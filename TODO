@@ -1,0 +1,138 @@
+* MapTop:
+  - replace mapName by instance of Map class
+
+* Commands:
+  - !maptop:
+    * group maptop by playerName to avoid same name multiple times in maptop or show player id in brackets if name appears multiple times
+
+* onPlayerSendMap:
+  - add map to random maprot
+
+
+vagrant:
+
+  - auto adjust maprot
+  - auto delete default maps
+  - auto add servertestgema
+  - ErrorOutput class?
+
+General:
+
+  - Add documentation for getters/setters
+  - Update documentation
+  - Check event handleres and possibly export functions to own classes
+  - Add graphic of database structure to README
+  - Split bootstrap.sh into dependecies.sh and setup.sh
+  - Combine README.md files of old gema mod version and new one
+
+
+Stuff to maybe do:
+
+  - Alternative way to use options: "!command --argument value"  ?
+  - Export strings to cfg file in config/string/strings-en.cfg .. strings-de.cfg
+  - Unit Tests
+  - Make gema mode toggable? (not base version)
+
+
+Server related config files:
+
+forbidden.cfg
+maprot.cfg
+motd_en.txt
+nicknameblacklist.cfg
+serverblacklist.cfg
+servercmdline.txt
+serverinfo_en.txt
+serverkillmessages.cfg
+serverpwd.cfg
+
+
+
+--------------
+
+Not Base version:
+
+
+* !gtop and !maptop stuff = records group
+* make !maptop <weapon> <startRank>
+
+* add !gtop | !gemaTop
+  => List of points per player
+  => Each rank 1 is worth 10 points
+  => Each other rank is worth 1 point
+  => !gtop <weapon> <startRank>  => Shows the gtop
+
+  -> add grank
+	=> !grank  => show own grank	
+	=> !grank <player> => show grank of a player
+  -> add mrank
+	=> !mrank => show own mrank
+	=> !mrank <player> => show mrank of a player
+  -> add uploader to map in db
+  -> add timestamp to record in db
+  -> add weapon system
+  -> add everything from previous mod
+
+  -> !ignore  !unignore  !ignorelist  !ignoreall  !unignoreall
+  -> !pm  !colorSay  !setColor
+  -> !mapinfo
+	=> Upload Date
+	=> Uploader
+	=> Finished by x players
+	=> Finished with x weapons
+
+  -> !whois <cn>  => show geoip and country
+
+onScore:
+
+  - Show time difference to above rank and rank 1?
+
+* Output:
+
+  - Add possibility to print with ignore list
+
+* DataBase:
+
+  - Allow connection to external db server with a server attribute
+
+
+
+possible other classes:
+
+  - ColorSelector
+	=> getColor() -> switch case + check whether color is valid
+	=> constants?
+
+
+Easy gtop:
+
+  "SELECT * FROM (
+     SELECT * FROM records
+     ORDER BY time, map
+  )"
+
+- Get all records
+- Order by time and map
+- Set ranks in sql query where map is equal, then restart at 1
+- group by record.player (or player_name?) -> sum of (Amount Rank 1 * 10) + Amount other ranks
+- output: The 5 best players on this server are:
+  1) name with 9989 points\t(records 1889, best times 900)
+- maybe save amount best times and amount records in player table
+
+
+- Lua ORM
+
+- Add colors to player say text "name[ip]: text"
+- Add a privacy reminder? => non existant privacy in this game..
+
+
+Website for gema records:
+
+  * web interface for maptop of lua server
+    -> list maps where a specific player has records
+
+  * make a website like tasvideos.org for assaultcube gema videos containg demo files of best records
+    => Accept demo files from other servers
+
+
+Hint: Used Lua Development Tools to edit the lua files.
