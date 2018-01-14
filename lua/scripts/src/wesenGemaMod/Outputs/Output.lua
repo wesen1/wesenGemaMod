@@ -100,11 +100,7 @@ function Output:getTabs(_entryLength, _longestEntryLength)
   local tabsCovered = math.floor(_entryLength / tabWidth);
   local tabsNeeded = numberOfTabs - tabsCovered;
   
-  if (numberOfTabs * 320 - _longestEntryLength < 32) then
-    tabsNeeded = tabsNeeded + 1;
-  end
-
-  return self:generateTabs(tabsNeeded) .. " ";
+  return self:generateTabs(tabsNeeded);
   
 end
 

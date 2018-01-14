@@ -15,52 +15,74 @@ setmetatable(TableOutput, { __index = Output });
 
 
 ---
--- Returns the columns of a table in the format [1] => [row1 entries], [2] => [row2 Entries].
+-- Returns the rows of a table in the format [1] => [row1 entries], [2] => [row2 Entries].
+-- Merges all sub tables into the main table schema.
 --
+-- @param table _table The table content in the format [1] => [row1 entries], [2] => [row2 entries], etc
 --
-function TableOutput:getColumns(_table, _columns, _offsetX, _offsetY)
+function TableOutput:getRows(_table)
 
   local table = {};
-  local offsetX = 0;
   local offsetY = 0;
-  local isSubTable = false;
+  local longestRow = 0;
+  local longestColumn = 0;
   
-  if (_columns and _offsetX and _offsetY) then
-    table = _columns;
-    offsetX = _offsetX;
-    offsetY = _offsetY;
-    isSubTable = true;
-  end
+  for y, row in pairs (_table) do
   
+    table[y + offsetY] = {};
   
-  for y, column in ipairs (_table) do
-  
-    table[x + offsetX] = {};
-  
-    for y, field in ipairs (column) do
+    for x, field in pairs (row) do
       
       if (type(field) == "table") then
       
-        table, offsetX, offsetY = self:getColumns(field, table, offsetX, offsetY);
+        local subTable = self:getRows(field);
+        
+        for subY, subRow in pairs(subTable) do
+        
+          if (table[y + offsetY] == nil) then 
+            table[y + offsetY] = {};
+          end
+        
+          for subX, subField in pairs(subRow) do
+            table[y + offsetY][x + subX - 1] = subField;
             
+            if (x + subX - 1 > longestRow) then
+              longestRow = x + subX - 1;
+            end
+            
+          end
+          
+          if (subY ~= #subTable) then
+            offsetY = offsetY + 1;
+          end
+          
+        end
+
       else
       
-        if (isSubTable) then
-          offsetY = offsetY + 1;
+        local offsetX = 0;
+      
+        while (table[y + offsetY][x + offsetX] ~= nil) do
+          offsetX = offsetX + 1;
         end
       
-        table[x + offsetX][y + offsetY] = field;
+        table[y + offsetY][x + offsetX] = field;
+        
+        if (x + offsetX > longestRow) then
+          longestRow = x + offsetX;
+        end
+        
       end
       
     end
     
-    if (isSubTable) then
-      offsetX = offsetX + 1;
+    if (y + offsetY > longestColumn) then
+      longestColumn = y + offsetY;
     end
-    
+        
   end
   
-  return table, offsetX, offsetY;
+  return table, longestRow, longestColumn;
 
 end
 
@@ -72,34 +94,49 @@ end
 -- 
 function TableOutput:printTable(_table)
 
-  local columns = self:getColumns(_table);
-  local widestEntries, entryWidths = self:getWidestEntries(columns);
-  
-  for y = 1, 8 do
+  local rows, longestRow, longestColumn = self:getRows(_table);
+  local widestEntries, entryWidths = self:getWidestEntries(rows);
     
+    
+  for y = 1, longestColumn, 1 do
+
     local rowString = "";
     
-    for x = 1, 10 do
+    local rowLength = 0;
     
-      local field = x .. "|" .. y;
-      local fieldWidth = 0;
-      
-      print (field);
-    
-      if (columns[x][y]) then
-
-        field = columns[x][y];
-        fieldWidth = entryWidths[x][y];
-
+    for x, field in pairs(rows[y]) do
+      if (x > rowLength) then
+        rowLength = x;
       end
-                            
-      rowString = rowString .. field .. self:getTabs(fieldWidth, widestEntries[x]);
-                
     end
     
+    for x = 1, longestRow, 1 do
+    
+      local field = "";
+      local fieldWidth = 0;
+    
+      if (rows[y] ~= nil and rows[y][x] ~= nil) then
+      
+        field = rows[y][x];
+        fieldWidth = entryWidths[y][x];
+        
+      end
+      
+      rowString = rowString .. field;
+      
+      if (x < rowLength) then
+        print ("Row: " .. y .. ", Column: " .. x .. " => " .. fieldWidth, widestEntries[x]);
+        rowString = rowString .. self:getTabs(fieldWidth, widestEntries[x]);
+      end
+
+    end
+
     self:print(rowString);
   
   end
+    if (isSubTable) then
+      offsetY = offsetY + 1;
+    end
 
 end
 
@@ -110,19 +147,21 @@ end
 -- 
 -- @return (table) Longest entries per column
 --
-function TableOutput:getWidestEntries(_columns)
+function TableOutput:getWidestEntries(_rows)
 
   local widestEntries = {};
   local entryWidths = {};
   
-  for x, column in ipairs(_columns) do
+  for y, row in pairs(_rows) do
     
-    entryWidths[x] = {};
+    entryWidths[y] = {};
+    widestEntries[y] = 0;
 
-    for y, field in pairs(column) do
-        
+    for x, field in pairs(row) do
+            
       local textWidth = self:getTextWidth(field);
-      entryWidths[x][y] = textWidth;
+      
+      entryWidths[y][x] = textWidth;
 
       if (widestEntries[x] == nil or widestEntries[x] < textWidth) then
         widestEntries[x] = textWidth;        

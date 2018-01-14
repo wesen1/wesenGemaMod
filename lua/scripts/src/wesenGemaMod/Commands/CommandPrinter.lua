@@ -50,10 +50,7 @@ end
 --
 function CommandPrinter:getArgumentOutputList(_command)
   
-  local arguments = {
-    [1] = {},
-    [2] = {}
-  };
+  local arguments = {};
           
   for i, argument in ipairs(_command:getArguments()) do
 
@@ -72,8 +69,10 @@ function CommandPrinter:getArgumentOutputList(_command)
       prefix = ": ";
     end
     
-    arguments[1][i] = prefix .. argumentName;
-    arguments[2][i] = colorLoader:getColor("helpDescription") .. ": " .. argumentDescription;
+    table.insert(arguments, {
+      prefix .. argumentName,
+      colorLoader:getColor("helpDescription") .. ": " .. argumentDescription
+    });
 
   end
   
@@ -90,10 +89,7 @@ function CommandPrinter:printCommandList(_cn)
 
   Output:print(colorLoader:getColor("cmdsTitle") .. "Available commands:");
   
-  local columns = {
-    [1] = {},
-    [2] = {}
-  };
+  local rows = {};
   
   for i, level in pairs (commandLister:getSortedLevels()) do
     
@@ -115,12 +111,16 @@ function CommandPrinter:printCommandList(_cn)
         
       end
       
-      table.insert(columns[1], " " .. groupName);
-      table.insert(columns[2], commandOutput);
+      local row = {
+        " " .. groupName,
+        commandOutput
+      };
+      
+      table.insert(rows, row);
               
     end
     
-    TableOutput:printTable(columns, _cn);
+    TableOutput:printTable(rows, _cn);
     
   end
   
@@ -134,25 +134,27 @@ end
 -- 
 function CommandPrinter:printHelpText(_command, _cn)
     
-    local columns = {
+    local rows = {
       [1] = {
         colorLoader:getColor("helpTitle") .. "Usage ",
-        colorLoader:getColor("helpTitle") .. "Description "
+        ": " .. self:generateCommandString(_command, false)
       },
       [2] = { 
-        ": " .. self:generateCommandString(_command, false),
+        colorLoader:getColor("helpTitle") .. "Description ",
         ": " .. colorLoader:getColor("helpDescription") .. _command:getDescription()
       }
     }    
     
     if (_command:getNumberOfArguments() > 0) then
     
-      columns[1][3] = colorLoader:getColor("helpTitle") .. "Arguments";
-      columns[2][3] = self:getArgumentOutputList(_command);
+      rows[3] = {
+        colorLoader:getColor("helpTitle") .. "Arguments",
+        self:getArgumentOutputList(_command)
+      }
       
     end
     
-    TableOutput:printTable(columns);
+    TableOutput:printTable(rows);
         
 end
 
