@@ -6,7 +6,7 @@
 --- 
 -- Stores the configuration for a single command.
 --
-BaseCommand = {};
+local BaseCommand = {};
 
 ---
 -- @field name (String) The main command name (must not contain a leading "!" and must be lowercase)
@@ -49,18 +49,22 @@ BaseCommand.description = "";
 -- 
 BaseCommand.group = "Other";
 
+BaseCommand.parentCommandLister = "";
+
 
 ---
 -- BaseCommand constructor.
 --
+-- @param CommandLister _parentCommandLister The parent command lister
 -- @param String _name              Name of the command
 -- @param int _requiredlevel        Level that is required in order to execute the command
 -- @param _group (String) Group of the command
 --
-function BaseCommand:__construct(_name, _requiredLevel, _group)
+function BaseCommand:__construct(_parentCommandLister, _name, _requiredLevel, _group)
 
   local instance = {};
-  setmetatable(instance, {__index = BaseCommand});
+  
+  instance.parentCommandLister = _parentCommandLister;
 
   instance.name = _name;
   instance.requiredLevel = _requiredLevel;
@@ -213,3 +217,5 @@ end
 function BaseCommand:execute(_cn, _args)
 end
 
+
+return BaseCommand;

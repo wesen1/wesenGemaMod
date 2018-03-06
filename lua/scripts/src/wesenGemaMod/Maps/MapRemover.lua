@@ -6,7 +6,7 @@
 --
 -- Handles removal of maps.
 --
-MapRemover = {};
+local MapRemover = {};
 
 --
 -- Removes a map from the database and the maps folder.
@@ -58,3 +58,6 @@ function MapRemover:mapHasRecords(_mapName)
   end
   
 end
+
+
+return MapRemover;

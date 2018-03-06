@@ -3,12 +3,12 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("Output");
+local Output = require("Outputs/Output");
 
 --
 -- Handles printing of map records.
 --
-MapRecordPrinter = {};
+local MapRecordPrinter = {};
 
 MapRecordPrinter.parentMapRecord = "";
 
@@ -66,6 +66,8 @@ end
 --
 function MapRecordPrinter:printScoreRecord()
 
+  local colorLoader = self.parentMapRecord:getParentMapTop():getParentGemaMod():getColorLoader();
+
   local playerName = self.parentMapRecord:getPlayer():getName();
   local time = self.parentMapRecord:getDisplayString();
   local rank = self.parentMapRecord:getRank();
@@ -104,3 +106,6 @@ function MapRecordPrinter:printScoreRecord()
   end
 
 end
+
+
+return MapRecordPrinter;

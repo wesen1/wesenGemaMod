@@ -3,16 +3,29 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("BaseCommand");
-require("Output");
+local BaseCommand = require("Commands/BaseCommand");
+local Output = require("Outputs/Output");
 
-
+---
 -- Command !colors
 --
 -- Displays all available colors to a player.
 --
-Colors = BaseCommand:__construct("colors", 0, "Colors");
-Colors:setDescription("Shows a list of all available colors");
+local ColorsCommand = {};
+setmetatable(ColorsCommand, {__index = BaseCommand});
+
+
+function ColorsCommand:__construct(_parentCommandLister)
+
+  local instance = BaseCommand:__construct(_parentCommandLister, "colors", 0, "Colors");
+  setmetatable(instance, {__index = ColorsCommand});
+  
+  
+  instance:setDescription("Shows a list of all available colors");
+  
+  return instance;
+
+end
 
 --
 -- Displays all available colors to a player.
@@ -20,7 +33,7 @@ Colors:setDescription("Shows a list of all available colors");
 -- @param int _cn       Client number of the player that executed the command
 -- @param array _args   Additional arguments
 --
-function Colors:execute(_cn, _args)
+function ColorsCommand:execute(_cn, _args)
 
   local symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
   local output = "";
@@ -37,5 +50,4 @@ function Colors:execute(_cn, _args)
 end
 
 
-return Colors;
-
+return ColorsCommand;

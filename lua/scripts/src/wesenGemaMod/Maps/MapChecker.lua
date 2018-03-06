@@ -6,7 +6,7 @@
 --
 -- Checks whether maps are valid gemas.
 --
-MapChecker = {};
+local MapChecker = {};
 
 --
 -- Checks whether a mapname contains g3ema@4 or one of the words "jigsaw" and "deadmeat-10".
@@ -67,3 +67,6 @@ function MapChecker:isGema(_mapName)
   return false;
 
 end
+
+
+return MapChecker;

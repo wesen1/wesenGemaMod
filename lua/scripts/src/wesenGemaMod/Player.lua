@@ -6,7 +6,7 @@
 ---
 -- Stores information about a single player.
 --
-Player = {};
+local Player = {};
 
 ---
 -- @field id (int) Id of the player in the database
@@ -155,15 +155,17 @@ end
 ---
 -- Fetches the ip id of this player ip from the database.
 --
+-- @param DataBase _dataBase The database
+--
 -- @return (int) Ip id
 --
-function Player:fetchIpId()
+function Player:fetchIpId(_dataBase)
 
   local sql = "SELECT id "
            .. "FROM ips "
            .. "WHERE ip = '" .. self.ip .. "';";
            
-  local result = dataBase:query(sql, true);
+  local result = _dataBase:query(sql, true);
   
   if (#result == 0) then
     return nil;
@@ -175,16 +177,17 @@ end
 
 ---
 -- Saves the player ip to the database.
+-- 
+-- @param DataBase _dataBase The database
 --
-function Player:saveIp()
+function Player:saveIp(_dataBase)
 
-  if (self:fetchIpId() == nil) then
-    sqlInsertIp = "INSERT INTO ips "
+  if (self:fetchIpId(_dataBase) == nil) then
+    local sql = "INSERT INTO ips "
                .. "(ip) "
                .. "VALUES ('" .. self.ip .. "');";
        
-    dataBase:query(sqlInsertIp, false);
-    result = dataBase:query(sqlGetId, true)
+    _dataBase:query(sql, false);
     
   end
   
@@ -192,19 +195,21 @@ end
 
 ---
 -- Fetches the id of this player name from the database.
+-- 
+-- @param DataBase _dataBase The database
 --
 -- @return (int) Id of this player name
 --
-function Player:fetchNameId()
+function Player:fetchNameId(_dataBase)
 
-  local playerName = dataBase:sanitize(self.name);
+  local playerName = _dataBase:sanitize(self.name);
 
   -- must use the keyword BINARY in order to make the string comparison case sensitve
   local sqlGetId = "SELECT id "
                 .. "FROM names "
                 .. "WHERE name= BINARY '" .. playerName .. "';";
            
-  local result = dataBase:query(sqlGetId, true);
+  local result = _dataBase:query(sqlGetId, true);
 
   if (#result == 0) then
     return nil;
@@ -216,18 +221,20 @@ end
 
 ---
 -- Saves the player name to the database.
+-- 
+-- @param DataBase _dataBase The database
 --
-function Player:saveName()
+function Player:saveName(_dataBase)
 
-  local playerName = dataBase:sanitize(self.name);
+  local playerName = _dataBase:sanitize(self.name);
 
-  if (self:fetchNameId() == nil) then
+  if (self:fetchNameId(_dataBase) == nil) then
 
     local sql = "INSERT INTO names "
              .. "(name) "
              .. "VALUES ('" .. playerName .. "');";
 
-    dataBase:query(sql, false);
+    _dataBase:query(sql, false);
     
   end
 
@@ -235,19 +242,21 @@ end
 
 ---
 -- Fetches the id of the player from the database
+-- 
+-- @param DataBase _dataBase The database
 --
 -- @return (nil|int) nil or player id
 --
-function Player:fetchPlayerId()
+function Player:fetchPlayerId(_dataBase)
 
-  local nameId = self:fetchNameId();
-  local ipId = self:fetchIpId();
+  local nameId = self:fetchNameId(_dataBase);
+  local ipId = self:fetchIpId(_dataBase);
 
   local sql = "SELECT id "
            .. "FROM players "
            .. "WHERE name=" .. nameId .. " and ip=" .. ipId .. ";";
            
-  local result = dataBase:query(sql, true);
+  local result = _dataBase:query(sql, true);
   
   if (#result == 0) then
     return nil;
@@ -260,28 +269,32 @@ end
 ---
 -- Saves the player (combination of ip and name) in the database.
 -- Also sets the id attribute
+-- 
+-- @param DataBase _dataBase The database
 --
-function Player:savePlayerData()
+function Player:savePlayerData(_dataBase)
 
-  self:saveName();
-  self:saveIp();
+  self:saveName(_dataBase);
+  self:saveIp(_dataBase);
   
-  local nameId = self:fetchNameId();
-  local ipId = self:fetchIpId();
-  
-  local playerId = self:fetchPlayerId();
+  local nameId = self:fetchNameId(_dataBase);
+  local ipId = self:fetchIpId(_dataBase);
+  local playerId = self:fetchPlayerId(_dataBase);
 
   if (self.playerId == nil) then
 
-    sql = "INSERT INTO players "
+    local sql = "INSERT INTO players "
        .. "(name, ip) "
        .. "VALUES (" .. nameId .. "," .. ipId .. ");";
               
-    dataBase:query(sql, false);
-    playerId = self:fetchPlayerId();
+    _dataBase:query(sql, false);
+    playerId = self:fetchPlayerId(_dataBase);
     
   end
   
   self.id = playerId;
 
 end
+
+
+return Player;

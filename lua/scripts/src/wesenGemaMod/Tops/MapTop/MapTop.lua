@@ -3,15 +3,15 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("MapTopCacher");
-require("MapTopLoader");
-require("MapTopPrinter");
-require("MapTopSaver");
+local MapTopCacher = require("Tops/MapTop/MapTopCacher");
+local MapTopLoader = require("Tops/MapTop/MapTopLoader");
+local MapTopPrinter = require("Tops/MapTop/MapTopPrinter");
+local MapTopSaver = require("Tops/MapTop/MapTopSaver");
 
 --
 -- Handles the records of the current map.
 --
-MapTop = {};
+local MapTop = {};
 
 
 -- @var String Name of the current map
@@ -22,12 +22,13 @@ MapTop.mapTopCacher = "";
 MapTop.mapTopLoader = "";
 MapTop.mapTopPrinter = "";
 MapTop.mapTopSaver = "";
+MapTop.parentGemaMod = "";
 
 
 --
 -- Maptop constructor.
 --
-function MapTop:__construct()
+function MapTop:__construct(_parentGemaMod)
 
   local instance = {};
   setmetatable(instance, {__index = MapTop});
@@ -37,6 +38,7 @@ function MapTop:__construct()
   instance.mapTopLoader = MapTopLoader:__construct(instance);
   instance.mapTopPrinter = MapTopPrinter:__construct(instance);
   instance.mapTopSaver = MapTopSaver:__construct();
+  instance.parentGemaMod = _parentGemaMod;
   
   return instance;
   
@@ -59,6 +61,10 @@ end
 
 function MapTop:setMapTopCacher(_mapTopCacher)
   self.mapTopCacher = _mapTopCacher;
+end
+
+function MapTop:getParentGemaMod()
+  return self.parentGemaMod;
 end
 
 
@@ -88,7 +94,7 @@ function MapTop:addRecord(_newRecord)
   if (saveRecord == true) then
 
     self.mapTopCacher:addRecord(_newRecord, playerRank, _newRecord:getRank());
-    self.mapTopSaver:addRecord(_newRecord, self.mapName);
+    self.mapTopSaver:addRecord(self.parentGemaMod:getDataBase(), _newRecord, self.mapName);
   end
     
 end
@@ -150,15 +156,17 @@ function MapTop:isEmpty()
   
 end
 
---
+---
 -- Loads the records for a map from the database.
 --
--- @param String _mapName  The map name
+-- @param String _mapName The map name
 --
 function MapTop:loadRecords(_mapName)
 
+  local dataBase = self.parentGemaMod:getDataBase();
+
   self.mapTopCacher:setRecords({});
-  self.mapTopCacher:setRecords(self.mapTopLoader:fetchRecords(_mapName));
+  self.mapTopCacher:setRecords(self.mapTopLoader:fetchRecords(dataBase, _mapName));
 
 end
 
@@ -204,3 +212,6 @@ function MapTop:printMapTop(_cn)
   self.mapTopPrinter:printMapTop(_cn);
   
 end
+
+
+return MapTop;

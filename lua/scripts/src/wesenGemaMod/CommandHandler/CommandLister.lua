@@ -6,17 +6,18 @@
 ---
 -- Stores a list of all commands.
 --
-CommandLister = {};
+local CommandLister = {};
 
 CommandLister.commands = {};
 CommandLister.sortedLevels = {};
 CommandLister.sortedGroups = {};
 CommandLister.sortedCommands = {};
+CommandLister.parentCommandHandler = "";
 
 ---
 -- CommandLister constructor.
 -- 
-function CommandLister:__construct()
+function CommandLister:__construct(_parentCommandHandler)
 
   local instance = {};
   setmetatable(instance, {__index = CommandLister});
@@ -25,6 +26,7 @@ function CommandLister:__construct()
   instance.sortedLevels = {};
   instance.sortedGroups = {};
   instance.sortedCommands = {};
+  instance.parentCommandHandler = _parentCommandHandler;
   
   return instance;
 
@@ -34,33 +36,22 @@ function CommandLister:getCommands()
   return self.commands;
 end
 
-function CommandLister:setCommands(_commands)
-  self.commands = _commands;
-end
-
 function CommandLister:getSortedLevels()
   return self.sortedLevels;
-end
-
-function CommandLister:setSortedLevels(_sortedLevels)
-  self.sortedLevels = _sortedLevels;
 end
 
 function CommandLister:getSortedGroups()
   return self.sortedGroups;
 end
 
-function CommandLister:setSortedGroups(_sortedGroups)
-  self.sortedGroups = _sortedGroups;
-end
-
 function CommandLister:getSortedCommands()
   return self.sortedCommands;
 end
 
-function CommandLister:setSortedCommands(_sortedCommands)
-  self.sortedCommands = _sortedCommands;
+function CommandLister:getParentCommandHandler()
+  return self.parentCommandHandler;
 end
+
 
 ---
 -- Adds a command to the command list
@@ -69,10 +60,12 @@ end
 --
 function CommandLister:addCommand(_command)
 
-  self.commands["!" .. _command:getName()] = _command;
+  local command = _command:__construct(self);
+
+  self.commands["!" .. command:getName()] = command;
   
-  local level = _command:getRequiredLevel();
-  local group = _command:getGroup();
+  local level = command:getRequiredLevel();
+  local group = command:getGroup();
   
   if (self.sortedCommands[level] == nil) then
     self.sortedCommands[level] = {};
@@ -91,7 +84,7 @@ function CommandLister:addCommand(_command)
     table.sort(self.sortedGroups[level]);
   end
   
-  table.insert(self.sortedCommands[level][group], _command:getName());
+  table.insert(self.sortedCommands[level][group], command:getName());
   table.sort(self.sortedCommands[level][group]);
 
 end
@@ -122,3 +115,5 @@ function CommandLister:getCommand(_commandName)
 
 end
 
+
+return CommandLister;

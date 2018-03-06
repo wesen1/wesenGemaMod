@@ -3,12 +3,12 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("Output");
+local Output = require("Outputs/Output");
 
 --
 -- Handles printing of maptop related values.
 --
-MapTopPrinter = {};
+local MapTopPrinter = {};
 
 -- MapTop to which this MapTopPrinter belongs
 MapTopPrinter.parentMapTop = "";
@@ -45,6 +45,8 @@ end
 -- @param int _cn  Client number of the player
 --
 function MapTopPrinter:printMapTop(_cn)
+
+  local colorLoader = self.parentMapTop:getParentGemaMod():getColorLoader();
 
   if (self.parentMapTop:isEmpty()) then
     Output:print(colorLoader:getColor("emptyTop") .. "No records found for this map.", _cn);
@@ -93,6 +95,8 @@ end
 --
 function MapTopPrinter:printMapStatistics(_cn)
 
+  local colorLoader = self.parentMapTop:getParentGemaMod():getColorLoader();
+
   if (self.parentMapTop:isEmpty()) then
     Output:print(colorLoader:getColor("emptyTop") .. "No records found for this map.", _cn);
   
@@ -118,3 +122,6 @@ function MapTopPrinter:printMapStatistics(_cn)
   end
 
 end
+
+
+return MapTopPrinter;

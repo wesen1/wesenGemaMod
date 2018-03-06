@@ -3,12 +3,12 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("Output");
+local Output = require("Outputs/Output");
 
 ---
 -- Handles outputs of tables to clients.
 --
-TableOutput = {};
+local TableOutput = {};
 
 -- TableOutput inherits from Output
 setmetatable(TableOutput, { __index = Output });
@@ -173,4 +173,5 @@ function TableOutput:getWidestEntries(_rows)
   
   return widestEntries, entryWidths;
 
-end
+endreturn TableOutput;
+return TableOutput;

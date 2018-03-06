@@ -6,7 +6,7 @@
 --
 -- Handles maptop caching.
 --
-MapTopCacher = {};
+local MapTopCacher = {};
 
 ---
 --  @field records (table) Cached list of records for the current map
@@ -97,3 +97,6 @@ function MapTopCacher:getNumberOfRecords()
   return #self.records;
 
 end
+
+
+return MapTopCacher;
