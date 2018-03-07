@@ -21,11 +21,11 @@ The records are saved in a minimal database and the commands are built in a way 
 
 ## Setup development environment
 
-- Install vagrant and a Lua IDE or texteditor
-- Navigate to the project folder in a console and type ''''vagrant up'''' to initialize the vagrant box
-- Next type ''''vagrant ssh'''' to connect to the vagrant box
-- Now inside the vagrant box type ''''cd AssaultCube_v.1.2.0.2''''
-- Finally type ''''./server.sh''''
+* Install vagrant and virtualbox
+* Navigate to the project folder in a console and type ````vagrant up```` to initialize the vagrant box
+* Next type ````vagrant ssh```` to connect to the vagrant box
+* Now inside the vagrant box type ````cd AssaultCube_v.1.2.0.2````
+* Finally type ````./server.sh````
 
-After that you should be able to connect to your test server by typing ''''/connect localhost'''' ingame.
+After that you should be able to connect to your test server by typing ````/connect localhost```` ingame.
 
