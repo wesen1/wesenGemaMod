@@ -1,64 +1,76 @@
 ---
 -- @author wesen
--- @copyright 2017 wesen <wesen-ac@web.de>
--- 
-
+-- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
 --
--- Handles loading of the color configuration.
---
-ColorLoader = {};
 
--- Name of the lua configuration file for colors
-ColorLoader.colorConfigFile = "colors";
-
+---
+-- @type ColorLoader Handles loading of the color configuration.
 --
+local ColorLoader = {};
+
+
+---
+-- The name of the lua configuration file for colors
+--
+-- @tfield string colorConfigFileName
+--
+ColorLoader.colorConfigFileName = "colors";
+
+
+---
 -- ColorLoader constructor.
 --
--- @param String _colorConfigFile  Name of the lua configuration file for colors
+-- @tparam string _colorConfigFileName The name of the lua configuration file for colors
 --
-function ColorLoader:__construct(_colorConfigFile)
+function ColorLoader:__construct(_colorConfigFileName)
 
   local instance = {};
   setmetatable(instance, {__index = ColorLoader});
 
-  instance.colorConfigFile = _colorConfigFile;
-  
+  instance.colorConfigFileName = _colorConfigFileName;
+
   return instance;
 
 end
 
 
---
+-- Getters and setters
+
+---
 -- Returns the name of the lua configuration file for colors.
 --
--- @return String Name of the lua configuration file for colors
+-- @treturn string The name of the lua configuration file for colors
 --
-function ColorLoader:getColorConfigFile()
-
-  return self.colorConfigFile;
-  
+function ColorLoader:getColorConfigFileName()
+  return self.colorConfigFileName;
 end
 
---
+---
 -- Sets the name of the lua configuration file for colors.
 --
--- @param String _colorConfigFile Name of the lua configuration file for colors
+-- @tparam string _colorConfigFileName The name of the lua configuration file for colors
 --
-function ColorLoader:setColorConfigFile(_colorConfigFile)
-
-  self.colorConfigFile = _colorConfigFile;
-  
+function ColorLoader:setColorConfigFileName(_colorConfigFileName)
+  self.colorConfigFileName = _colorConfigFileName;
 end
 
 
---
+-- Class Methods
+
+---
 -- Loads a color from the color config file.
 --
--- @param String _colorId  Name of the color
+-- @tparam string _colorId Name of the color
 --
-function ColorLoader:getColor(_colorId)
+-- @treturn string The color with leading \f
+--
+function ColorLoader:loadColor(_colorId)
 
-  return "\f" .. cfg.getvalue(self.colorConfigFile, _colorId);
+  return "\f" .. cfg.getvalue(self.colorConfigFileName, _colorId);
 
 end
 
+
+return ColorLoader;

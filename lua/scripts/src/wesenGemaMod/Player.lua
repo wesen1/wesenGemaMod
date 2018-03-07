@@ -1,61 +1,72 @@
 ---
 -- @author wesen
--- @copyright 2017 wesen <wesen-ac@web.de>
--- 
-
----
--- Stores information about a single player.
+-- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
 --
-Player = {};
 
 ---
--- @field id (int) Id of the player in the database
--- 
+-- @type Player Stores information about a single player.
+--
+local Player = {};
+
+
+---
+-- The id of the player in the database
+--
+-- @tfield int id
+--
 Player.id = -1;
 
 ---
--- @field name (String) The player name
--- 
+-- The player name
+--
+-- @tfield string name
+--
 Player.name = "";
 
 ---
--- @field ip (String) The player ip
--- 
+-- The player ip
+--
+-- @tfield string ip
+--
 Player.ip = "";
 
 ---
--- @field level (int) The player level
+-- The player level (0 = unarmed, 1 = admin)
 --
--- 0 = unarmed
--- 1 = admin
--- 
+-- @tfield int level
+--
 Player.level = 0;
 
 ---
--- @field startTime (int) Spawn time (used to calculate time needed to score)
--- 
+-- The spawn time in milliseconds
+-- This value is used to calculate the time that the player needed to score
+--
+-- @tfield int startTime
+--
 Player.startTime = 0;
 
 
 ---
 -- Player Constructor.
 --
--- @param _name (String) Player name
--- @param _ip (String) Player ip 
+-- @tparam string _name The player name
+-- @tparam string _ip The player ip
 --
 function Player:__construct(_name, _ip)
 
   local instance = {};
   setmetatable(instance, {__index = Player});
-  
+
   instance.id = -1;
   instance.name = _name;
   instance.ip = _ip;
   instance.level = 0;
   instance.startTime = 0;
-    
+
   return instance;
-  
+
 end
 
 
@@ -64,7 +75,7 @@ end
 ---
 -- Returns the player id in the database.
 --
--- @return (int) Player id
+-- @treturn int The player id
 --
 function Player:getId()
   return self.id;
@@ -73,7 +84,7 @@ end
 ---
 -- Sets the player id.
 --
--- @param _id (int) Player id
+-- @tparam int _id The player id
 --
 function Player:setId(_id)
   self.id = _id;
@@ -82,7 +93,7 @@ end
 ---
 -- Returns the player name.
 --
--- @return (String) Player name
+-- @treturn string The player name
 --
 function Player:getName()
   return self.name;
@@ -91,7 +102,7 @@ end
 ---
 -- Sets the player name.
 --
--- @param _name (String) Player name
+-- @tparam string _name The player name
 --
 function Player:setName(_name)
   self.name = _name;
@@ -100,7 +111,7 @@ end
 ---
 -- Returns the player ip.
 --
--- @return (String) Player ip
+-- @treturn string The player ip
 --
 function Player:getIp()
   return self.ip;
@@ -109,7 +120,7 @@ end
 ---
 -- Sets the player ip.
 --
--- @param _ip (String) Player ip
+-- @tparam string _ip The player ip
 --
 function Player:setIp(_ip)
   self.ip = _ip;
@@ -118,7 +129,7 @@ end
 ---
 -- Returns the player level.
 --
--- @return (int) Player level
+-- @treturn int The player level
 --
 function Player:getLevel()
   return self.level;
@@ -127,7 +138,7 @@ end
 ---
 -- Sets the player Level.
 --
--- @param _level (int) Player level
+-- @tparam int _level The player level
 --
 function Player:setLevel(_level)
   self.level = _level;
@@ -136,7 +147,7 @@ end
 ---
 -- Returns the start time.
 --
--- @return (int) Start time
+-- @treturn int The start time
 --
 function Player:getStartTime()
   return self.startTime;
@@ -145,26 +156,30 @@ end
 ---
 -- Sets the start time.
 --
--- @param _startTime (int) Start time
+-- @tparam int _startTime The start time
 --
 function Player:setStartTime(_startTime)
   self.startTime = _startTime;
 end
 
 
+-- Methods
+
 ---
 -- Fetches the ip id of this player ip from the database.
 --
--- @return (int) Ip id
+-- @tparam DataBase _dataBase The database
 --
-function Player:fetchIpId()
+-- @treturn int The ip id
+--
+function Player:fetchIpId(_dataBase)
 
   local sql = "SELECT id "
            .. "FROM ips "
            .. "WHERE ip = '" .. self.ip .. "';";
-           
-  local result = dataBase:query(sql, true);
-  
+
+  local result = _dataBase:query(sql, true);
+
   if (#result == 0) then
     return nil;
   else
@@ -176,35 +191,38 @@ end
 ---
 -- Saves the player ip to the database.
 --
-function Player:saveIp()
+-- @tparam DataBase _dataBase The database
+--
+function Player:saveIp(_dataBase)
 
-  if (self:fetchIpId() == nil) then
-    sqlInsertIp = "INSERT INTO ips "
+  if (self:fetchIpId(_dataBase) == nil) then
+    local sql = "INSERT INTO ips "
                .. "(ip) "
                .. "VALUES ('" .. self.ip .. "');";
-       
-    dataBase:query(sqlInsertIp, false);
-    result = dataBase:query(sqlGetId, true)
-    
+
+    _dataBase:query(sql, false);
+
   end
-  
+
 end
 
 ---
 -- Fetches the id of this player name from the database.
 --
--- @return (int) Id of this player name
+-- @tparam DataBase _dataBase The database
 --
-function Player:fetchNameId()
+-- @treturn int The player name id
+--
+function Player:fetchNameId(_dataBase)
 
-  local playerName = dataBase:sanitize(self.name);
+  local playerName = _dataBase:sanitize(self.name);
 
   -- must use the keyword BINARY in order to make the string comparison case sensitve
   local sqlGetId = "SELECT id "
                 .. "FROM names "
                 .. "WHERE name= BINARY '" .. playerName .. "';";
-           
-  local result = dataBase:query(sqlGetId, true);
+
+  local result = _dataBase:query(sqlGetId, true);
 
   if (#result == 0) then
     return nil;
@@ -217,18 +235,20 @@ end
 ---
 -- Saves the player name to the database.
 --
-function Player:saveName()
+-- @tparam DataBase _dataBase The database
+--
+function Player:saveName(_dataBase)
 
-  local playerName = dataBase:sanitize(self.name);
+  local playerName = _dataBase:sanitize(self.name);
 
-  if (self:fetchNameId() == nil) then
+  if (self:fetchNameId(_dataBase) == nil) then
 
     local sql = "INSERT INTO names "
              .. "(name) "
              .. "VALUES ('" .. playerName .. "');";
 
-    dataBase:query(sql, false);
-    
+    _dataBase:query(sql, false);
+
   end
 
 end
@@ -236,52 +256,58 @@ end
 ---
 -- Fetches the id of the player from the database
 --
--- @return (nil|int) nil or player id
+-- @tparam DataBase _dataBase The database
 --
-function Player:fetchPlayerId()
+-- @treturn int|nil The player id or nil
+--
+function Player:fetchPlayerId(_dataBase)
 
-  local nameId = self:fetchNameId();
-  local ipId = self:fetchIpId();
+  local nameId = self:fetchNameId(_dataBase);
+  local ipId = self:fetchIpId(_dataBase);
 
   local sql = "SELECT id "
            .. "FROM players "
            .. "WHERE name=" .. nameId .. " and ip=" .. ipId .. ";";
-           
-  local result = dataBase:query(sql, true);
+
+  local result = _dataBase:query(sql, true);
   
   if (#result == 0) then
     return nil;
   else
     return tonumber(result[1]["id"]);
   end
-  
+
 end
 
 ---
 -- Saves the player (combination of ip and name) in the database.
 -- Also sets the id attribute
 --
-function Player:savePlayerData()
+-- @tparam DataBase _dataBase The database
+--
+function Player:savePlayerData(_dataBase)
 
-  self:saveName();
-  self:saveIp();
-  
-  local nameId = self:fetchNameId();
-  local ipId = self:fetchIpId();
-  
-  local playerId = self:fetchPlayerId();
+  self:saveName(_dataBase);
+  self:saveIp(_dataBase);
+
+  local nameId = self:fetchNameId(_dataBase);
+  local ipId = self:fetchIpId(_dataBase);
+  local playerId = self:fetchPlayerId(_dataBase);
 
   if (self.playerId == nil) then
 
-    sql = "INSERT INTO players "
+    local sql = "INSERT INTO players "
        .. "(name, ip) "
        .. "VALUES (" .. nameId .. "," .. ipId .. ");";
-              
-    dataBase:query(sql, false);
-    playerId = self:fetchPlayerId();
-    
+
+    _dataBase:query(sql, false);
+    playerId = self:fetchPlayerId(_dataBase);
+
   end
-  
+
   self.id = playerId;
 
 end
+
+
+return Player;

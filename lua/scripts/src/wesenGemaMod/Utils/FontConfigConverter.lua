@@ -6,7 +6,7 @@
 ---
 -- Converts assaultcube font config to lua config files containing only the width of each character.
 --
-FontConfigConverter = {};
+local FontConfigConverter = {};
 
 ---
 -- Converts a font configuration file to a lua config file only containing the text width of each character.
@@ -43,7 +43,9 @@ end
 ---
 -- Reads a file and saves it in a table (each line = table entry).
 --
--- @param _filePath (String) File path
+-- @param _filePath (String) The file path
+-- 
+-- @return String[] The lines in the file
 --
 function FontConfigConverter:readFile(_filePath)
 
@@ -59,3 +61,6 @@ function FontConfigConverter:readFile(_filePath)
   return lines;
   
 end
+
+
+return FontConfigConverter;

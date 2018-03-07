@@ -3,13 +3,32 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("Output");
-require("TableOutput");
+local Output = require("Outputs/Output");
+local TableOutput = require("Outputs/TableOutput");
 
 ---
 -- Handles printing of commands in !cmds and !help.
 -- 
-CommandPrinter = {};
+local CommandPrinter = {};
+
+
+CommandPrinter.parentCommandHandler = "";
+
+
+---
+-- CommandPrinter constructor.
+-- 
+function CommandPrinter:__construct(_parentCommandHandler)
+
+  local instance = {};
+  setmetatable(instance, {__index = CommandPrinter});
+  
+  instance.parentCommandHandler = _parentCommandHandler;
+  
+  return instance;
+
+end
+
 
 ---
 -- Generates and returns a command string.
@@ -19,19 +38,19 @@ CommandPrinter = {};
 -- 
 function CommandPrinter:generateCommandString(_command, _showOnlyRequiredArguments)
 
-  local commandString = colorLoader:getColor("command" .. _command:getRequiredLevel())
+  local commandString = Output:getColor("command" .. _command:getRequiredLevel())
                      .. "!" .. _command:getName();
   
   for i, argument in ipairs(_command:getArguments()) do
 
     if (not argument["isRequired"] and not _showOnlyRequiredArguments) then
       commandString = commandString
-                     .. colorLoader:getColor("optionalArgument")
+                     .. Output:getColor("optionalArgument")
                      .. " <" .. argument["name"] .. ">";
 
     elseif (argument["isRequired"]) then
       commandString = commandString
-                   .. colorLoader:getColor("requiredArgument")
+                   .. Output:getColor("requiredArgument")
                    .. " <" .. argument["name"] .. ">";
     end
 
@@ -58,9 +77,9 @@ function CommandPrinter:getArgumentOutputList(_command)
     local argumentDescription = argument["description"];
 
     if (argument["isRequired"]) then 
-      argumentName = colorLoader:getColor("requiredArgument") .. argumentName;
+      argumentName = Output:getColor("requiredArgument") .. argumentName;
     else
-      argumentName = colorLoader:getColor("optionalArgument") .. argumentName;
+      argumentName = Output:getColor("optionalArgument") .. argumentName;
       argumentDescription = argumentDescription .. " (Optional)";
     end
     
@@ -71,7 +90,7 @@ function CommandPrinter:getArgumentOutputList(_command)
     
     table.insert(arguments, {
       prefix .. argumentName,
-      colorLoader:getColor("helpDescription") .. ": " .. argumentDescription
+      Output:getColor("helpDescription") .. ": " .. argumentDescription
     });
 
   end
@@ -85,28 +104,28 @@ end
 -- 
 -- @param _cn (int) Player cn
 --
-function CommandPrinter:printCommandList(_cn)
+function CommandPrinter:printCommandList(_cn, _commandLister)
 
-  Output:print(colorLoader:getColor("cmdsTitle") .. "Available commands:");
+  Output:print(Output:getColor("cmdsTitle") .. "Available commands:");
   
   local rows = {};
   
-  for i, level in pairs (commandLister:getSortedLevels()) do
+  for i, level in pairs (_commandLister:getSortedLevels()) do
     
-    if (players[_cn]:getLevel() < level) then
+    if (self.parentCommandHandler:getParentGemaMod():getPlayers()[_cn]:getLevel() < level) then
       break;
     end
     
-    local groups = commandLister:getSortedGroups();
+    local groups = _commandLister:getSortedGroups();
     
     for j, groupName in pairs(groups[level]) do
     
-      local commandLists = commandLister:getSortedCommands();
+      local commandLists = _commandLister:getSortedCommands();
       local commandOutput = ": ";
                         
       for i, commandName in pairs(commandLists[level][groupName]) do      
       
-        local command = commandLister:getCommand("!" .. commandName);
+        local command = _commandLister:getCommand("!" .. commandName);
         commandOutput = commandOutput .. CommandPrinter:generateCommandString(command, true) .. "   ";
         
       end
@@ -136,19 +155,19 @@ function CommandPrinter:printHelpText(_command, _cn)
     
     local rows = {
       [1] = {
-        colorLoader:getColor("helpTitle") .. "Usage ",
+        Output:getColor("helpTitle") .. "Usage ",
         ": " .. self:generateCommandString(_command, false)
       },
       [2] = { 
-        colorLoader:getColor("helpTitle") .. "Description ",
-        ": " .. colorLoader:getColor("helpDescription") .. _command:getDescription()
+        Output:getColor("helpTitle") .. "Description ",
+        ": " .. Output:getColor("helpDescription") .. _command:getDescription()
       }
     }    
     
     if (_command:getNumberOfArguments() > 0) then
     
       rows[3] = {
-        colorLoader:getColor("helpTitle") .. "Arguments",
+        Output:getColor("helpTitle") .. "Arguments",
         self:getArgumentOutputList(_command)
       }
       
@@ -158,3 +177,5 @@ function CommandPrinter:printHelpText(_command, _cn)
         
 end
 
+
+return CommandPrinter;

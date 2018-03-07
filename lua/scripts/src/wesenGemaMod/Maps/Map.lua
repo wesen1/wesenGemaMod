@@ -1,27 +1,30 @@
 ---
 -- @author wesen
 -- @copyright 2017 wesen <wesen-ac@web.de>
--- 
+--
+
+local MapRemover = require("Maps/MapRemover");
 
 --
 -- Stores information about the current map.
 --
-Map = {};
+local Map = {};
 
---
+---
 -- Fetches the map id from the database.
+-- 
+-- @param DataBase _dataBase The database
+-- @param String _mapName The map name
 --
--- @param String _mapName  The map name
---
-function Map:fetchMapId(_mapName)
+function Map:fetchMapId(_dataBase, _mapName)
 
-  local mapName = dataBase:sanitize(_mapName);
+  local mapName = _dataBase:sanitize(_mapName);
 
   local sql = "SELECT id "
            .. "FROM maps "
            .. "WHERE name = BINARY '" .. mapName .. "';";
            
-  local result = dataBase:query(sql, true);
+  local result = _dataBase:query(sql, true);
   
   if (#result == 0) then
     return nil;
@@ -31,23 +34,31 @@ function Map:fetchMapId(_mapName)
 
 end
 
---
+---
 -- Saves the map name to the database.
 --
--- @param String _mapName  The map name
+-- @param DataBase _dataBase The database
+-- @param String _mapName The map name
 --
-function Map:saveMapName(_mapName)
+function Map:saveMapName(_dataBase, _mapName)
 
-  local mapName = dataBase:sanitize(_mapName);
+  local mapName = _dataBase:sanitize(_mapName);
   
-  if (self:fetchMapId(_mapName) == nil) then
+  if (self:fetchMapId(_dataBase, _mapName) == nil) then
   
     local sql = "INSERT INTO maps "
              .. "(name) "
              .. "VALUES ('" .. mapName .. "');";
                               
-    dataBase:query(sql, false);
+    _dataBase:query(sql, false);
     
   end
 
 end
+
+function Map:removeMap(_dataBase, _mapName, _mapTop)
+  MapRemover:removeMap(_dataBase, _mapName, self:fetchMapId(_dataBase, _mapName), _mapTop);
+end
+
+
+return Map;

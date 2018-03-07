@@ -1,29 +1,38 @@
 ---
--- Table functions
+-- @author wesen
+-- @copyright 2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
 --
+
+---
+-- @type TableUtils Class that provides additional table functions.
+--
+local TableUtils = {};
+
 
 ---
 -- Returns a part of a table from start index to end index.
 --
--- @param _table (table) The table
--- @param _startIndex (int) Start index
--- @param _endIndex (int) End index
+-- @tparam table _table The table
+-- @tparam int _startIndex The start index
+-- @tparam int _endIndex The end index
 --
--- @return (table) The partial table
+-- @treturn table The partial table
 --
-function slice(_table, _startIndex, _endIndex)
+function TableUtils:slice(_table, _startIndex, _endIndex)
 
   local length = #_table;
 
   -- Check and adjust start index
   if (tonumber(_startIndex) == nil or _startIndex < 1) then
     _startIndex = 1;
-  
+
   elseif (_startIndex > length) then
     _startIndex = length;
-  
+
   end
-    
+
   -- Check and adjust end index
   if (tonumber(_endIndex) == nil or _endIndex > length) then
     _endIndex = length;
@@ -33,38 +42,39 @@ function slice(_table, _startIndex, _endIndex)
     _endIndex = length + _endIndex;
 
   end
-	
-  
+
+  -- Create the result table
   local result = {};
   for index = _startIndex, _endIndex do
     table.insert(result, _table[index]);
   end
 
   return result;
-  
+
 end
+
 
 ---
 -- Checks whether String _needle is contained in a table of strings.
 --
--- @param _needle (String) Needle
--- @param _haystack (String[]) Haystack
+-- @tparam string _needle The needle
+-- @tparam table _haystack The haystack (a table of strings)
 --
--- @return (bool) True: String was found int table
---                False: String was not found in table
+-- @treturn bool True: String was found in the table
+--               False: String was not found in the table
 --
-function in_table(_needle, _haystack)
+function TableUtils:inTable(_needle, _haystack)
 
   for index, string in pairs(_haystack) do
 
     if (_needle == string) then
       return true;
     end
-        
+
   end
-  
+
   return false;
-  
+
 end
 
 ---
@@ -72,12 +82,12 @@ end
 --
 -- source: https://gist.github.com/tylerneylon/81333721109155b2d244
 --
--- @param obj (table) The table
--- @param seen (table) Table containing already seen table
+-- @tparam table obj The table
+-- @tparam table seen The table that contains already seen tables
 --
--- @return (table) Clone of the table
+-- @treturn table Clone of the table
 --
-function copy(obj, seen)
+function TableUtils:copy(obj, seen)
   -- Handle non-tables and previously-seen tables.
   if type(obj) ~= 'table' then return obj end
   if seen and seen[obj] then return seen[obj] end
@@ -86,37 +96,9 @@ function copy(obj, seen)
   local s = seen or {}
   local res = setmetatable({}, getmetatable(obj))
   s[obj] = res
-  for k, v in pairs(obj) do res[copy(k, s)] = copy(v, s) end
+  for k, v in pairs(obj) do res[self:copy(k, s)] = self:copy(v, s) end
   return res
 end
 
 
----
--- String functions
---
-
----
--- Splits a string everytime the delimiter appears in it.
---
--- @param _text (String) The string
--- @param _delimiter (String) Delimiter at which the string will be split
---
--- @return (table) The splits
---
-function split(_text, _delimiter)
-
-  text = _text .. _delimiter;
-  words = {};
-
-  for word in text:gmatch("([^" .. _delimiter .. "]*)" .. _delimiter) do
-
-    if (#word > 0) then
-      table.insert(words, word);
-    end
-  
-  end
-  
-  return words;
-  
-end
-
+return TableUtils;

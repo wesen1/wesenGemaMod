@@ -3,12 +3,12 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("MapRecordPrinter");
+local MapRecordPrinter = require("Tops/MapTop/MapRecord/MapRecordPrinter");
 
 --
 -- Stores information about a single record.
 --
-MapRecord = {};
+local MapRecord = {};
 
 
 -- Class attributes
@@ -103,3 +103,6 @@ end
 function MapRecord:printScoreRecord()
   self.mapRecordPrinter:printScoreRecord();
 end
+
+
+return MapRecord;

@@ -3,12 +3,12 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
-require("Output");
+local Output = require("Outputs/Output");
 
 --
 -- Handles printing of maptop related values.
 --
-MapTopPrinter = {};
+local MapTopPrinter = {};
 
 -- MapTop to which this MapTopPrinter belongs
 MapTopPrinter.parentMapTop = "";
@@ -47,7 +47,7 @@ end
 function MapTopPrinter:printMapTop(_cn)
 
   if (self.parentMapTop:isEmpty()) then
-    Output:print(colorLoader:getColor("emptyTop") .. "No records found for this map.", _cn);
+    Output:print(Output:getColor("emptyTop") .. "No records found for this map.", _cn);
   else
 
     local amountDisplayRecords = 5;
@@ -57,7 +57,7 @@ function MapTopPrinter:printMapTop(_cn)
       amountDisplayRecords = amountRecords;
     end
 
-    Output:print(colorLoader:getColor("mapTopInfo") .. "The " .. amountDisplayRecords .. " best players of this map are:", _cn);
+    Output:print(Output:getColor("mapTopInfo") .. "The " .. amountDisplayRecords .. " best players of this map are:", _cn);
   
     local startRank = 1;
     local limit = 5;
@@ -74,10 +74,10 @@ function MapTopPrinter:printMapTop(_cn)
     
       local rank = string.rep("0", maxRankLength - string.len(i)) .. i;
       local record = self.parentMapTop:getRecord(i);
-      local output = colorLoader:getColor("mapRecordRank") .. rank .. ") "
-                  .. colorLoader:getColor("mapRecordTime") .. record:getDisplayString()
-                  .. colorLoader:getColor("mapRecordInfo") .. " by "
-                  .. colorLoader:getColor("mapRecordName") .. record:getPlayer():getName();
+      local output = Output:getColor("mapRecordRank") .. rank .. ") "
+                  .. Output:getColor("mapRecordTime") .. record:getDisplayString()
+                  .. Output:getColor("mapRecordInfo") .. " by "
+                  .. Output:getColor("mapRecordName") .. record:getPlayer():getName();
       Output:print(output, _cn);
     
     end
@@ -94,7 +94,7 @@ end
 function MapTopPrinter:printMapStatistics(_cn)
 
   if (self.parentMapTop:isEmpty()) then
-    Output:print(colorLoader:getColor("emptyTop") .. "No records found for this map.", _cn);
+    Output:print(Output:getColor("emptyTop") .. "No records found for this map.", _cn);
   
   else
   
@@ -106,15 +106,18 @@ function MapTopPrinter:printMapStatistics(_cn)
       playerAmountString = playerAmountString .. "s"
     end
       
-    Output:print(colorLoader:getColor("mapTopInfo") .. "This map was finished by " .. playerAmountString, _cn);
+    Output:print(Output:getColor("mapTopInfo") .. "This map was finished by " .. playerAmountString, _cn);
     Output:print(
-      colorLoader:getColor("mapRecordInfo") .. "The best record of this map is "
-      .. colorLoader:getColor("mapRecordTime") .. bestRecord:getDisplayString()
-      .. colorLoader:getColor("mapRecordInfo") .. " by "
-      .. colorLoader:getColor("mapRecordName") .. bestRecord:getPlayer():getName(),
+      Output:getColor("mapRecordInfo") .. "The best record of this map is "
+   .. Output:getColor("mapRecordTime") .. bestRecord:getDisplayString()
+   .. Output:getColor("mapRecordInfo") .. " by "
+   .. Output:getColor("mapRecordName") .. bestRecord:getPlayer():getName(),
       _cn
     );
 
   end
 
 end
+
+
+return MapTopPrinter;

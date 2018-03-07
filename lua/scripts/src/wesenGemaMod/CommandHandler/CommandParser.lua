@@ -3,10 +3,31 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
+local Output = require("Outputs/Output");
+local StringUtils = require("Utils/StringUtils");
+local TableUtils = require("Utils/TableUtils");
+
 ---
 -- Handles command parsing and execution.
 --
-CommandParser = {};
+local CommandParser = {};
+
+
+CommandParser.parentCommandHandler = "";
+
+---
+-- CommandParser constructor.
+-- 
+function CommandParser:__construct(_parentCommandHandler)
+
+  local instance = {};
+  setmetatable(instance, {__index = CommandParser});
+  
+  instance.parentCommandHandler = _parentCommandHandler;
+  
+  return instance;
+
+end
 
 
 --
@@ -36,25 +57,27 @@ end
 --
 function CommandParser:parseCommand(_text, _cn)
 
-  local parts = split(_text, " ");
+  local parts = StringUtils:split(_text, " ");
   local commandName = string.lower(parts[1]);
   
   local args = {};
   if (#parts > 1) then
-    args = slice(parts, 2);
+    args = TableUtils:slice(parts, 2);
   end
   
-  local command = commandLister:getCommand(commandName);
+  local command = self.parentCommandHandler:getCommand(commandName);
       
   if (command) then
+  
+    local player = self.parentCommandHandler:getParentGemaMod():getPlayers()[_cn];
          
-    if (players[_cn]:getLevel() >= command:getRequiredLevel()) then
+    if (player:getLevel() >= command:getRequiredLevel()) then
         
       if (#args < command:getNumberOfRequiredArguments()) then
-        Output:print(colorLoader:getColor("error") .. "Error: Not enough arguments.");
+        Output:print(Output:getColor("error") .. "Error: Not enough arguments.");
       
       elseif (#args > command:getNumberOfArguments()) then
-        Output:print(colorLoader:getColor("error") .. "Error: Too many arguments");
+        Output:print(Output:getColor("error") .. "Error: Too many arguments");
         
       else
         command:execute(_cn, args);
@@ -62,14 +85,16 @@ function CommandParser:parseCommand(_text, _cn)
       end
       
     else
-      Output:print(colorLoader:getColor("error") .. "Error: You do not have the permission to use this command!", _cn);
+      Output:print(Output:getColor("error") .. "Error: You do not have the permission to use this command!", _cn);
     end 
       
   else   
     
-    Output:print(colorLoader:getColor("error") .. "Unknown command '" .. commandName .. "', check your spelling and try again", _cn);
+    Output:print(Output:getColor("error") .. "Unknown command '" .. commandName .. "', check your spelling and try again", _cn);
   
   end
   
 end
 
+
+return CommandParser;

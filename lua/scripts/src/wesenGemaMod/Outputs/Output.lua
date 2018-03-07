@@ -3,16 +3,28 @@
 -- @copyright 2017 wesen <wesen-ac@web.de>
 -- 
 
---
+local ColorLoader = require("Colors/ColorLoader");
+
+
+---
 -- Handles outputs to clients.
 --
-Output = {};
+local Output = {};
 
+
+---
+-- The color loader
+-- 
+-- @var ColorLoader colorLoader
+-- 
+Output.colorLoader = ColorLoader:__construct("colors");
+
+
+---
+-- Displays text in the console of a player.
 --
--- Display text in the console of a player.
---
--- @param String _text   Text that will be displayed
--- @param int _cn        Player client number
+-- @param _text (String) The text that will be displayed
+-- @param _cn (int) The player client number
 --
 function Output:print(_text, _cn)
 
@@ -25,17 +37,18 @@ function Output:print(_text, _cn)
 
 end
 
---
+---
 -- Outputs the text that a player says to every other player except for himself.
 --
--- @param String _text  Text that the player says
--- @param int _cn       Client number of the player
+-- @param _text (String) The text that the player says
+-- @param _cn (int) The client number of the player
+-- @param _players (Player[]) The list of players
 --
-function Output:playerSayText(_text, _cn)
+function Output:playerSayText(_text, _cn, _players)
 
-  local output = players[_cn]:getName() .. ": " .. _text;
-    
-  for cn, player in ipairs(players) do
+  local output = _players[_cn]:getName() .. ": " .. _text;
+
+  for cn, player in pairs(_players) do
   
     if (cn ~= _cn) then
       self:print(output, cn);
@@ -45,7 +58,18 @@ function Output:playerSayText(_text, _cn)
   
 end
 
+---
+-- Loads a color from the color config file.
+-- 
+-- @param _colorId (String) The name of the color
+-- 
+-- @return String The color with leading \f
 --
+function Output:getColor(_colorId)
+  return self.colorLoader:loadColor(_colorId);
+end
+
+---
 -- Calculates and returns the width of text that does not include special characters such as "\n" or "\t".
 --
 -- @param String _text  The text
@@ -120,5 +144,7 @@ function Output:generateTabs(_amountTabs)
   end
   
   return tabs;
-    
+  
 end
+    
+return Output;
