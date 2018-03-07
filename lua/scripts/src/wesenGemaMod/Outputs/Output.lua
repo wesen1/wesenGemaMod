@@ -46,16 +46,39 @@ end
 --
 function Output:playerSayText(_text, _cn, _players)
 
-  local output = _players[_cn]:getName() .. ": " .. _text;
+  local player = _players[_cn];
+  local playerNameColor = self:getPlayerNameColor(player:getLevel());
+
+  local output = playerNameColor .. player:getName()
+              .. self:getColor("playerSayTextCn") .. " (" .. _cn .. ")"
+              .. self:getColor("playerSayTextColon") .. ": "
+              .. player:getTextColor() .. _text;
 
   for cn, player in pairs(_players) do
-  
+
     if (cn ~= _cn) then
       self:print(output, cn);
     end
-  
+
   end
   
+end
+
+---
+-- Returns the player name color based on the players level.
+--
+-- @tparam int _playerLevel The level of the player
+--
+-- @treturn string The color for the name
+--
+function Output:getPlayerNameColor(_playerLevel)
+
+  if (_playerLevel == 0) then
+    return self:getColor("nameUnarmed");
+  elseif (_playerLevel == 1) then
+    return self:getColor("nameAdmin");
+  end
+
 end
 
 ---

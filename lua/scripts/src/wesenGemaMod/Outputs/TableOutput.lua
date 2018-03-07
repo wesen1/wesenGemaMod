@@ -91,8 +91,9 @@ end
 -- Prints a table.
 -- 
 -- @param _table (table) Columns of a row
+-- @tparam int _cn The player client number to which the table will be printed
 -- 
-function TableOutput:printTable(_table)
+function TableOutput:printTable(_table, _cn)
 
   local rows, longestRow, longestColumn = self:getRows(_table);
   local widestEntries, entryWidths = self:getWidestEntries(rows);
@@ -125,18 +126,14 @@ function TableOutput:printTable(_table)
       rowString = rowString .. field;
       
       if (x < rowLength) then
-        print ("Row: " .. y .. ", Column: " .. x .. " => " .. fieldWidth, widestEntries[x]);
         rowString = rowString .. self:getTabs(fieldWidth, widestEntries[x]);
       end
 
     end
 
-    self:print(rowString);
+    self:print(rowString, _cn);
   
   end
-    if (isSubTable) then
-      offsetY = offsetY + 1;
-    end
 
 end
 

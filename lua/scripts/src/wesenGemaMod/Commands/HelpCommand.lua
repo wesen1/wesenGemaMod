@@ -22,8 +22,6 @@ function HelpCommand:__construct(_parentCommandLister)
 
   instance:addAlias("man");
   instance:addArgument("cmd", true, "Command name");
-  instance:addArgument("test", false, "Hello name");
-  instance:addArgument("helloing", false, "Good evening");
   instance:setDescription("Shows a commands description and it's arguments");
   
   return instance;
@@ -35,14 +33,13 @@ function HelpCommand:execute(_cn, _args)
 
   local inputCommand = _args[1];
   local command = self.parentCommandLister:getCommand("!" .. inputCommand);
-  
+
   if (command) then  
     CommandPrinter:printHelpText(command, _cn);
-
   else
     Output:print(Output:getColor("error") .. "Error: Unknown command '!" .. inputCommand .. "'", _cn);
   end
-  
+
 end
 
 

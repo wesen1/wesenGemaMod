@@ -106,7 +106,7 @@ end
 --
 function CommandPrinter:printCommandList(_cn, _commandLister)
 
-  Output:print(Output:getColor("cmdsTitle") .. "Available commands:");
+  Output:print(Output:getColor("cmdsTitle") .. "Available commands:", _cn);
   
   local rows = {};
   
@@ -173,7 +173,7 @@ function CommandPrinter:printHelpText(_command, _cn)
       
     end
     
-    TableOutput:printTable(rows);
+    TableOutput:printTable(rows, _cn);
         
 end
 

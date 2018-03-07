@@ -56,15 +56,12 @@ function PlayerSayTextHandler:onPlayerSayText(_cn, _text)
 
   if (commandParser:isCommand(_text)) then
     commandParser:parseCommand(_text, _cn);
-
   else
-
     Output:playerSayText(_text, _cn, self.parentGemaMod:getPlayers());
-
-    -- block the normal player text output of the server
-    return PLUGIN_BLOCK;
-
   end
+
+  -- block the normal player text output of the server
+  return PLUGIN_BLOCK;
 
 end
 

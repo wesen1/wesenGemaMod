@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+local Output = require("Outputs/Output");
+
 ---
 -- @type Player Stores information about a single player.
 --
@@ -46,6 +48,13 @@ Player.level = 0;
 -- @tfield int startTime
 --
 Player.startTime = 0;
+
+---
+-- The color of the texts that the player says to other clients
+--
+-- @tfield string textColor
+--
+Player.textColor = Output:getColor("playerTextDefault");
 
 
 ---
@@ -160,6 +169,24 @@ end
 --
 function Player:setStartTime(_startTime)
   self.startTime = _startTime;
+end
+
+---
+-- Returns the text color.
+--
+-- @treturn string The text color
+--
+function Player:getTextColor()
+  return self.textColor;
+end
+
+---
+-- Sets the text color.
+--
+-- @tparam string _textColor The text color
+--
+function Player:setTextColor(_textColor)
+  self.textColor = _textColor;
 end
 
 
