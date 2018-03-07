@@ -173,5 +173,7 @@ function TableOutput:getWidestEntries(_rows)
   
   return widestEntries, entryWidths;
 
-endreturn TableOutput;
+end
+
+
 return TableOutput;

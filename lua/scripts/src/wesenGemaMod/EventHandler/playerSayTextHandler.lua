@@ -59,7 +59,7 @@ function PlayerSayTextHandler:onPlayerSayText(_cn, _text)
 
   else
 
-    Output:playerSayText(_text, _cn);
+    Output:playerSayText(_text, _cn, self.parentGemaMod:getPlayers());
 
     -- block the normal player text output of the server
     return PLUGIN_BLOCK;

@@ -134,7 +134,13 @@ function GemaMod:onMapChange(_mapName)
 end
 
 function GemaMod:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
-  self.playerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError);
+
+  local pluginBlock = self.playerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError);
+  
+  if (pluginBlock) then
+    return pluginBlock;
+  end
+  
 end
 
 function GemaMod:onPlayerConnect(_cn)
@@ -154,11 +160,23 @@ function GemaMod:onPlayerRoleChange (_cn, _newRole)
 end
 
 function GemaMod:onPlayerSayText(_cn, _text)
-  self.playerSayTextHandler:onPlayerSayText(_cn, _text);
+
+  local pluginBlock = self.playerSayTextHandler:onPlayerSayText(_cn, _text);
+
+  if (pluginBlock) then
+    return pluginBlock;
+  end
+
 end
 
 function GemaMod:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
-  self.playerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError);
+
+  local uploadError = self.playerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError);
+
+  if (uploadError) then
+    return uploadError;
+  end
+
 end
 
 function GemaMod:onPlayerSpawn(_cn)

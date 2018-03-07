@@ -93,9 +93,7 @@ end
 -- @param int _flag The flag id
 --
 function FlagActionHandler:resetFlag(_cn, _flag)
-
   flagaction(_cn, FA_RESET, _flag);
-
 end
 
 

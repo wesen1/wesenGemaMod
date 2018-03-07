@@ -47,8 +47,8 @@ end
 function Output:playerSayText(_text, _cn, _players)
 
   local output = _players[_cn]:getName() .. ": " .. _text;
-    
-  for cn, player in ipairs(_players) do
+
+  for cn, player in pairs(_players) do
   
     if (cn ~= _cn) then
       self:print(output, cn);

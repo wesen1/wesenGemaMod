@@ -48,10 +48,12 @@ function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _nu
       mapexists(_text))
   then
 
-    Map:removeMap(_text);
-    
+    Map:removeMap(self.parentGemaMod:getDataBase(), _text, self.parentGemaMod:getMapTop());
+
     local infoMessage = "The map was automatically deleted because it wasn't playable";
     Output:print(Output:getColor("info") .. infoMessage, _cn);
+    
+    return PLUGIN_BLOCK;
     
   end
 

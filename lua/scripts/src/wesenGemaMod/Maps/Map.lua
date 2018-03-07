@@ -1,7 +1,9 @@
 ---
 -- @author wesen
 -- @copyright 2017 wesen <wesen-ac@web.de>
--- 
+--
+
+local MapRemover = require("Maps/MapRemover");
 
 --
 -- Stores information about the current map.
@@ -52,6 +54,10 @@ function Map:saveMapName(_dataBase, _mapName)
     
   end
 
+end
+
+function Map:removeMap(_dataBase, _mapName, _mapTop)
+  MapRemover:removeMap(_dataBase, _mapName, self:fetchMapId(_dataBase, _mapName), _mapTop);
 end
 
 
