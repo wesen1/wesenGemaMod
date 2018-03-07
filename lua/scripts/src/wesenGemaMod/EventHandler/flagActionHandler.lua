@@ -4,6 +4,7 @@
 -- 
 
 local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
+local TableUtils = require("Utils/TableUtils");
 
 
 ---
@@ -79,7 +80,7 @@ function FlagActionHandler:registerRecord(_cn, _endTime)
     return;
   end
     
-  local record = MapRecord:__construct(copy(scorePlayer), delta, self.parentGemaMod:getMapTop());
+  local record = MapRecord:__construct(TableUtils:copy(scorePlayer), delta, self.parentGemaMod:getMapTop());
   record:printScoreRecord();
   self.parentGemaMod:getMapTop():addRecord(record);
 

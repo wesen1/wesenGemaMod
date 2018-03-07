@@ -4,6 +4,8 @@
 -- 
 
 local Output = require("Outputs/Output");
+local StringUtils = require("Utils/StringUtils");
+local TableUtils = require("Utils/TableUtils");
 
 ---
 -- Handles command parsing and execution.
@@ -55,12 +57,12 @@ end
 --
 function CommandParser:parseCommand(_text, _cn)
 
-  local parts = split(_text, " ");
+  local parts = StringUtils:split(_text, " ");
   local commandName = string.lower(parts[1]);
   
   local args = {};
   if (#parts > 1) then
-    args = slice(parts, 2);
+    args = TableUtils:slice(parts, 2);
   end
   
   local command = self.parentCommandHandler:getCommand(commandName);

@@ -6,8 +6,6 @@ PLUGIN_NAME = "wesen's basic gema mod";
 PLUGIN_AUTHOR = "wesen";
 PLUGIN_VERSION = 0.1;
 
-include("ac_server");
-
 -- 
 -- Add the path to the wesenGemaMod classes to the package path list
 -- in order to be able to omit this path portion in require() calls
