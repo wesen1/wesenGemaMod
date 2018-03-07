@@ -66,7 +66,7 @@ end
 -- @return String The color with leading \f
 --
 function Output:getColor(_colorId)
-  return self.colorLoader:getColor(_colorId);
+  return self.colorLoader:loadColor(_colorId);
 end
 
 ---
