@@ -18,12 +18,12 @@ function slice(_table, _startIndex, _endIndex)
   -- Check and adjust start index
   if (tonumber(_startIndex) == nil or _startIndex < 1) then
     _startIndex = 1;
-  
+
   elseif (_startIndex > length) then
     _startIndex = length;
-  
+
   end
-    
+
   -- Check and adjust end index
   if (tonumber(_endIndex) == nil or _endIndex > length) then
     _endIndex = length;
@@ -33,15 +33,15 @@ function slice(_table, _startIndex, _endIndex)
     _endIndex = length + _endIndex;
 
   end
-	
-  
+
+
   local result = {};
   for index = _startIndex, _endIndex do
     table.insert(result, _table[index]);
   end
 
   return result;
-  
+
 end
 
 ---
@@ -60,11 +60,11 @@ function in_table(_needle, _haystack)
     if (_needle == string) then
       return true;
     end
-        
+
   end
-  
+
   return false;
-  
+
 end
 
 ---
@@ -113,10 +113,9 @@ function split(_text, _delimiter)
     if (#word > 0) then
       table.insert(words, word);
     end
-  
-  end
-  
-  return words;
-  
-end
 
+  end
+
+  return words;
+
+end
