@@ -40,11 +40,7 @@ function HelpCommand:execute(_cn, _args)
     CommandPrinter:printHelpText(command, _cn);
 
   else
-  
-    local colorLoader = self.parentCommandLister:getParentCommandHandler():getParentGemaMod():getColorLoader();
-  
-    Output:print(colorLoader:getColor("error") .. "Error: Unknown command '!" .. inputCommand .. "'", _cn);
-
+    Output:print(Output:getColor("error") .. "Error: Unknown command '!" .. inputCommand .. "'", _cn);
   end
   
 end

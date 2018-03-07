@@ -17,7 +17,7 @@ local Output = {};
 -- 
 -- @var ColorLoader colorLoader
 -- 
-Output.colorLoader = ColorLoader;
+Output.colorLoader = ColorLoader:__construct("colors");
 
 
 ---

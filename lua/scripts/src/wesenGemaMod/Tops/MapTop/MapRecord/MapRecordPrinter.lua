@@ -66,8 +66,6 @@ end
 --
 function MapRecordPrinter:printScoreRecord()
 
-  local colorLoader = self.parentMapRecord:getParentMapTop():getParentGemaMod():getColorLoader();
-
   local playerName = self.parentMapRecord:getPlayer():getName();
   local time = self.parentMapRecord:getDisplayString();
   local rank = self.parentMapRecord:getRank();
@@ -78,21 +76,21 @@ function MapRecordPrinter:printScoreRecord()
     amountRecords = amountRecords + 1;
   end
   
-  local rankString = colorLoader:getColor("mapRecordRank") .. "(Rank " .. rank .. " of " .. amountRecords .. ")";
+  local rankString = Output:getColor("mapRecordRank") .. "(Rank " .. rank .. " of " .. amountRecords .. ")";
   if (currentRank ~= nil) then
     local currentRecord = self.parentMapRecord:getParentMapTop():getRecord(currentRank);
     
     if (currentRecord:getMilliseconds() < self.parentMapRecord:getMilliseconds()) then
-      rankString = colorLoader:getColor("scoreRecordSlower") .. "(But has a better record)";
+      rankString = Output:getColor("scoreRecordSlower") .. "(But has a better record)";
     elseif (currentRecord:getMilliseconds() == self.parentMapRecord:getMilliseconds()) then
-      rankString = colorLoader:getColor("scoreRecordTied") .. "(Tied his current record)";
+      rankString = Output:getColor("scoreRecordTied") .. "(Tied his current record)";
     end
   end
     
-  local scoreString = colorLoader:getColor("mapRecordName") .. playerName
-                   .. colorLoader:getColor("mapRecordInfo") .. " scored after "
-                   .. colorLoader:getColor("mapRecordTime") .. time
-                   .. colorLoader:getColor("mapRecordInfo") .. " minutes "
+  local scoreString = Output:getColor("mapRecordName") .. playerName
+                   .. Output:getColor("mapRecordInfo") .. " scored after "
+                   .. Output:getColor("mapRecordTime") .. time
+                   .. Output:getColor("mapRecordInfo") .. " minutes "
                    .. rankString;
   
   Output:print(scoreString);

@@ -55,11 +55,9 @@ end
 function PlayerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
   if (not MapChecker:isGema(_mapName)) then
-  
-    local colorLoader = self.parentGemaMod:getColorLoader();
 
     local errorMessage = "This map is not a gema map! Make sure your map name contains g3/ema/@/4";
-    Output:print(colorLoader:getColor("error") .. errorMessage, _cn);
+    Output:print(Output:getColor("error") .. errorMessage, _cn);
 
     -- returns the Upload Error "Ignore" which will make the server ignore the upload
     -- and print an error message to the player

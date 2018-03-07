@@ -4,6 +4,7 @@
 -- 
 
 local Map = require("Maps/Map");
+local Output = require("Outputs/Output");
 
 ---
 -- Class that handles player vote calls.
@@ -50,7 +51,7 @@ function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _nu
     Map:removeMap(_text);
     
     local infoMessage = "The map was automatically deleted because it wasn't playable";
-    self.parentGemaMod:output():print(colorLoader:getColor("info") .. infoMessage, _cn);
+    Output:print(Output:getColor("info") .. infoMessage, _cn);
     
   end
 

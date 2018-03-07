@@ -3,6 +3,8 @@
 -- @copyright 2017-2018 wesen <wesen-ac@web.de>
 -- 
 
+local Output = require("Outputs/Output");
+
 ---
 -- Class that handles player disconnects.
 --
@@ -45,7 +47,7 @@ function PlayerDisconnectHandler:onPlayerDisconnect(_cn, _reason)
   if (_reason == DISC_BANREFUSE) then
     
     local errorMessage = string.format("Error: %s could not connect [banned]", getname(cn));
-    self.parentGemaMod:output():print(colorLoader:getColor("error") .. errorMessage);
+    Output:print(Output:getColor("error") .. errorMessage);
 
   end
 

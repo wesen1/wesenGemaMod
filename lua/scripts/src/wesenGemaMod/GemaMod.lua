@@ -6,7 +6,6 @@
 local DataBase = require("DataBase");
 local MapTop = require("Tops/MapTop/MapTop");
 local CommandHandler = require("CommandHandler/CommandHandler");
-local ColorLoader = require("Colors/ColorLoader");
 local Output = require("Outputs/Output");
 local Player = require("Player");
 
@@ -40,7 +39,6 @@ function GemaMod:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   local instance = {};
   setmetatable(instance, {__index = GemaMod});
   
-  instance.colorLoader = ColorLoader:__construct("colors");
   instance.dataBase = DataBase:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName);
   instance.commandHandler = CommandHandler:__construct(instance);
   instance.mapTop = MapTop:__construct(instance);
@@ -100,10 +98,6 @@ end
 
 function GemaMod:getOutput()
   return self.output;
-end
-
-function GemaMod:getColorLoader()
-  return self.colorLoader;
 end
 
 
