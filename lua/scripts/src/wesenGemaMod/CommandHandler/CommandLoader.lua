@@ -38,6 +38,27 @@ function CommandLoader:__construct(_parentCommandHandler)
 end
 
 
+-- Getters and setters
+
+---
+-- Returns the parent command handler.
+--
+-- @treturn CommandHandler The parent command handler
+--
+function CommandLoader:getParentCommandHandler()
+  return self.parentCommandHandler;
+end
+
+---
+-- Sets the parent command handler.
+--
+-- @tparam CommandHandler _parentCommandHandler The parent command handler
+--
+function CommandLoader:setParentCommandHandler(_parentCommandHandler)
+  self.parentCommandHandler = _parentCommandHandler;
+end
+
+
 -- Class Methods
 
 ---

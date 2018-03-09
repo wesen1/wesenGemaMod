@@ -110,7 +110,7 @@ end
 -- @tparam CommandLoader _commandLoader The command loader
 --
 function CommandHandler:setCommandLoader(_commandLoader)
-  self.commandLoader = commandLoader;
+  self.commandLoader = _commandLoader;
 end
 
 ---

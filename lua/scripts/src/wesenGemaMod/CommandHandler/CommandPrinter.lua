@@ -41,6 +41,29 @@ function CommandPrinter:__construct(_parentCommandHandler)
 end
 
 
+-- Getters and setters
+
+---
+-- Returns the parent command handler.
+--
+-- @treturn CommandHandler The parent command handler
+--
+function CommandPrinter:getParentCommandHandler()
+  return self.parentCommandHandler;
+end
+
+---
+-- Sets the parent command handler.
+--
+-- @tparam CommandHandler _parentCommandHandler The parent command handler
+--
+function CommandPrinter:setParentCommandHandler(_parentCommandHandler)
+  self.parentCommandHandler = _parentCommandHandler;
+end
+
+
+-- Class Methods
+
 ---
 -- Generates and returns a command string.
 --

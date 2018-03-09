@@ -42,6 +42,29 @@ function CommandParser:__construct(_parentCommandHandler)
 end
 
 
+-- Getters and setters
+
+---
+-- Returns the parent command handler.
+--
+-- @treturn CommandHandler The parent command handler
+--
+function CommandParser:getParentCommandHandler()
+  return self.parentCommandHandler;
+end
+
+---
+-- Sets the parent command handler.
+--
+-- @tparam CommandHandler _parentCommandHandler The parent command handler
+--
+function CommandParser:setParentCommandHandler(_parentCommandHandler)
+  self.parentCommandHandler = _parentCommandHandler;
+end
+
+
+-- Class Methods
+
 ---
 -- Checks whether a string starts with "!" followed by other characters than "!".
 --
