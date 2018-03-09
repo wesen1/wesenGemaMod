@@ -1,6 +1,8 @@
 ---
 -- @author wesen
 -- @copyright 2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
 --
 
 local CommandLister = require("CommandHandler/CommandLister");

@@ -23,6 +23,8 @@ ColorLoader.colorConfigFileName = "colors";
 -- ColorLoader constructor.
 --
 -- @tparam string _colorConfigFileName The name of the lua configuration file for colors
+-- 
+-- @treturn ColorLoader The ColorLoader instance
 --
 function ColorLoader:__construct(_colorConfigFileName)
 

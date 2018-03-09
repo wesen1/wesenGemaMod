@@ -106,43 +106,45 @@ end
 --
 function CommandPrinter:printCommandList(_cn, _commandLister)
 
+  local player = self.parentCommandHandler:getParentGemaMod():getPlayers()[_cn];
+
   Output:print(Output:getColor("cmdsTitle") .. "Available commands:", _cn);
   
   local rows = {};
   
-  for i, level in pairs (_commandLister:getSortedLevels()) do
-    
-    if (self.parentCommandHandler:getParentGemaMod():getPlayers()[_cn]:getLevel() < level) then
+  local groupedCommands = _commandLister:getGroupedCommands();
+  
+  for index, level in pairs(_commandLister:getSortedCommandLevels()) do
+  
+    if (player:getLevel() < level) then
       break;
     end
-    
-    local groups = _commandLister:getSortedGroups();
-    
-    for j, groupName in pairs(groups[level]) do
-    
-      local commandLists = _commandLister:getSortedCommands();
-      local commandOutput = ": ";
-                        
-      for i, commandName in pairs(commandLists[level][groupName]) do      
-      
-        local command = _commandLister:getCommand("!" .. commandName);
-        commandOutput = commandOutput .. CommandPrinter:generateCommandString(command, true) .. "   ";
-        
+
+    local commandGroups = groupedCommands[level];
+
+    for level, groupName in pairs(_commandLister:getSortedCommandGroupNames()[level]) do
+
+      local groupCommandString = "";
+
+      for index, commandName in pairs(commandGroups[groupName]) do
+
+        local command = _commandLister:getCommand(commandName);
+        groupCommandString = groupCommandString .. self:generateCommandString(command, true) .. "   ";
       end
-      
+        
       local row = {
         " " .. groupName,
-        commandOutput
-      };
-      
-      table.insert(rows, row);
-              
-    end
-    
-    TableOutput:printTable(rows, _cn);
-    
-  end
+        ": " .. groupCommandString
+      }
   
+      table.insert(rows, row);
+
+    end
+
+  end
+
+  TableOutput:printTable(rows, _cn);
+
 end
 
 ---
@@ -165,16 +167,16 @@ function CommandPrinter:printHelpText(_command, _cn)
     }    
     
     if (_command:getNumberOfArguments() > 0) then
-    
+
       rows[3] = {
         Output:getColor("helpTitle") .. "Arguments",
         self:getArgumentOutputList(_command)
       }
       
     end
-    
+
     TableOutput:printTable(rows, _cn);
-        
+
 end
 
 
