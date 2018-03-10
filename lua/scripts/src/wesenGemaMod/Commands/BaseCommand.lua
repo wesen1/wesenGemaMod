@@ -18,7 +18,9 @@ local BaseCommand = {};
 BaseCommand.name = "";
 
 ---
--- @tfield string[] aliases The alternative command names (must not contain a leading "!" and must be lowercase)
+-- The alternative command names (must not contain a leading "!" and must be lowercase)
+--
+-- @tfield string[] aliases
 --
 BaseCommand.aliases = {};
 

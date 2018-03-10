@@ -33,7 +33,7 @@ GemaMod.commandHandler = "";
 
 ---
 -- The map top
---local Output = require("Outputs/Output");
+--
 -- @tfield MapTop mapTop
 --
 GemaMod.mapTop = "";
