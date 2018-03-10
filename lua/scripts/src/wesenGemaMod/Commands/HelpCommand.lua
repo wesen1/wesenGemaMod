@@ -47,7 +47,7 @@ end
 --
 function HelpCommand:execute(_cn, _args)
 
-  local inputCommand = _args[1];
+  local inputCommand = string.lower(_args[1]);
 
   if (_args[1]:sub(1,1) ~= "!") then
     inputCommand = "!" .. inputCommand;
