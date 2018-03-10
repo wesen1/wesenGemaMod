@@ -8,7 +8,9 @@
 local Output = require("Outputs/Output");
 
 ---
--- @type TableOutput Handles outputs of tables to clients.
+-- Handles outputs of tables to clients.
+--
+-- @type TableOutput
 --
 local TableOutput = {};
 

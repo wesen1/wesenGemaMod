@@ -9,7 +9,9 @@ local Map = require("Maps/Map");
 local Output = require("Outputs/Output");
 
 ---
--- @type PlayerCallVoteHandler Class that handles player vote calls.
+-- Class that handles player vote calls.
+--
+-- @type PlayerCallVoteHandler
 --
 local PlayerCallVoteHandler = {};
 

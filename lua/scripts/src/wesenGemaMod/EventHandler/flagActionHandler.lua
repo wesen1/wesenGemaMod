@@ -9,7 +9,9 @@ local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
 local TableUtils = require("Utils/TableUtils");
 
 ---
--- @type FlagActionHandler Class that handles flag actions.
+-- Class that handles flag actions.
+--
+-- @type FlagActionHandler
 --
 local FlagActionHandler = {};
 

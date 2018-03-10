@@ -8,7 +8,9 @@
 local MapRemover = require("Maps/MapRemover");
 
 ---
--- @type Map Provides functions to add and remove maps.
+-- Provides functions to add and remove maps.
+--
+-- @type Map
 --
 local Map = {};
 

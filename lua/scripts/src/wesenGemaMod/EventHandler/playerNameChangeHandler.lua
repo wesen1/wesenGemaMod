@@ -6,7 +6,9 @@
 --
 
 ---
--- @type PlayerNameChangeHandler Class that handles player name changes.
+-- Class that handles player name changes.
+--
+-- @type PlayerNameChangeHandler
 --
 local PlayerNameChangeHandler = {};
 

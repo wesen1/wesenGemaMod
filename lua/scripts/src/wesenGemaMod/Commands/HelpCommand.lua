@@ -11,7 +11,10 @@ local CommandPrinter = require("CommandHandler/CommandPrinter");
 local Output = require("Outputs/Output");
 
 ---
--- @type HelpCommand Command !help - Prints help texts for each command.
+-- Command !help.
+-- Prints help texts for each command
+--
+-- @type HelpCommand
 --
 local HelpCommand = {};
 

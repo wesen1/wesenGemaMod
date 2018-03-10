@@ -8,7 +8,9 @@
 local Output = require("Outputs/Output");
 
 ---
--- @type Player Stores information about a single player.
+-- Stores information about a single player.
+--
+-- @type Player
 --
 local Player = {};
 

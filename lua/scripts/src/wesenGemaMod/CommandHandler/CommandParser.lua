@@ -10,7 +10,9 @@ local StringUtils = require("Utils/StringUtils");
 local TableUtils = require("Utils/TableUtils");
 
 ---
--- @type CommandParser Handles command parsing and execution.
+-- Handles command parsing and execution.
+--
+-- @type CommandParser
 --
 local CommandParser = {};
 

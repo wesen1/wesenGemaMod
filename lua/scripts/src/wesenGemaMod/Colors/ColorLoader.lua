@@ -6,7 +6,9 @@
 --
 
 ---
--- @type ColorLoader Handles loading of the color configuration.
+-- Handles loading of the color configuration.
+--
+-- @type ColorLoader
 --
 local ColorLoader = {};
 

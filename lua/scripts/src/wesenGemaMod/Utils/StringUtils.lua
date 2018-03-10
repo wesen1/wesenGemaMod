@@ -6,7 +6,9 @@
 --
 
 ---
--- @type StringUtils Class that provides additional string functions.
+-- Class that provides additional string functions.
+--
+-- @type StringUtils
 --
 local StringUtils = {};
 

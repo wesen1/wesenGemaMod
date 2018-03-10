@@ -6,7 +6,9 @@
 --
 
 ---
--- @type MapChecker Checks whether maps are valid gemas.
+-- Checks whether maps are valid gemas.
+--
+-- @type MapChecker
 --
 local MapChecker = {};
 

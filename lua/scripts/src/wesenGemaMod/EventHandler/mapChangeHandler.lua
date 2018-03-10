@@ -6,7 +6,9 @@
 --
 
 ---
--- @type MapChangeHandler Class that handles map changes.
+-- Class that handles map changes.
+--
+-- @type MapChangeHandler
 --
 local MapChangeHandler = {};
 

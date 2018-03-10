@@ -9,7 +9,9 @@ local Output = require("Outputs/Output");
 local TableOutput = require("Outputs/TableOutput");
 
 ---
--- @type CommandPrinter Handles printing of commands in !cmds and !help.
+-- Handles printing of commands in !cmds and !help.
+--
+-- @type CommandPrinter
 --
 local CommandPrinter = {};
 

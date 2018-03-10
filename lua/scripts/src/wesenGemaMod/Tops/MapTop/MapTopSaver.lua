@@ -8,7 +8,9 @@
 local Map = require("Maps/Map");
 
 ---
--- @type MapTopSaver Handles saving records to the database.
+-- Handles saving records to the database.
+--
+-- @type MapTopSaver
 --
 local MapTopSaver = {};
 

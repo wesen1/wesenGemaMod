@@ -9,7 +9,9 @@ local Output = require("Outputs/Output");
 local Player = require("Player");
 
 ---
--- @type PlayerConnectHandler Class that handles player connects.
+-- Class that handles player connects.
+--
+-- @type PlayerConnectHandler
 --
 local PlayerConnectHandler = {};
 

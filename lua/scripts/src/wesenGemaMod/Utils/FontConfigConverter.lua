@@ -6,7 +6,10 @@
 --
 
 ---
--- @type FontConfigConverter Converts assaultcube font config to lua config files containing only the width of each character.
+-- Converts assaultcube font config to lua config files that contain
+-- only the width of each character.
+--
+-- @type FontConfigConverter
 --
 local FontConfigConverter = {};
 

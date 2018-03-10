@@ -7,8 +7,10 @@
 local luasql = require "luasql.mysql";
 
 ---
--- @type DataBase Handles database access.
--- The class only works when the database server is on the same machine like the assaultcube server
+-- Handles database access.
+-- The class does only work when the database server is on the same machine like the assaultcube server
+--
+-- @type DataBase
 --
 local DataBase = {};
 

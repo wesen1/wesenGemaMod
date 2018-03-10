@@ -6,7 +6,9 @@
 --
 
 ---
--- @type BaseCommand Stores the configuration for a single command.
+-- Stores the configuration for a single command.
+--
+-- @type BaseCommand
 --
 local BaseCommand = {};
 

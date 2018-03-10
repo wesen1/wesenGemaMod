@@ -9,7 +9,10 @@ local BaseCommand = require("Commands/BaseCommand");
 local Output = require("Outputs/Output");
 
 ---
--- @type ColorsCommand Command !colors - Displays all available colors to a player.
+-- Command !colors.
+-- Displays all available colors to a player
+--
+-- @type ColorsCommand
 --
 local ColorsCommand = {};
 

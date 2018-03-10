@@ -6,7 +6,9 @@
 --
 
 ---
--- @type CommandLister Stores a list of all commands and provides methods to get the commands.
+-- Stores a list of all commands and provides methods to get the commands.
+--
+-- @type CommandLister
 --
 local CommandLister = {};
 

@@ -8,7 +8,9 @@
 local Output = require("Outputs/Output");
 
 ---
--- @type PlayerSayTextHandler Class that handles players saying texts.
+-- Class that handles players saying texts.
+--
+-- @type PlayerSayTextHandler
 --
 local PlayerSayTextHandler = {};
 

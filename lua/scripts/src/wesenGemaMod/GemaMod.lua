@@ -12,7 +12,9 @@ local Player = require("Player");
 local EventHandler = require("EventHandler");
 
 ---
--- @type GemaMod Wrapper class for the gema mod.
+-- Wrapper class for the gema mod.
+--
+-- @type GemaMod
 --
 local GemaMod = {};
 

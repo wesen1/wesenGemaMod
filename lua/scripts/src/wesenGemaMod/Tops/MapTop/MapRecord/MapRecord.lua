@@ -8,7 +8,9 @@
 local MapRecordPrinter = require("Tops/MapTop/MapRecord/MapRecordPrinter");
 
 ---
--- @type MapRecord Stores information about a single record.
+-- Stores information about a single record.
+--
+-- @type MapRecord
 --
 local MapRecord = {};
 

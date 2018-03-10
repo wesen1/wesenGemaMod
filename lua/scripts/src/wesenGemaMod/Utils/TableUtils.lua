@@ -6,7 +6,9 @@
 --
 
 ---
--- @type TableUtils Class that provides additional table functions.
+-- Class that provides additional table functions.
+--
+-- @type TableUtils
 --
 local TableUtils = {};
 

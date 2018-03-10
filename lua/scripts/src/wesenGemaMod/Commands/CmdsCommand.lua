@@ -8,7 +8,10 @@
 local BaseCommand = require("Commands/BaseCommand");
 
 ---
--- @type CmdsCommand Command !cmds - Displays all available commands to a player.
+-- Command !cmds.
+-- Displays all available commands to a player
+--
+-- @type CmdsCommand
 --
 local CmdsCommand = {};
 

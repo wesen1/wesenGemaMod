@@ -17,7 +17,9 @@ local PlayerSendMapHandler = require("EventHandler/playerSendMapHandler");
 local PlayerSpawnHandler = require("EventHandler/playerSpawnHandler");
 
 ---
--- @type EventHandler Wrapper class for the event handlers.
+-- Wrapper class for the event handlers.
+--
+-- @type EventHandler
 --
 local EventHandler = {};
 

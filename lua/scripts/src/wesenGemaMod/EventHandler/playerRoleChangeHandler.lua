@@ -6,7 +6,9 @@
 --
 
 ---
--- @type PlayerRoleChangeHandler Class that handles player role changes.
+-- Class that handles player role changes.
+--
+-- @type PlayerRoleChangeHandler
 --
 local PlayerRoleChangeHandler = {};
 

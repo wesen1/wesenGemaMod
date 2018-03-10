@@ -8,7 +8,9 @@
 local Output = require("Outputs/Output");
 
 ---
--- @type MapTopPrinter Handles printing of maptop related values.
+-- Handles printing of maptop related values.
+--
+-- @type MapTopPrinter
 --
 local MapTopPrinter = {};
 

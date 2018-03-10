@@ -6,7 +6,9 @@
 --
 
 ---
--- @type CommandLoader Loads all commands from the Commands directory.
+-- Loads all commands from the Commands directory.
+--
+-- @type CommandLoader
 --
 local CommandLoader = {};
 

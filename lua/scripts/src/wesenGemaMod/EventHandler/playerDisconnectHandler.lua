@@ -8,7 +8,9 @@
 local Output = require("Outputs/Output");
 
 ---
--- @type PlayerDisconnectHandler Class that handles player disconnects.
+-- Class that handles player disconnects.
+--
+-- @type PlayerDisconnectHandler
 --
 local PlayerDisconnectHandler = {};
 

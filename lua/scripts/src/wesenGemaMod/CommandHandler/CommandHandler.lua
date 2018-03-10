@@ -12,7 +12,9 @@ local CommandPrinter = require("CommandHandler/CommandPrinter");
 
 
 ---
--- @type CommandHandler Handles commands loading, parsing, listing and printing.
+-- Handles commands loading, parsing, listing and printing.
+--
+-- @type CommandHandler
 --
 local CommandHandler = {};
 

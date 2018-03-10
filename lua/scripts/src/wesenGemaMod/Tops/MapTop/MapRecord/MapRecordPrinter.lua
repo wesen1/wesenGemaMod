@@ -8,7 +8,9 @@
 local Output = require("Outputs/Output");
 
 ---
--- @type MapRecordPriner Handles printing of map records.
+-- Handles printing of map records.
+--
+-- @type MapRecordPriner
 --
 local MapRecordPrinter = {};
 

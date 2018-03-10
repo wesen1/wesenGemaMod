@@ -9,7 +9,10 @@ local BaseCommand = require("Commands/BaseCommand");
 local Output = require("Outputs/Output");
 
 ---
--- @type MapTopCommand Command !maptop - Displays the best records of a map to a player.
+-- Command !maptop.
+-- Displays the best records of a map to a player
+--
+-- @type MapTopCommand
 --
 local MapTopCommand = {};
 

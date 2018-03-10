@@ -6,7 +6,9 @@
 --
 
 ---
--- @type PlayerSpawnHandler Class that handles player spawns.
+-- Class that handles player spawns.
+--
+-- @type PlayerSpawnHandler 
 --
 local PlayerSpawnHandler = {};
 

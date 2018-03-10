@@ -8,7 +8,9 @@
 local ColorLoader = require("Colors/ColorLoader");
 
 ---
--- @type Output Handles outputs to clients.
+-- Handles outputs of texts to clients.
+--
+-- @type Output
 --
 local Output = {};
 

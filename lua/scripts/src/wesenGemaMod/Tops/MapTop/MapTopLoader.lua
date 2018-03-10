@@ -10,7 +10,9 @@ local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
 local Player = require("Player");
 
 ---
--- @type MapTopLoader Loads the map records from the database.
+-- Loads the map records from the database.
+--
+-- @type MapTopLoader
 --
 local MapTopLoader = {};
 

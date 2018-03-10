@@ -11,7 +11,9 @@ local MapTopPrinter = require("Tops/MapTop/MapTopPrinter");
 local MapTopSaver = require("Tops/MapTop/MapTopSaver");
 
 ---
--- @type MapTop Handles listing, printing and saving the records of the current map.
+-- Handles listing, printing and saving the records of the current map.
+--
+-- @type MapTop
 --
 local MapTop = {};
 

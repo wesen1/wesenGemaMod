@@ -10,7 +10,9 @@ local Map = require("Maps/Map");
 local Output = require("Outputs/Output");
 
 ---
--- @type PlayerSendMapHandler Class that handles player sent maps.
+-- Class that handles player sent maps.
+--
+-- @type PlayerSendMapHandler
 --
 local PlayerSendMapHandler = {};
 

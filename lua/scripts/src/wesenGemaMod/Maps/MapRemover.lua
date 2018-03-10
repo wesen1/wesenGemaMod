@@ -8,7 +8,9 @@
 local TableUtils = require("Utils/TableUtils");
 
 ---
--- @type MapRemover Handles removal of maps.
+-- Handles removing of maps.
+--
+-- @type MapRemover
 --
 local MapRemover = {};
 

@@ -6,9 +6,12 @@
 --
 
 ---
--- @type MapTopCacher Handles maptop caching.
+-- Handles maptop caching.
+--
+-- @type MapTopCacher
 --
 local MapTopCacher = {};
+
 
 ---
 -- The list of cached records for one map
