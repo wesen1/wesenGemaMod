@@ -1,75 +1,150 @@
 ---
 -- @author wesen
--- @copyright 2017 wesen <wesen-ac@web.de>
+-- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
 --
 local luasql = require "luasql.mysql";
 
 ---
--- Handles database access.
--- Only works when the database server is on the same machine like the assaultcube server
+-- @type DataBase Handles database access.
+-- The class only works when the database server is on the same machine like the assaultcube server
 --
 local DataBase = {};
 
--- User for the database
+---
+-- The database user
+--
+-- @tfield string user
+--
 DataBase.user = "";
 
--- Password for the user
+---
+-- The database users password
+--
+-- @tfield string password
+--
 DataBase.password = "";
 
--- Name of the database
-DataBase.dbname = "";
+---
+-- The database name
+--
+-- @tfield string dataBaseName
+--
+DataBase.dataBaseName = "";
 
 
 ---
 -- DataBase constructor.
 --
--- @param String _user The username for the lua server
--- @param String _password The password for the user
--- @param String _dbname The name of the database for the gema mod
+-- @tparam string _user The username for the lua server
+-- @tparam string _password The password for the user
+-- @tparam string _dataBaseName The name of the database for the gema mod
 --
-function DataBase:__construct(_user, _password, _dbname)
+-- @treturn DataBase The DataBase instance
+--
+function DataBase:__construct(_user, _password, _dataBaseName)
 
   local instance = {};
   setmetatable(instance, {__index = DataBase});
-  
+
   instance.user = _user;
   instance.password = _password;
-  instance.dbname = _dbname;
-  
+  instance.dataBaseName = _dataBaseName;
+
   return instance;
-  
+
 end
 
+
+-- Getters and setters
+
+---
+-- Returns the database user name.
+--
+-- @treturn string The database user name
+--
+function DataBase:getUser()
+  return self.user;
+end
+
+---
+-- Sets the database user name.
+--
+-- @tparm string _user The database user name
+--
+function DataBase:setUser(_user)
+  self.user = _user;
+end
+
+---
+-- Returns the database users password.
+--
+-- @treturn string The database users password
+--
+function DataBase:getPassword()
+  return self.password;
+end
+
+---
+-- Sets the database users password.
+--
+-- @tparam string _password The database users password
+--
+function DataBase:setPassword(_password)
+  self.password = _password;
+end
+
+---
+-- Returns the database name.
+--
+-- @treturn string The database name
+--
+function DataBase:getDataBaseName()
+  return self.dataBaseName;
+end
+
+---
+-- Sets the database name.
+--
+-- @tparam string _dataBaseName The database name
+--
+function DataBase:setDataBaseName(_dataBaseName)
+  self.dataBaseName = _dataBaseName;
+end
+
+
+-- Class Methods
 
 ---
 -- Executes a single query.
 --
--- @param String _sql The sql query
--- @param Bool _expectsResult True: The result from the query will be returned as an array
---                            False: No result will be returned
+-- @tparam string _sql The sql query
+-- @tparam bool _expectsResult True: The result from the query will be returned as a table
+--                             False: No result will be returned
+--
+-- @treturn table|nil The result or nil
 --
 function DataBase:query(_sql, _expectsResult)
 
   local env = luasql.mysql();
-  local conn = env:connect(self.dbname, self.user, self.password);    
+  local conn = env:connect(self.dbname, self.user, self.password);
   local cur = conn:execute(_sql);
   local rows = {};
- 
+
   if (_expectsResult == true) then
-  
+
     local counter = 0;
-  
+
     while (#rows == counter) do
-    
       table.insert(rows, cur:fetch ({}, "a"));
       counter = counter + 1;
-    
     end
-    
+
     cur:close();
-    
+
   end
-  
+
   conn:close();
   env:close();
 
@@ -79,23 +154,23 @@ end
 
 ---
 -- Sanitizes sql string values.
--- Hint: Use this function on everything that can be manipulated by players (mapnames, playernames, passwords, etc.)
---       before adding it to any sql query
+-- Use this function on everything that can be manipulated by players (mapnames, playernames, passwords, etc.)
+-- before adding it to any sql query
 --
--- @param String _sqlStringValue The value which shall be sanitized
+-- @tparam string _sqlStringValue The value which shall be sanitized
 --
--- @return String The sanitized value
+-- @treturn string The sanitized value
 --
 function DataBase:sanitize(_sqlStringValue)
 
   local env = luasql.mysql();
   local conn = env:connect(self.dbname, self.user, self.password);
-  
+
   local sanitizedValue = conn:escape(_sqlStringValue);
-  
+
   conn:close();
   env:close();
-  
+
   return sanitizedValue;
 
 end
