@@ -40,13 +40,19 @@ end
 --
 function MapTopLoader:fetchRecords(_dataBase, _mapName)
 
+  local mapId = Map:fetchMapId(_dataBase, _mapName);
+  
+  if (not mapId) then
+    return {};
+  end
+
   local sql = "SELECT milliseconds, players.id, names.name, ips.ip "
            .. "FROM records "
            .. "INNER JOIN maps ON records.map = maps.id "
            .. "INNER JOIN players ON records.player = players.id "
            .. "INNER JOIN names ON players.name = names.id "
            .. "INNER JOIN ips ON players.ip = ips.id "
-           .. "WHERE maps.id = " .. Map:fetchMapId(_dataBase, _mapName) .. " "
+           .. "WHERE maps.id = " .. mapId .. " "
            .. "ORDER BY milliseconds ASC;";
                                  
   local result = _dataBase:query(sql, true);

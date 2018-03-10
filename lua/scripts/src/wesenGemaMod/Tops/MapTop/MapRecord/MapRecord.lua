@@ -1,40 +1,70 @@
 ---
 -- @author wesen
--- @copyright 2017 wesen <wesen-ac@web.de>
--- 
+-- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
+--
 
 local MapRecordPrinter = require("Tops/MapTop/MapRecord/MapRecordPrinter");
 
---
--- Stores information about a single record.
+---
+-- @type MapRecord Stores information about a single record.
 --
 local MapRecord = {};
 
 
--- Class attributes
-
--- The player who created the record
+---
+-- The player who established the record
+--
+-- @tfield string player
+--
 MapRecord.player = "";
 
+---
+-- The rank of the record in the map top
+--
+-- @tfield int rank
+--
 MapRecord.rank = -1;
 
--- Time needed to score in milliseconds
+---
+-- The time needed to score in milliseconds
+--
+-- @tfield int milliseconds
 MapRecord.milliseconds = -1;
 
+---
 -- The record in a readable format (minutes:seconds,milliseconds)
+-- This string is generated once on instance creation
+--
+-- @tfield string displayString
+--
 MapRecord.displayString = "";
 
+---
+-- The parent map top
+--
+-- @tfield MapTop parentMapTop
+--
 MapRecord.parentMapTop = "";
 
+---
+-- The map record printer
+--
+-- @tfield MapRecordPrinter mapRecordPrinter
+--
 MapRecord.mapRecordPrinter = "";
 
+
+---
+-- MapRecord constructor.
 --
--- Record constructor.
+-- @tparam Player _player The player object containing name and ip of the player who did the record
+-- @tparam int _milliseconds The time needed to finish the map
+-- @tparam MapTop _parentMapTop The parent map top
+-- @tparam int _rank The rank of the record in the maptop (if known)
 --
--- @param Player _player        Player object containing name and ip of the player who did the record
--- @param int _milliseconds     The time needed to finish the map
--- @param MapTop _parentMapTop  The parent MapTop
--- @param int _rank             Rank of the record in the maptop (if known)
+-- @treturn MapRecord The MapRecord instance
 --
 function MapRecord:__construct(_player, _milliseconds, _parentMapTop, _rank)
 
@@ -46,7 +76,7 @@ function MapRecord:__construct(_player, _milliseconds, _parentMapTop, _rank)
   instance.milliseconds = _milliseconds;
   instance.mapRecordPrinter = MapRecordPrinter:__construct(instance);
   instance.displayString = instance.mapRecordPrinter:generateTimeString();
-  
+
   if (_rank == nil) then
     instance.rank = _parentMapTop:predictRank(_milliseconds);
   else
@@ -54,52 +84,126 @@ function MapRecord:__construct(_player, _milliseconds, _parentMapTop, _rank)
   end
 
   return instance;
-  
+
 end
 
 
--- Getters and Setters
-function MapRecord:setPlayer(_player)
-  self.player = _player;
-end
+-- Getters and setters
 
+---
+-- Returns the player.
+--
+-- @treturn Player The player
+--
 function MapRecord:getPlayer()
   return self.player;
 end
 
-function MapRecord:setRank(_rank)
-  self.rank = _rank;
+---
+-- Sets the player.
+--
+-- @tparam Player _player The player
+--
+function MapRecord:setPlayer(_player)
+  self.player = _player;
 end
 
+---
+-- Returns the rank.
+--
+-- @treturn int The rank
+--
 function MapRecord:getRank()
   return self.rank;
 end
 
-function MapRecord:setMilliseconds(_milliseconds)
-  self.milliseconds = _milliseconds;
+---
+-- Sets the rank.
+--
+-- @tparam int _rank The rank
+--
+function MapRecord:setRank(_rank)
+  self.rank = _rank;
 end
 
+---
+-- Returns the milliseconds.
+--
+-- @treturn int The milliseconds
+--
 function MapRecord:getMilliseconds()
   return self.milliseconds;
 end
 
-function MapRecord:setDisplayString(_displayString)
-  self.displayString = _displayString;
+---
+-- Sets the milliseconds.
+--
+-- @tparam int _milliseconds The milliseconds
+--
+function MapRecord:setMilliseconds(_milliseconds)
+  self.milliseconds = _milliseconds;
 end
 
+---
+-- Returns the record in a readable format.
+--
+-- @treturn string The record in a readable format
+--
 function MapRecord:getDisplayString()
   return self.displayString;
 end
 
-function MapRecord:setParentMapTop(_parentMapTop)
-  self.parentMapTop = _parentMapTop;
+---
+-- Sets the record in a readable format.
+--
+-- @tparam string _displayString The record in a readable format
+--
+function MapRecord:setDisplayString(_displayString)
+  self.displayString = _displayString;
 end
 
+---
+-- Returns the parent map top.
+--
+-- @treturn MapTop The parent map top
+--
 function MapRecord:getParentMapTop()
   return self.parentMapTop;
 end
 
+---
+-- Sets the parent map top.
+--
+-- @tparam MapTop _parentMapTop The parent map top
+--
+function MapRecord:setParentMapTop(_parentMapTop)
+  self.parentMapTop = _parentMapTop;
+end
 
+---
+-- Returns the maprecord printer.
+--
+-- @treturn MapRecordPrinter The maprecord printer
+--
+function MapRecord:getMapRecordPrinter()
+  return self.mapRecordPrinter;
+end
+
+---
+-- Sets the maprecord printer.
+--
+-- @tparam MapRecordPrinter _mapRecordPrinter The maprecord printer
+--
+function MapRecordPrinter:setMapRecordPrinter(_mapRecordPrinter)
+  self.mapRecordPrinter = _mapRecordPrinter;
+end
+
+
+-- Class Methods
+
+---
+-- Prints the record to all clients when a player scores.
+--
 function MapRecord:printScoreRecord()
   self.mapRecordPrinter:printScoreRecord();
 end
