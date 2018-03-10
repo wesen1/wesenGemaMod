@@ -75,8 +75,14 @@ function Output:playerSayText(_text, _cn, _players)
   local player = _players[_cn];
   local playerNameColor = self:getPlayerNameColor(player:getLevel());
 
+  -- make the output look exactly like the assaultcube output by only showing the cn when the name is not unique
+  local cnString = "";
+  if (not self:isPlayerNameUnique(_cn, _players)) then
+    cnString = " (" .. _cn .. ")";
+  end
+
   local output = playerNameColor .. player:getName()
-              .. self:getColor("playerSayTextCn") .. " (" .. _cn .. ")"
+              .. self:getColor("playerSayTextCn") .. cnString
               .. self:getColor("playerSayTextColon") .. ": "
               .. player:getTextColor() .. _text;
 
@@ -87,6 +93,29 @@ function Output:playerSayText(_text, _cn, _players)
     end
 
   end
+
+end
+
+---
+-- Returns whether a player name is unique in the list of players.
+--
+-- @tparam int _cn The client number of the player
+-- @tparam Player[] _players The list of players
+--
+-- @treturn bool True: The player name is unique
+--               False: Multiple players have the players name
+--
+function Output:isPlayerNameUnique(_cn, _players)
+
+  for cn, player in pairs(_players) do
+
+    if (cn ~= _cn and player:getName() == _players[_cn]:getName()) then
+        return false;
+    end
+
+  end
+
+  return true;
 
 end
 

@@ -87,7 +87,7 @@ end
 --
 -- @treturn Database The database
 --
-function GemaMod:getDatabase()
+function GemaMod:getDataBase()
   return self.dataBase;
 end
 
