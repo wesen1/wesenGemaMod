@@ -128,7 +128,7 @@ end
 function DataBase:query(_sql, _expectsResult)
 
   local env = luasql.mysql();
-  local conn = env:connect(self.dbname, self.user, self.password);
+  local conn = env:connect(self.dataBaseName, self.user, self.password);
   local cur = conn:execute(_sql);
   local rows = {};
 
@@ -164,7 +164,7 @@ end
 function DataBase:sanitize(_sqlStringValue)
 
   local env = luasql.mysql();
-  local conn = env:connect(self.dbname, self.user, self.password);
+  local conn = env:connect(self.dataBaseName, self.user, self.password);
 
   local sanitizedValue = conn:escape(_sqlStringValue);
 

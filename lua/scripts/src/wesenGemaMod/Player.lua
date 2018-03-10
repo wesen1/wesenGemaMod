@@ -63,6 +63,8 @@ Player.textColor = Output:getColor("playerTextDefault");
 -- @tparam string _name The player name
 -- @tparam string _ip The player ip
 --
+-- @treturn Player The Player instance
+--
 function Player:__construct(_name, _ip)
 
   local instance = {};
@@ -190,14 +192,14 @@ function Player:setTextColor(_textColor)
 end
 
 
--- Methods
+-- Class Methods
 
 ---
 -- Fetches the ip id of this player ip from the database.
 --
 -- @tparam DataBase _dataBase The database
 --
--- @treturn int The ip id
+-- @treturn int|nil The ip id or nil if the ip was not found in the database
 --
 function Player:fetchIpId(_dataBase)
 
@@ -238,7 +240,7 @@ end
 --
 -- @tparam DataBase _dataBase The database
 --
--- @treturn int The player name id
+-- @treturn int|nil The player name id or nil if the player name was not found in the database
 --
 function Player:fetchNameId(_dataBase)
 
@@ -285,7 +287,7 @@ end
 --
 -- @tparam DataBase _dataBase The database
 --
--- @treturn int|nil The player id or nil
+-- @treturn int|nil The player id or nil if the player was not found in the database
 --
 function Player:fetchPlayerId(_dataBase)
 
@@ -297,7 +299,7 @@ function Player:fetchPlayerId(_dataBase)
            .. "WHERE name=" .. nameId .. " and ip=" .. ipId .. ";";
 
   local result = _dataBase:query(sql, true);
-  
+
   if (#result == 0) then
     return nil;
   else
