@@ -6,10 +6,14 @@
 --
 
 ---
--- @type TableUtils Class that provides additional table functions.
+-- Class that provides additional table functions.
+--
+-- @type TableUtils
 --
 local TableUtils = {};
 
+
+-- Class Methods
 
 ---
 -- Returns a part of a table from start index to end index.
@@ -58,7 +62,7 @@ end
 -- Checks whether String _needle is contained in a table of strings.
 --
 -- @tparam string _needle The needle
--- @tparam table _haystack The haystack (a table of strings)
+-- @tparam string[] _haystack The haystack
 --
 -- @treturn bool True: String was found in the table
 --               False: String was not found in the table

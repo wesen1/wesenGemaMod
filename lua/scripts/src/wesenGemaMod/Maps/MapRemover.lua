@@ -1,21 +1,32 @@
 ---
 -- @author wesen
 -- @copyright 2017-2018 wesen <wesen-ac@web.de>
--- 
+-- @release 0.1
+-- @license MIT
+--
 
 local TableUtils = require("Utils/TableUtils");
 
+---
+-- Handles removing of maps.
 --
--- Handles removal of maps.
+-- @type MapRemover
 --
 local MapRemover = {};
 
+
+-- Class Methods
+
+---
+-- Removes a map from the database and the maps folder if there are no records for that map.
 --
--- Removes a map from the database and the maps folder.
+-- @tparam DataBase _dataBase The database
+-- @tparam string _mapName The name of the map
+-- @tparam int _mapId The id of the map
+-- @tparam MapTop _mapTop The map top
 --
--- @param String _mapName   Name of the map
---
--- @return bool  Success
+-- @treturn bool True: The map was successfully removed
+--               False: The map was not removed
 --
 function MapRemover:removeMap(_dataBase, _mapName, _mapId, _mapTop)
 
@@ -27,23 +38,24 @@ function MapRemover:removeMap(_dataBase, _mapName, _mapId, _mapTop)
     local sql = "DELETE FROM maps "
                  .. "WHERE id=" .. _mapId .. ";";
     _dataBase:query(sql, false);
-  
+
     -- remove map files
     removemap(_mapName, _mapTop);
-    
+
     return true;
-    
+
   end
 
 end
 
 ---
--- Returns whether a map has records.
+-- Returns whether there are records for a map.
 --
 -- @tparam DataBase _dataBase The database
 -- @tparam string _mapName The mapname
+-- @tparam MapTop _mapTop The map top
 --
--- @treturn bool  True: Map has records
+-- @treturn bool True: Map has records
 --               False: Map has no records
 --
 function MapRemover:mapHasRecords(_dataBase, _mapName, _mapTop)
@@ -51,13 +63,13 @@ function MapRemover:mapHasRecords(_dataBase, _mapName, _mapTop)
   local mapTop = TableUtils:copy(_mapTop);
   mapTop:setMapName(_mapName);
   mapTop:loadRecords(_mapName);
-  
+
   if (mapTop:getNumberOfRecords() == 0) then
     return false;
   else
     return true;
   end
-  
+
 end
 
 

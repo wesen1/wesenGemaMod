@@ -1,13 +1,16 @@
 ---
 -- @author wesen
--- @copyright 2017 wesen <wesen-ac@web.de>
--- 
+-- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
+--
 
 local Map = require("Maps/Map");
 
-
 ---
 -- Handles saving records to the database.
+--
+-- @type MapTopSaver
 --
 local MapTopSaver = {};
 
@@ -15,21 +18,26 @@ local MapTopSaver = {};
 ---
 -- MapTopSaver constructor.
 --
+-- @treturn MapTopSaver The MapTopSaver instance
+--
 function MapTopSaver:__construct()
 
   local instance = {};
   setmetatable(instance, {__index = MapTopSaver});
-    
+
   return instance;
 
 end
 
+
+-- Class Methods
+
 ---
 -- Saves a single record to the database.
 --
--- @param _dataBase (DataBase) The database
--- @param _record (Record) The record
--- @param _mapName (String) Map name
+-- @tparam DataBase _dataBase The database
+-- @tparam MapRecord _record The record
+-- @tparam string _mapName The map name
 --
 function MapTopSaver:addRecord(_dataBase, _record, _mapName)
 
@@ -42,9 +50,9 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
            .. "INNER JOIN maps ON records.map = maps.id "
            .. "WHERE records.player = " .. player:getId() .. " "
            .. "AND maps.id = " .. mapId .. ";";
-                        
+
   local result = _dataBase:query(sql, true);
-  
+
   if (#result == 0) then
 
     -- insert new record
@@ -55,22 +63,22 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
                .. player:getId() .. ","
                .. mapId
              .. ");";
-                              
+
     _dataBase:query(sql, false);
-             
+
   else
-  
+
     local recordId = result[1].id;
-  
+
     -- update existing record
     local sql = "UPDATE records "
              .. "SET milliseconds = " .. _record:getMilliseconds() .. " "
              .. "WHERE id = " .. recordId .. ";";
-               
+
     _dataBase:query(sql, false);
-  
+
   end
-  
+
 end
 
 

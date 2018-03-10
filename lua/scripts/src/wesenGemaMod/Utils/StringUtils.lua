@@ -6,10 +6,14 @@
 --
 
 ---
--- @type StringUtils Class that provides additional string functions.
+-- Class that provides additional string functions.
+--
+-- @type StringUtils
 --
 local StringUtils = {};
 
+
+-- Class Methods
 
 ---
 -- Splits a string everytime the delimiter appears in it.
@@ -17,7 +21,7 @@ local StringUtils = {};
 -- @tparam string _text The string
 -- @tparam string _delimiter The delimiter at which the string will be split
 --
--- @treturn table The splits
+-- @treturn string[] The splits
 --
 function StringUtils:split(_text, _delimiter)
 

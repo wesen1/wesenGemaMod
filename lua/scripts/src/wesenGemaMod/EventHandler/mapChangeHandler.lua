@@ -1,26 +1,32 @@
 ---
 -- @author wesen
 -- @copyright 2017-2018 wesen <wesen-ac@web.de>
--- 
+-- @release 0.1
+-- @license MIT
+--
 
 ---
 -- Class that handles map changes.
+--
+-- @type MapChangeHandler
 --
 local MapChangeHandler = {};
 
 
 ---
 -- The parent gema mod to which this EventHandler belongs
--- 
--- @param GemaMod parentGemaMod
--- 
+--
+-- @tfield GemaMod parentGemaMod
+--
 MapChangeHandler.parentGemaMod = "";
 
 
 ---
 -- MapChangeHandler constructor.
--- 
--- @param GemaMod _parentGemaMod The parent gema mod
+--
+-- @tparam GemaMod _parentGemaMod The parent gema mod
+--
+-- @treturn MapChangeHandler The MapChangeHandler instance
 --
 function MapChangeHandler:__construct(_parentGemaMod)
 
@@ -30,13 +36,37 @@ function MapChangeHandler:__construct(_parentGemaMod)
   instance.parentGemaMod = _parentGemaMod;
 
   return instance;
-  
+
 end
+
+
+-- Getters and setters
+
+---
+-- Returns the parent gema mod.
+--
+-- @treturn GemaMod The parent gema mod
+--
+function MapChangeHandler:getParentGemaMod()
+  return self.parentGemaMod;
+end
+
+---
+-- Sets the parent gema mod.
+--
+-- @tparam GemaMod _parentGemaMod The parent gema mod
+--
+function MapChangeHandler:setParentGemaMod(_parentGemaMod)
+  self.parentGemaMod = _parentGemaMod;
+end
+
+
+-- Class Methods
 
 ---
 -- Event handler which is called when the map is changed.
 --
--- @param String _mapName Name of the new map
+-- @tparam string _mapName The name of the new map
 --
 function MapChangeHandler:onMapChange(_mapName)
 
@@ -45,7 +75,7 @@ function MapChangeHandler:onMapChange(_mapName)
   mapTop:setMapName(_mapName);
   mapTop:loadRecords(_mapName);
   mapTop:printMapStatistics();
-  
+
 end
 
 
