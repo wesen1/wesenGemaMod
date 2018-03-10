@@ -313,7 +313,7 @@ end
 -- Must be overwritten in each command
 --
 -- @tparam int _cn The client number of the player who called the command
--- @tparam string[] _args The list of arguments
+-- @tparam string[] _args The list of arguments which were passed by the player
 --
 function BaseCommand:execute(_cn, _args)
 end
