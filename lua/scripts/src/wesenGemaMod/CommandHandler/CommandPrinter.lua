@@ -142,6 +142,7 @@ end
 -- Prints the list of available commands to a player.
 --
 -- @tparam int _cn The client number of the player
+-- @tparam CommandLister _commandLister The command lister
 --
 function CommandPrinter:printCommandList(_cn, _commandLister)
 

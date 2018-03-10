@@ -18,7 +18,10 @@ local MapRemover = {};
 ---
 -- Removes a map from the database and the maps folder if there are no records for that map.
 --
+-- @tparam DataBase _dataBase The database
 -- @tparam string _mapName The name of the map
+-- @tparam int _mapId The id of the map
+-- @tparam MapTop _mapTop The map top
 --
 -- @treturn bool True: The map was successfully removed
 --               False: The map was not removed

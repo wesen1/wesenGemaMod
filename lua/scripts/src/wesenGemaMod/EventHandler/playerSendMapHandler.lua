@@ -73,7 +73,7 @@ end
 -- @tparam string _mapName The map name
 -- @tparam int _cn The client number of the player
 -- @tparam int _revision The map revision
--- @tparam int _mapSize The map size
+-- @tparam int _mapsize The map size
 -- @tparam int _cfgsize The cfg size
 -- @tparam int _cfgsizegz The cgz size
 -- @tparam int _uploadError The upload error

@@ -67,9 +67,9 @@ end
 ---
 -- Event handler that is called when the state of the flag is changed.
 --
--- @param int _cn The client number of the player who changed the state
--- @param int _action The id of the flag action
--- @param int _flag The id of the flag whose state was changed
+-- @tparam int _cn The client number of the player who changed the state
+-- @tparam int _action The id of the flag action
+-- @tparam int _flag The id of the flag whose state was changed
 --
 function FlagActionHandler:onFlagAction(_cn, _action, _flag)
 
@@ -87,8 +87,8 @@ end
 ---
 -- Adds a record to the maptop and prints the score message.
 --
--- @param int _cn The player client number of the player who scored
--- @param int _endTime The time in milliseconds when the player scored
+-- @tparam int _cn The player client number of the player who scored
+-- @tparam int _endTime The time in milliseconds when the player scored
 --
 function FlagActionHandler:registerRecord(_cn, _endTime)
 
@@ -115,8 +115,8 @@ end
 ---
 -- Triggers the flag action that the player with _cn returns the flag.
 --
--- @param int _cn The player client number of the player who dropped the flag
--- @param int _flag The flag id of the flag that was dropped
+-- @tparam int _cn The player client number of the player who dropped the flag
+-- @tparam int _flag The flag id of the flag that was dropped
 --
 function FlagActionHandler:resetFlag(_cn, _flag)
   flagaction(_cn, FA_RESET, _flag);

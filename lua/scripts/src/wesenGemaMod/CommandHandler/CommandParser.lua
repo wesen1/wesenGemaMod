@@ -116,7 +116,7 @@ end
 --
 -- @tparam BaseCommand _command The command
 -- @tparam string[] _arguments The arguments
--- @tparam int The client number of the player who tries to execute the command
+-- @tparam int _cn The client number of the player who tries to execute the command
 --
 function CommandParser:executeCommand(_command, _arguments, _cn)
 

@@ -20,7 +20,7 @@ setmetatable(ColorsCommand, {__index = BaseCommand});
 ---
 -- ColorsCommand constructor.
 --
--- @tparam CommandLister The parent command lister
+-- @tparam CommandLister _parentCommandLister The parent command lister
 --
 -- @treturn ColorsCommand The ColorsCommand instance
 --

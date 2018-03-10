@@ -73,7 +73,7 @@ BaseCommand.parentCommandLister = "";
 --
 -- @tparam CommandLister _parentCommandLister The parent command lister
 -- @tparam string _name The name of the command
--- @tparam int _requiredlevel The minimum required level that is necessary to execute the command
+-- @tparam int _requiredLevel The minimum required level that is necessary to execute the command
 -- @tparam string _group The group of the command
 --
 -- @treturn BaseCommand The BaseCommand instance

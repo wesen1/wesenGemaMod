@@ -49,7 +49,7 @@ end
 ---
 -- Sets the list of cached records.
 --
--- @tparam MapRecord[] The list of cached records
+-- @tparam MapRecord[] _records The list of cached records
 --
 function MapTopCacher:setRecords(_records)
   self.records = _records;

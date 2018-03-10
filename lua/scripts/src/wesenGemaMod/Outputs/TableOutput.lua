@@ -145,7 +145,7 @@ end
 ---
 -- Returns the widest entries for every column.
 --
--- @tparam table _columns The table with at least two columns and one row
+-- @tparam table _rows The table with at least two columns and one row
 --
 -- @treturn table The widest entries per column
 -- @treturn table The widths of all entries
@@ -223,7 +223,7 @@ end
 -- Returns tabs to format outputs as a table.
 --
 -- @tparam int _entryLength The length of the entry for which tabs shall be generated
--- @tparam int _longesEntryLength The length of the longest entry that is in the same
+-- @tparam int _longestEntryLength The length of the longest entry that is in the same
 --              column like the entry for which tabs are generated
 --
 -- @treturn string The tabs

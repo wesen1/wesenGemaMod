@@ -123,7 +123,7 @@ end
 ---
 -- Returns how many connections a specific ip has to the server.
 --
--- @tparam string _ip The ip address
+-- @tparam int _cn The client number of the player
 --
 -- @treturn int The amount of connections
 --

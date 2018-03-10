@@ -30,9 +30,9 @@ gemaMod:initialize();
 ---
 -- Event handler that is called when the state of the flag is changed.
 --
--- @param int _cn The client number of the player who changed the state
--- @param int _action The id of the flag action
--- @param int _flag The id of the flag whose state was changed
+-- @tparam int _cn The client number of the player who changed the state
+-- @tparam int _action The id of the flag action
+-- @tparam int _flag The id of the flag whose state was changed
 --
 function onFlagAction(_cn, _action, _flag)
   gemaMod:onFlagAction(_cn, _action, _flag);
@@ -137,7 +137,7 @@ end
 -- @tparam string _mapName The map name
 -- @tparam int _cn The client number of the player
 -- @tparam int _revision The map revision
--- @tparam int _mapSize The map size
+-- @tparam int _mapsize The map size
 -- @tparam int _cfgsize The cfg size
 -- @tparam int _cfgsizegz The cgz size
 -- @tparam int _uploadError The upload error

@@ -71,7 +71,7 @@ end
 ---
 -- Sets the database user name.
 --
--- @tparm string _user The database user name
+-- @tparam string _user The database user name
 --
 function DataBase:setUser(_user)
   self.user = _user;
