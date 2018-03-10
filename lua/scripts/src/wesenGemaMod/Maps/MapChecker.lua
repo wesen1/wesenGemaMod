@@ -18,6 +18,9 @@ local MapChecker = {};
 --
 -- @tfield string[] implictWords
 --
+MapChecker.implicitWords = {};
+
+-- Set the words after initializing the attribute as empty table to avoid LDoc error messages
 MapChecker.implicitWords = {"jigsaw", "deadmeat-10"};
 
 ---
@@ -26,7 +29,10 @@ MapChecker.implicitWords = {"jigsaw", "deadmeat-10"};
 --
 -- @tfield string[] codes
 --
-MapChecker.codes = {"g","3e","m","a@4"};
+MapChecker.codes = {};
+
+-- Set the codes after initializing the attribute as empty table to avoid LDoc error messages
+MapChecker.codes = {"g", "3e", "m", "a@4"};
 
 
 -- Getters and setters
