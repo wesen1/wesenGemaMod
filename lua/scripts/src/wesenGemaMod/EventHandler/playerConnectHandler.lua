@@ -1,34 +1,40 @@
 ---
 -- @author wesen
 -- @copyright 2017-2018 wesen <wesen-ac@web.de>
--- 
+-- @release 0.1
+-- @license MIT
+--
 
 local Output = require("Outputs/Output");
 local Player = require("Player");
 
-
 ---
--- Class that handles player connects.
+-- @type PlayerConnectHandler Class that handles player connects.
 --
 local PlayerConnectHandler = {};
 
 
 ---
 -- The parent gema mod to which this EventHandler belongs
--- 
--- @param GemaMod parentGemaMod
--- 
+--
+-- @tfield GemaMod parentGemaMod
+--
 PlayerConnectHandler.parentGemaMod = "";
 
 ---
 -- The maximum allowed amount of connections with the same ip to the server
+--
+-- @tfield int maximumAmountConnectionsWithSameIp
+--
 PlayerConnectHandler.maximumAmountConnectionsWithSameIp = 2;
 
 
 ---
 -- PlayerConnectHandler constructor.
--- 
--- @param GemaMod _parentGemaMod The parent gema mod
+--
+-- @tparam GemaMod _parentGemaMod The parent gema mod
+--
+-- @treturn PlayerConnectHandler The PlayerConnectHandler instance
 --
 function PlayerConnectHandler:__construct(_parentGemaMod)
 
@@ -38,21 +44,62 @@ function PlayerConnectHandler:__construct(_parentGemaMod)
   instance.parentGemaMod = _parentGemaMod;
 
   return instance;
-  
+
 end
 
+
+-- Getters and setters
+
+---
+-- Returns the parent gema mod.
+--
+-- @treturn GemaMod The parent gema mod
+--
+function PlayerConnectHandler:getParentGemaMod()
+  return self.parentGemaMod;
+end
+
+---
+-- Sets the parent gema mod.
+--
+-- @tparam GemaMod _parentGemaMod The parent gema mod
+--
+function PlayerConnectHandler:setParentGemaMod(_parentGemaMod)
+  self.parentGemaMod = _parentGemaMod;
+end
+
+---
+-- Returns the maximum allowed amount of connections with the same ip.
+--
+-- @treturn int The maximum allowed amount of connections with the same ip
+--
+function PlayerConnectHandler:getMaximumAmountConnectionsWithSameIp()
+  return self.maximumAmountConnectionsWithSameIp;
+end
+
+---
+-- Sets the maximum allowed amount of connections with the same ip.
+--
+-- @tparam int _maximumAmountConnectionsWithSameIp The maximum allowed amount of connections with the same ip
+--
+function PlayerConnectHandler:setMaximumAmountConnectionsWithSameIp(_maximumAmountConnectionsWithSameIp)
+  self.maximumAmountConnectionsWithSameIp = _maximumAmountConnectionsWithSameIp;
+end
+
+
+-- Class Methods
 
 ---
 -- Event handler which is called when a player connects.
 --
--- @param int _cn Client number of the player
+-- @tparam int _cn The client number of the player who connected
 --
 function PlayerConnectHandler:onPlayerConnect(_cn)
 
   if (#self.parentGemaMod:getPlayers() == 0) then
     setautoteam (false);
-  end  
-  
+  end
+
   self:checkAmountConnections(_cn);
   self.parentGemaMod:addPlayer(_cn);
   self:printServerInformation(_cn);
@@ -61,41 +108,41 @@ end
 
 ---
 -- Checks the amount of connections of a specific ip and disconnects the client if there are too many connections.
--- 
--- @param int _cn The client number of the player
--- 
+--
+-- @tparam int _cn The client number of the player who connected
+--
 function PlayerConnectHandler:checkAmountConnections(_cn)
 
   if (self:countConnections(_cn) > self.maximumAmountConnectionsWithSameIp) then
-    
     Output:print(Output:getColor("error") .. "Error: " .. getname(_cn) .. " could not connect [too many connections with same IP]");
     disconnect(_cn, DISC_NONE);
   end
-  
+
 end
 
 ---
 -- Returns how many connections a specific ip has to the server.
 --
--- @param string _ip The ip address
+-- @tparam string _ip The ip address
 --
--- @return int The amount of connections
+-- @treturn int The amount of connections
 --
 function PlayerConnectHandler:countConnections(_cn)
 
+  -- countConnections is called before the player list is updated, therefore
+  -- isconnected() and getip() are used here instead of an iteration over the player list
   local ip = getip(_cn);
 
-  -- count connections is called faster than the players list is updated
   local amountConnections = 0;
-      
+
   for i = 0, 15, 1 do
-  
+
     if isconnected(i) and getip(i) == ip then
       amountConnections = amountConnections + 1
     end
-  
+
   end
-  
+
   return amountConnections;
 
 end
@@ -103,8 +150,8 @@ end
 
 ---
 -- Prints the map statistics and information about the commands to a player.
--- 
--- @param int _cn The client number of the player
+--
+-- @tparam int _cn The client number of the player who connected
 --
 function PlayerConnectHandler:printServerInformation(_cn)
 
