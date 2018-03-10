@@ -1,48 +1,72 @@
 ---
 -- @author wesen
--- @copyright 2017 wesen <wesen-ac@web.de>
--- 
+-- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @release 0.1
+-- @license MIT
+--
 
 local Output = require("Outputs/Output");
 
---
--- Handles printing of maptop related values.
+---
+-- @type MapTopPrinter Handles printing of maptop related values.
 --
 local MapTopPrinter = {};
 
--- MapTop to which this MapTopPrinter belongs
+
+---
+-- The parent map top
+--
+-- @tfield MapTop parentMapTop
+--
 MapTopPrinter.parentMapTop = "";
 
---
+
+---
 -- MapTopPrinter constructor.
 --
--- @param MapTop _parentMapTop  The parent MapTop
+-- @tparam MapTop _parentMapTop The parent map top
+--
+-- @treturn MapTopPrinter The MapTopPrinter instance
 --
 function MapTopPrinter:__construct(_parentMapTop)
 
   local instance = {};
   setmetatable(instance, {__index = MapTopPrinter});
-  
+
   instance.parentMapTop = _parentMapTop;
-  
+
   return instance;
-  
+
 end
+
 
 -- Getters and Setters
-function MapTopPrinter:setParentMapTop(_parentMapTop)
-  self.parentMapTop = _parentMapTop;
-end
 
+---
+-- Returns the parent map top.
+--
+-- @treturn MapTop The parent map top
+--
 function MapTopPrinter:getParentMapTop()
   return self.parentMapTop;
 end
 
-
+---
+-- Sets the parent map top.
 --
+-- @tparam MapTop _parentMapTop The parent map top
+--
+function MapTopPrinter:setParentMapTop(_parentMapTop)
+  self.parentMapTop = _parentMapTop;
+end
+
+
+-- Class Methods
+
+---
 -- Prints the maptop to a player.
 --
--- @param int _cn  Client number of the player
+-- @tparam int _cn The client number of the player to which the maptop will be printed
 --
 function MapTopPrinter:printMapTop(_cn)
 
@@ -58,20 +82,19 @@ function MapTopPrinter:printMapTop(_cn)
     end
 
     Output:print(Output:getColor("mapTopInfo") .. "The " .. amountDisplayRecords .. " best players of this map are:", _cn);
-  
+
     local startRank = 1;
-    local limit = 5;
-    
+    local limit = 4;
+
     if (amountRecords < startRank + limit) then
-      limit = amountRecords - (startRank - 1);
+      limit = amountRecords - startRank;
     end
-    
-    
-    local maxRankLength = string.len(limit);
-      
-    for i = startRank, limit do
-    
-    
+
+
+    local maxRankLength = string.len(startRank + limit);
+
+    for i = startRank, startRank + limit do
+
       local rank = string.rep("0", maxRankLength - string.len(i)) .. i;
       local record = self.parentMapTop:getRecord(i);
       local output = Output:getColor("mapRecordRank") .. rank .. ") "
@@ -79,33 +102,33 @@ function MapTopPrinter:printMapTop(_cn)
                   .. Output:getColor("mapRecordInfo") .. " by "
                   .. Output:getColor("mapRecordName") .. record:getPlayer():getName();
       Output:print(output, _cn);
-    
+
     end
-    
+
   end
 
 end
 
---
+---
 -- Prints statistics about the current map.
 --
--- @param int _cn  Player to which the statistics will be printed
+-- @tparam int _cn The client number of the player to which the statistics will be printed
 --
 function MapTopPrinter:printMapStatistics(_cn)
 
   if (self.parentMapTop:isEmpty()) then
     Output:print(Output:getColor("emptyTop") .. "No records found for this map.", _cn);
-  
+
   else
-  
+
     local bestRecord = self.parentMapTop:getRecord(1);
     local amountRecords = self.parentMapTop:getNumberOfRecords();
-            
+
     local playerAmountString = amountRecords .. " player";
     if (amountRecords ~= 1) then
       playerAmountString = playerAmountString .. "s"
     end
-      
+
     Output:print(Output:getColor("mapTopInfo") .. "This map was finished by " .. playerAmountString, _cn);
     Output:print(
       Output:getColor("mapRecordInfo") .. "The best record of this map is "

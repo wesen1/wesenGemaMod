@@ -220,7 +220,7 @@ function MapTop:addRecord(_newMapRecord)
   end
 
   if (saveRecord) then
-    self.mapTopCacher:addRecord(_newMapRecord, playerRank, _newMapRecord:getRank());
+    self.mapTopCacher:addRecord(_newMapRecord, playerRank);
     self.mapTopSaver:addRecord(self.parentGemaMod:getDataBase(), _newMapRecord, self.mapName);
   end
 
