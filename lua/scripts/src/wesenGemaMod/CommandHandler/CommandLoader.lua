@@ -70,22 +70,36 @@ end
 --
 function CommandLoader:loadCommands(_commandLister)
 
+  for index, commandClassName in ipairs(self:getCommandClassNames()) do
+    local command = require("Commands/" .. commandClassName);
+    _commandLister:addCommand(command);
+  end
+
+end
+
+---
+-- Returns the list of command class names from the Commands folder sorted by name.
+--
+-- @treturn table The list of command class names
+--
+function CommandLoader:getCommandClassNames()
+
+  local commandClassNames = {};
   local lfs = require("lfs");
 
   -- iterate over each file in the Commands directory
   for luaFile in lfs.dir("lua/scripts/src/wesenGemaMod/Commands") do
 
     if (luaFile ~= "." and luaFile ~= ".." and luaFile ~= "BaseCommand.lua") then
-
       local commandClassName = luaFile:gsub(".lua", "");
-      local command = require("Commands/" .. commandClassName);
-
-      _commandLister:addCommand(command);
-      print("Loaded command !" .. commandClassName);
-
+      table.insert(commandClassNames, commandClassName);
     end
 
   end
+
+  table.sort(commandClassNames);
+
+  return commandClassNames;
 
 end
 

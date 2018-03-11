@@ -198,6 +198,8 @@ function CommandLister:addCommand(_command)
   self:addCommandToCommandList(command);
   self:addCommandToGroupedCommandList(command);
 
+  print("Loaded command !" .. command:getName());
+
 end
 
 ---
@@ -206,7 +208,12 @@ end
 -- @tparam BaseCommand _command The command
 --
 function CommandLister:addCommandToCommandList(_command)
-  self.commands["!" .. _command:getName()] = _command;
+
+  -- Saving the command in lowercase in order to be able to correctly parse commands
+  -- that contain uppercase letters (user inputted commands are converted to lowercase
+  -- while parsing to make the command parsing case insensitive)
+  self.commands["!" .. string.lower(_command:getName())] = _command;
+
 end
 
 ---
@@ -227,7 +234,8 @@ function CommandLister:addCommandToGroupedCommandList(_command)
     self:addGroupName(level, groupName);
   end
 
-  table.insert(self.groupedCommands[level][groupName], "!" .. _command:getName());
+  -- Saving the command in lowercase because it is saved in lowercase in the commands list too
+  table.insert(self.groupedCommands[level][groupName], "!" .. string.lower(_command:getName()));
   table.sort(self.groupedCommands[level][groupName]);
 
 end
