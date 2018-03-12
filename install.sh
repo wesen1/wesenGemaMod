@@ -22,11 +22,16 @@ installerDirectory=$PWD
 echo "This sript will install an AssaultCube lua server with wesen's gema mod to $outputDirectory. Continue? (Yes|No)"
 read continueInstallation;
 
+#
+# Convert user input to lowercase
+# Source: https://stackoverflow.com/a/11392488
+#
+continueInstallation=$(echo "$continueInstallation" | tr '[:upper:]' '[:lower:]')
 
-# TODO: case insensitive comparisons
 if [ "$continueInstallation" != "yes" ] && [ "$continueInstallation" != "y" ]; then
   exit
 fi
+
 
 cd "$outputDirectory"
 mkdir "tmp"
@@ -77,9 +82,6 @@ apt-get install -y mariadb-server
 
 echo "Configuring database"
 
-# Remove test database and root user
-# TODO: Document each line
-
 echo "Setting root user password to 'root'"
 mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
 
@@ -114,9 +116,9 @@ apt-get install -y lua-filesystem lua-sql-mysql
 echo "Copy the gema mod to lua/scripts folder? (Yes|No)"
 read copyGemaMod
 
+copyGemaMod=$(echo "$copyGemaMod" | tr '[:upper:]' '[:lower:]')
 
-# TODO: case insensitive comparisons
-if [ $copyGemaMod == "yes" ] || [ $copyGemaMod == "y" ]
+if [ "copyGemaMod" == "yes" ] || [ "copyGemaMod" == "y" ]
 then
 
   # TODO: Make current user own the directory instead of root
@@ -128,9 +130,9 @@ fi
 echo "Delete unnecessary files from AssaultCube folder? (Yes|No)"
 read deleteFiles
 
+deleteFiles=$(echo "$deleteFiles" | tr '[:upper:]' '[:lower:]')
 
-# TODO: case insensitive comparisons
-if [ $deleteFiles == "yes" ] || [ $deleteFiles == "y" ]
+if [ "$deleteFiles" == "yes" ] || [ "$deleteFiles" == "y" ]
 then
 
   echo "Removing unnecessary files from AssaultCube folder ..."
@@ -193,8 +195,9 @@ fi
 echo "Delete the temporary files? (Yes|No)"
 read deleteTemporaryFiles
 
-# TODO: case insensitive comparisons
-if [ $deleteTemporaryFiles == "yes" ] || [ $deleteTemporaryFiles == "y" ]; then
+deleteTemporaryFiles=$(echo "$deleteTemporaryFiles" | tr '[:upper:]' '[:lower:]')
+
+if [ "$deleteTemporaryFiles" == "yes" ] || [ "$deleteTemporaryFiles" == "y" ]; then
   echo "Removing temporary files ..."
   rm -rf "$outputDirectory/tmp"
 fi
