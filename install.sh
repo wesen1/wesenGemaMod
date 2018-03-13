@@ -17,7 +17,18 @@ if [ ! -d $outputDirectory ]; then
   exit
 fi
 
-installerDirectory=$PWD
+# Argument $0 is the path to the script
+directoryName="$(dirname $0)"
+
+if [[ $directoryName == "/"* ]]; then
+  # If the script path starts with a slash it is an absolute path
+  # Therefore the path to the installer directory is the same
+  installerDirectory=$directoryName
+else
+  # If the script path does not start with a slash it is a relative path
+  # Therefore the current working directory (absolute path) is added in front of it
+  installerDirectory="$PWD/$directoryName"
+fi
 
 echo "This sript will install an AssaultCube lua server with wesen's gema mod to $outputDirectory. Continue? (Yes|No)"
 read continueInstallation;
