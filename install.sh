@@ -1,6 +1,9 @@
 #!/bin/bash
 
 # TODO: Default: supress output, if --verbose don't supress output
+# TODO: sudo apt-get install wget tr dirname id read ??
+
+## Check whether the user is root
 
 #
 # If the user is not root abort
@@ -11,11 +14,8 @@ if [[ $(id -u) != 0 ]]; then
   exit
 fi
 
-outputDirectory=$1
-if [ ! -d $outputDirectory ]; then
-  echo "Error: The specified output directory does not exist."
-  exit
-fi
+
+## Determine the installer directory
 
 # Argument $0 is the path to the script
 directoryName="$(dirname $0)"
@@ -29,6 +29,35 @@ else
   # Therefore the current working directory (absolute path) is added in front of it
   installerDirectory="$PWD/$directoryName"
 fi
+
+
+## Determine the output directory
+
+# Argument $1 is the output directory
+outputDirectory=$1
+
+if [[ $outputDirectory == "/"* ]]; then
+  outputDirectory=$outputDirectory
+else
+  outputDirectory="$PWD/$outputDirectory"
+fi
+
+if [ ! -d $outputDirectory ]; then
+
+  echo "The output directory $outputDirectory doesn't exist. Shall it be created? (Yes|No)"
+  read createOutputDirectory
+  createOutputDirectory=$(echo "$createOutputDirectory" | tr '[:upper:]' '[:lower:]')
+
+  if [ "$createOutputDirectory" == "yes" ] || [ "$createOutputDirectory" == "y" ]; then
+    mkdir -p $outputDirectory
+  else
+    exit
+  fi
+
+fi
+
+
+## Ask for confirmation to install the gema server
 
 echo "This sript will install an AssaultCube lua server with wesen's gema mod to $outputDirectory. Continue? (Yes|No)"
 read continueInstallation;
@@ -44,12 +73,13 @@ if [ "$continueInstallation" != "yes" ] && [ "$continueInstallation" != "y" ]; t
 fi
 
 
+## Install AssaultCube Server
+
 cd "$outputDirectory"
 mkdir "tmp"
 
 apt-get update
 
-# Install AssaultCube
 echo "Installing AssaultCube server dependencies"
 apt-get install -y libsdl1.2debian
 
@@ -61,7 +91,8 @@ tar -xvf tmp/AssaultCube_v1.2.0.2.tar.bz2 -C ./
 mv AssaultCube_v1.2.0.2 lua_server
 
 
-# Install Lua mod
+## Install Lua mod
+
 echo "Installing packages that are necessary to build lua mod"
 apt-get install -y lib32z1-dev g++ lua5.1-dev unzip
 
@@ -74,8 +105,10 @@ echo "Extracting lua mod"
 unzip master.zip
 
 echo "Building lua mod"
-# "Fix" compile error in Lua mod and build the executable
+
+# "Fix" compile error in Lua mod by commenting out the line below and build the executable
 sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/" AC-Lua-master/src/tools.h
+
 cd AC-Lua-master
 sh build.sh
 
@@ -85,25 +118,16 @@ mv linux_release/linux_64_server ../../lua_server/bin_unix/linux_64_server
 cd ../..
 
 
-# Install database
-echo "Installing mariadb-server"
+## Install database
 
 # TODO: Detect existing mariadb/mysql installation and ask for root password
+
+echo "Installing mariadb-server"
 apt-get install -y mariadb-server
 
 echo "Configuring database"
-
 echo "Setting root user password to 'root'"
 mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
-
-echo "Restricting root user login to localhost"
-mysql -u root -Bse "DELETE FROM mysql.user WHERE User='root' AND Host NOT IN ('localhost', '127.0.0.1', '::1');"
-
-echo "Deleting users without user name"
-mysql -u root -Bse "DELETE FROM mysql.user WHERE User='';"
-
-echo "Removing test data base"
-mysql -u root -Bse "DELETE FROM mysql.db WHERE Db='test' OR Db='test_%';"          
 
 # Import database
 echo "Initializing database for wesen's gema mod"
@@ -120,7 +144,8 @@ sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY 'password';
 mysql -u root -Bse "$sql"
 
 
-# Install wesen gema mod
+## Install wesen's gema mod
+
 echo "Installing dependencies for wesen's gema mod"
 apt-get install -y lua-filesystem lua-sql-mysql
 
@@ -129,22 +154,23 @@ read copyGemaMod
 
 copyGemaMod=$(echo "$copyGemaMod" | tr '[:upper:]' '[:lower:]')
 
-if [ "copyGemaMod" == "yes" ] || [ "copyGemaMod" == "y" ]
-then
+if [ "$copyGemaMod" == "yes" ] || [ "$copyGemaMod" == "y" ]; then
 
   # TODO: Make current user own the directory instead of root
+  echo "Copying gema mod ..."
   cp -r "$installerDirectory/lua" "lua_server"
 
 fi
 
+
+## Delete unnecessary AssaultCube files
 
 echo "Delete unnecessary files from AssaultCube folder? (Yes|No)"
 read deleteFiles
 
 deleteFiles=$(echo "$deleteFiles" | tr '[:upper:]' '[:lower:]')
 
-if [ "$deleteFiles" == "yes" ] || [ "$deleteFiles" == "y" ]
-then
+if [ "$deleteFiles" == "yes" ] || [ "$deleteFiles" == "y" ]; then
 
   echo "Removing unnecessary files from AssaultCube folder ..."
 
@@ -202,7 +228,8 @@ then
 fi
 
 
-# Delete temporary files
+## Delete temporary files
+
 echo "Delete the temporary files? (Yes|No)"
 read deleteTemporaryFiles
 
@@ -214,8 +241,7 @@ if [ "$deleteTemporaryFiles" == "yes" ] || [ "$deleteTemporaryFiles" == "y" ]; t
 fi
 
 
-# TODO: remove default maps?
-# TODO: Configure server? => Show message how to configure server and how to start server
-# Start the server
-# cd lua_server
-# sh server.sh
+## Print information
+
+echo "Go to https://assault.cubers.net/docs/server.html to learn how to configure your server"
+echo "Navigate to $outputDirectory and type \"sh server.sh\" to start the server"
