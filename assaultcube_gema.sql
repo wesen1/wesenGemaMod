@@ -75,7 +75,10 @@ CREATE TABLE `records` (
   `id` int(11) NOT NULL,
   `milliseconds` int(11) NOT NULL,
   `player` int(11) NOT NULL,
-  `map` int(11) NOT NULL
+  `map` int(11) NOT NULL,
+  `weapon_id` int(11) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  `created_at` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --

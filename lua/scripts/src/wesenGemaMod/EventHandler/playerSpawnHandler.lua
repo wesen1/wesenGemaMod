@@ -70,7 +70,13 @@ end
 -- @tparam int _cn The client number of the player who spawned
 --
 function PlayerSpawnHandler:onPlayerSpawn(_cn)
-  self.parentGemaMod:getPlayers()[_cn]:setStartTime(getsvtick());
+
+  local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
+
+  spawnedPlayer:setStartTime(getsvtick());
+  spawnedPlayer:setTeam(getteam(_cn));
+  spawnedPlayer:setWeapon(getweapon(_cn));
+
 end
 
 

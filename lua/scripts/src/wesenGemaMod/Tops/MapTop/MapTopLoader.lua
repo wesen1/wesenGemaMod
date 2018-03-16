@@ -83,7 +83,7 @@ function MapTopLoader:fetchRecords(_dataBase, _mapName)
     return {};
   end
 
-  local sql = "SELECT milliseconds, players.id, names.name, ips.ip "
+  local sql = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
            .. "FROM records "
            .. "INNER JOIN maps ON records.map = maps.id "
            .. "INNER JOIN players ON records.player = players.id "
@@ -101,7 +101,11 @@ function MapTopLoader:fetchRecords(_dataBase, _mapName)
     player:setId(row.id);
 
     local milliseconds = tonumber(row.milliseconds);
-    local record = MapRecord:__construct(player, milliseconds, self.parentMapTop, index);
+    local weapon_id = tonumber(row.weapon_id);
+    local team_id = tonumber(row.team_id);
+    local created_at = tonumber(created_at_timestamp);
+    local record = MapRecord:__construct(player, milliseconds, weapon_id, team_id, self.parentMapTop, index);
+    record:setCreatedAt(created_at);
 
     table.insert(records, record);
 

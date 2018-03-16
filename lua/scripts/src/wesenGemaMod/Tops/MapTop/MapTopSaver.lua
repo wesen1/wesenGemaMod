@@ -57,11 +57,14 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
 
     -- insert new record
     local sql = "INSERT INTO records "
-             .. "(milliseconds, player, map) "
+             .. "(milliseconds, player, map, weapon_id, team_id, created_at) "
              .. "VALUES (" 
                .. _record:getMilliseconds() .. ","
                .. player:getId() .. ","
-               .. mapId
+               .. mapId .. ","
+               .. _record:getWeapon() .. ","
+               .. _record:getTeam() .. ","
+               .. "FROM_UNIXTIME(" .. _record:getCreatedAt() .. ")"
              .. ");";
 
     _dataBase:query(sql, false);
@@ -72,7 +75,11 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
 
     -- update existing record
     local sql = "UPDATE records "
-             .. "SET milliseconds = " .. _record:getMilliseconds() .. " "
+             .. "SET "
+             .. "milliseconds = " .. _record:getMilliseconds() .. ","
+             .. "weapon_id = " .. _record:getWeapon() .. ","
+             .. "team_id = " .. _record:getTeam() .. ","
+             .. "created_at = FROM_UNIXTIME(" .. _record:getCreatedAt() .. ") "
              .. "WHERE id = " .. recordId .. ";";
 
     _dataBase:query(sql, false);

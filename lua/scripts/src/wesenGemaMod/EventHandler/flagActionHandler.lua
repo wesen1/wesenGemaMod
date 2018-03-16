@@ -108,7 +108,13 @@ function FlagActionHandler:registerRecord(_cn, _endTime)
     return;
   end
 
-  local record = MapRecord:__construct(TableUtils:copy(scorePlayer), delta, self.parentGemaMod:getMapTop());
+  local record = MapRecord:__construct(
+                                  TableUtils:copy(scorePlayer), 
+                                  delta,
+                                  scorePlayer:getWeapon(),
+                                  scorePlayer:getTeam(),
+                                  self.parentGemaMod:getMapTop()
+  );
   record:printScoreRecord();
   self.parentGemaMod:getMapTop():addRecord(record);
 

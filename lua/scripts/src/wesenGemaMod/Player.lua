@@ -52,6 +52,20 @@ Player.level = 0;
 Player.startTime = 0;
 
 ---
+-- The current team of the player
+--
+-- @tfield int team
+--
+Player.team = -1;
+
+---
+-- The current weapon of the player
+--
+-- @tfield int weapon
+--
+Player.weapon = -1;
+
+---
 -- The color of the texts that the player says to other clients
 --
 -- @tfield string textColor
@@ -77,6 +91,8 @@ function Player:__construct(_name, _ip)
   instance.ip = _ip;
   instance.level = 0;
   instance.startTime = 0;
+  instance.team = -1;
+  instance.weapon = -1;
 
   return instance;
 
@@ -173,6 +189,42 @@ end
 --
 function Player:setStartTime(_startTime)
   self.startTime = _startTime;
+end
+
+---
+-- Returns the current team of the player.
+--
+-- @treturn int The current team of the player
+--
+function Player:getTeam()
+  return self.team;
+end
+
+---
+-- Sets the current team of the player.
+--
+-- @tparam int _team The current team of the player
+--
+function Player:setTeam(_team)
+  self.team = _team;
+end
+
+---
+-- Returns the current weapon of the player.
+--
+-- @treturn int The current weapon of the player
+--
+function Player:getWeapon()
+  return self.weapon;
+end
+
+---
+-- Sets the current weapon of the player.
+--
+-- @tparam int _weapon The current weapon of the player
+--
+function Player:setWeapon(_weapon)
+  self.weapon = _weapon;
 end
 
 ---
