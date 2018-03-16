@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Install the lua server with the install script
-cd /vagrant
-./install.sh /home/vagrant <<END
+/vagrant/install.sh /home/vagrant <<END
+y
 y
 n
 y

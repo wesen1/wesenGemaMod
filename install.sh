@@ -1,55 +1,101 @@
 #!/bin/bash
 
-# TODO: Default: supress output, if --verbose don't supress output
-# TODO: sudo apt-get install wget tr dirname id read ??
-
-## Check whether the user is root
+###################
+# Functions
+###################
 
 #
-# If the user is not root abort
+# Returns whether the script was executed with root.
 # Source: https://stackoverflow.com/a/21372328
 #
-if [[ $(id -u) != 0 ]]; then
+# @return Bool True: User is root
+#              False: User is not root
+#
+isRoot()
+{
+  if [[ $(id -u) != 0 ]]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+#
+# Returns an absolute path from a path string.
+#
+# @param String $1 The path string
+#
+getAbsolutePath()
+{
+  pathString="$1"
+
+  if [[ $pathString == "/"* ]]; then
+
+    # If the path starts with a slash it is already an absolute path
+    absoluteDirectory=$pathString
+  else
+    # If the path does not start with a slash it is a relative path
+    # Therefore the current working directory (absolute path) is added in front of it
+    absoluteDirectory="$PWD/$pathString"
+  fi
+
+  echo $absoluteDirectory
+}
+
+#
+# Asks a yes no question and returns the user decision.
+#
+# @param String $1 The yes/no question
+#
+# @return int 0: The user answerd yes
+#             1: The user answered no
+#
+askYesNoQuestion()
+{
+  echo "$1 (Yes|No)"
+  read userDecision
+
+  #
+  # Convert user input to lowercase
+  # Source: https://stackoverflow.com/a/11392488
+  #  
+  userDecision=$(echo "$userDecision" | tr '[:upper:]' '[:lower:]')
+
+  if [[ "$userDecision" == "yes" ]] || [[ "$userDecision" == "y" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+
+###################
+# Script
+###################
+
+# TODO: Default: supress output, if --verbose don't supress output
+
+## Check whether the user is root
+if ! $(isRoot); then
   echo "Please run as root"
   exit
 fi
 
 
-## Determine the installer directory
+## Determine the directories
 
 # Argument $0 is the path to the script
-directoryName="$(dirname $0)"
+installerDirectory="$(getAbsolutePath $(dirname $0))"
 
-if [[ $directoryName == "/"* ]]; then
-  # If the script path starts with a slash it is an absolute path
-  # Therefore the path to the installer directory is the same
-  installerDirectory=$directoryName
-else
-  # If the script path does not start with a slash it is a relative path
-  # Therefore the current working directory (absolute path) is added in front of it
-  installerDirectory="$PWD/$directoryName"
-fi
+# Argument $1 is the output directory as specified by the user
+outputDirectory="$(getAbsolutePath $1)"
 
-
-## Determine the output directory
-
-# Argument $1 is the output directory
-outputDirectory=$1
-
-if [[ $outputDirectory == "/"* ]]; then
-  outputDirectory=$outputDirectory
-else
-  outputDirectory="$PWD/$outputDirectory"
-fi
 
 if [ ! -d $outputDirectory ]; then
 
-  echo "The output directory $outputDirectory doesn't exist. Shall it be created? (Yes|No)"
-  read createOutputDirectory
-  createOutputDirectory=$(echo "$createOutputDirectory" | tr '[:upper:]' '[:lower:]')
-
-  if [ "$createOutputDirectory" == "yes" ] || [ "$createOutputDirectory" == "y" ]; then
-    mkdir -p $outputDirectory
+  question="The output directory $outputDirectory doesn't exist. Shall it be created?"
+  if askYesNoQuestion "$question"; then
+    mkdir -p "$outputDirectory"
   else
     exit
   fi
@@ -58,17 +104,8 @@ fi
 
 
 ## Ask for confirmation to install the gema server
-
-echo "This sript will install an AssaultCube lua server with wesen's gema mod to $outputDirectory. Continue? (Yes|No)"
-read continueInstallation;
-
-#
-# Convert user input to lowercase
-# Source: https://stackoverflow.com/a/11392488
-#
-continueInstallation=$(echo "$continueInstallation" | tr '[:upper:]' '[:lower:]')
-
-if [ "$continueInstallation" != "yes" ] && [ "$continueInstallation" != "y" ]; then
+question="This sript will install an AssaultCube lua server with wesen's gema mod to $outputDirectory. Continue?"
+if ! askYesNoQuestion "$question"; then
   exit
 fi
 
@@ -119,29 +156,38 @@ cd ../..
 
 
 ## Install database
+question="Shall the database for wesen's gema mod be installed?"
+if askYesNoQuestion "$question"; then
 
-# TODO: Detect existing mariadb/mysql installation and ask for root password
+  #
+  # Check whether mysql or mariadb is already installed
+  # Source: https://stackoverflow.com/a/677212s
+  #
+  if ! hash mysql >/dev/null 2>&1; then
 
-echo "Installing mariadb-server"
-apt-get install -y mariadb-server
+    echo "Installing mariadb-server"
+    apt-get install -y mariadb-server
 
-echo "Configuring database"
-echo "Setting root user password to 'root'"
-mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
+    echo "Setting root user password to 'root'"
+    mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
 
-# Import database
-echo "Initializing database for wesen's gema mod"
-sql="CREATE DATABASE assaultcube_gema;
-     USE assaultcube_gema;
-     SOURCE $installerDirectory/assaultcube_gema.sql;"
-mysql -u root -Bse "$sql"
+  fi
 
-# Create new user for lua mod
-echo "Creating a new user for wesen's gema mod"
-sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY 'password';
-     GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
-     FLUSH PRIVILEGES;"
-mysql -u root -Bse "$sql"
+  # Import database
+  echo "Initializing database for wesen's gema mod"
+  sql="CREATE DATABASE assaultcube_gema;
+       USE assaultcube_gema;
+       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  mysql -u root -Bse "$sql"
+
+  # Create new user for lua mod
+  echo "Creating a new user for wesen's gema mod"
+  sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY 'password';
+       GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
+       FLUSH PRIVILEGES;"
+  mysql -u root -Bse "$sql"
+
+fi
 
 
 ## Install wesen's gema mod
@@ -149,14 +195,9 @@ mysql -u root -Bse "$sql"
 echo "Installing dependencies for wesen's gema mod"
 apt-get install -y lua-filesystem lua-sql-mysql
 
-echo "Copy the gema mod to lua/scripts folder? (Yes|No)"
-read copyGemaMod
+question="Copy the gema mod to lua/scripts folder?"
+if askYesNoQuestion "$question"; then
 
-copyGemaMod=$(echo "$copyGemaMod" | tr '[:upper:]' '[:lower:]')
-
-if [ "$copyGemaMod" == "yes" ] || [ "$copyGemaMod" == "y" ]; then
-
-  # TODO: Make current user own the directory instead of root
   echo "Copying gema mod ..."
   cp -r "$installerDirectory/lua" "lua_server"
 
@@ -164,13 +205,8 @@ fi
 
 
 ## Delete unnecessary AssaultCube files
-
-echo "Delete unnecessary files from AssaultCube folder? (Yes|No)"
-read deleteFiles
-
-deleteFiles=$(echo "$deleteFiles" | tr '[:upper:]' '[:lower:]')
-
-if [ "$deleteFiles" == "yes" ] || [ "$deleteFiles" == "y" ]; then
+question="Delete unnecessary files from AssaultCube folder?"
+if askYesNoQuestion "$question"; then
 
   echo "Removing unnecessary files from AssaultCube folder ..."
 
@@ -229,13 +265,8 @@ fi
 
 
 ## Delete temporary files
-
-echo "Delete the temporary files? (Yes|No)"
-read deleteTemporaryFiles
-
-deleteTemporaryFiles=$(echo "$deleteTemporaryFiles" | tr '[:upper:]' '[:lower:]')
-
-if [ "$deleteTemporaryFiles" == "yes" ] || [ "$deleteTemporaryFiles" == "y" ]; then
+question="Delete the temporary files?"
+if askYesNoQuestion "$question"; then
   echo "Removing temporary files ..."
   rm -rf "$outputDirectory/tmp"
 fi
