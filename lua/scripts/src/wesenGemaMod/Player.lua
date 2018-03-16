@@ -377,7 +377,7 @@ function Player:savePlayerData(_dataBase)
   local ipId = self:fetchIpId(_dataBase);
   local playerId = self:fetchPlayerId(_dataBase);
 
-  if (self.playerId == nil) then
+  if (playerId == nil) then
 
     local sql = "INSERT INTO players "
        .. "(name, ip) "
