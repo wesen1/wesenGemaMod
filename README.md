@@ -7,16 +7,11 @@ Gema mod for AssaultCube Lua servers.
 The records are saved in a minimal database and the commands are built in a way that allows you to easily add new commands.
 
 
-### Known problems:
-
-* When players use "/gonext" the time displayed in the vote will be some random big number
-* Players can not vote too often when their votes do not pass a few times in a row
-
-
 ## Installation
 
-- Check out bootstrap.sh
-- Adjust main.lua (database information)
+````./install.sh <output directory>````
+
+* Adjust main.lua (database information) and adjust database user password
 
 
 ## Setup development environment

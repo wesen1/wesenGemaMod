@@ -18,11 +18,7 @@ vagrant:
 
 General:
 
-  - Add documentation for getters/setters
-  - Update documentation
-  - Check event handleres and possibly export functions to own classes
   - Add graphic of database structure to README
-  - Split bootstrap.sh into dependecies.sh and setup.sh
   - Combine README.md files of old gema mod version and new one
 
 
