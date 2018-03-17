@@ -71,10 +71,11 @@ end
 -- @tparam DataBase _dataBase The database
 -- @tparam string _mapName The map name
 -- @tparam MapTop _mapTop The map top
+-- @tparam MapRotEditor _mapRotEditor The map rot editor
 --
-function Map:removeMap(_dataBase, _mapName, _mapTop)
+function Map:removeMap(_dataBase, _mapName, _mapTop, _mapRotEditor)
 
-  local success = MapRemover:removeMap(_dataBase, _mapName, self:fetchMapId(_dataBase, _mapName), _mapTop);
+  local success = MapRemover:removeMap(_dataBase, _mapName, _mapTop, self:fetchMapId(_dataBase, _mapName), _mapRotEditor);
 
   if (not success) then
     Output:print(Output:getColor("error") .. "Error: Could not remove the map '" .. _mapName .. '"');

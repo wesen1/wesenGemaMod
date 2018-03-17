@@ -96,6 +96,8 @@ function PlayerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize
   elseif (_uploadError == UE_NOERROR) then
     -- if upload is not rejected
     Map:saveMapName(self.parentGemaMod:getDataBase(), _mapName);
+    self.parentGemaMod:getMapRotEditor():addMapToMapRotConfigFile(_mapName);
+    self.parentGemaMod:getMapRotEditor():addMapToLoadedMapRot(_mapName);
 
   end
 

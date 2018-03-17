@@ -10,6 +10,7 @@ local MapTop = require("Tops/MapTop/MapTop");
 local CommandHandler = require("CommandHandler/CommandHandler");
 local Player = require("Player");
 local EventHandler = require("EventHandler");
+local MapRotEditor = require("MapRotEditor");
 
 ---
 -- Wrapper class for the gema mod.
@@ -54,6 +55,13 @@ GemaMod.players = {};
 --
 GemaMod.eventHandler = "";
 
+---
+-- The map rot editor
+--
+-- @ŧfield MapRotEditor mapRotEditor
+--
+GemaMod.mapRotEditor = "";
+
 
 ---
 -- Gema mod constructor.
@@ -74,6 +82,7 @@ function GemaMod:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.mapTop = MapTop:__construct(instance);
   instance.players = {};
   instance.eventHandler = EventHandler:__construct(instance);
+  instance.mapRotEditor = MapRotEditor:__construct("config/maprot.cfg");
 
   return instance;
 
@@ -172,6 +181,24 @@ function GemaMod:setEventHandler(_eventHandler)
   self.eventHandler = _eventHandler;
 end
 
+---
+-- Returns the map rot editor.
+--
+-- @treturn MapRotEditor mapRotEditor
+--
+function GemaMod:getMapRotEditor()
+  return self.mapRotEditor;
+end
+
+---
+-- Sets the map rot editor.
+--
+-- @tparam MapRotEditor _mapRotEditor The map rot editor
+--
+function GemaMod:setMapRotEditor(_mapRotEditor)
+  self.mapRotEditor = _mapRotEditor;
+end
+
 
 -- Class Methods
 
@@ -181,6 +208,11 @@ end
 function GemaMod:initialize()
   print("Loading commands ...");
   self.commandHandler:loadCommands();
+
+  print("Loading gema maps ...");
+  self.mapRotEditor:addExistingGemaMapsToDataBase(self.dataBase, "packages/maps/servermaps/incoming");
+  self.mapRotEditor:generateMapRotFromExistingMaps(self.dataBase);
+
 end
 
 ---

@@ -22,13 +22,14 @@ local MapRemover = {};
 --
 -- @tparam DataBase _dataBase The database
 -- @tparam string _mapName The name of the map
--- @tparam int _mapId The id of the map
 -- @tparam MapTop _mapTop The map top
+-- @tparam int _mapId The id of the map
+-- @tparam MapRotEditor _mapRotEditor The map rot editor
 --
 -- @treturn bool True: The map was successfully removed
 --               False: The map was not removed
 --
-function MapRemover:removeMap(_dataBase, _mapName, _mapId, _mapTop)
+function MapRemover:removeMap(_dataBase, _mapName, _mapTop, _mapId, _mapRotEditor)
 
   if (self:mapHasRecords(_dataBase, _mapName, _mapTop)) then
     return false;
@@ -36,8 +37,11 @@ function MapRemover:removeMap(_dataBase, _mapName, _mapId, _mapTop)
 
     -- remove map from database
     local sql = "DELETE FROM maps "
-                 .. "WHERE id=" .. _mapId .. ";";
+             .. "WHERE id=" .. _mapId .. ";";
     _dataBase:query(sql, false);
+
+    _mapRotEditor:removeMapFromMapRotConfigFile(_mapName);
+    _mapRotEditor:removeMapFromLoadedMapRot(_mapName);
 
     -- remove map files
     removemap(_mapName, _mapTop);
