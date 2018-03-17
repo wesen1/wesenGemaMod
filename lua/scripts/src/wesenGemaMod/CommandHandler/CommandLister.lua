@@ -267,7 +267,7 @@ function CommandLister:addGroupName(_level, _groupName)
   self.groupedCommands[_level][_groupName] = {};
 
   table.insert(self.sortedCommandGroupNames[_level], _groupName);
-  table.sort(self.sortedCommandGroupNames);
+  table.sort(self.sortedCommandGroupNames[_level]);
 
 end
 

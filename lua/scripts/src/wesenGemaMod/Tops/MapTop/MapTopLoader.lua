@@ -102,10 +102,10 @@ function MapTopLoader:fetchRecords(_dataBase, _mapName)
     local player = Player:__construct(row.name, row.ip);
     player:setId(row.id);
 
-    local milliseconds = tonumber(row.milliseconds);
-    local weapon_id = tonumber(row.weapon_id);
-    local team_id = tonumber(row.team_id);
-    local created_at = tonumber(created_at_timestamp);
+    local milliseconds = tonumber(row["milliseconds"]);
+    local weapon_id = tonumber(row["weapon_id"]);
+    local team_id = tonumber(row["team_id"]);
+    local created_at = tonumber(row["created_at_timestamp"]);
     local record = MapRecord:__construct(player, milliseconds, weapon_id, team_id, self.parentMapTop, index);
     record:setCreatedAt(created_at);
 

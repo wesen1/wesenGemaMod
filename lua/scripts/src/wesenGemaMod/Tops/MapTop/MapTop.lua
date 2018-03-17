@@ -306,7 +306,11 @@ end
 --
 function MapTop:predictRank(_milliseconds)
 
-  for rank, record in ipairs(self.mapTopCacher:getRecords()) do
+  local mapRecords = self.mapTopCacher:getRecords();
+
+  for rank = 1, #mapRecords, 1 do
+
+    local record = mapRecords[rank];
 
     if (record:getMilliseconds() > _milliseconds) then
       return rank;

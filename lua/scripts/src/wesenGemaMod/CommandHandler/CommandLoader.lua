@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+local lfs = require("lfs");
+
 ---
 -- Loads all commands from the Commands directory.
 --
@@ -85,7 +87,6 @@ end
 function CommandLoader:getCommandClassNames()
 
   local commandClassNames = {};
-  local lfs = require("lfs");
 
   -- iterate over each file in the Commands directory
   for luaFile in lfs.dir("lua/scripts/src/wesenGemaMod/Commands") do

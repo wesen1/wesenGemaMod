@@ -127,10 +127,10 @@ function CommandParser:executeCommand(_command, _arguments, _cn)
   if (player:getLevel() >= _command:getRequiredLevel()) then
 
     if (#_arguments < _command:getNumberOfRequiredArguments()) then
-      Output:print(Output:getColor("error") .. "Error: Not enough arguments.");
+      Output:print(Output:getColor("error") .. "Error: Not enough arguments.", _cn);
 
     elseif (#_arguments > _command:getNumberOfArguments()) then
-      Output:print(Output:getColor("error") .. "Error: Too many arguments");
+      Output:print(Output:getColor("error") .. "Error: Too many arguments", _cn);
 
     else
       _command:execute(_cn, _arguments);
