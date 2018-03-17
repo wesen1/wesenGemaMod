@@ -77,7 +77,7 @@ function FlagActionHandler:onFlagAction(_cn, _action, _flag)
 
   -- instant flag reset (gameplay affecting)
   if (_action == FA_DROP or _action == FA_LOST) then
-    -- self:resetFlag(_cn, _flag)
+    self:resetFlag(_cn, _flag)
 
   elseif (_action == FA_SCORE) then
     self:registerRecord(_cn, getsvtick());
