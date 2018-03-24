@@ -34,6 +34,13 @@ MapChecker.codes = {};
 -- Set the codes after initializing the attribute as empty table to avoid LDoc error messages
 MapChecker.codes = {"g", "3e", "m", "a@4"};
 
+---
+-- The maxmium map name length
+--
+-- @tfield int maximumMapNameLength
+--
+MapChecker.maximumMapNameLength = 64;
+
 
 -- Getters and setters
 
@@ -156,6 +163,41 @@ function MapChecker:mapNameContainsCodes(_mapName)
     if (match == #self.codes) then
       return true;
     end
+  end
+
+end
+
+---
+-- Checks whether a map name is valid.
+--
+-- @tparam string _mapName The map name
+--
+-- @treturn bool True: The name is a valid map name
+--               False: The name is not a valid map name
+--
+function MapChecker:isValidMapName(_mapName)
+
+  -- Check whether the map name is longer than the maximum allowed length
+  if (string.len(_mapName) > self.maximumMapNameLength) then
+    return false;
+  end
+
+  -- Check whether the map name contains forbidden characters
+  -- Map names may contain only '-', '_', '.', letters and digits
+
+  ---
+  -- See https://www.lua.org/pil/20.2.html
+  --
+  -- ^ = Match all characters that are not inside the pattern []
+  -- %a = letters
+  -- %d = digits
+  --
+  local pattern = "^[%a%d-_.]";
+
+  if (_mapName:match(pattern) ~= nil) then
+    return true;
+  else
+    return false;
   end
 
 end

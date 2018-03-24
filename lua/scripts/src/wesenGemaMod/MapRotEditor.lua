@@ -81,9 +81,12 @@ function MapRotEditor:addExistingGemaMapsToDataBase(_dataBase, _mapsDirectory)
 
       local mapName = luaFile:gsub(".cgz", "");
 
-      print("Loading " .. mapName);
+      if (not MapChecker:isValidMapName(mapName)) then
+        print("Deleting " .. mapName);
+        os.remove(_mapsDirectory .. "/" .. luaFile);
 
-      if MapChecker:isGema(mapName) then
+      elseif MapChecker:isGema(mapName) then
+        print("Loading " .. mapName);
         Map:saveMapName(_dataBase, mapName);
       end
 
