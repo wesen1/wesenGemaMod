@@ -74,7 +74,10 @@ function MapChangeHandler:onMapChange(_mapName)
 
   mapTop:setMapName(_mapName);
   mapTop:loadRecords(_mapName);
-  mapTop:printMapStatistics();
+
+  for cn, player in pairs(self.parentGemaMod:getPlayers()) do
+    mapTop:printMapStatistics(cn);
+  end
 
 end
 
