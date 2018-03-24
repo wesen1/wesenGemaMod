@@ -139,7 +139,7 @@ function PlayerConnectHandler:countConnections(_cn)
 
   for i = 0, 15, 1 do
 
-    if isconnected(i) and getip(i) == ip then
+    if (isconnected(i) and getip(i) == ip) then
       amountConnections = amountConnections + 1
     end
 
