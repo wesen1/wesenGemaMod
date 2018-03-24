@@ -1,6 +1,6 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2018 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
@@ -8,9 +8,9 @@
 ---
 -- Class that handles player spawns.
 --
--- @type PlayerSpawnHandler 
+-- @type PlayerSpawnAfterHandler 
 --
-local PlayerSpawnHandler = {};
+local PlayerSpawnAfterHandler = {};
 
 
 ---
@@ -18,20 +18,20 @@ local PlayerSpawnHandler = {};
 --
 -- @tfield GemaMod parentGemaMod
 --
-PlayerSpawnHandler.parentGemaMod = "";
+PlayerSpawnAfterHandler.parentGemaMod = "";
 
 
 ---
--- PlayerSpawnHandler constructor.
+-- PlayerSpawnAfterHandler constructor.
 --
 -- @tparam GemaMod _parentGemaMod The parent gema mod
 --
--- @treturn PlayerSpawnHandler The PlayerSpawnHandler instance
+-- @treturn PlayerSpawnAfterHandler The PlayerSpawnAfterHandler instance
 --
-function PlayerSpawnHandler:__construct(_parentGemaMod)
+function PlayerSpawnAfterHandler:__construct(_parentGemaMod)
 
   local instance = {};
-  setmetatable(instance, {__index = PlayerSpawnHandler});
+  setmetatable(instance, {__index = PlayerSpawnAfterHandler});
 
   instance.parentGemaMod = _parentGemaMod;
 
@@ -47,7 +47,7 @@ end
 --
 -- @treturn GemaMod The parent gema mod
 --
-function PlayerSpawnHandler:getParentGemaMod()
+function PlayerSpawnAfterHandler:getParentGemaMod()
   return self.parentGemaMod;
 end
 
@@ -56,7 +56,7 @@ end
 --
 -- @tparam GemaMod _parentGemaMod The parent gema mod
 --
-function PlayerSpawnHandler:setParentGemaMod(_parentGemaMod)
+function PlayerSpawnAfterHandler:setParentGemaMod(_parentGemaMod)
   self.parentGemaMod = _parentGemaMod;
 end
 
@@ -64,18 +64,19 @@ end
 -- Class Methods
 
 ---
--- Event handler which is called when a player spawns.
--- Initializes the start time of the player that spawned
+-- Event handler which is called after a player spawned.
+-- Sets the players team and weapon.
 --
 -- @tparam int _cn The client number of the player who spawned
 --
-function PlayerSpawnHandler:onPlayerSpawn(_cn)
+function PlayerSpawnAfterHandler:onPlayerSpawnAfter(_cn)
 
   local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
 
-  spawnedPlayer:setStartTime(getsvtick());
+  spawnedPlayer:setWeapon(getprimary(_cn));
+  spawnedPlayer:setTeam(getteam(_cn));
 
 end
 
 
-return PlayerSpawnHandler;
+return PlayerSpawnAfterHandler;

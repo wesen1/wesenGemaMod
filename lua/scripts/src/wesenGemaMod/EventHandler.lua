@@ -15,6 +15,7 @@ local PlayerRoleChangeHandler = require("EventHandler/playerRoleChangeHandler");
 local PlayerSayTextHandler = require("EventHandler/playerSayTextHandler");
 local PlayerSendMapHandler = require("EventHandler/playerSendMapHandler");
 local PlayerSpawnHandler = require("EventHandler/playerSpawnHandler");
+local PlayerSpawnAfterHandler = require("EventHandler/PlayerSpawnAfterHandler");
 
 ---
 -- Wrapper class for the event handlers.
@@ -94,6 +95,13 @@ EventHandler.playerSendMapHandler = "";
 --
 EventHandler.playerSpawnHandler = "";
 
+---
+-- The player spawn after event handler
+--
+-- @tfield PlaySpawnAfterHandler playerSpawnAfterHandler
+--
+EventHandler.playerSpawnAfterHandler = "";
+
 
 ---
 -- EventHandler constructor.
@@ -117,6 +125,7 @@ function EventHandler:__construct(_parentGemaMod)
   instance.playerSayTextHandler = PlayerSayTextHandler:__construct(_parentGemaMod);
   instance.playerSendMapHandler = PlayerSendMapHandler:__construct(_parentGemaMod);
   instance.playerSpawnHandler = PlayerSpawnHandler:__construct(_parentGemaMod);
+  instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler:__construct(_parentGemaMod);
 
   return instance;
 
@@ -303,6 +312,24 @@ end
 --
 function EventHandler:setPlayerSpawnHandler(_playerSpawnHandler)
   self.playerSpawnHandler = _playerSpawnHandler;
+end
+
+---
+-- Returns the player spawn after handler.
+--
+-- @treturn PlayerSpawnAfterHandler The player spawn after handler
+--
+function EventHandler:getPlayerSpawnAfterHandler()
+  return self.playerSpawnAfterHandler;
+end
+
+---
+-- Sets the player spawn after handler.
+--
+-- @tparam PlayerSpawnAfterHandler _playerSpawnAfterHandler The player spawn after handler
+--
+function EventHandler:setPlayerSpawnAfterHandler(_playerSpawnAfterHandler)
+  self.playerSpawnAfterHandler = _playerSpawnAfterHandler;
 end
 
 

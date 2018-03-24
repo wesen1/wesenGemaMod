@@ -380,5 +380,15 @@ function GemaMod:onPlayerSpawn(_cn)
   self.eventHandler:getPlayerSpawnHandler():onPlayerSpawn(_cn);
 end
 
+---
+-- Event handler which is called after a player spawned.
+-- Sets the players team and weapon.
+--
+-- @tparam int _cn The client number of the player who spawned
+--
+function GemaMod:onPlayerSpawnAfter(_cn)
+  self.eventHandler:getPlayerSpawnAfterHandler():onPlayerSpawnAfter(_cn);
+end
+
 
 return GemaMod;
