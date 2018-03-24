@@ -99,24 +99,44 @@ end
 --
 -- @tparam table _table The columns of a row in the format { [1] => [row1 entries], [2] => [row2 entries], ... }
 -- @tparam int _cn The player client number to which the table will be printed
+-- @tparam bool _isOneDimensionalTable Indicates whether the table is an one dimensional table
 --
-function TableOutput:printTable(_table, _cn)
+function TableOutput:printTable(_table, _cn, _isOneDimensionalTable)
 
-  local rows, longestRow, longestColumn = self:getRows(_table);
+  local rows = {};
+  local longestRow = 1;
+  local longestColumn = 1;
+
+  if (_isOneDimensionalTable) then
+    rows = _table;
+    longestRow = #_table[1];
+    longestColumn = #_table;
+
+  elseif (not _isOneDimensionalTable) then
+    rows, longestRow, longestColumn = self:getRows(_table);
+  end
+
+
   local widestEntries, entryWidths = self:getWidestEntries(rows);
 
 
   for y = 1, longestColumn, 1 do
 
     local rowString = "";
-
     local rowLength = 0;
 
-    for x, field in pairs(rows[y]) do
-      if (x > rowLength) then
-        rowLength = x;
+    if (not _isOneDimensionalTable) then
+
+      for x, field in pairs(rows[y]) do
+        if (x > rowLength) then
+          rowLength = x;
+        end
       end
+
+    else
+      rowLength = longestRow;
     end
+    
 
     for x = 1, longestRow, 1 do
 

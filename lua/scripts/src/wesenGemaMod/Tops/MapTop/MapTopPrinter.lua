@@ -6,6 +6,8 @@
 --
 
 local Output = require("Outputs/Output");
+local TableOutput = require("Outputs/TableOutput");
+local WeaponNameFetcher = require("WeaponNameFetcher");
 
 ---
 -- Handles printing of maptop related values.
@@ -95,17 +97,29 @@ function MapTopPrinter:printMapTop(_cn)
 
     local maxRankLength = string.len(startRank + limit);
 
+    local mapTopEntries = {};
+
     for i = startRank, startRank + limit do
 
       local rank = string.rep("0", maxRankLength - string.len(i)) .. i;
       local record = self.parentMapTop:getRecord(i);
-      local output = Output:getColor("mapRecordRank") .. rank .. ") "
-                  .. Output:getColor("mapRecordTime") .. record:getDisplayString()
-                  .. Output:getColor("mapRecordInfo") .. " by "
-                  .. Output:getColor("mapRecordName") .. record:getPlayer():getName();
-      Output:print(output, _cn);
+
+      local mapTopEntry = {
+        [1] = Output:getColor("mapRecordRank") .. rank .. ") "
+     .. Output:getColor("mapRecordTime") .. record:getDisplayString()
+     .. Output:getColor("mapRecordInfo") .. " by "
+     .. Output:getColor("mapRecordName") .. record:getPlayer():getName(),
+
+        [2] = self:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
+        
+        [3] = Output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", record:getCreatedAt())
+      }
+
+      table.insert(mapTopEntries, mapTopEntry);
 
     end
+
+    TableOutput:printTable(mapTopEntries, _cn, true);
 
   end
 
@@ -136,11 +150,30 @@ function MapTopPrinter:printMapStatistics(_cn)
       Output:getColor("mapRecordInfo") .. "The best record of this map is "
    .. Output:getColor("mapRecordTime") .. bestRecord:getDisplayString()
    .. Output:getColor("mapRecordInfo") .. " by "
-   .. Output:getColor("mapRecordName") .. bestRecord:getPlayer():getName(),
+   .. Output:getColor("mapRecordName") .. bestRecord:getPlayer():getName()
+   .. Output:getColor("mapRecordInfo") .. " with "
+   .. self:getTeamColor(bestRecord:getTeam()) .. WeaponNameFetcher:getWeaponName(bestRecord:getWeapon()),
       _cn
     );
 
   end
+
+end
+
+---
+-- Returns the color for a team.
+--
+-- @tparam int _teamId The team id
+--
+-- @treturn string The team color
+--
+function MapTopPrinter:getTeamColor(_teamId)
+
+  if (_teamId == TEAM_RVSF) then
+    return Output:getColor("teamRVSF");
+  elseif (_teamId == TEAM_CLA) then
+    return Output:getColor("teamCLA");
+  end 
 
 end
 
