@@ -5,16 +5,16 @@
 -- @license MIT
 --
 
-local FlagActionHandler = require("EventHandler/flagActionHandler");
-local MapChangeHandler = require("EventHandler/mapChangeHandler");
-local PlayerCallVoteHandler = require("EventHandler/playerCallVoteHandler");
-local PlayerConnectHandler = require("EventHandler/playerConnectHandler");
-local PlayerDisconnectHandler = require("EventHandler/playerDisconnectHandler");
-local PlayerNameChangeHandler = require("EventHandler/playerNameChangeHandler");
-local PlayerRoleChangeHandler = require("EventHandler/playerRoleChangeHandler");
-local PlayerSayTextHandler = require("EventHandler/playerSayTextHandler");
-local PlayerSendMapHandler = require("EventHandler/playerSendMapHandler");
-local PlayerSpawnHandler = require("EventHandler/playerSpawnHandler");
+local FlagActionHandler = require("EventHandler/FlagActionHandler");
+local MapChangeHandler = require("EventHandler/MapChangeHandler");
+local PlayerCallVoteHandler = require("EventHandler/PlayerCallVoteHandler");
+local PlayerConnectHandler = require("EventHandler/PlayerConnectHandler");
+local PlayerDisconnectHandler = require("EventHandler/PlayerDisconnectHandler");
+local PlayerNameChangeHandler = require("EventHandler/PlayerNameChangeHandler");
+local PlayerRoleChangeHandler = require("EventHandler/PlayerRoleChangeHandler");
+local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
+local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
+local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
 local PlayerSpawnAfterHandler = require("EventHandler/PlayerSpawnAfterHandler");
 
 ---
