@@ -281,6 +281,7 @@ end
 -- Calculates and returns the width of text that does not include special characters such as "\n" or "\t".
 --
 -- @tparam string _text The text
+-- @tparam int[] The font pixel widths in the format {[character] = width}
 --
 -- @treturn int The text width
 --
@@ -303,6 +304,7 @@ end
 -- Returns the width of a single character.
 --
 -- @tparam string _character The character
+-- @tparam int[] The font pixel widths in the format {[character] = width}
 --
 -- @treturn int The character width
 --
