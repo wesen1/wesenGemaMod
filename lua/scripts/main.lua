@@ -16,12 +16,11 @@ package.path = package.path .. ";./lua/scripts/src/wesenGemaMod/?.lua";
 
 local GemaMod = require("GemaMod");
 
--- Database login credentials
-local dataBaseUser = "assaultcube";
-local dataBasePassword = "password";
-local dataBaseName = "assaultcube_gema";
-
-local gemaMod = GemaMod:__construct(dataBaseUser, dataBasePassword, dataBaseName);
+local gemaMod = GemaMod:__construct(
+  cfg.getvalue("gemamod", "dataBaseUser"),
+  cfg.getvalue("gemamod", "dataBasePassword"),
+  cfg.getvalue("gemamod", "dataBaseName")
+);
 gemaMod:initialize();
 
 
