@@ -184,7 +184,7 @@ function CommandPrinter:printCommandList(_cn, _commandLister)
 
   end
 
-  TableOutput:printTable(rows, _cn);
+  TableOutput:printTable(rows, _cn, true);
 
 end
 
@@ -207,7 +207,9 @@ function CommandPrinter:printHelpText(_command, _cn)
       }
     }
 
-    if (_command:getNumberOfArguments() > 0) then
+    local commandHasArguments = _command:getNumberOfArguments() > 0;
+
+    if (commandHasArguments) then
 
       rows[3] = {
         Output:getColor("helpTitle") .. "Arguments",
@@ -216,7 +218,7 @@ function CommandPrinter:printHelpText(_command, _cn)
 
     end
 
-    TableOutput:printTable(rows, _cn);
+    TableOutput:printTable(rows, _cn, not commandHasArguments);
 
 end
 
