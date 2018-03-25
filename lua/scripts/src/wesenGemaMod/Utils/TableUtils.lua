@@ -82,6 +82,25 @@ function TableUtils:inTable(_needle, _haystack)
 end
 
 ---
+-- Returns the sum of values in a table.
+--
+-- @tparam int[] _table The table
+--
+-- @treturn int The sum of the values
+--
+function TableUtils:tableSum(_table)
+
+  local sum = 0;
+
+  for i, number in pairs(_table) do
+    sum = sum + number;
+  end
+
+  return sum;
+
+end
+
+---
 -- Returns a clone of a table.
 --
 -- source: https://gist.github.com/tylerneylon/81333721109155b2d244

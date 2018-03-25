@@ -6,6 +6,7 @@
 --
 
 local Output = require("Outputs/Output");
+local TableUtils = require("Utils/TableUtils");
 
 ---
 -- Handles outputs of tables to clients.
@@ -28,69 +29,168 @@ setmetatable(TableOutput, { __index = Output });
 --
 -- @treturn table The table with merged sub tables in the format { [1] => [row1 entries], [2] => [row2 entries], ... }
 --
-function TableOutput:getRows(_table)
+function TableOutput:getRows(_table, _rows, _insertRows, _insertColumns, _mainTableWidth)
 
-  local table = {};
-  local offsetY = 0;
-  local longestRow = 0;
-  local longestColumn = 0;
+  local rows = {};
+  local insertRows = {};
+  local insertColumns = {};
+  local isSubTable = false;
+  local startRow = 1;
+  local startColumn = 1;
+  local mainTableWidth = #_table[1];
 
-  for y, row in pairs (_table) do
+  if (_rows and _insertRows and _insertColumns and _mainTableWidth) then
+    rows = _rows;
+    insertRows = _insertRows;
+    insertColumns = _insertColumns;
+    mainTableWidth = _mainTableWidth;
+    isSubTable = true;
 
-    table[y + offsetY] = {};
+    local rowNumber = #rows + TableUtils:tableSum(insertRows);
+    local columnNumber = #rows[rowNumber] + 1;
 
-    for x, field in pairs (row) do
+    local numberOfInsertRows = insertRows[rowNumber];
+    if (numberOfInsertRows == nil or numberOfInsertRows < #_table - 1) then
+      insertRows[rowNumber] = #_table - 1;
+    end
 
-      if (type(field) == "table") then
+    if (insertColumns[columnNumber] == nil) then
+      insertColumns[columnNumber] = {};
+    end
+    insertColumns[columnNumber][rowNumber] = #_table;
 
-        local subTable = self:getRows(field);
+    local tableWidth = self:getTableWidth(_mainTableWidth, insertColumns);
 
-        for subY, subRow in pairs(subTable) do
+    -- Add empty columns for all rows above and the current row
+    for y = 1, rowNumber, 1 do
 
-          if (table[y + offsetY] == nil) then 
-            table[y + offsetY] = {};
-          end
+      local rowInsertColumns = self:getNumberOfInsertColumns(insertColumns, columnNumber, y);
 
-          for subX, subField in pairs(subRow) do
-            table[y + offsetY][x + subX - 1] = subField;
+      for x = tableWidth, startColumn + #_table + rowInsertColumns + 1, -1 do
+        rows[y][x] = rows[y][x - #_table];
+      end
 
-            if (x + subX - 1 > longestRow) then
-              longestRow = x + subX - 1;
-            end
-
-          end
-
-          if (subY ~= #subTable) then
-            offsetY = offsetY + 1;
-          end
-
-        end
-
-      else
-
-        local offsetX = 0;
-
-        while (table[y + offsetY][x + offsetX] ~= nil) do
-          offsetX = offsetX + 1;
-        end
-
-        table[y + offsetY][x + offsetX] = field;
-
-        if (x + offsetX > longestRow) then
-          longestRow = x + offsetX;
-        end
-
+      for x = startColumn + rowInsertColumns + 2, startColumn + #_table + rowInsertColumns + 1, 1 do
+        rows[y][x] = "";
       end
 
     end
 
-    if (y + offsetY > longestColumn) then
-      longestColumn = y + offsetY;
-    end
+    startRow = rowNumber;
+    startColumn = columnNumber;
 
   end
 
-  return table, longestRow, longestColumn;
+  local rowNumber = startRow
+
+  for y, row in pairs(_table) do
+
+    if (not isSubTable or rows[rowNumber] == nil) then
+
+      rows[rowNumber] = {};
+
+      if (isSubTable) then
+        for i = 1, startColumn - 1, 1 do
+          rows[rowNumber][i] = "";
+        end
+      end
+
+    end
+
+    local columnNumber = startColumn;
+
+    for x, field in pairs(_table[y]) do
+
+      if (type(field) == "table") then
+        self:getRows(field, rows, insertRows, insertColumns, mainTableWidth);
+      else
+        rows[rowNumber][columnNumber] = field;
+
+        if (not isSubTable) then
+          for i = 1, self:getNumberOfInsertColumns(insertColumns, columnNumber), 1 do
+            columnNumber = columnNumber + 1;
+            rows[rowNumber][columnNumber] = "";
+          end
+        end
+
+      end
+      
+      columnNumber = columnNumber + 1;
+
+    end
+
+    rowNumber = rowNumber + 1;
+
+  end
+
+  return rows;
+
+end
+
+---
+-- Calculates and returns the total table width.
+--
+-- @tparam int _mainTableWidth The width of the main table
+-- @tparam int[] _insertColumns The insert columns in the format {[x] = {[y] = amountInsertColumns}}
+--
+-- @treturn int The total table width
+--
+function TableOutput:getTableWidth(_mainTableWidth, _insertColumns)
+
+  local totalNumberOfInsertColumns = 0;
+
+  for x, numbersOfInsertColumns in pairs(_insertColumns) do
+    totalNumberOfInsertColumns = totalNumberOfInsertColumns + self:getNumberOfInsertColumns(_insertColumns, x);
+  end
+
+  return _mainTableWidth + totalNumberOfInsertColumns;
+
+end
+
+---
+-- Returns the maximum number of insert columns of all columns for a column.
+--
+-- @tparam int[] _insertColumns The insert columns in the format {[x] = {[y] = amountInsertColumns}}
+-- @tparam int _columnNumber The number of the column
+--
+-- @treturn int The maximum number of insert columns for this column
+--
+function TableOutput:getMaximumNumberOfInsertColumns(_insertColumns, _columnNumber)
+
+  if (_insertColumns[_columnNumber] == nil) then
+    return 0;
+  end
+
+  -- Calculate the maximum number of insert columns
+  local numbersOfInsertColumns = _insertColumns[_columnNumber];
+  local maximumNumberOfInsertColumns = 0;
+
+  for y, numberOfInsertColumns in pairs(numbersOfInsertColumns) do
+    if (numberOfInsertColumns > maximumNumberOfInsertColumns) then
+      maximumNumberOfInsertColumns = numberOfInsertColumns;
+    end
+  end
+  
+  return maximumNumberOfInsertColumns;
+
+end
+
+---
+-- Returns the number of insert columns for a specific field.
+--
+-- @tparam int[] _insertColumns The insert columns in the format {[x] = {[y] = amountInsertColumns}}
+-- @tparam int _columnNumber The column number
+-- @tparam int _rowNumber The row number
+--
+-- @treturn int The number of insert columns
+--
+function TableOutput:getNumberOfInsertColumns(_insertColumns, _columnNumber, _rowNumber)
+
+  if (_insertColumns[_columnNumber] == nil or _insertColumns[_columnNumber][_rowNumber] == nil) then
+    return 0;
+  else
+    return _insertColumns[_columnNumber][_rowNumber];
+  end
 
 end
 
@@ -103,56 +203,27 @@ end
 --
 function TableOutput:printTable(_table, _cn, _isOneDimensionalTable)
 
-  local rows = {};
-  local longestRow = 1;
-  local longestColumn = 1;
-
-  if (_isOneDimensionalTable) then
-    rows = _table;
-    longestRow = #_table[1];
-    longestColumn = #_table;
-
-  elseif (not _isOneDimensionalTable) then
-    rows, longestRow, longestColumn = self:getRows(_table);
+  local rows = _table;
+  if (not _isOneDimensionalTable) then
+    rows = self:getRows(_table);
   end
 
-
+  local tableHeight = #rows;
+  local tableWidth = #rows[1];
   local widestEntries, entryWidths = self:getWidestEntries(rows);
 
-
-  for y = 1, longestColumn, 1 do
+  for y = 1, tableHeight, 1 do
 
     local rowString = "";
-    local rowLength = 0;
 
-    if (not _isOneDimensionalTable) then
+    for x = 1, tableWidth, 1 do
 
-      for x, field in pairs(rows[y]) do
-        if (x > rowLength) then
-          rowLength = x;
-        end
-      end
-
-    else
-      rowLength = longestRow;
-    end
-    
-
-    for x = 1, longestRow, 1 do
-
-      local field = "";
-      local fieldWidth = 0;
-
-      if (rows[y] ~= nil and rows[y][x] ~= nil) then
-
-        field = rows[y][x];
-        fieldWidth = entryWidths[y][x];
-
-      end
+      local field = rows[y][x];
+      local fieldWidth = entryWidths[y][x];
 
       rowString = rowString .. field;
 
-      if (x < rowLength) then
+      if (x < tableWidth) then
         rowString = rowString .. self:getTabs(fieldWidth, widestEntries[x]);
       end
 
@@ -176,15 +247,19 @@ function TableOutput:getWidestEntries(_rows)
 
   local widestEntries = {};
   local entryWidths = {};
+  local fontDefault = cfg.totable("font_default");
+  
+  local tableHeight = #_rows;
+  local tableWidth = #_rows[1];
 
-  for y, row in pairs(_rows) do
+  for y = 1, tableHeight, 1 do
 
     entryWidths[y] = {};
     widestEntries[y] = 0;
 
-    for x, field in pairs(row) do
+    for x = 1, tableWidth - 1, 1 do
 
-      local textWidth = self:getTextWidth(field);
+      local textWidth = self:getTextWidth(_rows[y][x], fontDefault);
 
       entryWidths[y][x] = textWidth;
 
@@ -195,6 +270,8 @@ function TableOutput:getWidestEntries(_rows)
     end
 
   end
+
+  fontDefault = nil;
 
   return widestEntries, entryWidths;
 
@@ -207,7 +284,7 @@ end
 --
 -- @treturn int The text width
 --
-function Output:getTextWidth(_text)
+function Output:getTextWidth(_text, _font)
 
   local textWidth = 0;
 
@@ -215,7 +292,7 @@ function Output:getTextWidth(_text)
   _text = _text:gsub("(%\f[A-Za-z0-9])", "");
 
   for character in _text:gmatch(".") do
-    textWidth = textWidth + self:getCharacterWidth(character);
+    textWidth = textWidth + self:getCharacterWidth(character, _font);
   end
 
   return textWidth;
@@ -229,9 +306,9 @@ end
 --
 -- @treturn int The character width
 --
-function Output:getCharacterWidth(_character)
+function Output:getCharacterWidth(_character, _font)
 
-  local width = cfg.getvalue("font_default", _character);
+  local width = _font[_character];
 
   if (width == nil) then
     width = cfg.getvalue("font_default", "default");
