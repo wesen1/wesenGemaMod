@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local NestedTableConverter = require("Outputs/Helper/NestedTableConverter");
+local NestedTableConverter = require("Outputs/Helpers/NestedTableConverter");
 local Output = require("Outputs/Output");
 
 ---
