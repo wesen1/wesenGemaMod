@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local NestedTableConverter = require("Outputs/Helpers/NestedTableConverter");
 local Output = require("Outputs/Output");
 
 ---
@@ -21,80 +22,6 @@ setmetatable(TableOutput, { __index = Output });
 -- Class Methods
 
 ---
--- Returns the rows of a table in the format { [1] => [row1 entries], [2] => [row2 Entries], ... }.
--- Merges all sub tables into the main table schema.
---
--- @tparam table _table The table content in the format { [1] => [row1 entries], [2] => [row2 entries], ... }
---
--- @treturn table The table with merged sub tables in the format { [1] => [row1 entries], [2] => [row2 entries], ... }
---
-function TableOutput:getRows(_table)
-
-  local table = {};
-  local offsetY = 0;
-  local longestRow = 0;
-  local longestColumn = 0;
-
-  for y, row in pairs (_table) do
-
-    table[y + offsetY] = {};
-
-    for x, field in pairs (row) do
-
-      if (type(field) == "table") then
-
-        local subTable = self:getRows(field);
-
-        for subY, subRow in pairs(subTable) do
-
-          if (table[y + offsetY] == nil) then 
-            table[y + offsetY] = {};
-          end
-
-          for subX, subField in pairs(subRow) do
-            table[y + offsetY][x + subX - 1] = subField;
-
-            if (x + subX - 1 > longestRow) then
-              longestRow = x + subX - 1;
-            end
-
-          end
-
-          if (subY ~= #subTable) then
-            offsetY = offsetY + 1;
-          end
-
-        end
-
-      else
-
-        local offsetX = 0;
-
-        while (table[y + offsetY][x + offsetX] ~= nil) do
-          offsetX = offsetX + 1;
-        end
-
-        table[y + offsetY][x + offsetX] = field;
-
-        if (x + offsetX > longestRow) then
-          longestRow = x + offsetX;
-        end
-
-      end
-
-    end
-
-    if (y + offsetY > longestColumn) then
-      longestColumn = y + offsetY;
-    end
-
-  end
-
-  return table, longestRow, longestColumn;
-
-end
-
----
 -- Prints a table.
 --
 -- @tparam table _table The columns of a row in the format { [1] => [row1 entries], [2] => [row2 entries], ... }
@@ -103,56 +30,27 @@ end
 --
 function TableOutput:printTable(_table, _cn, _isOneDimensionalTable)
 
-  local rows = {};
-  local longestRow = 1;
-  local longestColumn = 1;
-
-  if (_isOneDimensionalTable) then
-    rows = _table;
-    longestRow = #_table[1];
-    longestColumn = #_table;
-
-  elseif (not _isOneDimensionalTable) then
-    rows, longestRow, longestColumn = self:getRows(_table);
+  local rows = _table;
+  if (not _isOneDimensionalTable) then
+    rows = NestedTableConverter:convertTable(_table);
   end
 
-
+  local tableHeight = #rows;
+  local tableWidth = #rows[1];
   local widestEntries, entryWidths = self:getWidestEntries(rows);
 
-
-  for y = 1, longestColumn, 1 do
+  for y = 1, tableHeight, 1 do
 
     local rowString = "";
-    local rowLength = 0;
 
-    if (not _isOneDimensionalTable) then
+    for x = 1, tableWidth, 1 do
 
-      for x, field in pairs(rows[y]) do
-        if (x > rowLength) then
-          rowLength = x;
-        end
-      end
-
-    else
-      rowLength = longestRow;
-    end
-    
-
-    for x = 1, longestRow, 1 do
-
-      local field = "";
-      local fieldWidth = 0;
-
-      if (rows[y] ~= nil and rows[y][x] ~= nil) then
-
-        field = rows[y][x];
-        fieldWidth = entryWidths[y][x];
-
-      end
+      local field = rows[y][x];
+      local fieldWidth = entryWidths[y][x];
 
       rowString = rowString .. field;
 
-      if (x < rowLength) then
+      if (x < tableWidth) then
         rowString = rowString .. self:getTabs(fieldWidth, widestEntries[x]);
       end
 
@@ -176,15 +74,19 @@ function TableOutput:getWidestEntries(_rows)
 
   local widestEntries = {};
   local entryWidths = {};
+  local fontDefault = cfg.totable("font_default");
+  
+  local tableHeight = #_rows;
+  local tableWidth = #_rows[1];
 
-  for y, row in pairs(_rows) do
+  for y = 1, tableHeight, 1 do
 
     entryWidths[y] = {};
     widestEntries[y] = 0;
 
-    for x, field in pairs(row) do
+    for x = 1, tableWidth - 1, 1 do
 
-      local textWidth = self:getTextWidth(field);
+      local textWidth = self:getTextWidth(_rows[y][x], fontDefault);
 
       entryWidths[y][x] = textWidth;
 
@@ -196,6 +98,8 @@ function TableOutput:getWidestEntries(_rows)
 
   end
 
+  fontDefault = nil;
+
   return widestEntries, entryWidths;
 
 end
@@ -204,10 +108,11 @@ end
 -- Calculates and returns the width of text that does not include special characters such as "\n" or "\t".
 --
 -- @tparam string _text The text
+-- @tparam int[] The font pixel widths in the format {[character] = width}
 --
 -- @treturn int The text width
 --
-function Output:getTextWidth(_text)
+function Output:getTextWidth(_text, _font)
 
   local textWidth = 0;
 
@@ -215,7 +120,7 @@ function Output:getTextWidth(_text)
   _text = _text:gsub("(%\f[A-Za-z0-9])", "");
 
   for character in _text:gmatch(".") do
-    textWidth = textWidth + self:getCharacterWidth(character);
+    textWidth = textWidth + self:getCharacterWidth(character, _font);
   end
 
   return textWidth;
@@ -226,12 +131,13 @@ end
 -- Returns the width of a single character.
 --
 -- @tparam string _character The character
+-- @tparam int[] The font pixel widths in the format {[character] = width}
 --
 -- @treturn int The character width
 --
-function Output:getCharacterWidth(_character)
+function Output:getCharacterWidth(_character, _font)
 
-  local width = cfg.getvalue("font_default", _character);
+  local width = _font[_character];
 
   if (width == nil) then
     width = cfg.getvalue("font_default", "default");
