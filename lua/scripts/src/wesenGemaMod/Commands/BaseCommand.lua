@@ -302,7 +302,7 @@ function BaseCommand:hasAlias(_alias)
 
   for i, alias in pairs(self.aliases) do
 
-    if (alias == _alias:lower()) then
+    if (alias:lower() == _alias:lower()) then
       return true;
     end
 
