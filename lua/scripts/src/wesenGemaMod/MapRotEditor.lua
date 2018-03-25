@@ -77,7 +77,8 @@ function MapRotEditor:addExistingGemaMapsToDataBase(_dataBase, _mapsDirectory)
 
   for luaFile in lfs.dir(_mapsDirectory) do
 
-    if (luaFile ~= "." and luaFile ~= ".." and luaFile:match(".cgz")) then
+    -- Check whether the file is not "." or ".." and ends with ".cgz"
+    if (luaFile ~= "." and luaFile ~= ".." and luaFile:match("^.+%.cgz$")) then
 
       local mapName = luaFile:gsub(".cgz", "");
 

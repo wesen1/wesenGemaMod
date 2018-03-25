@@ -82,18 +82,22 @@ function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _nu
 
   if (_type == SA_MAP and
       _number1 == GM_CTF and
-      _voteError == VOTEE_INVALID and
-      mapexists(_text))
+      _voteError == VOTEE_INVALID)
   then
 
-    Map:removeMap(self.parentGemaMod:getDataBase(),
-                  _text,
-                  self.parentGemaMod:getMapTop(),
-                  self.parentGemaMod:getMapRotEditor()
-    );
+    if (mapexists(_text)) then
+      Map:removeMap(self.parentGemaMod:getDataBase(),
+                    _text,
+                    self.parentGemaMod:getMapTop(),
+                    self.parentGemaMod:getMapRotEditor()
+      );
 
-    local infoMessage = "The map was automatically deleted because it wasn't playable";
-    Output:print(Output:getColor("info") .. infoMessage, _cn);
+      local infoMessage = "The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
+      Output:print(Output:getColor("info") .. infoMessage, _cn);
+
+    else
+      Output:print(Output:getColor("error") .. "The map \"" .. _text .. "\" could not be found on the server.", _cn);
+    end
 
     return PLUGIN_BLOCK;
 
