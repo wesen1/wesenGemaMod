@@ -16,6 +16,7 @@ local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
 local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
 local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
 local PlayerSpawnAfterHandler = require("EventHandler/PlayerSpawnAfterHandler");
+local VoteEndHandler = require("EventHandler/VoteEndHandler");
 
 ---
 -- Wrapper class for the event handlers.
@@ -102,6 +103,13 @@ EventHandler.playerSpawnHandler = "";
 --
 EventHandler.playerSpawnAfterHandler = "";
 
+---
+-- The vote end handler
+--
+-- @tfield VoteEndHandler voteEndHandler
+--
+EventHandler.voteEndHandler = "";
+
 
 ---
 -- EventHandler constructor.
@@ -126,6 +134,7 @@ function EventHandler:__construct(_parentGemaMod)
   instance.playerSendMapHandler = PlayerSendMapHandler:__construct(_parentGemaMod);
   instance.playerSpawnHandler = PlayerSpawnHandler:__construct(_parentGemaMod);
   instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler:__construct(_parentGemaMod);
+  instance.voteEndHandler = VoteEndHandler:__construct(_parentGemaMod);
 
   return instance;
 
@@ -330,6 +339,24 @@ end
 --
 function EventHandler:setPlayerSpawnAfterHandler(_playerSpawnAfterHandler)
   self.playerSpawnAfterHandler = _playerSpawnAfterHandler;
+end
+
+---
+-- Returns the vote end handler.
+--
+-- @treturn VoteEndHandler The vote end handler
+--
+function EventHandler:getVoteEndHandler()
+  return self.voteEndHandler;
+end
+
+---
+-- Sets the vote end handler.
+--
+-- @tparam VoteEndHandler _voteEndHandler The vote end handler
+--
+function EventHandler:setVoteEndHandler(_voteEndHandler)
+  self.voteEndHandler = _voteEndHandler;
 end
 
 
