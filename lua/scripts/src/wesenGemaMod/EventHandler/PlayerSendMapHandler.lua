@@ -89,7 +89,9 @@ function PlayerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize
 
     if (MapChecker:isGema(_mapName)) then
 
-      Map:saveMapName(self.parentGemaMod:getDataBase(), _mapName);
+      local uploadPlayer = self.parentGemaMod:getPlayers()[_cn];
+
+      Map:saveMapName(self.parentGemaMod:getDataBase(), _mapName, uploadPlayer);
       self.parentGemaMod:getMapRotEditor():addMapToMapRotConfigFile(_mapName);
       self.parentGemaMod:getMapRotEditor():addMapToLoadedMapRot(_mapName);
 
