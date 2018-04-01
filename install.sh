@@ -105,8 +105,6 @@ createDirectoriesRecursive()
 # Script
 ###################
 
-# TODO: Default: supress output, if --verbose don't supress output
-
 ## Check whether the user is root
 if ! $(isRoot); then
   echo "Please run as root"
