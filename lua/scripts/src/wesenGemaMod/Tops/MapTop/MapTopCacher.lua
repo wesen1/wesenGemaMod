@@ -124,16 +124,16 @@ end
 --
 function MapTopCacher:removeRecordsWithPlayerName(_playerName)
 
-  local rankPlayerWithSameName = -1;
+  local recordWithPlayerName = -1;
   local numberOfRecords = self.parentMapTop:getNumberOfRecords();
 
-  while (rankPlayerWithSameName ~= nil) do
+  while (recordWithPlayerName ~= nil) do
 
-    rankPlayerWithSameName = self:getRecordByName(_playerName);
+    recordWithPlayerName = self:getRecordByName(_playerName);
 
-    if (rankPlayerWithSameName ~= nil) then
+    if (recordWithPlayerName ~= nil) then
 
-      for i = rankPlayerWithSameName, numberOfRecords, 1 do
+      for i = recordWithPlayerName:getRank(), numberOfRecords, 1 do
         self.records[i] = self.records[i + 1];
       end
       self.records[numberOfRecords] = nil;
