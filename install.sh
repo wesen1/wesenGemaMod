@@ -97,7 +97,34 @@ createDirectoriesRecursive()
     fi
 
   done
+}
 
+#
+# Reads a password from the command line and saves it in the global variable $password.
+#
+# @param String $1 The description of the user for which the password will be used
+#
+readPassword()
+{
+  password="1"
+  confirmPassword="2"
+  isFirstCycle=1
+
+  while [ "$password" != "$confirmPassword" ]; do
+
+    if [ $isFirstCycle == 1 ]; then
+      isFirstCycle=0
+    else
+      echo "The passwords did not match. Please try again."
+    fi
+
+    echo -e "\n"
+    read -p "Enter a password for $1: " -s password
+    echo -en "\n"
+    read -p "Confirm the password for $1: " -s confirmPassword
+    echo -e "\n"
+
+  done
 }
 
 
@@ -193,41 +220,6 @@ mv linux_release/linux_64_server ../../lua_server/bin_unix/linux_64_server
 cd ../..
 
 
-## Install database
-question="Shall the database for wesen's gema mod be installed?"
-if askYesNoQuestion "$question"; then
-
-  #
-  # Check whether mysql or mariadb is already installed
-  # Source: https://stackoverflow.com/a/677212s
-  #
-  if ! hash mysql >/dev/null 2>&1; then
-
-    echo "Installing mariadb-server"
-    apt-get install -y mariadb-server
-
-    echo "Setting root user password to 'root'"
-    mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
-
-  fi
-
-  # Import database
-  echo "Initializing database for wesen's gema mod"
-  sql="CREATE DATABASE assaultcube_gema;
-       USE assaultcube_gema;
-       SOURCE $installerDirectory/assaultcube_gema.sql;"
-  mysql -u root -Bse "$sql"
-
-  # Create new user for lua mod
-  echo "Creating a new user for wesen's gema mod"
-  sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY 'password';
-       GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
-       FLUSH PRIVILEGES;"
-  mysql -u root -Bse "$sql"
-
-fi
-
-
 ## Install wesen's gema mod
 
 echo "Installing dependencies for wesen's gema mod"
@@ -313,6 +305,59 @@ fi
 ## Change the owner of all files in the output directory
 chown -R "$userName" "$outputDirectory"
 chgrp -R "$userName" "$outputDirectory"
+
+
+## Install database
+question="Shall the database for wesen's gema mod be installed?"
+if askYesNoQuestion "$question"; then
+
+  #
+  # Check whether mysql or mariadb is already installed
+  # Source: https://stackoverflow.com/a/677212s
+  #
+  if ! hash mysql >/dev/null 2>&1; then
+
+    echo "Installing mariadb-server"
+    apt-get install -y mariadb-server
+
+    readPassword "the 'root' database user"
+    rootUserPassword="$password"
+
+    echo "Setting root user password"
+    mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('$rootUserPassword') WHERE User='root';"
+
+  fi
+
+  # Import database
+  echo "Initializing database for wesen's gema mod"
+  sql="CREATE DATABASE assaultcube_gema;
+       USE assaultcube_gema;
+       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  mysql -u root -Bse "$sql"
+
+  # Create new user for lua mod
+  readPassword "the gemamod database user"
+  gemamodUserPassword="$password"
+
+  echo "Creating a new user for wesen's gema mod"
+  sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY '$gemamodUserPassword';
+       GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
+       FLUSH PRIVILEGES;"
+  mysql -u root -Bse "$sql"
+
+  # Write the gemamod user password to the gemamod config file
+  gemamodConfigPath="$outputDirectory/lua_server/lua/config/gemamod.cfg"
+
+  if [ -f "$gemamodConfigPath" ]; then
+    echo "Setting password in config file ..."
+
+    # See https://stackoverflow.com/a/20568559
+    sed -i "s/^\(dataBasePassword=\).*/\1$gemamodUserPassword/" "$gemamodConfigPath"
+  fi
+
+else
+  echo "The database will not be installed. You have to adjust lua/config/gemamod.cfg manually."
+fi
 
 
 ## Print information

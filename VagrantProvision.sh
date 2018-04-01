@@ -3,10 +3,14 @@
 # Install the lua server with the install script
 /vagrant/install.sh /home/vagrant <<END
 y
-y
 n
 y
 n
+y
+root
+root
+password
+password
 END
 
 # Create a link to the lua folder of the project in the lua_server folder
