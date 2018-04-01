@@ -137,6 +137,23 @@ function Output:getPlayerNameColor(_playerLevel)
 end
 
 ---
+-- Returns the color for a team.
+--
+-- @tparam int _teamId The team id
+--
+-- @treturn string The team color
+--
+function Output:getTeamColor(_teamId)
+
+  if (_teamId == TEAM_RVSF) then
+    return Output:getColor("teamRVSF");
+  elseif (_teamId == TEAM_CLA) then
+    return Output:getColor("teamCLA");
+  end 
+
+end
+
+---
 -- Loads a color from the color config file.
 --
 -- @tparam string _colorId The name of the color

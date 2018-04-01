@@ -118,7 +118,7 @@ function MapTopPrinter:printMapTop(_cn)
      .. Output:getColor("mapRecordInfo") .. " by "
      .. Output:getColor("mapRecordName") .. record:getPlayer():getName(),
 
-        [2] = self:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
+        [2] = Output:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
 
         [3] = Output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", record:getCreatedAt())
       }
@@ -160,28 +160,11 @@ function MapTopPrinter:printMapStatistics(_cn)
    .. Output:getColor("mapRecordInfo") .. " by "
    .. Output:getColor("mapRecordName") .. bestRecord:getPlayer():getName()
    .. Output:getColor("mapRecordInfo") .. " with "
-   .. self:getTeamColor(bestRecord:getTeam()) .. WeaponNameFetcher:getWeaponName(bestRecord:getWeapon()),
+   .. Output:getTeamColor(bestRecord:getTeam()) .. WeaponNameFetcher:getWeaponName(bestRecord:getWeapon()),
       _cn
     );
 
   end
-
-end
-
----
--- Returns the color for a team.
---
--- @tparam int _teamId The team id
---
--- @treturn string The team color
---
-function MapTopPrinter:getTeamColor(_teamId)
-
-  if (_teamId == TEAM_RVSF) then
-    return Output:getColor("teamRVSF");
-  elseif (_teamId == TEAM_CLA) then
-    return Output:getColor("teamCLA");
-  end 
 
 end
 

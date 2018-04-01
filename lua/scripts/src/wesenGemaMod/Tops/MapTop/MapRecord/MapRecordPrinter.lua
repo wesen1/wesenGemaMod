@@ -6,6 +6,7 @@
 --
 
 local Output = require("Outputs/Output");
+local WeaponNameFetcher = require("WeaponNameFetcher");
 
 ---
 -- Handles printing of map records.
@@ -123,11 +124,15 @@ function MapRecordPrinter:printScoreRecord()
     end
   end
 
+  local weaponName = WeaponNameFetcher:getWeaponName(self.parentMapRecord:getWeapon());
+
   local scoreString = Output:getColor("mapRecordName") .. playerName
                    .. Output:getColor("mapRecordInfo") .. " scored after "
                    .. Output:getColor("mapRecordTime") .. time
                    .. Output:getColor("mapRecordInfo") .. " minutes "
-                   .. rankString;
+                   .. Output:getColor("mapRecordInfo") .. "with "
+                   .. Output:getTeamColor(self.parentMapRecord:getTeam()) .. weaponName
+                   .. " " .. rankString;
 
   Output:print(scoreString);
 
