@@ -182,31 +182,31 @@ mkdir "tmp"
 
 apt-get update
 
-echo "Installing AssaultCube server dependencies"
+echo "Installing AssaultCube server dependencies ..."
 apt-get install -y libsdl1.2debian
 
-echo "Downloading AssaultCube"
+echo "Downloading AssaultCube ..."
 wget https://github.com/assaultcube/AC/releases/download/v1.2.0.2/AssaultCube_v1.2.0.2.tar.bz2 -P "tmp"
 
-echo "Extracting AssaultCube"
+echo "Extracting AssaultCube ..."
 tar -xvf tmp/AssaultCube_v1.2.0.2.tar.bz2 -C ./
 mv AssaultCube_v1.2.0.2 lua_server
 
 
 ## Install Lua mod
 
-echo "Installing packages that are necessary to build lua mod"
+echo "Installing packages that are necessary to build lua mod ..."
 apt-get install -y lib32z1-dev g++ lua5.1-dev unzip
 
-echo "Downloading lua mod"
+echo "Downloading lua mod ..."
 wget https://github.com/wesen1/AC-Lua/archive/master.zip -P "tmp"
 
 cd tmp
 
-echo "Extracting lua mod"
+echo "Extracting lua mod ..."
 unzip master.zip
 
-echo "Building lua mod"
+echo "Building lua mod ..."
 
 # "Fix" compile error in Lua mod by commenting out the line below and build the executable
 sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/" AC-Lua-master/src/tools.h
@@ -214,7 +214,7 @@ sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/"
 cd AC-Lua-master
 sh build.sh
 
-echo "Moving the built executable to the AssaultCube folder"
+echo "Moving the built executable to the AssaultCube folder ..."
 mv linux_release/linux_64_server ../../lua_server/bin_unix/linux_64_server
 
 cd ../..
@@ -222,7 +222,7 @@ cd ../..
 
 ## Install wesen's gema mod
 
-echo "Installing dependencies for wesen's gema mod"
+echo "Installing dependencies for wesen's gema mod ..."
 apt-get install -y lua-filesystem lua-sql-mysql
 
 question="Copy the gema mod to lua/scripts folder?"
@@ -317,19 +317,19 @@ if askYesNoQuestion "$question"; then
   #
   if ! hash mysql >/dev/null 2>&1; then
 
-    echo "Installing mariadb-server"
+    echo "Installing mariadb-server ..."
     apt-get install -y mariadb-server
 
     readPassword "the 'root' database user"
     rootUserPassword="$password"
 
-    echo "Setting root user password"
+    echo "Setting root user password ..."
     mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('$rootUserPassword') WHERE User='root';"
 
   fi
 
   # Import database
-  echo "Initializing database for wesen's gema mod"
+  echo "Initializing database for wesen's gema mod ..."
   sql="CREATE DATABASE assaultcube_gema;
        USE assaultcube_gema;
        SOURCE $installerDirectory/assaultcube_gema.sql;"
@@ -339,7 +339,7 @@ if askYesNoQuestion "$question"; then
   readPassword "the gemamod database user"
   gemamodUserPassword="$password"
 
-  echo "Creating a new user for wesen's gema mod"
+  echo "Creating a new user for wesen's gema mod ..."
   sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY '$gemamodUserPassword';
        GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
        FLUSH PRIVILEGES;"
@@ -361,5 +361,6 @@ fi
 
 
 ## Print information
+echo -en "\n\nInstallation complete.\n"
 echo "Go to https://assault.cubers.net/docs/server.html to learn how to configure your server"
 echo "Navigate to $outputDirectory and type \"sh server.sh\" to start the server"
