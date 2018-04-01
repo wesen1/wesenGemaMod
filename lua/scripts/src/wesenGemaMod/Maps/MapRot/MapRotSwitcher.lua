@@ -19,7 +19,7 @@ local MapRotSwitcher = {};
 -- @tparam string _mapRotFilePath The path to the maprot file relative from the server root directory
 --
 function MapRotSwitcher:switchMapRot(_mapRotFilePath)
-  setmaprot(_mapRotFileName);
+  setmaprot(_mapRotFilePath);
 end
 
 --
