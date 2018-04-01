@@ -20,18 +20,28 @@ local MapTopCacher = {};
 --
 MapTopCacher.records = {};
 
+---
+-- The parent map top
+--
+-- @tfield MapTop parentMapTop
+--
+MapTopCacher.parentMapTop = "";
+
 
 ---
 -- MapTopCacher constructor.
 --
+-- @tparam MapTop _parentMapTop The parent map top
+--
 -- @treturn MapTopCacher The MapTopCacher instance
 --
-function MapTopCacher:__construct()
+function MapTopCacher:__construct(_parentMapTop)
 
   local instance = {};
   setmetatable(instance, {__index = MapTopCacher});
 
   instance.records = {};
+  instance.parentMapTop = _parentMapTop;
 
   return instance;
 
@@ -58,6 +68,24 @@ function MapTopCacher:setRecords(_records)
   self.records = _records;
 end
 
+---
+-- Returns the parent map top.
+--
+-- @treturn MapTop The parent map top
+--
+function MapTopCacher:getParentMapTop()
+  return self.parentMapTop;
+end
+
+---
+-- Sets the parent map top.
+--
+-- @tparam MapTop _parentMapTop The parent map top
+--
+function MapTopCacher:setParentMapTop(_parentMapTop)
+  self.parentMapTop = _parentMapTop;
+end
+
 
 -- Class Methods
 
@@ -69,11 +97,21 @@ end
 --
 function MapTopCacher:addRecord(_newRecord, _currentRank)
 
-  if (_currentRank ~= nil) then
-    table.remove(self.records, _currentRank);
+  local currentRank = -1;
+
+  if (_currentRank == nil) then
+    currentRank = self.parentMapTop:getNumberOfRecords() + 1;
+  else
+    currentRank = _currentRank;
   end
 
-  table.insert(self.records, _newRecord:getRank(), _newRecord);
+  for i = currentRank - 1, _newRecord:getRank(), -1 do
+    local record = self.records[i];
+    record:setRank(i + 1);
+    self.records[i + 1] = record;
+  end
+
+  self.records[_newRecord:getRank()] = _newRecord;
 
 end
 

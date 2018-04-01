@@ -74,7 +74,7 @@ function MapTop:__construct(_parentGemaMod)
   setmetatable(instance, {__index = MapTop});
 
   instance.mapName = "";
-  instance.mapTopCacher = MapTopCacher:__construct();
+  instance.mapTopCacher = MapTopCacher:__construct(instance);
   instance.mapTopLoader = MapTopLoader:__construct(instance);
   instance.mapTopPrinter = MapTopPrinter:__construct(instance);
   instance.mapTopSaver = MapTopSaver:__construct();
