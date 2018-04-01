@@ -85,7 +85,15 @@ function MapTopPrinter:printMapTop(_cn)
       amountDisplayRecords = amountRecords;
     end
 
-    Output:print(Output:getColor("mapTopInfo") .. "The " .. amountDisplayRecords .. " best players of this map are:", _cn);
+    local mapTopTitle = "The %i best player%s of this map %s:";
+
+    if (amountDisplayRecords == 1) then
+      mapTopTitle = string.format(mapTopTitle, amountDisplayRecords, "", "is");
+    else
+      mapTopTitle = string.format(mapTopTitle, amountDisplayRecords, "s", "are");
+    end
+
+    Output:print(Output:getColor("mapTopInfo") .. mapTopTitle, _cn);
 
     local startRank = 1;
     local limit = 4;
@@ -111,7 +119,7 @@ function MapTopPrinter:printMapTop(_cn)
      .. Output:getColor("mapRecordName") .. record:getPlayer():getName(),
 
         [2] = self:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
-        
+
         [3] = Output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", record:getCreatedAt())
       }
 
