@@ -75,14 +75,13 @@ function TableOutput:getWidestEntries(_rows)
   local widestEntries = {};
   local entryWidths = {};
   local fontDefault = cfg.totable("font_default");
-  
+
   local tableHeight = #_rows;
   local tableWidth = #_rows[1];
 
   for y = 1, tableHeight, 1 do
 
     entryWidths[y] = {};
-    widestEntries[y] = 0;
 
     for x = 1, tableWidth - 1, 1 do
 
