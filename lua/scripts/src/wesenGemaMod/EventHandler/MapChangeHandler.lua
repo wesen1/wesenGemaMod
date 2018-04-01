@@ -5,6 +5,9 @@
 -- @license MIT
 --
 
+local MapChecker = require("Maps/MapChecker");
+local Output = require("Outputs/Output");
+
 ---
 -- Class that handles map changes.
 --
@@ -67,16 +70,33 @@ end
 -- Event handler which is called when the map is changed.
 --
 -- @tparam string _mapName The name of the new map
+-- @tparam int _gameMode The game mode
 --
-function MapChangeHandler:onMapChange(_mapName)
+function MapChangeHandler:onMapChange(_mapName, _gameMode)
 
-  local mapTop = self.parentGemaMod:getMapTop();
+  if (self.parentGemaMod:getIsActive()) then
 
-  mapTop:setMapName(_mapName);
-  mapTop:loadRecords(_mapName);
+    if (not MapChecker:isGema(_mapName) or _gameMode ~= GM_CTF) then
+      self.parentGemaMod:setIsActive(false);
+      Output:print(Output:getColor("info") .. "[INFO] The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
+      return;
+    end
 
-  for cn, player in pairs(self.parentGemaMod:getPlayers()) do
-    mapTop:printMapStatistics(cn);
+    local mapTop = self.parentGemaMod:getMapTop();
+
+    mapTop:setMapName(_mapName);
+    mapTop:loadRecords(_mapName);
+
+    for cn, player in pairs(self.parentGemaMod:getPlayers()) do
+      mapTop:printMapStatistics(cn);
+    end
+
+  else
+    if (MapChecker:isGema(_mapName) and _gameMode == GM_CTF) then
+      self.parentGemaMod:setIsActive(true);
+      Output:print(Output:getColor("info") .. "[INFO] The gema mode was automatically enabled.");
+      self:onMapChange(_mapName, _gameMode);
+    end
   end
 
 end

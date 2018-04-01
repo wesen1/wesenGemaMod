@@ -98,13 +98,20 @@ end
 --
 function PlayerConnectHandler:onPlayerConnect(_cn)
 
-  if (#self.parentGemaMod:getPlayers() == 0) then
-    setautoteam (false);
+  if (self.parentGemaMod:getIsActive()) then
+
+    if (#self.parentGemaMod:getPlayers() == 0) then
+      setautoteam (false);
+    end
+
+    self:checkAmountConnections(_cn);
+    self:printServerInformation(_cn);
+
+  else
+    Output:print(Output:getColor("info") .. "[INFO] The gema mode is not enabled. Vote a map in ctf to enable it.", _cn);
   end
 
-  self:checkAmountConnections(_cn);
   self.parentGemaMod:addPlayer(_cn);
-  self:printServerInformation(_cn);
 
 end
 

@@ -41,9 +41,10 @@ end
 -- Event handler which is called when the map is changed.
 --
 -- @tparam string _mapName The name of the new map
+-- @tparam int _gameMode The game mode
 --
-function onMapChange(_mapName)
-  gemaMod:onMapChange(_mapName);
+function onMapChange(_mapName, _gameMode)
+  gemaMod:onMapChange(_mapName, _gameMode);
 end
 
 ---
@@ -120,6 +121,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK if the player says normal text or nil
 --
 function onPlayerSayText(_cn, _text)
+
   local pluginBlock = gemaMod:onPlayerSayText(_cn, _text);
 
   if (pluginBlock) then
