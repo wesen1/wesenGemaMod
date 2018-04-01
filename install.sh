@@ -68,6 +68,38 @@ askYesNoQuestion()
   fi
 }
 
+#
+# Creates all directories in the path that do not exist and changes the owner to
+# the user who executed the script.
+# Must use this function because mkdir and install apply owner options only to the
+# last created directory
+#
+# @param String $1 The directory path
+# @param String $2 The user name of the user who executed the script
+#
+createDirectoriesRecursive()
+{
+  directoryPath=""
+
+  #
+  # Split directory path by "/"
+  #
+  # https://stackoverflow.com/a/918898
+  for directory in $(echo $1 | tr "/" " ")
+  do
+
+    directoryPath="$directoryPath/$directory"
+
+    if [ ! -d $directoryPath ]; then
+      mkdir "$directoryPath"
+      chown "$2" "$directoryPath"
+      chgrp "$2" "$directoryPath"
+    fi
+
+  done
+
+}
+
 
 ###################
 # Script
@@ -80,6 +112,14 @@ if ! $(isRoot); then
   echo "Please run as root"
   exit
 fi
+
+
+## Determine the username
+
+#
+# See https://unix.stackexchange.com/a/137217
+#
+userName="${SUDO_USER:-$USER}"
 
 
 ## Determine the directories
@@ -95,7 +135,7 @@ if [ ! -d $outputDirectory ]; then
 
   question="The output directory $outputDirectory doesn't exist. Shall it be created?"
   if askYesNoQuestion "$question"; then
-    mkdir -p "$outputDirectory"
+    createDirectoriesRecursive "$outputDirectory" "$userName"
   else
     exit
   fi
@@ -272,7 +312,11 @@ if askYesNoQuestion "$question"; then
 fi
 
 
-## Print information
+## Change the owner of all files in the output directory
+chown -R "$userName" "$outputDirectory"
+chgrp -R "$userName" "$outputDirectory"
 
+
+## Print information
 echo "Go to https://assault.cubers.net/docs/server.html to learn how to configure your server"
 echo "Navigate to $outputDirectory and type \"sh server.sh\" to start the server"
