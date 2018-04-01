@@ -108,7 +108,7 @@ function PlayerConnectHandler:onPlayerConnect(_cn)
     self:printServerInformation(_cn);
 
   else
-    Output:print(Output:getColor("info") .. "[INFO] The gema mode is not enabled. Vote a map in ctf to enable it.", _cn);
+    Output:print(Output:getColor("info") .. "[INFO] The gema mode is not enabled. Vote a gema map in ctf to enable it.", _cn);
   end
 
   self.parentGemaMod:addPlayer(_cn);
