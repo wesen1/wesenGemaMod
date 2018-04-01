@@ -61,7 +61,7 @@ function HelpCommand:execute(_cn, _args)
   if (command) then
     CommandPrinter:printHelpText(command, _cn);
   else
-    Output:print(Output:getColor("error") .. "Error: Unknown command '" .. inputCommand .. "'", _cn);
+    Output:print(Output:getColor("error") .. "[ERROR] Unknown command '" .. inputCommand .. "'", _cn);
   end
 
 end

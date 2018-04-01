@@ -123,7 +123,7 @@ end
 function PlayerConnectHandler:checkAmountConnections(_cn)
 
   if (self:countConnections(_cn) > self.maximumAmountConnectionsWithSameIp) then
-    Output:print(Output:getColor("error") .. "Error: " .. getname(_cn) .. " could not connect [too many connections with same IP]");
+    Output:print(Output:getColor("info") .. "[INFO] " .. getname(_cn) .. " could not connect [too many connections with same IP]");
     disconnect(_cn, DISC_NONE);
   end
 

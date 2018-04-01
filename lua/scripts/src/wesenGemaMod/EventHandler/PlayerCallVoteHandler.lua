@@ -94,12 +94,12 @@ function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _nu
                       self.parentGemaMod:getMapRotEditor()
         );
 
-        local infoMessage = "The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
+        local infoMessage = "[INFO] The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
         Output:print(Output:getColor("info") .. infoMessage, _cn);
         return PLUGIN_BLOCK;
 
       else
-        Output:print(Output:getColor("error") .. "The map \"" .. _text .. "\" could not be found on the server.", _cn);
+        Output:print(Output:getColor("error") .. "[ERROR] The map \"" .. _text .. "\" could not be found on the server.", _cn);
       end
 
     elseif (_voteError == VOTEE_NOERROR) then

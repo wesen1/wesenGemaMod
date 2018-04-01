@@ -87,7 +87,7 @@ function Map:removeMap(_dataBase, _mapName, _mapTop, _mapRotEditor)
   local success = MapRemover:removeMap(_dataBase, _mapName, _mapTop, self:fetchMapId(_dataBase, _mapName), _mapRotEditor);
 
   if (not success) then
-    Output:print(Output:getColor("error") .. "Error: Could not remove the map '" .. _mapName .. '"');
+    Output:print(Output:getColor("error") .. "[ERROR] Could not remove the map '" .. _mapName .. '"');
   end
 
 end

@@ -76,8 +76,8 @@ function PlayerDisconnectHandler:onPlayerDisconnect(_cn, _reason)
 
   if (_reason == DISC_BANREFUSE) then
 
-    local errorMessage = string.format("Error: %s could not connect [banned]", getname(_cn));
-    Output:print(Output:getColor("error") .. errorMessage);
+    local errorMessage = string.format("[INFO] %s could not connect [banned]", getname(_cn));
+    Output:print(Output:getColor("info") .. errorMessage);
 
   end
 

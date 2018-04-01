@@ -108,7 +108,7 @@ function CommandParser:parseCommand(_inputText, _cn)
     self:executeCommand(command, arguments, _cn);
 
   else
-    Output:print(Output:getColor("error") .. "Unknown command '" .. commandName .. "', check your spelling and try again", _cn);
+    Output:print(Output:getColor("error") .. "[ERROR] Unknown command '" .. commandName .. "', check your spelling and try again", _cn);
   end
 
 end
@@ -127,10 +127,10 @@ function CommandParser:executeCommand(_command, _arguments, _cn)
   if (player:getLevel() >= _command:getRequiredLevel()) then
 
     if (#_arguments < _command:getNumberOfRequiredArguments()) then
-      Output:print(Output:getColor("error") .. "Error: Not enough arguments.", _cn);
+      Output:print(Output:getColor("error") .. "[ERROR] Not enough arguments.", _cn);
 
     elseif (#_arguments > _command:getNumberOfArguments()) then
-      Output:print(Output:getColor("error") .. "Error: Too many arguments", _cn);
+      Output:print(Output:getColor("error") .. "[ERROR] Too many arguments", _cn);
 
     else
       _command:execute(_cn, _arguments);
@@ -138,7 +138,7 @@ function CommandParser:executeCommand(_command, _arguments, _cn)
     end
 
   else
-    Output:print(Output:getColor("error") .. "Error: You do not have the permission to use this command!", _cn);
+    Output:print(Output:getColor("error") .. "[ERROR] You do not have the permission to use this command!", _cn);
   end
 
 end

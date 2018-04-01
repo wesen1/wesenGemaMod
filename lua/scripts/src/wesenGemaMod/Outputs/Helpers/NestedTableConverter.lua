@@ -102,7 +102,7 @@ function NestedTableConverter:convertTable(_table, _rows, _insertedRows, _insert
         end
 
       end
-      
+
       columnNumber = columnNumber + 1;
 
     end
