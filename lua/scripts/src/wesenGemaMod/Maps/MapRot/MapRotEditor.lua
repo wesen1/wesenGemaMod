@@ -22,7 +22,7 @@ local MapRotEditor = {};
 --
 -- @tfield string mapRotFilePath
 --
-MapRotEditor.mapRotFilePath = "config/maprot.cfg";
+MapRotEditor.mapRotFilePath = "config/maprot_gema.cfg";
 
 
 ---

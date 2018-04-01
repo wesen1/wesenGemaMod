@@ -174,3 +174,17 @@ end
 function onPlayerSpawnAfter(_cn)
   gemaMod:onPlayerSpawnAfter(_cn);
 end
+
+---
+-- Event handler which is called when a vote ends.
+--
+-- @tparam int _result The result of the vote
+-- @tparam int _cn The client number of the player who called the vote
+-- @tparam int _type The vote type
+-- @tparam string _text The map name, kick reason, etc.
+-- @tparam int _number1 The game mode, target cn, etc.
+-- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
+--
+function onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
+  gemaMod:onVoteEnd(_result, _cn, _type, _text, _number1, _number2);
+end

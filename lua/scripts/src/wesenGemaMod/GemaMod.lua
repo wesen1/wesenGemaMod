@@ -10,7 +10,8 @@ local MapTop = require("Tops/MapTop/MapTop");
 local CommandHandler = require("CommandHandler/CommandHandler");
 local Player = require("Player");
 local EventHandler = require("EventHandler");
-local MapRotEditor = require("MapRotEditor");
+local MapRotEditor = require("Maps/MapRot/MapRotEditor");
+local MapRotSwitcher = require("Maps/MapRot/MapRotSwitcher");
 
 ---
 -- Wrapper class for the gema mod.
@@ -89,7 +90,7 @@ function GemaMod:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.mapTop = MapTop:__construct(instance);
   instance.players = {};
   instance.eventHandler = EventHandler:__construct(instance);
-  instance.mapRotEditor = MapRotEditor:__construct("config/maprot.cfg");
+  instance.mapRotEditor = MapRotEditor:__construct("config/maprot_gema.cfg");
   instance.isActive = true;
 
   return instance;
@@ -240,6 +241,8 @@ function GemaMod:initialize()
   print("Loading gema maps ...");
   self.mapRotEditor:addExistingGemaMapsToDataBase(self.dataBase, "packages/maps/servermaps/incoming");
   self.mapRotEditor:generateMapRotFromExistingMaps(self.dataBase);
+
+  MapRotSwitcher:switchToGemaMapRot();
 
 end
 
@@ -419,5 +422,18 @@ function GemaMod:onPlayerSpawnAfter(_cn)
   self.eventHandler:getPlayerSpawnAfterHandler():onPlayerSpawnAfter(_cn);
 end
 
+---
+-- Event handler which is called when a vote ends.
+--
+-- @tparam int _result The result of the vote
+-- @tparam int _cn The client number of the player who called the vote
+-- @tparam int _type The vote type
+-- @tparam string _text The map name, kick reason, etc.
+-- @tparam int _number1 The game mode, target cn, etc.
+-- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
+--
+function GemaMod:onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
+  self.eventHandler:getVoteEndHandler():onVoteEnd(_result, _cn, _type, _text, _number1, _number2);
+end
 
 return GemaMod;
