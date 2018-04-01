@@ -13,7 +13,7 @@
 #
 isRoot()
 {
-  if [[ $(id -u) != 0 ]]; then
+  if [ $(id -u) != 0 ]; then
     return 1
   else
     return 0
@@ -29,7 +29,7 @@ getAbsolutePath()
 {
   pathString="$1"
 
-  if [[ $pathString == "/"* ]]; then
+  if [[ "$pathString" == "/"* ]]; then
 
     # If the path starts with a slash it is already an absolute path
     absoluteDirectory=$pathString
@@ -61,7 +61,7 @@ askYesNoQuestion()
   #  
   userDecision=$(echo "$userDecision" | tr '[:upper:]' '[:lower:]')
 
-  if [[ "$userDecision" == "yes" ]] || [[ "$userDecision" == "y" ]]; then
+  if [ "$userDecision" == "yes" ] || [ "$userDecision" == "y" ]; then
     return 0
   else
     return 1
