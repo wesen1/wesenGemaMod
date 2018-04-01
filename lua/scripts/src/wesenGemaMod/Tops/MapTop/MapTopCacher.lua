@@ -105,6 +105,8 @@ function MapTopCacher:addRecord(_newRecord, _currentRank)
     currentRank = _currentRank;
   end
 
+  self:removeRecordsWithPlayerName(_newRecord:getPlayer():getName());
+
   for i = currentRank - 1, _newRecord:getRank(), -1 do
     local record = self.records[i];
     record:setRank(i + 1);
@@ -112,6 +114,33 @@ function MapTopCacher:addRecord(_newRecord, _currentRank)
   end
 
   self.records[_newRecord:getRank()] = _newRecord;
+
+end
+
+---
+-- Removes all records with the player name _playerName from the cached records list.
+--
+-- @tparam string _playerName The player name
+--
+function MapTopCacher:removeRecordsWithPlayerName(_playerName)
+
+  local rankPlayerWithSameName = -1;
+  local numberOfRecords = self.parentMapTop:getNumberOfRecords();
+
+  while (rankPlayerWithSameName ~= nil) do
+
+    rankPlayerWithSameName = self:getRecordByName(_playerName);
+
+    if (rankPlayerWithSameName ~= nil) then
+
+      for i = rankPlayerWithSameName, numberOfRecords, 1 do
+        self.records[i] = self.records[i + 1];
+      end
+      self.records[numberOfRecords] = nil;
+
+    end
+
+  end
 
 end
 
