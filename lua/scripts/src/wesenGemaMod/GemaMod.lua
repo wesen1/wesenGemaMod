@@ -64,6 +64,7 @@ GemaMod.mapRotEditor = "";
 
 ---
 -- Indicates whether the gema mode is currently active.
+--
 -- @tfield bool isActive
 --
 GemaMod.isActive = true;

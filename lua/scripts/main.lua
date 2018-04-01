@@ -121,6 +121,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK if the player says normal text or nil
 --
 function onPlayerSayText(_cn, _text)
+
   local pluginBlock = gemaMod:onPlayerSayText(_cn, _text);
 
   if (pluginBlock) then
