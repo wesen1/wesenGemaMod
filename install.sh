@@ -13,7 +13,7 @@
 #
 isRoot()
 {
-  if [[ $(id -u) != 0 ]]; then
+  if [ $(id -u) != 0 ]; then
     return 1
   else
     return 0
@@ -29,7 +29,7 @@ getAbsolutePath()
 {
   pathString="$1"
 
-  if [[ $pathString == "/"* ]]; then
+  if [[ "$pathString" == "/"* ]]; then
 
     # If the path starts with a slash it is already an absolute path
     absoluteDirectory=$pathString
@@ -61,11 +61,70 @@ askYesNoQuestion()
   #  
   userDecision=$(echo "$userDecision" | tr '[:upper:]' '[:lower:]')
 
-  if [[ "$userDecision" == "yes" ]] || [[ "$userDecision" == "y" ]]; then
+  if [ "$userDecision" == "yes" ] || [ "$userDecision" == "y" ]; then
     return 0
   else
     return 1
   fi
+}
+
+#
+# Creates all directories in the path that do not exist and changes the owner to
+# the user who executed the script.
+# Must use this function because mkdir and install apply owner options only to the
+# last created directory
+#
+# @param String $1 The directory path
+# @param String $2 The user name of the user who executed the script
+#
+createDirectoriesRecursive()
+{
+  directoryPath=""
+
+  #
+  # Split directory path by "/"
+  #
+  # https://stackoverflow.com/a/918898
+  for directory in $(echo $1 | tr "/" " ")
+  do
+
+    directoryPath="$directoryPath/$directory"
+
+    if [ ! -d $directoryPath ]; then
+      mkdir "$directoryPath"
+      chown "$2" "$directoryPath"
+      chgrp "$2" "$directoryPath"
+    fi
+
+  done
+}
+
+#
+# Reads a password from the command line and saves it in the global variable $password.
+#
+# @param String $1 The description of the user for which the password will be used
+#
+readPassword()
+{
+  password="1"
+  confirmPassword="2"
+  isFirstCycle=1
+
+  while [ "$password" != "$confirmPassword" ]; do
+
+    if [ $isFirstCycle == 1 ]; then
+      isFirstCycle=0
+    else
+      echo "The passwords did not match. Please try again."
+    fi
+
+    echo -e "\n"
+    read -p "Enter a password for $1: " -s password
+    echo -en "\n"
+    read -p "Confirm the password for $1: " -s confirmPassword
+    echo -e "\n"
+
+  done
 }
 
 
@@ -73,13 +132,19 @@ askYesNoQuestion()
 # Script
 ###################
 
-# TODO: Default: supress output, if --verbose don't supress output
-
 ## Check whether the user is root
 if ! $(isRoot); then
   echo "Please run as root"
   exit
 fi
+
+
+## Determine the username
+
+#
+# See https://unix.stackexchange.com/a/137217
+#
+userName="${SUDO_USER:-$USER}"
 
 
 ## Determine the directories
@@ -95,7 +160,7 @@ if [ ! -d $outputDirectory ]; then
 
   question="The output directory $outputDirectory doesn't exist. Shall it be created?"
   if askYesNoQuestion "$question"; then
-    mkdir -p "$outputDirectory"
+    createDirectoriesRecursive "$outputDirectory" "$userName"
   else
     exit
   fi
@@ -117,31 +182,31 @@ mkdir "tmp"
 
 apt-get update
 
-echo "Installing AssaultCube server dependencies"
+echo "Installing AssaultCube server dependencies ..."
 apt-get install -y libsdl1.2debian
 
-echo "Downloading AssaultCube"
+echo "Downloading AssaultCube ..."
 wget https://github.com/assaultcube/AC/releases/download/v1.2.0.2/AssaultCube_v1.2.0.2.tar.bz2 -P "tmp"
 
-echo "Extracting AssaultCube"
+echo "Extracting AssaultCube ..."
 tar -xvf tmp/AssaultCube_v1.2.0.2.tar.bz2 -C ./
 mv AssaultCube_v1.2.0.2 lua_server
 
 
 ## Install Lua mod
 
-echo "Installing packages that are necessary to build lua mod"
+echo "Installing packages that are necessary to build lua mod ..."
 apt-get install -y lib32z1-dev g++ lua5.1-dev unzip
 
-echo "Downloading lua mod"
+echo "Downloading lua mod ..."
 wget https://github.com/wesen1/AC-Lua/archive/master.zip -P "tmp"
 
 cd tmp
 
-echo "Extracting lua mod"
+echo "Extracting lua mod ..."
 unzip master.zip
 
-echo "Building lua mod"
+echo "Building lua mod ..."
 
 # "Fix" compile error in Lua mod by commenting out the line below and build the executable
 sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/" AC-Lua-master/src/tools.h
@@ -149,50 +214,15 @@ sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/"
 cd AC-Lua-master
 sh build.sh
 
-echo "Moving the built executable to the AssaultCube folder"
+echo "Moving the built executable to the AssaultCube folder ..."
 mv linux_release/linux_64_server ../../lua_server/bin_unix/linux_64_server
 
 cd ../..
 
 
-## Install database
-question="Shall the database for wesen's gema mod be installed?"
-if askYesNoQuestion "$question"; then
-
-  #
-  # Check whether mysql or mariadb is already installed
-  # Source: https://stackoverflow.com/a/677212s
-  #
-  if ! hash mysql >/dev/null 2>&1; then
-
-    echo "Installing mariadb-server"
-    apt-get install -y mariadb-server
-
-    echo "Setting root user password to 'root'"
-    mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('root') WHERE User='root';"
-
-  fi
-
-  # Import database
-  echo "Initializing database for wesen's gema mod"
-  sql="CREATE DATABASE assaultcube_gema;
-       USE assaultcube_gema;
-       SOURCE $installerDirectory/assaultcube_gema.sql;"
-  mysql -u root -Bse "$sql"
-
-  # Create new user for lua mod
-  echo "Creating a new user for wesen's gema mod"
-  sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY 'password';
-       GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
-       FLUSH PRIVILEGES;"
-  mysql -u root -Bse "$sql"
-
-fi
-
-
 ## Install wesen's gema mod
 
-echo "Installing dependencies for wesen's gema mod"
+echo "Installing dependencies for wesen's gema mod ..."
 apt-get install -y lua-filesystem lua-sql-mysql
 
 question="Copy the gema mod to lua/scripts folder?"
@@ -272,7 +302,65 @@ if askYesNoQuestion "$question"; then
 fi
 
 
-## Print information
+## Change the owner of all files in the output directory
+chown -R "$userName" "$outputDirectory"
+chgrp -R "$userName" "$outputDirectory"
 
+
+## Install database
+question="Shall the database for wesen's gema mod be installed?"
+if askYesNoQuestion "$question"; then
+
+  #
+  # Check whether mysql or mariadb is already installed
+  # Source: https://stackoverflow.com/a/677212s
+  #
+  if ! hash mysql >/dev/null 2>&1; then
+
+    echo "Installing mariadb-server ..."
+    apt-get install -y mariadb-server
+
+    readPassword "the 'root' database user"
+    rootUserPassword="$password"
+
+    echo "Setting root user password ..."
+    mysql -u root -Bse "UPDATE mysql.user SET Password=PASSWORD('$rootUserPassword') WHERE User='root';"
+
+  fi
+
+  # Import database
+  echo "Initializing database for wesen's gema mod ..."
+  sql="CREATE DATABASE assaultcube_gema;
+       USE assaultcube_gema;
+       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  mysql -u root -Bse "$sql"
+
+  # Create new user for lua mod
+  readPassword "the gemamod database user"
+  gemamodUserPassword="$password"
+
+  echo "Creating a new user for wesen's gema mod ..."
+  sql="CREATE USER 'assaultcube'@'localhost' IDENTIFIED BY '$gemamodUserPassword';
+       GRANT ALL PRIVILEGES ON assaultcube_gema.* TO 'assaultcube'@'localhost';
+       FLUSH PRIVILEGES;"
+  mysql -u root -Bse "$sql"
+
+  # Write the gemamod user password to the gemamod config file
+  gemamodConfigPath="$outputDirectory/lua_server/lua/config/gemamod.cfg"
+
+  if [ -f "$gemamodConfigPath" ]; then
+    echo "Setting password in config file ..."
+
+    # See https://stackoverflow.com/a/20568559
+    sed -i "s/^\(dataBasePassword=\).*/\1$gemamodUserPassword/" "$gemamodConfigPath"
+  fi
+
+else
+  echo "The database will not be installed. You have to adjust lua/config/gemamod.cfg manually."
+fi
+
+
+## Print information
+echo -en "\n\nInstallation complete.\n"
 echo "Go to https://assault.cubers.net/docs/server.html to learn how to configure your server"
 echo "Navigate to $outputDirectory and type \"sh server.sh\" to start the server"

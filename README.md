@@ -11,9 +11,6 @@ The records are saved in a minimal database and the commands are built in a way 
 
 ````./install.sh <output directory>````
 
-* Adjust main.lua (database information) and adjust database user password
-
-
 ## Setup development environment
 
 * Install vagrant and virtualbox
@@ -23,4 +20,3 @@ The records are saved in a minimal database and the commands are built in a way 
 * Finally type ````./server.sh````
 
 After that you should be able to connect to your test server by typing ````/connect localhost```` ingame.
-
