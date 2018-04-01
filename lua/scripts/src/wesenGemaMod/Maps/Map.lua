@@ -48,16 +48,25 @@ end
 --
 -- @tparam DataBase _dataBase The database
 -- @tparam string _mapName The map name
+-- @tparam Player _uploadPlayer The upload player (may be nil)
 --
-function Map:saveMapName(_dataBase, _mapName)
+function Map:saveMapName(_dataBase, _mapName, _uploadPlayer)
 
   local mapName = _dataBase:sanitize(_mapName);
+  if (_uploadPlayer) then
+    uploadPlayerId = _uploadPlayer:getId();
+  else
+    uploadPlayerId = "NULL";
+  end
 
   if (self:fetchMapId(_dataBase, _mapName) == nil) then
 
     local sql = "INSERT INTO maps "
-             .. "(name) "
-             .. "VALUES ('" .. mapName .. "');";
+             .. "(name, upload_player, uploaded_at) "
+             .. "VALUES ('" .. mapName .. "', "
+                            .. uploadPlayerId .. ", "
+                            .. "FROM_UNIXTIME(" .. os.time() .. ")"
+                     .. ");";
 
     _dataBase:query(sql, false);
 
