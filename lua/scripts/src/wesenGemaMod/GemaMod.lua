@@ -436,4 +436,5 @@ function GemaMod:onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
   self.eventHandler:getVoteEndHandler():onVoteEnd(_result, _cn, _type, _text, _number1, _number2);
 end
 
+
 return GemaMod;

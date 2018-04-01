@@ -23,4 +23,3 @@
 //     BobsInstagibServer \f3play nicely!
 //     Coloring a motd is fun: \f0Green\f5 and another \fLgreen\f5 from the set.
 //     contact me at a@b.c
-
