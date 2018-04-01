@@ -82,16 +82,20 @@ function PlayerSayTextHandler:onPlayerSayText(_cn, _text)
 
   logline(4, logText);
 
-  local commandParser = self.parentGemaMod:getCommandHandler():getCommandParser();
+  if (self.parentGemaMod:getIsActive()) then
 
-  if (commandParser:isCommand(_text)) then
-    commandParser:parseCommand(_text, _cn);
-  else
-    Output:playerSayText(_text, _cn, self.parentGemaMod:getPlayers());
+    local commandParser = self.parentGemaMod:getCommandHandler():getCommandParser();
+
+    if (commandParser:isCommand(_text)) then
+      commandParser:parseCommand(_text, _cn);
+    else
+      Output:playerSayText(_text, _cn, self.parentGemaMod:getPlayers());
+    end
+
+    -- block the normal player text output of the server
+    return PLUGIN_BLOCK;
+
   end
-
-  -- block the normal player text output of the server
-  return PLUGIN_BLOCK;
 
 end
 

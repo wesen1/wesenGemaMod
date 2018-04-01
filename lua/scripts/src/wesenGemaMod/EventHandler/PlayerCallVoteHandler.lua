@@ -6,6 +6,7 @@
 --
 
 local Map = require("Maps/Map");
+local MapChecker = require("Maps/MapChecker");
 local Output = require("Outputs/Output");
 
 ---
@@ -80,24 +81,35 @@ end
 --
 function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
 
-  if (_type == SA_MAP and
-      _number1 == GM_CTF and
-      _voteError == VOTEE_INVALID)
-  then
+  -- If vote is a map vote
+  if (_type == SA_MAP) then
 
-    if (mapexists(_text)) then
-      Map:removeMap(self.parentGemaMod:getDataBase(),
-                    _text,
-                    self.parentGemaMod:getMapTop(),
-                    self.parentGemaMod:getMapRotEditor()
-      );
+    -- If the map vote is invalid
+    if (_voteError == VOTEE_INVALID) then
 
-      local infoMessage = "The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
-      Output:print(Output:getColor("info") .. infoMessage, _cn);
-      return PLUGIN_BLOCK;
+      if (mapexists(_text)) then
+        Map:removeMap(self.parentGemaMod:getDataBase(),
+                      _text,
+                      self.parentGemaMod:getMapTop(),
+                      self.parentGemaMod:getMapRotEditor()
+        );
 
-    else
-      Output:print(Output:getColor("error") .. "The map \"" .. _text .. "\" could not be found on the server.", _cn);
+        local infoMessage = "The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
+        Output:print(Output:getColor("info") .. infoMessage, _cn);
+        return PLUGIN_BLOCK;
+
+      else
+        Output:print(Output:getColor("error") .. "The map \"" .. _text .. "\" could not be found on the server.", _cn);
+      end
+
+    elseif (_voteError == VOTEE_NOERROR) then
+
+      if (self.parentGemaMod:getIsActive() and (_number1 ~= GM_CTF or not MapChecker:isGema(_text))) then
+        Output:print(Output:getColor("info") .. "[INFO] The gema mode will be automatically disabled when this vote passes.");
+      elseif (not self.parentGemaMod:getIsActive() and _number1 == GM_CTF and MapChecker:isGema(_text)) then
+        Output:print(Output:getColor("info") .. "[INFO] The gema mode will be automatically enabled when this vote passes.");
+      end
+
     end
 
   end

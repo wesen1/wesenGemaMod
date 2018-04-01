@@ -71,10 +71,13 @@ end
 --
 function PlayerSpawnAfterHandler:onPlayerSpawnAfter(_cn)
 
-  local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
+  if (self.parentGemaMod:getIsActive()) then
+    local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
 
-  spawnedPlayer:setWeapon(getprimary(_cn));
-  spawnedPlayer:setTeam(getteam(_cn));
+    spawnedPlayer:setWeapon(getprimary(_cn));
+    spawnedPlayer:setTeam(getteam(_cn));
+
+  end
 
 end
 

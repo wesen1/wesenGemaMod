@@ -84,20 +84,16 @@ end
 --
 function PlayerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
-  if (not MapChecker:isGema(_mapName)) then
+  -- if upload is not rejected
+  if (_uploadError == UE_NOERROR) then
 
-    local errorMessage = "This map is not a gema map! Make sure your map name contains g3/ema/@/4";
-    Output:print(Output:getColor("error") .. errorMessage, _cn);
+    if (MapChecker:isGema(_mapName)) then
 
-    -- returns the Upload Error "Ignore" which will make the server ignore the upload
-    -- and print an error message to the player
-    return UE_IGNORE;
+      Map:saveMapName(self.parentGemaMod:getDataBase(), _mapName);
+      self.parentGemaMod:getMapRotEditor():addMapToMapRotConfigFile(_mapName);
+      self.parentGemaMod:getMapRotEditor():addMapToLoadedMapRot(_mapName);
 
-  elseif (_uploadError == UE_NOERROR) then
-    -- if upload is not rejected
-    Map:saveMapName(self.parentGemaMod:getDataBase(), _mapName);
-    self.parentGemaMod:getMapRotEditor():addMapToMapRotConfigFile(_mapName);
-    self.parentGemaMod:getMapRotEditor():addMapToLoadedMapRot(_mapName);
+    end
 
   end
 

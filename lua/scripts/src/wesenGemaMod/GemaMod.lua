@@ -62,6 +62,12 @@ GemaMod.eventHandler = "";
 --
 GemaMod.mapRotEditor = "";
 
+---
+-- Indicates whether the gema mode is currently active.
+-- @tfield bool isActive
+--
+GemaMod.isActive = true;
+
 
 ---
 -- Gema mod constructor.
@@ -83,6 +89,7 @@ function GemaMod:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.players = {};
   instance.eventHandler = EventHandler:__construct(instance);
   instance.mapRotEditor = MapRotEditor:__construct("config/maprot.cfg");
+  instance.isActive = true;
 
   return instance;
 
@@ -199,6 +206,26 @@ function GemaMod:setMapRotEditor(_mapRotEditor)
   self.mapRotEditor = _mapRotEditor;
 end
 
+---
+-- Returns whether the gema mode is active.
+--
+-- @treturn bool True: Gema mode is active
+--               False: Gema mode is not active
+--
+function GemaMod:getIsActive()
+  return self.isActive;
+end
+
+---
+-- Sets whether the gema mode is active.
+--
+-- @tparam bool _isActive True: Gema mode is active
+--                        False: Gema mode is not active
+--
+function GemaMod:setIsActive(_isActive)
+  self.isActive = _isActive;
+end
+
 
 -- Class Methods
 
@@ -257,9 +284,10 @@ end
 -- Event handler which is called when the map is changed.
 --
 -- @tparam string _mapName The name of the new map
+-- @tparam int _gameMode The game mode
 --
-function GemaMod:onMapChange(_mapName)
-  self.eventHandler:getMapChangeHandler():onMapChange(_mapName);
+function GemaMod:onMapChange(_mapName, _gameMode)
+  self.eventHandler:getMapChangeHandler():onMapChange(_mapName, _gameMode);
 end
 
 ---

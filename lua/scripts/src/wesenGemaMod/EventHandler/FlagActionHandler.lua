@@ -75,12 +75,16 @@ end
 --
 function FlagActionHandler:onFlagAction(_cn, _action, _flag)
 
-  -- instant flag reset (gameplay affecting)
-  if (_action == FA_DROP or _action == FA_LOST) then
-    self:resetFlag(_cn, _flag)
+  if (self.parentGemaMod:getIsActive()) then
 
-  elseif (_action == FA_SCORE) then
-    self:registerRecord(_cn, getsvtick());
+    -- instant flag reset (gameplay affecting)
+    if (_action == FA_DROP or _action == FA_LOST) then
+      self:resetFlag(_cn, _flag)
+
+    elseif (_action == FA_SCORE) then
+      self:registerRecord(_cn, getsvtick());
+    end
+
   end
 
 end

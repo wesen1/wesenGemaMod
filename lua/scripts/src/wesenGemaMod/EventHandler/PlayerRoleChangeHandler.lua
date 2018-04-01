@@ -72,12 +72,16 @@ end
 --
 function PlayerRoleChangeHandler:onPlayerRoleChange (_cn, _newRole)
 
-  local player = self.parentGemaMod:getPlayers()[_cn];
+  if (self.parentGemaMod:getIsActive()) then
 
-  if (_newRole == CR_ADMIN) then
-    player:setLevel(1);
-  elseif (_newRole == CR_DEFAULT) then
-    player:setLevel(0);
+    local player = self.parentGemaMod:getPlayers()[_cn];
+
+    if (_newRole == CR_ADMIN) then
+      player:setLevel(1);
+    elseif (_newRole == CR_DEFAULT) then
+      player:setLevel(0);
+    end
+
   end
 
 end

@@ -41,9 +41,10 @@ end
 -- Event handler which is called when the map is changed.
 --
 -- @tparam string _mapName The name of the new map
+-- @tparam int _gameMode The game mode
 --
-function onMapChange(_mapName)
-  gemaMod:onMapChange(_mapName);
+function onMapChange(_mapName, _gameMode)
+  gemaMod:onMapChange(_mapName, _gameMode);
 end
 
 ---

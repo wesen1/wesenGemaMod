@@ -71,9 +71,10 @@ end
 --
 function PlayerSpawnHandler:onPlayerSpawn(_cn)
 
-  local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
-
-  spawnedPlayer:setStartTime(getsvtick());
+  if (self.parentGemaMod:getIsActive()) then
+    local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
+    spawnedPlayer:setStartTime(getsvtick());
+  end
 
 end
 
