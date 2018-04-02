@@ -85,7 +85,9 @@ function MapTopPrinter:printMapTop(_cn)
       amountDisplayRecords = amountRecords;
     end
 
-    local mapTopTitle = "The %i best player%s of this map %s:";
+    local mapTopTitle = Output:getColor("mapTopInfo") .. "The "
+                     .. Output:getColor("mapTopNumberOfRecords") .. "%d "
+                     .. Output:getColor("mapTopInfo") .. "best player%s of this map %s:";
 
     if (amountDisplayRecords == 1) then
       mapTopTitle = string.format(mapTopTitle, amountDisplayRecords, "", "is");
@@ -93,7 +95,7 @@ function MapTopPrinter:printMapTop(_cn)
       mapTopTitle = string.format(mapTopTitle, amountDisplayRecords, "s", "are");
     end
 
-    Output:print(Output:getColor("mapTopInfo") .. mapTopTitle, _cn);
+    Output:print(mapTopTitle, _cn);
 
     local startRank = 1;
     local limit = 4;
@@ -148,12 +150,17 @@ function MapTopPrinter:printMapStatistics(_cn)
     local bestRecord = self.parentMapTop:getRecord(1);
     local amountRecords = self.parentMapTop:getNumberOfRecords();
 
-    local playerAmountString = amountRecords .. " player";
-    if (amountRecords ~= 1) then
-      playerAmountString = playerAmountString .. "s"
+    local mapTopSummary = Output:getColor("mapTopInfo") .. "This map was finished by "
+                     .. Output:getColor("mapTopNumberOfRecords") .. "%d "
+                     .. Output:getColor("mapTopInfo") .. "player%s";
+
+    if (amountRecords == 1) then
+      mapTopSummary = string.format(mapTopSummary, amountRecords, "");
+    else
+      mapTopSummary = string.format(mapTopSummary, amountRecords, "s");
     end
 
-    Output:print(Output:getColor("mapTopInfo") .. "This map was finished by " .. playerAmountString, _cn);
+    Output:print(mapTopSummary, _cn);
     Output:print(
       Output:getColor("mapRecordInfo") .. "The best record of this map is "
    .. Output:getColor("mapRecordTime") .. bestRecord:getDisplayString()
