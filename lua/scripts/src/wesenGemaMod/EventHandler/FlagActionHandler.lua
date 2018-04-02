@@ -105,16 +105,16 @@ function FlagActionHandler:registerRecord(_cn, _endTime)
     return;
   end
 
-  local delta = _endTime - scorePlayer:getStartTime();
+  local millisecondsNeededToScore = _endTime - scorePlayer:getStartTime();
   scorePlayer:setStartTime(0);
 
-  if delta == 0 then
+  if millisecondsNeededToScore == 0 then
     return;
   end
 
   local record = MapRecord:__construct(
                                   TableUtils:copy(scorePlayer), 
-                                  delta,
+                                  millisecondsNeededToScore,
                                   scorePlayer:getWeapon(),
                                   scorePlayer:getTeam(),
                                   self.parentGemaMod:getMapTop()
