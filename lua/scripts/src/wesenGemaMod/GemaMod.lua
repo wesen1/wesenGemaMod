@@ -70,6 +70,13 @@ GemaMod.mapRotEditor = "";
 --
 GemaMod.isActive = true;
 
+---
+-- The time in minutes that the players can add to the remaining time with the !extend command
+--
+-- @tfield int remainingExtendMinutes
+--
+GemaMod.remainingExtendMinutes = 0
+
 
 ---
 -- Gema mod constructor.
@@ -92,6 +99,7 @@ function GemaMod:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.eventHandler = EventHandler:__construct(instance);
   instance.mapRotEditor = MapRotEditor:__construct("config/maprot_gema.cfg");
   instance.isActive = true;
+  instance.remainingExtendMinutes = 0;
 
   return instance;
 
@@ -226,6 +234,25 @@ end
 --
 function GemaMod:setIsActive(_isActive)
   self.isActive = _isActive;
+end
+
+---
+-- Returns the time in minutes that the players can add to the remaining time with the !extend command.
+--
+-- @treturn int The time in minutes that the players can add to the remaining time with the !extend command
+--
+function GemaMod:getRemainingExtendMinutes()
+  return self.remainingExtendMinutes;
+end
+
+---
+-- Sets the time in minutes that the players can add to the remaining time with the !extend command.
+--
+-- @tparam int _remainingExtendMinutes The time in minutes that the players can add
+--                                     to the remaining time with the !extend command
+--
+function GemaMod:setRemainingExtendMinutes(_remainingExtendMinutes)
+  self.remainingExtendMinutes = _remainingExtendMinutes;
 end
 
 

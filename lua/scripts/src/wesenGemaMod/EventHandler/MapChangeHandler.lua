@@ -91,6 +91,8 @@ function MapChangeHandler:onMapChange(_mapName, _gameMode)
       mapTop:printMapStatistics(cn);
     end
 
+    self.parentGemaMod:setRemainingExtendMinutes(20);
+
   else
     if (MapChecker:isGema(_mapName) and _gameMode == GM_CTF) then
       self.parentGemaMod:setIsActive(true);

@@ -29,13 +29,13 @@ setmetatable(ExtendTimeCommand, {__index = BaseCommand});
 --
 function ExtendTimeCommand:__construct(_parentCommandLister)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "extend", 1, "Time");
+  local instance = BaseCommand:__construct(_parentCommandLister, "extend", 0, "Time");
   setmetatable(instance, {__index = ExtendTimeCommand});
 
   instance:addAlias("ext");
   instance:addAlias("extendTime");
   instance:addArgument("numberOfMinutes", true, "The number of minutes to add to the remaining time");
-  instance:setDescription("Extends the remaining time by a specific amount of time.");
+  instance:setDescription("Extends the remaining time by a specific amount of time. The time can be extended by 20 minutes per map, but admins may extend the time further than that.");
 
   return instance;
 
@@ -50,16 +50,14 @@ end
 --
 function ExtendTimeCommand:execute(_cn, _args)
 
-  local inputTime = tonumber(_args[1]);
-  local timeLeft = gettimeleft();
-  local errorMessage = false;
+  local inputMinutes = tonumber(_args[1]);
+  local errorMessage = self:checkInputMinutes(inputMinutes);
 
-  if (inputTime == nil) then
-    errorMessage = "[ERROR] The entered number of added minutes is not a number.";
-  elseif (inputTime < 1) then
-    errorMessage = "[ERROR] The number of added minutes may not be smaller than 1.";
-  elseif (timeLeft + inputTime > 35790) then
-    errorMessage = "[ERROR] The time remaining may not exceed 35790 minutes.";
+  local parentGemaMod = self.parentCommandLister:getParentCommandHandler():getParentGemaMod();
+  local player = parentGemaMod:getPlayers()[_cn];
+
+  if (not errorMessage) then
+    errorMessage = self:subtractMinutesFromRemainingExtendMinutes(player, inputMinutes);
   end
 
   if (errorMessage) then
@@ -67,13 +65,68 @@ function ExtendTimeCommand:execute(_cn, _args)
     return;
   end
 
-  settimeleft(timeLeft + inputTime);
+  settimeleft(gettimeleft() + inputMinutes);
 
-  local player = self.parentCommandLister:getParentCommandHandler():getParentGemaMod():getPlayers()[_cn];
 
   Output:print(Output:getColor("info") .. "[INFO] "
             .. Output:getPlayerNameColor(player:getLevel()) .. player:getName()
-            .. Output:getColor("info") .. " extended the time by " .. inputTime .. " minutes.");
+            .. Output:getColor("info") .. " extended the time by " .. inputMinutes .. " minutes.");
+
+end
+
+---
+-- Checks whether the input minutes are valid.
+--
+-- @tparam int _inputMinutes The input minutes
+--
+-- @treturn string|nil The error message or nil
+--
+function ExtendTimeCommand:checkInputMinutes(_inputMinutes)
+
+  local timeLeft = gettimeleft();
+  local errorMessage = nil;
+
+  if (_inputMinutes == nil) then
+    errorMessage = "[ERROR] The entered number of added minutes is not a number.";
+  elseif (_inputMinutes < 1) then
+    errorMessage = "[ERROR] The number of added minutes may not be smaller than 1.";
+  elseif (timeLeft + _inputMinutes > 35790) then
+    errorMessage = "[ERROR] The time remaining may not exceed 35790 minutes.";
+  end
+
+  return errorMessage;
+
+end
+
+---
+-- Subtracts _inputMinutes from the remainig extend minutes.
+-- Returns an error if the amount of minutes exceeds the remaining extend minutes.
+--
+-- @tparam Player _player The player who used !extend
+-- @tparam int _inputMinutes The input minutes
+--
+-- @treturn string|nil The error message or nil
+--
+function ExtendTimeCommand:subtractMinutesFromRemainingExtendMinutes(_player, _inputMinutes)
+
+  local parentGemaMod = self.parentCommandLister:getParentCommandHandler():getParentGemaMod();
+  local errorMessage = nil;
+
+  if (_player:getLevel() == 0) then
+
+    local remainingExtendMinutes = parentGemaMod:getRemainingExtendMinutes();
+
+    if (remainingExtendMinutes == 0) then
+      errorMessage = "[ERROR] The time may not be further extended. Ask an admin to extend the time.";
+    elseif (remainingExtendMinutes < _inputMinutes) then
+      errorMessage = "[ERROR] The time may be extended by only " .. remainingExtendMinutes .. " more minutes.";
+    else
+      parentGemaMod:setRemainingExtendMinutes(remainingExtendMinutes - _inputMinutes);
+    end
+
+  end
+
+  return errorMessage;
 
 end
 
