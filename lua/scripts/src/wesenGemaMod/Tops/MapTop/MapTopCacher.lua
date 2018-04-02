@@ -103,6 +103,7 @@ function MapTopCacher:addRecord(_newRecord, _currentRank)
     currentRank = self.parentMapTop:getNumberOfRecords() + 1;
   else
     currentRank = _currentRank;
+    self.records[currentRank] = nil;
   end
 
   self:removeRecordsWithPlayerName(_newRecord:getPlayer():getName());
