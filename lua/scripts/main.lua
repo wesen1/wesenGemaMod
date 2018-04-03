@@ -156,6 +156,16 @@ function onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizeg
 end
 
 ---
+-- Event handler that is called when a player shoots.
+--
+-- @tparam int _cn The client number of the player who shot
+-- @tparam int _weapon The weapon with which the player shot
+--
+function onPlayerShoot(_cn, _weapon)
+  gemaMod:onPlayerShoot(_cn, _weapon);
+end
+
+---
 -- Event handler which is called when a player spawns.
 -- Initializes the start time of the player that spawned
 --

@@ -26,7 +26,9 @@ WeaponNameFetcher.weaponNames = {
   [GUN_SUBGUN] = "Submachine Gun",
   [GUN_CARBINE] = "Carbine",
   [GUN_SNIPER] = "Sniper Rifle",
-  [GUN_SHOTGUN] = "Shotgun"
+  [GUN_SHOTGUN] = "Shotgun",
+  [GUN_KNIFE] = "Knife Only",
+  [GUN_PISTOL] = "Pistol Only"
 
 }
 

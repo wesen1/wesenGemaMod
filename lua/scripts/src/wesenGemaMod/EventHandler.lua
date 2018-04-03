@@ -14,6 +14,7 @@ local PlayerNameChangeHandler = require("EventHandler/PlayerNameChangeHandler");
 local PlayerRoleChangeHandler = require("EventHandler/PlayerRoleChangeHandler");
 local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
 local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
+local PlayerShootHandler = require("EventHandler/PlayerShootHandler");
 local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
 local PlayerSpawnAfterHandler = require("EventHandler/PlayerSpawnAfterHandler");
 local VoteEndHandler = require("EventHandler/VoteEndHandler");
@@ -90,6 +91,13 @@ EventHandler.playerSayTextHandler = "";
 EventHandler.playerSendMapHandler = "";
 
 ---
+-- The player shoot handler
+--
+-- @tfield PlayerShootHandler playerShootHandler
+--
+EventHandler.playerShootHandler = "";
+
+---
 -- The player spawn event handler
 --
 -- @tfield PlayerSpawnHandler playerSpawnHandler
@@ -132,6 +140,7 @@ function EventHandler:__construct(_parentGemaMod)
   instance.playerRoleChangeHandler = PlayerRoleChangeHandler:__construct(_parentGemaMod);
   instance.playerSayTextHandler = PlayerSayTextHandler:__construct(_parentGemaMod);
   instance.playerSendMapHandler = PlayerSendMapHandler:__construct(_parentGemaMod);
+  instance.playerShootHandler = PlayerShootHandler:__construct(_parentGemaMod);
   instance.playerSpawnHandler = PlayerSpawnHandler:__construct(_parentGemaMod);
   instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler:__construct(_parentGemaMod);
   instance.voteEndHandler = VoteEndHandler:__construct(_parentGemaMod);
@@ -303,6 +312,24 @@ end
 --
 function EventHandler:setPlayerSendMapHandler(_playerSendMapHandler)
   self.playerSendMapHandler = _playerSendMapHandler;
+end
+
+---
+-- Returns the player shoot handler.
+--
+-- @treturn PlayerShootHandler The player shoot handler
+--
+function EventHandler:getPlayerShootHandler()
+  return self.playerShootHandler;
+end
+
+---
+-- Sets the player shoot handler.
+--
+-- @tparam PlayerShootHandler _playerShootHandler The player shoot handler
+--
+function EventHandler:setPlayerShootHandler(_playerShootHandler)
+  self.playerShootHandler = _playerShootHandler;
 end
 
 ---

@@ -74,6 +74,7 @@ function PlayerSpawnHandler:onPlayerSpawn(_cn)
   if (self.parentGemaMod:getIsActive()) then
     local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
     spawnedPlayer:setStartTime(getsvtick());
+    spawnedPlayer:setWeapon(GUN_KNIFE);
   end
 
 end
