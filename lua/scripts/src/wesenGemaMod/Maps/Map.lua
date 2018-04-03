@@ -6,6 +6,7 @@
 --
 
 local MapRemover = require("Maps/MapRemover");
+local Output = require("Outputs/Output");
 
 ---
 -- Provides functions to add and remove maps.
