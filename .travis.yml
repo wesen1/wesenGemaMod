@@ -13,6 +13,7 @@ before_install:
   - source .travis/setenv_lua.sh
 
 install:
+  - apt-get install -y mariadb-server
   - luarocks install luacov
   - luarocks install luaunit
   - luarocks install luafilesystem
