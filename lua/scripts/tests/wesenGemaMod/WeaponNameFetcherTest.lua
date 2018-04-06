@@ -41,7 +41,7 @@ function TestWeaponNameFetcher:testCanFetchWeaponName()
   for i = 7, 17, 1 do
     luaunit.assertEquals(WeaponNameFetcher:getWeaponName(i), "Unknown Weapon ID (" .. i .. ")");
   end
-  
+
   for i = -10, -1, 1 do
     luaunit.assertEquals(WeaponNameFetcher:getWeaponName(i), "Unknown Weapon ID (" .. i .. ")");
   end

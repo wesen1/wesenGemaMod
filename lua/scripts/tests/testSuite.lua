@@ -15,7 +15,7 @@ unpack = unpack or table.unpack
 
 
 function requireTests(_testDirectoryPath)
-  
+
   for luaFileName in lfs.dir(_testDirectoryPath) do
 
     if (luaFileName ~= "." and luaFileName ~= "..") then
@@ -26,14 +26,14 @@ function requireTests(_testDirectoryPath)
       if (attr.mode == "directory") then
         requireTests(luaFilePath);
       else
-        
+
         if not (package.path:find(_testDirectoryPath)) then
           package.path = package.path .. ";" .. _testDirectoryPath .. "/?.lua";
         end
-        
+
         require(luaFileName:gsub(".lua", ""));
       end
-    
+
     end
 
   end
