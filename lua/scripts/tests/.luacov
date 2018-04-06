@@ -2,5 +2,6 @@
 -- Configuration file for luacov
 --
 modules = {
-   ["src.wesenGemaMod.*"] = ".."
+   ["src.wesenGemaMod.*"] = "..",
+   ["src.wesenGemaMod.Utils.*"] = ".."
 }
