@@ -11,6 +11,7 @@ package.path = package.path .. ";" .. lfs.currentdir() .. "/../src/wesenGemaMod/
 require("luacov");
 
 local luaunit = require("luaunit");
+unpack = unpack or table.unpack
 
 
 function requireTests(_testDirectoryPath)
