@@ -15,7 +15,6 @@ install:
   - luarocks install luacov
   - luarocks install luaunit
   - luarocks install luafilesystem
-  - luarocks install luasql-mysql
 
 script:
   - cd lua/scripts/tests
