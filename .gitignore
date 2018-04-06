@@ -1,5 +1,3 @@
-.buildpath
-.project
-.settings
 .vagrant
 test\ server
+luacov*
