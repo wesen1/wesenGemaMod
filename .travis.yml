@@ -13,7 +13,7 @@ before_install:
   - source .travis/setenv_lua.sh
 
 install:
-  - luarocks install luacoverage
+  - luarocks install luacov
   - luarocks install luaunit
 
 script:
