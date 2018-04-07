@@ -20,5 +20,4 @@ script:
   - cd lua/scripts/tests
   - lua testSuite.lua
   - luacov
-  - echo ""
   - sed -ne "/Summary/,$ p" luacov.report.out
