@@ -28,7 +28,7 @@ function PlayerInformationSaver:saveIp(_dataBase, _playerIp)
               "(ip) " ..
               "VALUES ('%s');";
 
-  _dataBase:query(string.format(sql, _ip), false);
+  _dataBase:query(string.format(sql, _playerIp), false);
 
 end
 
@@ -64,7 +64,7 @@ function PlayerInformationSaver:savePlayer(_dataBase, _player)
 
   local ipId = PlayerInformationLoader:fetchIpId(_dataBase, _player:getIp());
   if (ipId == nil) then
-    self:saveIp(_dataBase, ipId, _player:getIp());
+    self:saveIp(_dataBase, _player:getIp());
     ipId = PlayerInformationLoader:fetchIpId(_dataBase, _player:getIp());
   end
 
