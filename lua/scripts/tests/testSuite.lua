@@ -14,6 +14,9 @@ local luaunit = require("luaunit");
 unpack = unpack or table.unpack
 
 
+---
+-- Requires all lua files in _testDirectoryPath.
+--
 function requireTests(_testDirectoryPath)
 
   for luaFileName in lfs.dir(_testDirectoryPath) do
@@ -41,7 +44,7 @@ function requireTests(_testDirectoryPath)
 end
 
 
--- Require all files in the tests/wesenGemaMod directory
+-- Require all lua files in the tests/wesenGemaMod directory
 requireTests(lfs.currentdir() .. "/wesenGemaMod");
 
 -- Run the tests
