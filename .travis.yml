@@ -8,6 +8,9 @@ env:
     - LUA=lua5.2
     - LUA=lua5.3
 
+addons:
+  mariadb: "10.0"
+
 before_install:
   - source .travis/setenv_lua.sh
 
