@@ -136,10 +136,22 @@ end
 --
 function Output:getCharacterWidth(_character, _font)
 
-  local width = _font[_character];
+  local width = -1;
+
+  if (_font == nil) then
+    width = cfg.getvalue("font_default", "default");
+  else
+    width = _font[_character];
+  end
 
   if (width == nil) then
-    width = cfg.getvalue("font_default", "default");
+
+    if (_font ~= nil) then
+      width = cfg.getvalue("font_default", "default");
+    else
+      width = 0;
+    end
+
   end
 
   return width;
@@ -157,12 +169,18 @@ end
 --
 function Output:getTabs(_entryLength, _longestEntryLength)
 
-  -- Tab width in pixels (1 TabStop = Width of 10 " " or width of 10 default characters
-  local tabWidth = 320;
+  -- Tab width in pixels (1 TabStop = Width of 10 " " or width of 10 default characters)
+  local tabWidth = self:getCharacterWidth("default") * 10;
 
   local numberOfTabs = math.ceil(_longestEntryLength / tabWidth);
   local tabsCovered = math.floor(_entryLength / tabWidth);
   local tabsNeeded = numberOfTabs - tabsCovered;
+
+  -- If the entry length is exactly at a tab stop one tab will have no effect,
+  -- therefore an additional tab is added
+  if (_entryLength % tabWidth == 0) then
+    tabsNeeded = tabsNeeded + 1;
+  end
 
   return self:generateTabs(tabsNeeded);
 
