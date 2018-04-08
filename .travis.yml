@@ -19,7 +19,8 @@ install:
   - luarocks install luaunit
   - luarocks install luafilesystem
   - luarocks install mach
-  - sudo apt-get install lua-sql-mysql
+  - sudo apt-get update
+  - sudo apt-get install -y lua-sql-mysql
 
 script:
   - cd lua/scripts/tests
