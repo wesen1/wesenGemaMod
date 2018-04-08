@@ -4,7 +4,7 @@
 -- @release 0.1
 -- @license MIT
 --
-local luasql = require "luasql.mysql";
+local luasql = require("luasql.mysql");
 
 ---
 -- Handles database access.

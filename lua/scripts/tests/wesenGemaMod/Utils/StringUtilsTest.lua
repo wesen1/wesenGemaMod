@@ -11,6 +11,8 @@ local StringUtils = require("Utils/StringUtils");
 ---
 -- Checks whether the string utils work as expected.
 --
+-- @type TestStringUtils
+--
 TestStringUtils = {};
 
 ---

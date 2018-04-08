@@ -56,11 +56,11 @@ function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedFun
   for index, functionCallData in ipairs(_expectedFunctionCalls) do
 
     local expectedDataBaseCall = dataBaseMock[functionCallData["method"]]:should_be_called_with(
-                                                  unpack(functionCallData["arguments"])
-                                                )
-                                                :and_will_return(
-                                                  functionCallData["returnValue"]
-                                                );
+                                                                unpack(functionCallData["arguments"])
+                                                              )
+                                                              :and_will_return(
+                                                                functionCallData["returnValue"]
+                                                              );
 
     if (index == 1) then
       expectedFunctionCalls = expectedDataBaseCall

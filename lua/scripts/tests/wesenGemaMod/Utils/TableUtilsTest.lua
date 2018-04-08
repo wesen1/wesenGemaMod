@@ -11,6 +11,8 @@ local TableUtils = require("Utils/TableUtils");
 ---
 -- Checks whether the table utils work as expected.
 --
+-- @type TestTableUtils
+--
 TestTableUtils = {};
 
 ---

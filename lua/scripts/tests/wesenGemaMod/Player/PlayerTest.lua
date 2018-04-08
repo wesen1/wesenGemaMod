@@ -79,7 +79,7 @@ function TestPlayer:canGetAttributes(_id, _name, _ip, _level, _startTime, _team,
   package.loaded["Player/Player"] = nil;
 
   -- Overwrite Output dependency with mock
-  local outputMock = mach.mock_object(Output, "Output");
+  local outputMock = mach.mock_object(Output, "OutputMock");
   package.loaded["Outputs/Output"] = outputMock;
 
   outputMock.getColor:should_be_called_with("playerTextDefault")
@@ -155,11 +155,11 @@ function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
   self:resetDependencies();
 
   -- Overwrite PlayerInformationLoader dependency with mock
-  local PlayerInformationLoaderMock = mach.mock_object(PlayerInformationLoader, "PlayerInformationLoader");
+  local PlayerInformationLoaderMock = mach.mock_object(PlayerInformationLoader, "PlayerInformationLoaderMock");
   package.loaded["Player/PlayerInformationLoader"] = PlayerInformationLoaderMock;
 
   -- Overwrite PlayerInformationSaver dependency with mock
-  local PlayerInformationSaverMock = mach.mock_object(PlayerInformationSaver, "PlayerInformationSaver");
+  local PlayerInformationSaverMock = mach.mock_object(PlayerInformationSaver, "PlayerInformationSaverMock");
   package.loaded["Player/PlayerInformationSaver"] = PlayerInformationSaverMock;
 
 
@@ -170,7 +170,7 @@ function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
   local outputMockTextColor = "\f0";
 
   -- Overwrite Output dependency with mock
-  local outputMock = mach.mock_object(Output, "Output");
+  local outputMock = mach.mock_object(Output, "OutputMock");
   package.loaded["Outputs/Output"] = outputMock;
 
   outputMock.getColor:should_be_called_with("playerTextDefault")
@@ -183,7 +183,7 @@ function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
 
 
   local testPlayer = Player:__construct(_playerName, _playerIp);
-  local dataBaseMock = mach.mock_object(DataBase, "DataBase");
+  local dataBaseMock = mach.mock_object(DataBase, "DataBaseMock");
 
   PlayerInformationSaverMock.savePlayer:should_be_called_with(dataBaseMock, testPlayer)
                                        :and_will_return(nil)
