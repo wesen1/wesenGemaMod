@@ -7,7 +7,7 @@
 
 local Map = require("Maps/Map");
 local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
-local Player = require("Player");
+local Player = require("Player/Player");
 
 ---
 -- Loads the map records from the database.

@@ -75,7 +75,7 @@ function PlayerNameChangeHandler:onPlayerNameChange (_cn, _newName)
   local dataBase = self.parentGemaMod:getDataBase();
 
   self.parentGemaMod:getPlayers()[_cn]:setName(_newName);
-  self.parentGemaMod:getPlayers()[_cn]:savePlayerData(dataBase);
+  self.parentGemaMod:getPlayers()[_cn]:savePlayer(dataBase);
 
 end
 

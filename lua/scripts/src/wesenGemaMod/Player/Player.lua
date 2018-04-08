@@ -6,6 +6,8 @@
 --
 
 local Output = require("Outputs/Output");
+local PlayerInformationLoader = require("Player/PlayerInformationLoader");
+local PlayerInformationSaver = require("Player/PlayerInformationSaver");
 
 ---
 -- Stores information about a single player.
@@ -249,146 +251,15 @@ end
 -- Class Methods
 
 ---
--- Fetches the ip id of this player ip from the database.
---
--- @tparam DataBase _dataBase The database
---
--- @treturn int|nil The ip id or nil if the ip was not found in the database
---
-function Player:fetchIpId(_dataBase)
-
-  local sql = "SELECT id "
-           .. "FROM ips "
-           .. "WHERE ip = '" .. self.ip .. "';";
-
-  local result = _dataBase:query(sql, true);
-
-  if (#result == 0) then
-    return nil;
-  else
-    return tonumber(result[1].id);
-  end
-
-end
-
----
--- Saves the player ip to the database.
---
--- @tparam DataBase _dataBase The database
---
-function Player:saveIp(_dataBase)
-
-  if (self:fetchIpId(_dataBase) == nil) then
-    local sql = "INSERT INTO ips "
-               .. "(ip) "
-               .. "VALUES ('" .. self.ip .. "');";
-
-    _dataBase:query(sql, false);
-
-  end
-
-end
-
----
--- Fetches the id of this player name from the database.
---
--- @tparam DataBase _dataBase The database
---
--- @treturn int|nil The player name id or nil if the player name was not found in the database
---
-function Player:fetchNameId(_dataBase)
-
-  local playerName = _dataBase:sanitize(self.name);
-
-  -- must use the keyword BINARY in order to make the string comparison case sensitve
-  local sqlGetId = "SELECT id "
-                .. "FROM names "
-                .. "WHERE name= BINARY '" .. playerName .. "';";
-
-  local result = _dataBase:query(sqlGetId, true);
-
-  if (#result == 0) then
-    return nil;
-  else
-    return tonumber(result[1]["id"]);
-  end
-
-end
-
----
--- Saves the player name to the database.
---
--- @tparam DataBase _dataBase The database
---
-function Player:saveName(_dataBase)
-
-  local playerName = _dataBase:sanitize(self.name);
-
-  if (self:fetchNameId(_dataBase) == nil) then
-
-    local sql = "INSERT INTO names "
-             .. "(name) "
-             .. "VALUES ('" .. playerName .. "');";
-
-    _dataBase:query(sql, false);
-
-  end
-
-end
-
----
--- Fetches the id of the player from the database
---
--- @tparam DataBase _dataBase The database
---
--- @treturn int|nil The player id or nil if the player was not found in the database
---
-function Player:fetchPlayerId(_dataBase)
-
-  local nameId = self:fetchNameId(_dataBase);
-  local ipId = self:fetchIpId(_dataBase);
-
-  local sql = "SELECT id "
-           .. "FROM players "
-           .. "WHERE name=" .. nameId .. " and ip=" .. ipId .. ";";
-
-  local result = _dataBase:query(sql, true);
-
-  if (#result == 0) then
-    return nil;
-  else
-    return tonumber(result[1]["id"]);
-  end
-
-end
-
----
 -- Saves the player (combination of ip and name) in the database.
--- Also sets the id attribute
+-- Also sets the player id attribute
 --
--- @tparam DataBase _dataBase The database
+-- @tparam DataBase _dataBase The data base object
 --
-function Player:savePlayerData(_dataBase)
+function Player:savePlayer(_dataBase)
 
-  self:saveName(_dataBase);
-  self:saveIp(_dataBase);
-
-  local nameId = self:fetchNameId(_dataBase);
-  local ipId = self:fetchIpId(_dataBase);
-  local playerId = self:fetchPlayerId(_dataBase);
-
-  if (playerId == nil) then
-
-    local sql = "INSERT INTO players "
-       .. "(name, ip) "
-       .. "VALUES (" .. nameId .. "," .. ipId .. ");";
-
-    _dataBase:query(sql, false);
-    playerId = self:fetchPlayerId(_dataBase);
-
-  end
-
-  self.id = playerId;
+  PlayerInformationSaver:savePlayer(_dataBase, self);
+  self.id = PlayerInformationLoader:fetchPlayerId(_dataBase, self);
 
 end
 

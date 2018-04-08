@@ -6,7 +6,7 @@
 --
 
 local Output = require("Outputs/Output");
-local Player = require("Player");
+local Player = require("Player/Player");
 
 ---
 -- Class that handles player connects.

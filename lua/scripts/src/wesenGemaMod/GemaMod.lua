@@ -8,7 +8,7 @@
 local DataBase = require("DataBase");
 local MapTop = require("Tops/MapTop/MapTop");
 local CommandHandler = require("CommandHandler/CommandHandler");
-local Player = require("Player");
+local Player = require("Player/Player");
 local EventHandler = require("EventHandler");
 local MapRotEditor = require("Maps/MapRot/MapRotEditor");
 local MapRotSwitcher = require("Maps/MapRot/MapRotSwitcher");
@@ -284,7 +284,7 @@ function GemaMod:addPlayer(_cn)
   local playerName = getname(_cn);
 
   self.players[_cn] = Player:__construct(playerName, playerIp);
-  self.players[_cn]:savePlayerData(self.dataBase);
+  self.players[_cn]:savePlayer(self.dataBase);
 
 end
 
