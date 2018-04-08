@@ -19,5 +19,4 @@ install:
 script:
   - cd lua/scripts/tests
   - lua testSuite.lua
-  - luacov
   - sed -ne "/Summary/,$ p" luacov.report.out
