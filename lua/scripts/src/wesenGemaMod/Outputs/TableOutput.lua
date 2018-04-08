@@ -154,7 +154,7 @@ function Output:getCharacterWidth(_character, _font)
 
   end
 
-  return width;
+  return tonumber(width);
 
 end
 
@@ -169,16 +169,18 @@ end
 --
 function Output:getTabs(_entryLength, _longestEntryLength)
 
+  local defaultCharacterWidth = self:getCharacterWidth("default");
+
   -- Tab width in pixels (1 TabStop = Width of 10 " " or width of 10 default characters)
-  local tabWidth = self:getCharacterWidth("default") * 10;
+  local tabWidth = defaultCharacterWidth * 10;
 
   local numberOfTabs = math.ceil(_longestEntryLength / tabWidth);
   local tabsCovered = math.floor(_entryLength / tabWidth);
   local tabsNeeded = numberOfTabs - tabsCovered;
 
-  -- If the entry length is exactly at a tab stop one tab will have no effect,
-  -- therefore an additional tab is added
-  if (_entryLength % tabWidth == 0) then
+  -- If the entry length is between 0 and 2 pixels away from a tab stop
+  -- one tab will have no effect, therefore an additional tab is added
+  if (_entryLength - tabsCovered * tabWidth <= 2) then
     tabsNeeded = tabsNeeded + 1;
   end
 
