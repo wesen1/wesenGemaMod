@@ -5,39 +5,36 @@
 -- @license MIT
 --
 local luaunit = require("luaunit");
-local mach = require 'mach';
+local mach = require("mach");
 
 local DataBase = "";
 local Output = "";
 local PlayerInformationLoader = "";
 local PlayerInformationSaver = "";
-local TableUtils = "";
-
----
--- Replaces the loaded dependencies of the test by the real dependencies.
--- This function must be called before starting each test.
---
-function loadRealDependencies()
-
-  package.loaded["DataBase"] = nil;
-  package.loaded["Outputs/Output"] = nil;
-  package.loaded["Player/PlayerInformationLoader"] = nil;
-  package.loaded["Player/PlayerInformationSaver"] = nil;
-  package.loaded["Utils/TableUtils"] = nil;
-
-  DataBase = require("DataBase");
-  Output = require("Outputs/Output");
-  PlayerInformationLoader = require("Player/PlayerInformationLoader");
-  PlayerInformationSaver = require("Player/PlayerInformationSaver");
-  TableUtils = require("Utils/TableUtils");
-
-end
 
 
 ---
 -- Checks whether the Player class works as expected.
 --
 TestPlayer = {};
+
+---
+-- Replaces the loaded dependencies of the test by the real dependencies.
+-- This function must be called before starting each test.
+--
+function TestPlayer:resetDependencies()
+
+  package.loaded["DataBase"] = nil;
+  package.loaded["Outputs/Output"] = nil;
+  package.loaded["Player/PlayerInformationLoader"] = nil;
+  package.loaded["Player/PlayerInformationSaver"] = nil;
+
+  DataBase = require("DataBase");
+  Output = require("Outputs/Output");
+  PlayerInformationLoader = require("Player/PlayerInformationLoader");
+  PlayerInformationSaver = require("Player/PlayerInformationSaver");
+
+end
 
 
 ---
@@ -73,7 +70,7 @@ end
 --
 function TestPlayer:canGetAttributes(_id, _name, _ip, _level, _startTime, _team, _textColor, _weapon)
 
-  loadRealDependencies();
+  self:resetDependencies();
 
   local Player = "";
   local outputMockTextColor = "\f0";
@@ -155,7 +152,7 @@ end
 --
 function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
 
-  loadRealDependencies();
+  self:resetDependencies();
 
   -- Overwrite PlayerInformationLoader dependency with mock
   local PlayerInformationLoaderMock = mach.mock_object(PlayerInformationLoader, "PlayerInformationLoader");
