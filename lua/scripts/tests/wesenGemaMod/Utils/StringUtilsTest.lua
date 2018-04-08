@@ -15,6 +15,7 @@ local StringUtils = require("Utils/StringUtils");
 --
 TestStringUtils = {};
 
+
 ---
 -- Checks whether the split function works as expected.
 --

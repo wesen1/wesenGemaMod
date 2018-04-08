@@ -16,7 +16,10 @@ local PlayerInformationSaver = "";
 ---
 -- Checks whether the Player class works as expected.
 --
+-- @type TestPlayer
+--
 TestPlayer = {};
+
 
 ---
 -- Replaces the loaded dependencies of the test by the real dependencies.

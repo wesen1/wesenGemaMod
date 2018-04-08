@@ -38,22 +38,22 @@ end
 
 
 ---
--- Checks one of the data sets of testCanReadWriteToDataBase().
+-- Checks one of the data sets of testCanFetchIpId(), testCanFetchNameId() or testCanFetchPlayerId().
 --
 -- @tparam string _playerName The test player name
 -- @tparam string _playerIp The test player ip
--- @tparam table _expectedFunctionCalls The expected function calls in the format { { method, arguments, returnValue } }
+-- @tparam table _expectedDataBaseCalls The expected database function calls in the format { { method, arguments, returnValue } }
 -- @tparam string _playerFunctionCall The Player method that will be called in this test
 -- @tparam mixed _expectedReturnValue The expected return value
 --
-function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedFunctionCalls, _methodName, _additionalMethodArguments, _expectedReturnValue)
+function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedDataBaseCalls, _methodName, _additionalMethodArguments, _expectedReturnValue)
 
   local dataBaseMock = mach.mock_object(DataBase, "DataBase");
 
   local expectedFunctionCalls = "";
   local returnValue = -1;
 
-  for index, functionCallData in ipairs(_expectedFunctionCalls) do
+  for index, functionCallData in ipairs(_expectedDataBaseCalls) do
 
     local expectedDataBaseCall = dataBaseMock[functionCallData["method"]]:should_be_called_with(
                                                                 unpack(functionCallData["arguments"])
