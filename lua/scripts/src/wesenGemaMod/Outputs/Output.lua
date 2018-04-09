@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local ColorLoader = require("Colors/ColorLoader");
+local ColorLoader = require("Outputs/Helpers/ColorLoader");
 
 ---
 -- Handles outputs of texts to clients.
