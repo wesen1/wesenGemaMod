@@ -7,6 +7,7 @@
 
 local NestedTableConverter = require("Outputs/Helpers/NestedTableConverter");
 local Output = require("Outputs/Output");
+local TextWidthCalculator = require("Outputs/Helpers/TextWidthCalculator");
 
 ---
 -- Handles outputs of tables to clients.
@@ -17,6 +18,14 @@ local TableOutput = {};
 
 -- TableOutput inherits from Output
 setmetatable(TableOutput, { __index = Output });
+
+
+---
+-- The text width calculator
+--
+-- @tfield TextWidthCalculator textWidthCalculator
+--
+TableOutput.textWidthCalculator = TextWidthCalculator:__construct("font_default", true);
 
 
 -- Class Methods
@@ -74,7 +83,6 @@ function TableOutput:getWidestEntries(_rows)
 
   local widestEntries = {};
   local entryWidths = {};
-  local fontDefault = cfg.totable("font_default");
 
   local tableHeight = #_rows;
   local tableWidth = #_rows[1];
@@ -85,7 +93,7 @@ function TableOutput:getWidestEntries(_rows)
 
     for x = 1, tableWidth - 1, 1 do
 
-      local textWidth = self:getTextWidth(_rows[y][x], fontDefault);
+      local textWidth = self.textWidthCalculator:getTextWidth(_rows[y][x]);
 
       entryWidths[y][x] = textWidth;
 
@@ -97,64 +105,7 @@ function TableOutput:getWidestEntries(_rows)
 
   end
 
-  fontDefault = nil;
-
   return widestEntries, entryWidths;
-
-end
-
----
--- Calculates and returns the width of text that does not include special characters such as "\n" or "\t".
---
--- @tparam string _text The text
--- @tparam int[] _font The font pixel widths in the format {[character] = width}
---
--- @treturn int The text width
---
-function Output:getTextWidth(_text, _font)
-
-  local textWidth = 0;
-
-  -- exclude "\f_" strings (colors) from width calculation because these characters will not be printed to the screen
-  _text = _text:gsub("(%\f[A-Za-z0-9])", "");
-
-  for character in _text:gmatch(".") do
-    textWidth = textWidth + self:getCharacterWidth(character, _font);
-  end
-
-  return textWidth;
-
-end
-
----
--- Returns the width of a single character.
---
--- @tparam string _character The character
--- @tparam int[] _font The font pixel widths in the format {[character] = width}
---
--- @treturn int The character width
---
-function Output:getCharacterWidth(_character, _font)
-
-  local width = -1;
-
-  if (_font == nil) then
-    width = cfg.getvalue("font_default", "default");
-  else
-    width = _font[_character];
-  end
-
-  if (width == nil) then
-
-    if (_font ~= nil) then
-      width = cfg.getvalue("font_default", "default");
-    else
-      width = 0;
-    end
-
-  end
-
-  return tonumber(width);
 
 end
 
@@ -169,7 +120,7 @@ end
 --
 function Output:getTabs(_entryLength, _longestEntryLength)
 
-  local defaultCharacterWidth = self:getCharacterWidth("default");
+  local defaultCharacterWidth = self.textWidthCalculator:getCharacterWidth(" ");
 
   -- Tab width in pixels (1 TabStop = Width of 10 " " or width of 10 default characters)
   local tabWidth = defaultCharacterWidth * 10;

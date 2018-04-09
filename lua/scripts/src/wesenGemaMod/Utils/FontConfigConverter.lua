@@ -35,6 +35,7 @@ function FontConfigConverter:convertFontConfig(_filePath, _fileName)
       local width = 0;
       fontName, width = line:match("font (.*) \".*\" (%d+) %d+ %d+ %d+ %d+.*");
       cfg.setvalue("font_" .. fontName, "default", width);
+      cfg.setvalue("font_" .. fontName, "whitespace", width);
 
     elseif (line:find("fontchar")) then
 
