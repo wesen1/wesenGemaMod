@@ -71,7 +71,7 @@ function TextWidthCalculator:getTextWidth(_text)
   local textWidth = 0;
 
   -- exclude "\f_" strings (colors) from width calculation because these characters will not be printed to the screen
-  local ttext = _text:gsub("(%\f[A-Za-z0-9])", "");
+  local text = _text:gsub("(%\f[A-Za-z0-9])", "");
 
   for character in text:gmatch(".") do
     textWidth = textWidth + self:getCharacterWidth(character);
