@@ -124,6 +124,8 @@ function Output:isPlayerNameUnique(_cn, _players)
 
 end
 
+--]]
+
 ---
 -- Returns the player name color based on the players level.
 --
@@ -140,7 +142,6 @@ function Output:getPlayerNameColor(_playerLevel)
   end
 
 end
---]]
 
 ---
 -- Returns the color for a team.
