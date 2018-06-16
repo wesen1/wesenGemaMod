@@ -72,7 +72,7 @@ end
 -- @tparam int _cn The client number of the player
 -- @tparam string _text The text that the player sent
 --
--- @treturn int|nil PLUGIN_BLOCK if the player says normal text or nil
+-- @treturn int|nil PLUGIN_BLOCK if the gema mode is active or nil
 --
 function PlayerSayTextHandler:onPlayerSayText(_cn, _text)
 
