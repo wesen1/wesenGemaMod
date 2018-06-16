@@ -30,8 +30,14 @@ function TestStringUtils:testCanSplitStringByDelimiter()
     -- Delimiter with more than one symbol
     { "abcdebcghallobc", "bc", { "a", "de", "ghallo" } },
 
-    -- Text ending with delimiters
-    { "a b c   ", " " , { "a", "b", "c" } }
+    -- Text ending with multiple delimiters in a row
+    { "a b c   ", " " , { "a", "b", "c" } },
+    
+    -- Text starting with multiple delimiters in a row
+    { "cccchelloctest", "c", {"hello", "test" } },
+    
+    -- Text containing multiple delimiters in a row
+    { "good~~~~hello~~~mytest~", "~", { "good", "hello", "mytest" } }
   }
 
   for index, testValueSet in ipairs(testValues) do

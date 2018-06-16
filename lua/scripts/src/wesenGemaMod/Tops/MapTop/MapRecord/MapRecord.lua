@@ -16,7 +16,7 @@ local MapRecord = {};
 
 
 ---
--- The player who established the record
+-- The player who created the record
 --
 -- @tfield string player
 --
@@ -33,6 +33,7 @@ MapRecord.rank = -1;
 -- The time needed to score in milliseconds
 --
 -- @tfield int milliseconds
+--
 MapRecord.milliseconds = -1;
 
 ---

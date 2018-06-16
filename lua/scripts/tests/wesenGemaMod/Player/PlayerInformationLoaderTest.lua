@@ -40,15 +40,14 @@ end
 ---
 -- Checks one of the data sets of testCanFetchIpId(), testCanFetchNameId() or testCanFetchPlayerId().
 --
--- @tparam string _playerName The test player name
--- @tparam string _playerIp The test player ip
 -- @tparam table _expectedDataBaseCalls The expected database function calls in the format { { method, arguments, returnValue } }
--- @tparam string _playerFunctionCall The Player method that will be called in this test
+-- @tparam string _methodName The name of the Player method that will be called in this test
+-- @tparam table _additionalMethodArguments The additional arguments that will be passed to the called Player method
 -- @tparam mixed _expectedReturnValue The expected return value
 --
 function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedDataBaseCalls, _methodName, _additionalMethodArguments, _expectedReturnValue)
 
-  local dataBaseMock = mach.mock_object(DataBase, "DataBase");
+  local dataBaseMock = mach.mock_object(DataBase, "DataBaseMock");
 
   local expectedFunctionCalls = "";
   local returnValue = -1;
