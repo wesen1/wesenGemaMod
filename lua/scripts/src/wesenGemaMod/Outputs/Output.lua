@@ -72,6 +72,9 @@ end
 --
 function Output:playerSayText(_text, _cn, _players)
 
+  sayas(_text, _cn, false, false); 
+
+  --[[
   local player = _players[_cn];
   local playerNameColor = self:getPlayerNameColor(player:getLevel());
 
@@ -93,9 +96,11 @@ function Output:playerSayText(_text, _cn, _players)
     end
 
   end
+  --]]
 
 end
 
+--[[
 ---
 -- Returns whether a player name is unique in the list of players.
 --
@@ -135,6 +140,7 @@ function Output:getPlayerNameColor(_playerLevel)
   end
 
 end
+--]]
 
 ---
 -- Returns the color for a team.
