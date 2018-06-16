@@ -80,13 +80,18 @@ end
 function VoteEndHandler:onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
 
   if (_result == 1) then
+    -- Vote passed
 
-    if (self.parentGemaMod:getIsActive() and (_number1 ~= GM_CTF or not MapChecker:isGema(_text))) then
-      MapRotSwitcher:switchToRegularMapRot();
-      Output:print(Output:getColor("info") .. "[INFO] Regular maprot loaded.");
-    elseif (not self.parentGemaMod:getIsActive() and _number1 == GM_CTF and MapChecker:isGema(_text)) then
-      MapRotSwitcher:switchToGemaMapRot();
-      Output:print(Output:getColor("info") .. "[INFO] Gema map rot loaded.");
+    if (_type == SA_MAP) then
+
+      if (self.parentGemaMod:getIsActive() and (_number1 ~= GM_CTF or not MapChecker:isGema(_text))) then
+        MapRotSwitcher:switchToRegularMapRot();
+        Output:print(Output:getColor("info") .. "[INFO] Regular maprot loaded.");
+      elseif (not self.parentGemaMod:getIsActive() and _number1 == GM_CTF and MapChecker:isGema(_text)) then
+        MapRotSwitcher:switchToGemaMapRot();
+        Output:print(Output:getColor("info") .. "[INFO] Gema map rot loaded.");
+      end
+
     end
 
   end

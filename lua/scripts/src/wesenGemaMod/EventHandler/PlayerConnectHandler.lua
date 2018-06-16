@@ -166,10 +166,14 @@ function PlayerConnectHandler:printServerInformation(_cn)
 
   self.parentGemaMod:getMapTop():printMapStatistics(_cn);
 
-  local helpText = Output:getColor("info") .. "Say "
-                .. Output:getColor("command0") .. "!cmds "
-                .. Output:getColor("info") .. "to see a list of avaiable commands";
-  Output:print(helpText, _cn);
+  Output:print(Output:getColor("info") .. "Say "
+            .. Output:getColor("command0") .. "!cmds "
+            .. Output:getColor("info") .. "to see a list of avaiable commands",
+               _cn);
+  Output:print(Output:getColor("infoWarning") .. "Make sure to read the "
+            .. Output:getColor("command0") .. "!rules "
+            .. Output:getColor("infoWarning") .. "before spawning",
+               _cn);
 
 end
 
