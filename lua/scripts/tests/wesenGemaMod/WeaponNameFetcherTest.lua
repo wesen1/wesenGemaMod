@@ -5,18 +5,8 @@
 -- @license MIT
 --
 
--- Define the weapon id constants
-GUN_ASSAULT = 6;
-GUN_SUBGUN = 4;
-GUN_CARBINE = 2;
-GUN_SNIPER = 5;
-GUN_SHOTGUN = 3;
-GUN_KNIFE = 0;
-GUN_PISTOL = 1;
-
 local luaunit = require("luaunit");
 local WeaponNameFetcher = require("WeaponNameFetcher");
-
 
 ---
 -- Checks whether the WeaponNameFetcher works as expected.

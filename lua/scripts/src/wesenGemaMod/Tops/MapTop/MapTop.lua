@@ -252,7 +252,7 @@ end
 --
 -- @tparam int _rank The rank of the record
 --
--- @treturn MapRecord The record
+-- @treturn MapRecord|nil The record or nil if no record with this rank exists
 --
 function MapTop:getRecord(_rank)
   return self.mapTopCacher:getRecordByRank(_rank);
@@ -291,8 +291,6 @@ end
 function MapTop:loadRecords(_mapName)
 
   local dataBase = self.parentGemaMod:getDataBase();
-
-  self.mapTopCacher:setRecords({});
   self.mapTopCacher:setRecords(self.mapTopLoader:fetchRecords(dataBase, _mapName));
 
 end

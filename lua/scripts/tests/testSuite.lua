@@ -4,14 +4,17 @@
 local lfs = require("lfs");
 
 package.path = package.path .. ";" .. lfs.currentdir() .. "/../src/wesenGemaMod/?.lua"
-                            .. ";" .. lfs.currentdir() .. "/wesenGemaMod/?.lua";
+                            .. ";" .. lfs.currentdir() .. "/wesenGemaMod/?.lua"
+                            .. ";" .. lfs.currentdir() .. "/../?.lua";
 
 
 -- Require luacov to get coverage information about the tests
 require("luacov");
 
 local luaunit = require("luaunit");
-unpack = unpack or table.unpack
+unpack = unpack or table.unpack;
+
+require("tests/globals");
 
 
 ---
@@ -48,4 +51,4 @@ end
 requireTests(lfs.currentdir() .. "/wesenGemaMod");
 
 -- Run the tests
-os.exit( luaunit.LuaUnit:run() )
+os.exit(luaunit.LuaUnit:run())

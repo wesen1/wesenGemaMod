@@ -150,6 +150,8 @@ end
 --
 -- @tparam int _rank The rank of the record
 --
+-- @treturn MapRecord|nil The map record or nil if no record with this rank exists
+--
 function MapTopCacher:getRecordByRank(_rank)
   return self.records[_rank];
 end
