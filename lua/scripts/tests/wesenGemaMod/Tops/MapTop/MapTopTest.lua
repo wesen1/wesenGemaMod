@@ -51,23 +51,26 @@ end
 --
 function TestMapTop:testCanGetAttributes()
 
+  local gemaModMock = mach.mock_object(GemaMod, "GemaModMock");
   local mapName = "test_gema";
   local mapTopCacherMock = mach.mock_object(MapTopCacher, "MapTopCacherMock");
   local mapTopLoaderMock = mach.mock_object(MapTopLoader, "MapTopLoaderMock");
   local mapTopPrinterMock = mach.mock_object(MapTopPrinter, "MapTopPrinterMock");
   local mapTopSaverMock = mach.mock_object(MapTopSaver, "MapTopSaverMock");
 
+  self.mapTop:setParentGemaMod(gemaModMock);
   self.mapTop:setMapName("test_gema");
   self.mapTop:setMapTopCacher(mapTopCacherMock);
   self.mapTop:setMapTopLoader(mapTopLoaderMock);
   self.mapTop:setMapTopPrinter(mapTopPrinterMock);
   self.mapTop:setMapTopSaver(mapTopSaverMock);
 
-  luaunit.assertEquals(mapName, self.mapTop:getMapName());
-  luaunit.assertEquals(mapTopCacherMock, self.mapTop:getMapTopCacher());
-  luaunit.assertEquals(mapTopLoaderMock, self.mapTop:getMapTopLoader());
-  luaunit.assertEquals(mapTopPrinterMock, self.mapTop:getMapTopPrinter());
-  luaunit.assertEquals(mapTopSaverMock, self.mapTop:getMapTopSaver());
+  luaunit.assertEquals(self.mapTop:getParentGemaMod(), gemaModMock);
+  luaunit.assertEquals(self.mapTop:getMapName(), mapName);
+  luaunit.assertEquals(self.mapTop:getMapTopCacher(), mapTopCacherMock);
+  luaunit.assertEquals(self.mapTop:getMapTopLoader(), mapTopLoaderMock);
+  luaunit.assertEquals(self.mapTop:getMapTopPrinter(), mapTopPrinterMock);
+  luaunit.assertEquals(self.mapTop:getMapTopSaver(), mapTopSaverMock);
 
 end
 
@@ -290,22 +293,40 @@ function TestMapTop:testCanCheckIfIsEmpty()
   self.mapTop:setMapTopCacher(mapTopCacherMock);
 
   local testNumbersOfRecords = {
-    [4] = false,
-    [1] = false,
-    [0] = true,
-    [7] = false,
-    [3] = false,
-    [5] = false
+    {
+      ["numberOfRecords"] = 4,
+      ["expectedIsEmptyState"] = false
+    },
+    {
+      ["numberOfRecords"] = 1,
+      ["expectedIsEmptyState"] = false
+    },
+    {
+      ["numberOfRecords"] = 0,
+      ["expectedIsEmptyState"] = true
+    },
+    {
+      ["numberOfRecords"] = 7,
+      ["expectedIsEmptyState"] = false
+    },
+    {
+      ["numberOfRecords"] = 13,
+      ["expectedIsEmptyState"] = false
+    },
+    {
+      ["numberOfRecords"] = 61,
+      ["expectedIsEmptyState"] = false
+    }
   };
 
-  for testNumberOfRecords, expectedIsEmptyState in ipairs(testNumbersOfRecords) do
+  for index, testSet in ipairs(testNumbersOfRecords) do
 
     mapTopCacherMock.getNumberOfRecords
       :should_be_called()
-      :and_will_return(testNumberOfRecords)
+      :and_will_return(testSet["numberOfRecords"])
       :when(
         function ()
-          luaunit.assertEquals(self.mapTop:isEmpty(), expectedIsEmptyState);
+          luaunit.assertEquals(self.mapTop:isEmpty(), testSet["expectedIsEmptyState"]);
         end
       );
 

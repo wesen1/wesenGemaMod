@@ -62,7 +62,8 @@ return {
   modules = {
     ["src.wesenGemaMod.*"] = "..",
     ["src.wesenGemaMod.Player.*"] = "..",
-    ["src.wesenGemaMod.Utils.*"] = ".."
+    ["src.wesenGemaMod.Utils.*"] = "..",
+    ["src.wesenGemaMod.Tops.MapTop.*"] = ".."
   },
 
 }
