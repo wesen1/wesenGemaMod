@@ -85,13 +85,14 @@ function TestPlayer:canGetAttributes(_id, _name, _ip, _level, _startTime, _team,
   local outputMock = mach.mock_object(Output, "OutputMock");
   package.loaded["Outputs/Output"] = outputMock;
 
-  outputMock.getColor:should_be_called_with("playerTextDefault")
-                     :and_will_return(outputMockTextColor)
-                     :when(
-                       function()
-                         Player = require("Player/Player");
-                       end
-                     );
+  outputMock.getColor
+            :should_be_called_with("playerTextDefault")
+            :and_will_return(outputMockTextColor)
+            :when(
+              function()
+                Player = require("Player/Player");
+              end
+            );
 
   local testPlayer = Player:__construct("test", "1.1.1.1");
 
@@ -176,34 +177,32 @@ function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
   local outputMock = mach.mock_object(Output, "OutputMock");
   package.loaded["Outputs/Output"] = outputMock;
 
-  outputMock.getColor:should_be_called_with("playerTextDefault")
-                     :and_will_return(outputMockTextColor)
-                     :when(
-                       function()
-                         Player = require("Player/Player");
-                       end
-                     );
+  outputMock.getColor
+            :should_be_called_with("playerTextDefault")
+            :and_will_return(outputMockTextColor)
+            :when(
+              function()
+                Player = require("Player/Player");
+              end
+            );
 
 
   local testPlayer = Player:__construct(_playerName, _playerIp);
   local dataBaseMock = mach.mock_object(DataBase, "DataBaseMock");
 
-  PlayerInformationSaverMock.savePlayer:should_be_called_with(dataBaseMock, testPlayer)
-                                       :and_will_return(nil)
-                                       :and_then(
-                                         PlayerInformationLoaderMock.fetchPlayerId:should_be_called_with(
-                                                                                    dataBaseMock,
-                                                                                    testPlayer
-                                                                                  )
-                                                                                  :and_will_return(
-                                                                                    _playerId
-                                                                                  )
-                                       )
-                                       :when(
-                                         function()
-                                           testPlayer:savePlayer(dataBaseMock)
-                                         end
-                                       );
+  PlayerInformationSaverMock.savePlayer
+                            :should_be_called_with(dataBaseMock, testPlayer)
+                            :and_will_return(nil)
+                            :and_then(
+                              PlayerInformationLoaderMock.fetchPlayerId
+                                                         :should_be_called_with(dataBaseMock, testPlayer)
+                                                         :and_will_return(_playerId)
+                            )
+                            :when(
+                              function()
+                                testPlayer:savePlayer(dataBaseMock)
+                              end
+                            );
 
   luaunit.assertEquals(testPlayer:getId(), _playerId);
 

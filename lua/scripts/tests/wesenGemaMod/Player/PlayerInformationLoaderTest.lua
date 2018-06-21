@@ -54,12 +54,9 @@ function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedDat
 
   for index, functionCallData in ipairs(_expectedDataBaseCalls) do
 
-    local expectedDataBaseCall = dataBaseMock[functionCallData["method"]]:should_be_called_with(
-                                                                unpack(functionCallData["arguments"])
-                                                              )
-                                                              :and_will_return(
-                                                                functionCallData["returnValue"]
-                                                              );
+    local expectedDataBaseCall = dataBaseMock[functionCallData["method"]]
+                                             :should_be_called_with(unpack(functionCallData["arguments"]))
+                                             :and_will_return(functionCallData["returnValue"]);
 
     if (index == 1) then
       expectedFunctionCalls = expectedDataBaseCall
@@ -321,13 +318,14 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
   local outputMock = mach.mock_object(Output, "Output");
   package.loaded["Outputs/Output"] = outputMock;
 
-  outputMock.getColor:should_be_called_with("playerTextDefault")
-                     :and_will_return(outputMockTextColor)
-                     :when(
-                       function()
-                         Player = require("Player/Player");
-                       end
-                     );
+  outputMock.getColor
+            :should_be_called_with("playerTextDefault")
+            :and_will_return(outputMockTextColor)
+            :when(
+              function()
+                Player = require("Player/Player");
+              end
+            );
 
   local testValues = {
 

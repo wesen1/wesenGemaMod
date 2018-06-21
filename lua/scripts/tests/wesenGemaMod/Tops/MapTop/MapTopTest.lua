@@ -95,28 +95,26 @@ function TestMapTop:testCanAddRecords()
 
   -- No existing record: Save the record
   mapTopCacherMock.getRecordByName
-                    :should_be_called_with("testplayer")
-                    :and_will_return(nil)
-                    :and_then(
-                      mapTopCacherMock.addRecord
-                                        :should_be_called_with(newMapRecord, nil)
-                                        :and_then(
-                                          self.gemaModMock.getDataBase
-                                                :should_be_called()
-                                                :and_will_return("database")
-                                                :and_then(
-                                                  mapTopSaverMock.addRecord
-                                                                   :should_be_called_with(
-                                                                     "database", newMapRecord, "gema_for_pros"
-                                                                   )
-                                                )
-                                        )
-                    )
-                    :when(
-                      function()
-                        self.mapTop:addRecord(newMapRecord);
-                      end
-                    );
+                  :should_be_called_with("testplayer")
+                  :and_will_return(nil)
+                  :and_then(
+                    mapTopCacherMock.addRecord
+                                    :should_be_called_with(newMapRecord, nil)
+                  )
+                  :and_then(
+                    self.gemaModMock.getDataBase
+                                    :should_be_called()
+                                    :and_will_return("database")
+                  )
+                  :and_then(
+                    mapTopSaverMock.addRecord
+                                   :should_be_called_with("database", newMapRecord, "gema_for_pros")
+                  )
+                  :when(
+                    function()
+                      self.mapTop:addRecord(newMapRecord);
+                    end
+                  );
 
 
   -- Existing record is better than new record: No change
@@ -124,34 +122,38 @@ function TestMapTop:testCanAddRecords()
   existingMapRecord:setRank(1);
   newMapRecord:setRank(2);
 
-  mapTopCacherMock.getRecordByName:should_be_called_with("testplayer")
-                                  :and_will_return(existingMapRecord)
-                                  :and_then(
-                                    mapTopCacherMock.getRecordByRank:should_be_called_with(1)
-                                                                    :and_will_return(existingMapRecord)
-                                  )
-                                  :when(
-                                    function()
-                                      self.mapTop:addRecord(newMapRecord);
-                                    end
-                                  );
+  mapTopCacherMock.getRecordByName
+                  :should_be_called_with("testplayer")
+                  :and_will_return(existingMapRecord)
+                  :and_then(
+                    mapTopCacherMock.getRecordByRank
+                                    :should_be_called_with(1)
+                                    :and_will_return(existingMapRecord)
+                  )
+                  :when(
+                    function()
+                      self.mapTop:addRecord(newMapRecord);
+                    end
+                  );
 
   -- Existing record is equal to the new record: No change
   existingMapRecord:setMilliseconds(newMapRecord:getMilliseconds());
   existingMapRecord:setRank(1);
   newMapRecord:setRank(2);
 
-  mapTopCacherMock.getRecordByName:should_be_called_with("testplayer")
-                                  :and_will_return(existingMapRecord)
-                                  :and_then(
-                                    mapTopCacherMock.getRecordByRank:should_be_called_with(1)
-                                                                    :and_will_return(existingMapRecord)
-                                  )
-                                  :when(
-                                    function()
-                                      self.mapTop:addRecord(newMapRecord);
-                                    end
-                                  );
+  mapTopCacherMock.getRecordByName
+                  :should_be_called_with("testplayer")
+                  :and_will_return(existingMapRecord)
+                  :and_then(
+                    mapTopCacherMock.getRecordByRank
+                                    :should_be_called_with(1)
+                                    :and_will_return(existingMapRecord)
+                  )
+                  :when(
+                    function()
+                      self.mapTop:addRecord(newMapRecord);
+                    end
+                  );
 
   -- Existing record is worse than the new record: Update record
   existingMapRecord:setMilliseconds(newMapRecord:getMilliseconds() + 1)
@@ -159,30 +161,31 @@ function TestMapTop:testCanAddRecords()
   newMapRecord:setRank(1);
 
   mapTopCacherMock.getRecordByName
-    :should_be_called_with("testplayer")
-    :and_will_return(existingMapRecord)
-    :and_then(
-      mapTopCacherMock.getRecordByRank:should_be_called_with(1)
-        :and_will_return(existingMapRecord)
-        :and_then(
-          mapTopCacherMock.addRecord
-            :should_be_called_with(newMapRecord, 1)
-            :and_then(
-              self.gemaModMock.getDataBase
-                :should_be_called()
-                :and_will_return("database")
-                :and_then(
-                  mapTopSaverMock.addRecord
-                    :should_be_called_with("database", newMapRecord, "gema_for_pros")
-                )
-            )
-        )
-    )
-    :when(
-      function ()
-        self.mapTop:addRecord(newMapRecord);
-      end
-    );
+                  :should_be_called_with("testplayer")
+                  :and_will_return(existingMapRecord)
+                  :and_then(
+                    mapTopCacherMock.getRecordByRank
+                                    :should_be_called_with(1)
+                                    :and_will_return(existingMapRecord)
+                  )
+                  :and_then(
+                    mapTopCacherMock.addRecord
+                                    :should_be_called_with(newMapRecord, 1)
+                  )
+                  :and_then(
+                    self.gemaModMock.getDataBase
+                                    :should_be_called()
+                                    :and_will_return("database")
+                  )
+                  :and_then(
+                    mapTopSaverMock.addRecord
+                                   :should_be_called_with("database", newMapRecord, "gema_for_pros")
+                  )
+                  :when(
+                    function ()
+                      self.mapTop:addRecord(newMapRecord);
+                    end
+                  );
 
 end
 
@@ -196,14 +199,14 @@ function TestMapTop:testCanGetRank()
 
   -- No record
   mapTopCacherMock.getRecordByName
-    :should_be_called_with("pro")
-    :and_will_return(nil)
-    :when(
-      function()
-        local rank = self.mapTop:getRank("pro");
-        luaunit.assertNil(rank);
-      end
-    );
+                  :should_be_called_with("pro")
+                  :and_will_return(nil)
+                  :when(
+                    function()
+                      local rank = self.mapTop:getRank("pro");
+                      luaunit.assertNil(rank);
+                    end
+                  );
 
   -- Existing record
   local existingRecord = MapRecord:__construct(
@@ -211,14 +214,14 @@ function TestMapTop:testCanGetRank()
   );
 
   mapTopCacherMock.getRecordByName
-    :should_be_called_with("pro")
-    :and_will_return(existingRecord)
-    :when(
-      function ()
-        local rank = self.mapTop:getRank("pro");
-        luaunit.assertEquals(rank, 7);
-      end
-    );
+                  :should_be_called_with("pro")
+                  :and_will_return(existingRecord)
+                  :when(
+                    function ()
+                      local rank = self.mapTop:getRank("pro");
+                      luaunit.assertEquals(rank, 7);
+                    end
+                  );
 
 end
 
@@ -232,14 +235,14 @@ function TestMapTop:testCanGetRecord()
 
   -- Record with this rank doesn't exist
   mapTopCacherMock.getRecordByRank
-    :should_be_called_with(5)
-    :and_will_return(nil)
-    :when(
-      function()
-        local record = self.mapTop:getRecord(5);
-        luaunit.assertEquals(record, nil);
-      end
-    );
+                  :should_be_called_with(5)
+                  :and_will_return(nil)
+                  :when(
+                    function()
+                      local record = self.mapTop:getRecord(5);
+                      luaunit.assertEquals(record, nil);
+                    end
+                  );
 
   -- Record with this rank exists
   local existingRecord = MapRecord:__construct(
@@ -247,14 +250,14 @@ function TestMapTop:testCanGetRecord()
   );
 
   mapTopCacherMock.getRecordByRank
-    :should_be_called_with(5)
-    :and_will_return(existingRecord)
-    :when(
-      function ()
-        local record = self.mapTop:getRecord(5);
-        luaunit.assertEquals(record, existingRecord);
-      end
-    );
+                  :should_be_called_with(5)
+                  :and_will_return(existingRecord)
+                  :when(
+                    function ()
+                      local record = self.mapTop:getRecord(5);
+                      luaunit.assertEquals(record, existingRecord);
+                    end
+                  );
 
 end
 
@@ -271,14 +274,14 @@ function TestMapTop:testCanGetNumberOfRecords()
   for index, testNumberOfRecords in ipairs(testNumbersOfRecords) do
 
     mapTopCacherMock.getNumberOfRecords
-      :should_be_called()
-      :and_will_return(testNumberOfRecords)
-      :when(
-        function ()
-          local numberOfRecords = self.mapTop:getNumberOfRecords();
-          luaunit.assertEquals(numberOfRecords, testNumberOfRecords);
-        end
-      );
+                    :should_be_called()
+                    :and_will_return(testNumberOfRecords)
+                    :when(
+                      function ()
+                        local numberOfRecords = self.mapTop:getNumberOfRecords();
+                        luaunit.assertEquals(numberOfRecords, testNumberOfRecords);
+                      end
+                    );
 
   end
 
@@ -322,13 +325,13 @@ function TestMapTop:testCanCheckIfIsEmpty()
   for index, testSet in ipairs(testNumbersOfRecords) do
 
     mapTopCacherMock.getNumberOfRecords
-      :should_be_called()
-      :and_will_return(testSet["numberOfRecords"])
-      :when(
-        function ()
-          luaunit.assertEquals(self.mapTop:isEmpty(), testSet["expectedIsEmptyState"]);
-        end
-      );
+                    :should_be_called()
+                    :and_will_return(testSet["numberOfRecords"])
+                    :when(
+                      function ()
+                        luaunit.assertEquals(self.mapTop:isEmpty(), testSet["expectedIsEmptyState"]);
+                      end
+                    );
 
   end
 
@@ -355,22 +358,22 @@ function TestMapTop:testCanLoadRecords()
   };
 
   self.gemaModMock.getDataBase
-    :should_be_called()
-    :and_will_return("my_db")
-    :and_then(
-      mapTopLoaderMock.fetchRecords
-        :should_be_called_with("my_db", testMapName)
-        :and_will_return(testRecords)
-        :and_then(
-          mapTopCacherMock.setRecords
-            :should_be_called_with(testRecords)
-        )
-    )
-    :when(
-      function ()
-        self.mapTop:loadRecords(testMapName);
-      end
-    );
+                  :should_be_called()
+                  :and_will_return("my_db")
+                  :and_then(
+                    mapTopLoaderMock.fetchRecords
+                                    :should_be_called_with("my_db", testMapName)
+                                    :and_will_return(testRecords)
+                  )
+                  :and_then(
+                    mapTopCacherMock.setRecords
+                                    :should_be_called_with(testRecords)
+                  )
+                  :when(
+                    function ()
+                      self.mapTop:loadRecords(testMapName);
+                    end
+                  );
 
 end
 
@@ -448,14 +451,14 @@ function TestMapTop:testCanPredictRank()
   for index, testSet in ipairs(testSets) do
 
     local expectedMapTopCacherCall = mapTopCacherMock.getRecords
-      :should_be_called()
-      :and_will_return(testSet["existingRecords"]);
+                                                     :should_be_called()
+                                                     :and_will_return(testSet["existingRecords"]);
 
     if (testSet["numberOfRecords"] ~= nil) then
       expectedMapTopCacherCall:and_then(
         mapTopCacherMock.getNumberOfRecords
-          :should_be_called()
-          :and_will_return(testSet["numberOfRecords"])
+                        :should_be_called()
+                        :and_will_return(testSet["numberOfRecords"])
       );
     end
 
@@ -479,12 +482,12 @@ function TestMapTop:testCanPrintMapStatistics()
   self.mapTop:setMapTopPrinter(mapTopPrinterMock);
 
   mapTopPrinterMock.printMapStatistics
-    :should_be_called_with(9)
-    :when(
-      function ()
-        self.mapTop:printMapStatistics(9);
-      end
-    );
+                   :should_be_called_with(9)
+                   :when(
+                     function ()
+                       self.mapTop:printMapStatistics(9);
+                     end
+                   );
 
 end
 
@@ -497,11 +500,11 @@ function TestMapTop:testCanPrintMapTop()
   self.mapTop:setMapTopPrinter(mapTopPrinterMock);
 
   mapTopPrinterMock.printMapTop
-    :should_be_called_with(12)
-    :when(
-      function ()
-        self.mapTop:printMapTop(12);
-      end
-    );
+                   :should_be_called_with(12)
+                   :when(
+                     function ()
+                       self.mapTop:printMapTop(12);
+                     end
+                   );
 
 end
