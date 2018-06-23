@@ -26,4 +26,4 @@ install:
 script:
   - cd lua/scripts/tests
   - lua testSuite.lua
-  - sed -ne "/Summary/,$ p" luacov.report.out
+  - echo ""; sed -ne "/File.*Hits.*Missed.*Coverage/,$ p" luacov.report.out 
