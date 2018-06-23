@@ -12,7 +12,7 @@ PLUGIN_VERSION = 0.1;
 -- Add the path to the wesenGemaMod classes to the package path list
 -- in order to be able to omit this path portion in require() calls
 --
-package.path = package.path .. ";lua/scripts/src/wesenGemaMod/?.lua";
+package.path = package.path .. ";lua/scripts/wesenGemaMod/?.lua";
 
 local GemaMod = require("GemaMod");
 

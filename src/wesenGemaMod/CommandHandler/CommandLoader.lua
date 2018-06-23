@@ -89,7 +89,7 @@ function CommandLoader:getCommandClassNames()
   local commandClassNames = {};
 
   -- iterate over each file in the Commands directory
-  for luaFile in lfs.dir("lua/scripts/src/wesenGemaMod/Commands") do
+  for luaFile in lfs.dir("lua/scripts/wesenGemaMod/Commands") do
 
     if (luaFile ~= "." and luaFile ~= ".." and luaFile ~= "BaseCommand.lua") then
       local commandClassName = luaFile:gsub(".lua", "");

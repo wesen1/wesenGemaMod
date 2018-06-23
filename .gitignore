@@ -1,3 +1,4 @@
 .vagrant
 test\ server
 luacov*
+tmp

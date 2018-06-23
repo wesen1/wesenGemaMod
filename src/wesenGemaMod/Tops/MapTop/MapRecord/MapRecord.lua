@@ -18,7 +18,7 @@ local MapRecord = {};
 ---
 -- The player who created the record
 --
--- @tfield string player
+-- @tfield Player player
 --
 MapRecord.player = "";
 
