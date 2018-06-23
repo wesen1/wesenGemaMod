@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local Map = require("Maps/Map");
+local MapHandler = require("Maps/MapHandler");
 
 ---
 -- Handles saving records to the database.
@@ -42,7 +42,7 @@ end
 function MapTopSaver:addRecord(_dataBase, _record, _mapName)
 
   local player = _record:getPlayer();
-  local mapId = Map:fetchMapId(_dataBase, _mapName);
+  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
 
   local sql = "SELECT records.id "
            .. "FROM records "

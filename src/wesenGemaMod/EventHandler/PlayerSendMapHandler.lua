@@ -6,7 +6,7 @@
 --
 
 local MapChecker = require("Maps/MapChecker");
-local Map = require("Maps/Map");
+local MapHandler = require("Maps/MapHandler");
 local Output = require("Outputs/Output");
 
 ---
@@ -91,7 +91,7 @@ function PlayerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize
 
       local uploadPlayer = self.parentGemaMod:getPlayers()[_cn];
 
-      Map:saveMapName(self.parentGemaMod:getDataBase(), _mapName, uploadPlayer);
+      MapHandler:saveMapName(self.parentGemaMod:getDataBase(), _mapName, uploadPlayer);
       self.parentGemaMod:getMapRotEditor():addMapToMapRotConfigFile(_mapName);
       self.parentGemaMod:getMapRotEditor():addMapToLoadedMapRot(_mapName);
 

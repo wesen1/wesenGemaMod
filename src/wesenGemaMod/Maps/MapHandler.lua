@@ -11,9 +11,9 @@ local Output = require("Outputs/Output");
 ---
 -- Provides functions to add and remove maps.
 --
--- @type Map
+-- @type MapHandler
 --
-local Map = {};
+local MapHandler = {};
 
 
 -- Class Methods
@@ -26,7 +26,7 @@ local Map = {};
 --
 -- @treturn int|nil The map id or nil if the map id was not found
 --
-function Map:fetchMapId(_dataBase, _mapName)
+function MapHandler:fetchMapId(_dataBase, _mapName)
 
   local mapName = _dataBase:sanitize(_mapName);
 
@@ -51,7 +51,7 @@ end
 -- @tparam string _mapName The map name
 -- @tparam Player _uploadPlayer The upload player (may be nil)
 --
-function Map:saveMapName(_dataBase, _mapName, _uploadPlayer)
+function MapHandler:saveMapName(_dataBase, _mapName, _uploadPlayer)
 
   local mapName = _dataBase:sanitize(_mapName);
   if (_uploadPlayer) then
@@ -83,7 +83,7 @@ end
 -- @tparam MapTop _mapTop The map top
 -- @tparam MapRotEditor _mapRotEditor The map rot editor
 --
-function Map:removeMap(_dataBase, _mapName, _mapTop, _mapRotEditor)
+function MapHandler:removeMap(_dataBase, _mapName, _mapTop, _mapRotEditor)
 
   local success = MapRemover:removeMap(_dataBase, _mapName, _mapTop, self:fetchMapId(_dataBase, _mapName), _mapRotEditor);
 
@@ -94,4 +94,4 @@ function Map:removeMap(_dataBase, _mapName, _mapTop, _mapRotEditor)
 end
 
 
-return Map;
+return MapHandler;

@@ -7,7 +7,7 @@
 
 local lfs = require("lfs");
 local MapChecker = require("Maps/MapChecker");
-local Map = require("Maps/Map");
+local MapHandler = require("Maps/MapHandler");
 
 ---
 -- Class that edits the maprot file and the loaded maprot.
@@ -88,7 +88,7 @@ function MapRotEditor:addExistingGemaMapsToDataBase(_dataBase, _mapsDirectory)
 
       elseif MapChecker:isGema(mapName) then
         print("Loading " .. mapName);
-        Map:saveMapName(_dataBase, mapName);
+        MapHandler:saveMapName(_dataBase, mapName);
       end
 
     end

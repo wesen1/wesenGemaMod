@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local Map = require("Maps/Map");
+local MapHandler = require("Maps/MapHandler");
 local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
 local Player = require("Player/Player");
 
@@ -77,7 +77,7 @@ end
 --
 function MapTopLoader:fetchRecords(_dataBase, _mapName)
 
-  local mapId = Map:fetchMapId(_dataBase, _mapName);
+  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
 
   if (not mapId) then
     return {};

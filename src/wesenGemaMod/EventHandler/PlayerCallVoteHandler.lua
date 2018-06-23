@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local Map = require("Maps/Map");
+local MapHandler = require("Maps/MapHandler");
 local MapChecker = require("Maps/MapChecker");
 local Output = require("Outputs/Output");
 
@@ -88,10 +88,10 @@ function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _nu
     if (_voteError == VOTEE_INVALID) then
 
       if (mapexists(_text)) then
-        Map:removeMap(self.parentGemaMod:getDataBase(),
-                      _text,
-                      self.parentGemaMod:getMapTop(),
-                      self.parentGemaMod:getMapRotEditor()
+        MapHandler:removeMap(self.parentGemaMod:getDataBase(),
+                             _text,
+                             self.parentGemaMod:getMapTop(),
+                             self.parentGemaMod:getMapRotEditor()
         );
 
         local infoMessage = "[INFO] The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
