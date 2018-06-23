@@ -39,7 +39,7 @@ return {
   -- All will be included if nothing is listed.
   -- Do not include the '.lua' extension. Path separator is always '/'.
   -- Overruled by `exclude`.
-  include = {},
+  include = { "src.wesenGemaMod.*" },
 
   --- Lua patterns for files to exclude when reporting.
   -- Nothing will be excluded if nothing is listed.
@@ -59,11 +59,6 @@ return {
   --    ["some_rock"] = "src/some_rock.lua",
   --    ["some_rock.*"] = "src"
   -- }
-  modules = {
-    ["src.wesenGemaMod.*"] = "..",
-    ["src.wesenGemaMod.Player.*"] = "..",
-    ["src.wesenGemaMod.Utils.*"] = "..",
-    ["src.wesenGemaMod.Tops.MapTop.*"] = ".."
-  },
+  modules = {},
 
 }
