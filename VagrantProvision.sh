@@ -13,6 +13,13 @@ password
 password
 END
 
+# Install the gema server test framework dependencies 
+sudo apt-get install -y luarocks 
+ 
+luarocks install luacov 
+luarocks install luaunit 
+luarocks install mach 
+
 # Create a link to the lua folder of the project in the lua_server folder
 ln -fs /vagrant/lua /home/vagrant/lua_server
 
