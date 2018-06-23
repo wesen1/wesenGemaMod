@@ -155,7 +155,7 @@ function TestTableUtils:testCanCopyTable()
   luaunit.assertEquals(testTable, testTableReference);
   luaunit.assertEquals(tostring(testTable), tostring(testTableReference));
 
-  testTableReference["name"] = "notgema";
+  testTableReference["name"] = "notgma";
   testTableReference["rank"] = 999;
   testTableReference["points"] = 0;
 
