@@ -153,6 +153,7 @@ function TestTableUtils:testCanCopyTable()
   -- Check that changing a reference also changes the source table
   local testTableReference = testTable;
   luaunit.assertEquals(testTable, testTableReference);
+  luaunit.assertEquals(tostring(testTable), tostring(testTableReference));
 
   testTableReference["name"] = "notgema";
   testTableReference["rank"] = 999;
@@ -165,6 +166,7 @@ function TestTableUtils:testCanCopyTable()
   -- Check that changing a copied table does not change the source table
   local testTableCopy = TableUtils:copy(testTable);
   luaunit.assertEquals(testTable, testTableCopy);
+  luaunit.assertNotEquals(tostring(testTable), tostring(testTableCopy));
 
   testTableCopy["name"] = "tdm";
   testTableCopy["rank"] = 10000;
