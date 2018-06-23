@@ -4,3 +4,4 @@
 lua testSuite.lua
 echo ""
 sed -ne "/File.*Hits.*Missed.*Coverage/,$ p" luacov.report.out
+exit 0

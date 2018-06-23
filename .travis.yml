@@ -24,4 +24,5 @@ install:
   - luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
 
 script:
-  - lua/scripts/tests/run-tests.sh
+  - cd lua/scripts/tests
+  - ./run-tests.sh
