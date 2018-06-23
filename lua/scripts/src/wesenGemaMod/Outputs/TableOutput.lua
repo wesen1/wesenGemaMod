@@ -118,43 +118,24 @@ end
 --
 -- @treturn string The tabs
 --
-function Output:getTabs(_entryLength, _longestEntryLength)
+function TableOutput:getTabs(_entryLength, _longestEntryLength)
 
-  local defaultCharacterWidth = self.textWidthCalculator:getCharacterWidth(" ");
+  local emptySpaceCharacterWidth = self.textWidthCalculator:getCharacterWidth(" ");
 
-  -- Tab width in pixels (1 TabStop = Width of 10 " " or width of 10 default characters)
-  local tabWidth = defaultCharacterWidth * 10;
+  -- Tab width in pixels (1 TabStop seems to be 10 x " " + 1 pixel)
+  local tabWidth = emptySpaceCharacterWidth * 10 + 1;
 
   local numberOfTabs = math.ceil(_longestEntryLength / tabWidth);
   local tabsCovered = math.floor(_entryLength / tabWidth);
   local tabsNeeded = numberOfTabs - tabsCovered;
 
-  -- If the entry length is between 0 and 2 pixels away from a tab stop
+  -- If the entry length is 0 pixels away from a tab stop
   -- one tab will have no effect, therefore an additional tab is added
-  if (_entryLength - tabsCovered * tabWidth <= 2) then
+  if (_entryLength - tabsCovered * tabWidth == 0) then
     tabsNeeded = tabsNeeded + 1;
   end
 
-  return self:generateTabs(tabsNeeded);
-
-end
-
----
--- Generates a string of tabs.
---
--- @tparam int _amountTabs The amount of tabs
---
--- @treturn string The string of tabs
---
-function Output:generateTabs(_amountTabs)
-
-  local tabs = "";
-
-  for i = 1, _amountTabs, 1 do
-      tabs = tabs .. "\t";
-  end
-
-  return tabs;
+  return string.rep("\t", tabsNeeded);
 
 end
 
