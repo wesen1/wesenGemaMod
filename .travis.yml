@@ -24,6 +24,4 @@ install:
   - luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
 
 script:
-  - cd lua/scripts/tests
-  - lua testSuite.lua
-  - echo ""; sed -ne "/File.*Hits.*Missed.*Coverage/,$ p" luacov.report.out 
+  - lua/scripts/tests/run-tests.sh
