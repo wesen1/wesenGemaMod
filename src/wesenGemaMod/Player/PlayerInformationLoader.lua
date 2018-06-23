@@ -73,7 +73,7 @@ end
 -- @tparam DataBase _dataBase The database
 -- @tparam Player _player The player
 -- @tparam int|nil _nameId The name id
--- @tparma int|nil _ipId The ip id
+-- @tparam int|nil _ipId The ip id
 --
 -- @treturn int|nil The player id or nil if the player was not found in the database
 --

@@ -21,6 +21,7 @@ local PlayerInformationSaver = {};
 -- Saves the player ip to the database.
 --
 -- @tparam DataBase _dataBase The database
+-- @tparam string _playerIp The player ip
 --
 function PlayerInformationSaver:saveIp(_dataBase, _playerIp)
 
@@ -36,6 +37,7 @@ end
 -- Saves the player name to the database.
 --
 -- @tparam DataBase _dataBase The database
+-- @tparam string _playerName The player name
 --
 function PlayerInformationSaver:saveName(_dataBase, _playerName)
 

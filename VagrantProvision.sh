@@ -15,12 +15,17 @@ password
 END
 
 
-# Install the gema server test framework dependencies 
-sudo apt-get install -y luarocks 
- 
-luarocks install luacov 
-luarocks install luaunit 
-luarocks install mach 
+# Install the gema server test framework dependencies
+sudo apt-get install -y luarocks
+
+luarocks install luacov
+luarocks install luaunit
+luarocks install mach
+
+
+# Install LDoc
+luarocks install penlight
+luarocks install ldoc
 
 
 # Create links for the lua files
