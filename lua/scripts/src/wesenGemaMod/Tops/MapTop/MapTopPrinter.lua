@@ -108,8 +108,9 @@ function MapTopPrinter:printMapTop(_cn)
     local maxRankLength = string.len(startRank + limit);
 
     local mapTopEntries = {};
+    local mapTopContainsIp = false;
 
-    for i = startRank, startRank + limit do
+    for i = startRank, startRank + limit, 1 do
 
       local rank = string.rep("0", maxRankLength - string.len(i)) .. i;
       local record = self.parentMapTop:getRecord(i);
@@ -120,12 +121,31 @@ function MapTopPrinter:printMapTop(_cn)
      .. Output:getColor("mapRecordInfo") .. " by "
      .. Output:getColor("mapRecordName") .. record:getPlayer():getName(),
 
-        [2] = Output:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
+        [3] = Output:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
 
-        [3] = Output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", record:getCreatedAt())
+        [4] = Output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", record:getCreatedAt())
       }
 
+      if (not self.parentMapTop:isPlayerNameUnique(record:getPlayer():getName())) then
+        mapTopEntry[2] = Output:getColor("mapRecordInfo") .. " ("
+                      .. Output:getColor("ip") .. record:getPlayer():getIpString()
+                      .. Output:getColor("mapRecordInfo") .. ")";
+        mapTopContainsIp = true;
+      else
+        mapTopEntry[2] = " ";
+      end
+
       table.insert(mapTopEntries, mapTopEntry);
+
+    end
+
+    if (not mapTopContainsIp) then
+
+      for index, mapTopEntry in ipairs(mapTopEntries) do
+        mapTopEntry[2] = mapTopEntry[3];
+        mapTopEntry[3] = mapTopEntry[4];
+        mapTopEntry[4] = nil;
+      end
 
     end
 

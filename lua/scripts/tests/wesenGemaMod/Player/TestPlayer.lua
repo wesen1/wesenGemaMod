@@ -11,6 +11,8 @@ local DataBase = "";
 local Output = "";
 local PlayerInformationLoader = "";
 local PlayerInformationSaver = "";
+local Player = "";
+local outputMockTextColor = "\f0";
 
 
 ---
@@ -19,6 +21,32 @@ local PlayerInformationSaver = "";
 -- @type TestPlayer
 --
 TestPlayer = {};
+
+
+---
+-- Method that is called before each test is started.
+--
+function TestPlayer:setUp()
+
+  self:resetDependencies();
+
+  -- Unload Player module
+  package.loaded["Player/Player"] = nil;
+
+  -- Overwrite Output dependency with mock
+  local outputMock = mach.mock_object(Output, "OutputMock");
+  package.loaded["Outputs/Output"] = outputMock;
+
+  outputMock.getColor
+            :should_be_called_with("playerTextDefault")
+            :and_will_return(outputMockTextColor)
+            :when(
+              function()
+                Player = require("Player/Player");
+              end
+            );
+
+end
 
 
 ---
@@ -75,25 +103,6 @@ function TestPlayer:canGetAttributes(_id, _name, _ip, _level, _startTime, _team,
 
   self:resetDependencies();
 
-  local Player = "";
-  local outputMockTextColor = "\f0";
-
-  -- Unload Player module
-  package.loaded["Player/Player"] = nil;
-
-  -- Overwrite Output dependency with mock
-  local outputMock = mach.mock_object(Output, "OutputMock");
-  package.loaded["Outputs/Output"] = outputMock;
-
-  outputMock.getColor
-            :should_be_called_with("playerTextDefault")
-            :and_will_return(outputMockTextColor)
-            :when(
-              function()
-                Player = require("Player/Player");
-              end
-            );
-
   local testPlayer = Player:__construct("test", "1.1.1.1");
 
   -- Check default values
@@ -125,6 +134,59 @@ function TestPlayer:canGetAttributes(_id, _name, _ip, _level, _startTime, _team,
   luaunit.assertEquals(testPlayer:getTeam(), _team);
   luaunit.assertEquals(testPlayer:getTextColor(), _textColor);
   luaunit.assertEquals(testPlayer:getWeapon(), _weapon);
+
+end
+
+---
+-- Checks whether the equals method works as expected.
+--
+function TestPlayer:testCanCheckWhetherPlayersAreEqual()
+
+  self:resetDependencies();
+  local playerA = Player:__construct("player_expert", "123.12.2.4");
+  local playerB = Player:__construct("player_expert", "123.12.2.4");
+
+  -- Check that the objects are not the same table
+  luaunit.assertNotEquals(tostring(playerA), tostring(playerB));
+
+  -- Name and ip match
+  luaunit.assertTrue(playerA:equals(playerB));
+
+  -- Name matches, ip does not match
+  playerB:setIp("1.1.1.1");
+  luaunit.assertFalse(playerA:equals(playerB));
+
+  -- Ip matches, name does not match
+  playerB:setIp("123.12.2.4");
+  playerB:setName("player_pro");
+  luaunit.assertFalse(playerA:equals(playerB));
+
+  -- Ip and name do not match
+  playerB:setIp("1.1.1.1");
+  playerB:setName("pro");
+  luaunit.assertFalse(playerA:equals(playerB));
+
+end
+
+---
+-- Checks whether the getIpString() method works as expected.
+--
+function TestPlayer:testCanGetIpString()
+
+  local testPlayer = Player:__construct("hello", "1.1.1.1");
+  local testValueSets = {
+    { ["ip"] = "1.1.1.1", ["expectedIpString"] = "1.1.1.x" },
+    { ["ip"] = "127.0.0.1", ["expectedIpString"] = "127.0.0.x" },
+    { ["ip"] = "10.4.2.27", ["expectedIpString"] = "10.4.2.x" },
+    { ["ip"] = "192.168.49.32", ["expectedIpString"] = "192.168.49.x" },
+    { ["ip"] = "172.20.145.190", ["expectedIpString"] = "172.20.145.x" },
+    { ["ip"] = "127.127.34.243", ["expectedIpString"] = "127.127.34.x" }
+  }
+
+  for index, testValueSet in ipairs(testValueSets) do
+    testPlayer:setIp(testValueSet["ip"]);
+    luaunit.assertEquals(testPlayer:getIpString(), testValueSet["expectedIpString"]);
+  end
 
 end
 

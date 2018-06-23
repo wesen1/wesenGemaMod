@@ -100,13 +100,11 @@ function MapTopCacher:addRecord(_newRecord, _currentRank)
   local currentRank = -1;
 
   if (_currentRank == nil) then
-    currentRank = self.parentMapTop:getNumberOfRecords() + 1;
+    currentRank = self:getNumberOfRecords() + 1;
   else
     currentRank = _currentRank;
     self.records[currentRank] = nil;
   end
-
-  self:removeRecordsWithPlayerName(_newRecord:getPlayer():getName());
 
   for i = currentRank - 1, _newRecord:getRank(), -1 do
     local record = self.records[i];
@@ -115,33 +113,6 @@ function MapTopCacher:addRecord(_newRecord, _currentRank)
   end
 
   self.records[_newRecord:getRank()] = _newRecord;
-
-end
-
----
--- Removes all records with the player name _playerName from the cached records list.
---
--- @tparam string _playerName The player name
---
-function MapTopCacher:removeRecordsWithPlayerName(_playerName)
-
-  local recordWithPlayerName = -1;
-  local numberOfRecords = self.parentMapTop:getNumberOfRecords();
-
-  while (recordWithPlayerName ~= nil) do
-
-    recordWithPlayerName = self:getRecordByName(_playerName);
-
-    if (recordWithPlayerName ~= nil) then
-
-      for i = recordWithPlayerName:getRank(), numberOfRecords, 1 do
-        self.records[i] = self.records[i + 1];
-      end
-      self.records[numberOfRecords] = nil;
-
-    end
-
-  end
 
 end
 
@@ -159,15 +130,15 @@ end
 ---
 -- Returns the rank of a player in the list of cached maprecords.
 --
--- @tparam string _name The player name
+-- @tparam Player _player The player
 --
 -- @treturn MapRecord|nil The maprecord or nil if no record was found
 --
-function MapTopCacher:getRecordByName(_name)
+function MapTopCacher:getRecordByPlayer(_player)
 
   for rank, record in ipairs(self.records) do
 
-    if (record:getPlayer():getName() == _name) then
+    if (record:getPlayer():equals(_player)) then
       return record;
     end
 

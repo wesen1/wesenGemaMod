@@ -84,18 +84,19 @@ function TestMapTop:testCanAddRecords()
 
   self.mapTop:setMapTopCacher(mapTopCacherMock);
   self.mapTop:setMapTopSaver(mapTopSaverMock);
+  
+  local testPlayerNew = Player:__construct("testplayer", "10.0.0.0");
+  local testPlayerExisting = Player:__construct("testplayer", "10.0.0.0");
 
-  local newMapRecord = MapRecord:__construct(
-    Player:__construct("testplayer", "10.0.0.0"), 12300, GUN_SUBGUN, TEAM_RVSF, self.maptop, 2
-  );
+  local newMapRecord = MapRecord:__construct(testPlayerNew, 12300, GUN_SUBGUN, TEAM_RVSF, self.maptop, 2);
   local existingMapRecord = MapRecord:__construct(
-    Player:__construct("testplayer", "10.0.0.0"), 12100, GUN_KNIFE, TEAM_RVSF, self.maptop, 1
+    testPlayerExisting, 12100, GUN_KNIFE, TEAM_RVSF, self.maptop, 1
   );
 
 
   -- No existing record: Save the record
-  mapTopCacherMock.getRecordByName
-                  :should_be_called_with("testplayer")
+  mapTopCacherMock.getRecordByPlayer
+                  :should_be_called_with(testPlayerNew)
                   :and_will_return(nil)
                   :and_then(
                     mapTopCacherMock.addRecord
@@ -122,14 +123,9 @@ function TestMapTop:testCanAddRecords()
   existingMapRecord:setRank(1);
   newMapRecord:setRank(2);
 
-  mapTopCacherMock.getRecordByName
-                  :should_be_called_with("testplayer")
+  mapTopCacherMock.getRecordByPlayer
+                  :should_be_called_with(testPlayerNew)
                   :and_will_return(existingMapRecord)
-                  :and_then(
-                    mapTopCacherMock.getRecordByRank
-                                    :should_be_called_with(1)
-                                    :and_will_return(existingMapRecord)
-                  )
                   :when(
                     function()
                       self.mapTop:addRecord(newMapRecord);
@@ -141,14 +137,9 @@ function TestMapTop:testCanAddRecords()
   existingMapRecord:setRank(1);
   newMapRecord:setRank(2);
 
-  mapTopCacherMock.getRecordByName
-                  :should_be_called_with("testplayer")
+  mapTopCacherMock.getRecordByPlayer
+                  :should_be_called_with(testPlayerNew)
                   :and_will_return(existingMapRecord)
-                  :and_then(
-                    mapTopCacherMock.getRecordByRank
-                                    :should_be_called_with(1)
-                                    :and_will_return(existingMapRecord)
-                  )
                   :when(
                     function()
                       self.mapTop:addRecord(newMapRecord);
@@ -160,14 +151,9 @@ function TestMapTop:testCanAddRecords()
   existingMapRecord:setRank(1);
   newMapRecord:setRank(1);
 
-  mapTopCacherMock.getRecordByName
-                  :should_be_called_with("testplayer")
+  mapTopCacherMock.getRecordByPlayer
+                  :should_be_called_with(testPlayerNew)
                   :and_will_return(existingMapRecord)
-                  :and_then(
-                    mapTopCacherMock.getRecordByRank
-                                    :should_be_called_with(1)
-                                    :and_will_return(existingMapRecord)
-                  )
                   :and_then(
                     mapTopCacherMock.addRecord
                                     :should_be_called_with(newMapRecord, 1)
@@ -197,28 +183,30 @@ function TestMapTop:testCanGetRank()
   local mapTopCacherMock = mach.mock_object(MapTopCacher, "MapTopCacherMock");
   self.mapTop:setMapTopCacher(mapTopCacherMock);
 
+  local testPlayer = Player:__construct("pro", "123.123.123.123");
+
   -- No record
-  mapTopCacherMock.getRecordByName
-                  :should_be_called_with("pro")
+  mapTopCacherMock.getRecordByPlayer
+                  :should_be_called_with(testPlayer)
                   :and_will_return(nil)
                   :when(
                     function()
-                      local rank = self.mapTop:getRank("pro");
+                      local rank = self.mapTop:getRank(testPlayer);
                       luaunit.assertNil(rank);
                     end
                   );
 
   -- Existing record
   local existingRecord = MapRecord:__construct(
-    Player:__construct("pro", "10.0.0.17"), 13143, GUN_SUBGUN, TEAM_CLA, self.mapTop, 7
+    testPlayer, 13143, GUN_SUBGUN, TEAM_CLA, self.mapTop, 7
   );
 
-  mapTopCacherMock.getRecordByName
-                  :should_be_called_with("pro")
+  mapTopCacherMock.getRecordByPlayer
+                  :should_be_called_with(testPlayer)
                   :and_will_return(existingRecord)
                   :when(
                     function ()
-                      local rank = self.mapTop:getRank("pro");
+                      local rank = self.mapTop:getRank(testPlayer);
                       luaunit.assertEquals(rank, 7);
                     end
                   );
@@ -256,6 +244,37 @@ function TestMapTop:testCanGetRecord()
                     function ()
                       local record = self.mapTop:getRecord(5);
                       luaunit.assertEquals(record, existingRecord);
+                    end
+                  );
+
+end
+
+---
+-- Checks whether the maptop can find out whether a player name is unique.
+--
+function TestMapTop:testCanCheckWhetherPlayerNameIsUnique()
+
+  local names = { "gema", "hello", "experts", "pro", "gema", "experts" };
+  local records = {};
+  for i, name in ipairs(names) do
+    records[i] = MapRecord:__construct(
+      Player:__construct(name, "127.0.0.1"), i * 100, GUN_KNIFE, TEAM_CLA, self.mapTop, i
+    );
+  end
+
+  local mapTopCacherMock = mach.mock_object(MapTopCacher, "MapTopCacherMock");
+  self.mapTop:setMapTopCacher(mapTopCacherMock);
+
+  mapTopCacherMock.getRecords
+                  :should_be_called()
+                  :multiple_times(4)
+                  :and_will_return(records)
+                  :when(
+                    function ()
+                      luaunit.assertFalse(self.mapTop:isPlayerNameUnique("gema"));
+                      luaunit.assertFalse(self.mapTop:isPlayerNameUnique("experts"));
+                      luaunit.assertTrue(self.mapTop:isPlayerNameUnique("hello"));
+                      luaunit.assertTrue(self.mapTop:isPlayerNameUnique("pro"));
                     end
                   );
 

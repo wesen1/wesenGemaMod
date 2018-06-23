@@ -206,23 +206,23 @@ end
 function MapTop:addRecord(_newMapRecord)
 
   local saveRecord = false;
-  local playerRank = self:getRank(_newMapRecord:getPlayer():getName());
+  local existingPlayerMapRecord = self.mapTopCacher:getRecordByPlayer(_newMapRecord:getPlayer());
+  local previousRank = nil;
 
-  if (playerRank == nil) then
+  if (existingPlayerMapRecord == nil) then
     saveRecord = true;
 
   else
 
-    local previousRecord = self:getRecord(playerRank);
-
-    if (previousRecord:getMilliseconds() > _newMapRecord:getMilliseconds()) then
+    if (existingPlayerMapRecord:getMilliseconds() > _newMapRecord:getMilliseconds()) then
       saveRecord = true;
+      previousRank = existingPlayerMapRecord:getRank();
     end
 
   end
 
   if (saveRecord) then
-    self.mapTopCacher:addRecord(_newMapRecord, playerRank);
+    self.mapTopCacher:addRecord(_newMapRecord, previousRank);
     self.mapTopSaver:addRecord(self.parentGemaMod:getDataBase(), _newMapRecord, self.mapName);
   end
 
@@ -231,13 +231,13 @@ end
 ---
 -- Returns the rank of a specific player name.
 --
--- @tparam string _name The name of the player
+-- @tparam Player _player The player
 --
 -- @treturn int|nil The rank of the player or nil if no rank was found
 --
-function MapTop:getRank(_name)
+function MapTop:getRank(_player)
 
-  local record = self.mapTopCacher:getRecordByName(_name);
+  local record = self.mapTopCacher:getRecordByPlayer(_player);
 
   if (record == nil) then
     return nil;
@@ -256,6 +256,35 @@ end
 --
 function MapTop:getRecord(_rank)
   return self.mapTopCacher:getRecordByRank(_rank);
+end
+
+---
+-- Returns whether a player name is unique in the list of maprecords.
+--
+-- @tparam string _playerName The player name
+--
+-- @treturn bool True if the player name is unique in the list of maprecords, false otherwise
+--
+function MapTop:isPlayerNameUnique(_playerName)
+  
+  local counter = 0;
+  for index, mapRecord in ipairs(self.mapTopCacher:getRecords()) do
+
+    if (mapRecord:getPlayer():getName() == _playerName) then
+      counter = counter + 1;
+      if (counter > 1) then
+        break;
+      end
+    end
+
+  end
+
+  if (counter > 1) then
+    return false;
+  else
+    return true;
+  end
+
 end
 
 ---

@@ -8,6 +8,7 @@
 local Output = require("Outputs/Output");
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 local PlayerInformationSaver = require("Player/PlayerInformationSaver");
+local StringUtils = require("Utils/StringUtils");
 
 ---
 -- Stores information about a single player.
@@ -97,6 +98,21 @@ function Player:__construct(_name, _ip)
   instance.weapon = -1;
 
   return instance;
+
+end
+
+---
+-- Returns whether a player object equals this player.
+--
+-- @treturn Bool True if the ip and name match, false otherwise
+--
+function Player:equals(_player)
+
+  if (self.ip == _player:getIp() and self.name == _player:getName()) then
+    return true;
+  else
+    return false;
+  end
 
 end
 
@@ -249,6 +265,18 @@ end
 
 
 -- Class Methods
+
+---
+-- Returns the ip with the last octet replaced by "x".
+--
+-- @treturn string The ip with the last octet replaced by "x"
+--
+function Player:getIpString()
+
+  local ipOctets = StringUtils:split(self.ip, ".");
+  return ipOctets[1] .. "." .. ipOctets[2] .. "." .. ipOctets[3] .. ".x";
+
+end
 
 ---
 -- Saves the player (combination of ip and name) in the database.

@@ -84,14 +84,13 @@ function MapTopLoader:fetchRecords(_dataBase, _mapName)
   end
 
   -- The records are grouped by name in order to avoid the same name appearing multiple times in the maptop
-  local sql = "SELECT MIN(milliseconds) AS milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
+  local sql = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
            .. "FROM records "
            .. "INNER JOIN maps ON records.map = maps.id "
            .. "INNER JOIN players ON records.player = players.id "
            .. "INNER JOIN names ON players.name = names.id "
            .. "INNER JOIN ips ON players.ip = ips.id "
            .. "WHERE maps.id = " .. mapId .. " "
-           .. "GROUP BY names.name "
            .. "ORDER BY milliseconds ASC;";
 
   local result = _dataBase:query(sql, true);

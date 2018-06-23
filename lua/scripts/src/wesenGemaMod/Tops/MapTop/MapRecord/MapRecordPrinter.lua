@@ -103,10 +103,10 @@ end
 --
 function MapRecordPrinter:printScoreRecord()
 
-  local playerName = self.parentMapRecord:getPlayer():getName();
+  local player = self.parentMapRecord:getPlayer();
   local time = self.parentMapRecord:getDisplayString();
   local rank = self.parentMapRecord:getRank();
-  local currentRank = self.parentMapRecord:getParentMapTop():getRank(playerName);
+  local currentRank = self.parentMapRecord:getParentMapTop():getRank(player);
 
   local amountRecords = self.parentMapRecord:getParentMapTop():getNumberOfRecords();
   if (currentRank == nil) then
@@ -126,7 +126,7 @@ function MapRecordPrinter:printScoreRecord()
 
   local weaponName = WeaponNameFetcher:getWeaponName(self.parentMapRecord:getWeapon());
 
-  local scoreString = Output:getColor("mapRecordName") .. playerName
+  local scoreString = Output:getColor("mapRecordName") .. player:getName()
                    .. Output:getColor("mapRecordInfo") .. " scored after "
                    .. Output:getColor("mapRecordTime") .. time
                    .. Output:getColor("mapRecordInfo") .. " minutes "
