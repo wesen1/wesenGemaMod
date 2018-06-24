@@ -116,6 +116,26 @@ function MapRecord:__construct(_player, _milliseconds, _weapon, _team, _parentMa
 
 end
 
+---
+-- Returns whether another map record is the same as this record.
+--
+-- @treturn bool True if the other map record is the same as this record, false otherwise
+--
+function MapRecord:equals(_mapRecord)
+
+  if (self.parentMapTop == _mapRecord:getParentMapTop() and
+      self.player:equals(_mapRecord:getPlayer()) and
+      self.milliseconds == _mapRecord:getMilliseconds() and
+      self.weapon == _mapRecord:getWeapon() and
+      self.team == _mapRecord:getTeam() and
+      self.createdAt == _mapRecord:getCreatedAt()) then
+    return true;
+  else
+    return false;
+  end
+
+end
+
 
 -- Getters and setters
 

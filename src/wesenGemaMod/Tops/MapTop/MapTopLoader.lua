@@ -84,14 +84,14 @@ function MapTopLoader:fetchRecords(_dataBase, _mapName)
   end
 
   -- The records are grouped by name in order to avoid the same name appearing multiple times in the maptop
-  local sql = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
-           .. "FROM records "
-           .. "INNER JOIN maps ON records.map = maps.id "
-           .. "INNER JOIN players ON records.player = players.id "
-           .. "INNER JOIN names ON players.name = names.id "
-           .. "INNER JOIN ips ON players.ip = ips.id "
-           .. "WHERE maps.id = " .. mapId .. " "
-           .. "ORDER BY milliseconds ASC;";
+  local sql = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip " ..
+              "FROM records " ..
+              "INNER JOIN maps ON records.map = maps.id " ..
+              "INNER JOIN players ON records.player = players.id " ..
+              "INNER JOIN names ON players.name = names.id " ..
+              "INNER JOIN ips ON players.ip = ips.id " ..
+              "WHERE maps.id = " .. mapId .. " " ..
+              "ORDER BY milliseconds ASC;";
 
   local result = _dataBase:query(sql, true);
   local records = {};
@@ -99,7 +99,7 @@ function MapTopLoader:fetchRecords(_dataBase, _mapName)
   for index, row in ipairs(result) do
 
     local player = Player:__construct(row.name, row.ip);
-    player:setId(row.id);
+    player:setId(tonumber(row.id));
 
     local milliseconds = tonumber(row["milliseconds"]);
     local weapon_id = tonumber(row["weapon_id"]);
