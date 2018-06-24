@@ -12,6 +12,7 @@ local MapHandler = require("Maps/MapHandler");
 
 local mapHandlerMock = mach.mock_object(MapHandler, "MapHandlerMock");
 package.loaded["Maps/MapHandler"] = mapHandlerMock;
+package.loaded["Tops/MapTop/MapTopLoader"] = nil;
 
 local DataBase = require("DataBase");
 local MapTop = require("Tops/MapTop/MapTop");
