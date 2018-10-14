@@ -28,6 +28,18 @@ luarocks install penlight
 luarocks install ldoc
 
 
+# Configure remote database login with the "root" user
+sql="UPDATE mysql.user SET host='%' WHERE user='root';
+     UPDATE mysql.user SET plugin='' WHERE user='root';"
+mysql -u root -Bse "$sql"
+
+# Allow remote connection to database by commenting out the line "bind-address = 127.0.0.1"
+sed -i "/bind-address/s/^/#/" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# Restart the database server
+service mysql restart
+
+
 # Create links for the lua files
 ln -fs /vagrant/src/wesenGemaMod /home/vagrant/lua_server/lua/scripts
 
