@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+-- TODO: Move to ORM class
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 
 ---
@@ -12,7 +13,7 @@ local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 --
 -- @type PlayerSaver
 --
-local PlayerInformationSaver = {};
+local PlayerInformationSaver = setmetatable({}, {});
 
 
 -- Class Methods

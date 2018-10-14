@@ -5,76 +5,47 @@
 -- @license MIT
 --
 
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+
 ---
 -- Class that handles player spawns.
+-- PlayerSpawnHandler inherits from BaseEventHandler
 --
 -- @type PlayerSpawnHandler 
 --
-local PlayerSpawnHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-PlayerSpawnHandler.parentGemaMod = "";
+local PlayerSpawnHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- PlayerSpawnHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerSpawnHandler The PlayerSpawnHandler instance
 --
-function PlayerSpawnHandler:__construct(_parentGemaMod)
+function PlayerSpawnHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerSpawnHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerSpawnHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerSpawnHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerSpawnHandler).__call = PlayerSpawnHandler.__construct;
 
 
 -- Class Methods
 
 ---
 -- Event handler which is called when a player spawns.
--- Initializes the start time of the player that spawned
 --
--- @tparam int _cn The client number of the player who spawned
+-- @tparam Player _player The player who spawned
 --
-function PlayerSpawnHandler:onPlayerSpawn(_cn)
+function PlayerSpawnHandler:onPlayerSpawn(_player)
 
-  if (self.parentGemaMod:getIsActive()) then
-    local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
-    spawnedPlayer:setStartTime(getsvtick());
-    spawnedPlayer:setWeapon(GUN_KNIFE);
+  if (self.parentGemaMode:getIsActive()) then
+    _player:getScoreAttempt():start();
   end
 
 end

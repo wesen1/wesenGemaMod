@@ -5,75 +5,51 @@
 -- @license MIT
 --
 
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+
 ---
 -- Class that handles player spawns.
+-- PlayerSpawnAfterHandler inherits from BaseEventHandler
 --
 -- @type PlayerSpawnAfterHandler 
 --
-local PlayerSpawnAfterHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-PlayerSpawnAfterHandler.parentGemaMod = "";
+local PlayerSpawnAfterHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- PlayerSpawnAfterHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerSpawnAfterHandler The PlayerSpawnAfterHandler instance
 --
-function PlayerSpawnAfterHandler:__construct(_parentGemaMod)
+function PlayerSpawnAfterHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerSpawnAfterHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerSpawnAfterHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerSpawnAfterHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerSpawnAfterHandler).__call = PlayerSpawnAfterHandler.__construct;
 
 
 -- Class Methods
 
 ---
 -- Event handler which is called after a player spawned.
--- Sets the players team and weapon.
+-- Sets the players team.
+-- @todo: Explain why this is done onplayerspawnafter and not in onplayerspawn!
 --
--- @tparam int _cn The client number of the player who spawned
+-- @tparam Player _player The player who spawned
 --
-function PlayerSpawnAfterHandler:onPlayerSpawnAfter(_cn)
+function PlayerSpawnAfterHandler:onPlayerSpawnAfter(_player)
 
-  if (self.parentGemaMod:getIsActive()) then
-    local spawnedPlayer = self.parentGemaMod:getPlayers()[_cn];
-    spawnedPlayer:setTeam(getteam(_cn));
+  if (self.parentGemaMode:getIsActive()) then
+    
+    -- The team id set in the PlayerSpawnAfterHandler because @todo
+    _player:getScoreAttempt():setTeamId(getteam(_player:getCn()));
   end
 
 end

@@ -5,75 +5,78 @@
 -- @license MIT
 --
 
-local Output = require("Outputs/Output");
-local StringUtils = require("Utils/StringUtils");
-local TableUtils = require("Utils/TableUtils");
+local Exception = require("Util/Exception");
+local StringUtils = require("Util/StringUtils");
+local TableUtils = require("Util/TableUtils");
 
 ---
--- Handles command parsing and execution.
+-- Parses command input strings.
 --
 -- @type CommandParser
 --
-local CommandParser = {};
+local CommandParser = setmetatable({}, {});
 
 
 ---
--- The parent command handler
+-- The last parsed command
 --
--- @tfield CommandHandler parentCommandHandler
+-- @tfield Output output
 --
-CommandParser.parentCommandHandler = "";
+CommandParser.command = nil;
+
+---
+-- The last parsed arguments
+--
+-- @tfield String[] arguments
+--
+CommandParser.arguments = nil;
 
 
 ---
 -- CommandParser constructor.
 --
--- @tparam CommandHandler _parentCommandHandler The parent command handler
---
 -- @treturn CommandParser The CommandParser instance
 --
-function CommandParser:__construct(_parentCommandHandler)
+function CommandParser:__construct()
 
-  local instance = {};
-  setmetatable(instance, {__index = CommandParser});
-
-  instance.parentCommandHandler = _parentCommandHandler;
+  local instance = setmetatable({}, {__index = CommandParser});
 
   return instance;
 
 end
 
+getmetatable(CommandParser).__call = CommandParser.__construct;
 
--- Getters and setters
+
+-- Getters and Setters
 
 ---
--- Returns the parent command handler.
+-- Returns the last parsed command.
 --
--- @treturn CommandHandler The parent command handler
+-- @treturn BaseCommand The last parsed command
 --
-function CommandParser:getParentCommandHandler()
-  return self.parentCommandHandler;
+function CommandParser:getCommand()
+  return self.command;
 end
 
 ---
--- Sets the parent command handler.
+-- Returns the last parsed arguments.
 --
--- @tparam CommandHandler _parentCommandHandler The parent command handler
+-- @treturn String[] The last parsed arguments
 --
-function CommandParser:setParentCommandHandler(_parentCommandHandler)
-  self.parentCommandHandler = _parentCommandHandler;
+function CommandParser:getArguments()
+  return self.arguments;
 end
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Checks whether a string starts with "!" followed by other characters than "!".
 --
 -- @tparam string _text The string
 --
--- @treturn bool True: The string is a command
---               False: The string is not a command
+-- @treturn Bool True if the string is a command, false otherwise
 --
 function CommandParser:isCommand(_text)
 
@@ -87,58 +90,122 @@ function CommandParser:isCommand(_text)
 end
 
 ---
--- Splits an input text into command name and arguments and executes the command if it exists.
+-- Splits an input text into command name and arguments and saves the results in the class attributes command and arguments.
 --
 -- @tparam string _inputText The input text in the format "!commandName args"
--- @tparam int _cn The client number of the player who tries to execute the command
+-- @tparam CommandList _commandList The command list
 --
-function CommandParser:parseCommand(_inputText, _cn)
+-- @raise Error in case of unknown command
+-- @raise Error while parsing the arguments
+--
+function CommandParser:parseCommand(_inputText, _commandList)
+
+  self.command = nil;
+  self.arguments = nil;
 
   local inputTextParts = StringUtils:split(_inputText, " ");
+  
+  -- Find the command
   local commandName = string.lower(inputTextParts[1]);
-  local command = self.parentCommandHandler:getCommand(commandName);
+  local command = _commandList:getCommand(commandName);  
+  
+  if (not command) then
+    error(Exception("Unknown command '" .. commandName .. "', check your spelling and try again"));
+  end
 
-  if (command) then
+  self.command = command;
+  self.arguments = self:parseArguments(command, TableUtils:slice(inputTextParts, 2));
 
-    local arguments = {};
-    if (#inputTextParts > 1) then
-      arguments = TableUtils:slice(inputTextParts, 2);
+end
+
+
+-- Private Methods
+
+---
+-- Fetches the arguments from the input text parts.
+-- Creates and returns a table in the format { argumentName => inputArgumentValue }.
+--
+-- @tparam BaseCommand _command The command for which the arguments are used
+-- @tparam String[] _argumentTextParts The argument text parts
+--
+-- @treturn String[] The associative array of arguments
+--
+-- @raise Error while casting the input arguments to types
+--
+function CommandParser:parseArguments(_command, _argumentTextParts)
+
+  local numberOfArgumentTextParts = #_argumentTextParts;
+
+  -- Check whether the number of arguments is valid
+  if (numberOfArgumentTextParts < _command:getNumberOfRequiredArguments()) then
+    error(Exception("Not enough arguments."));
+  elseif (numberOfArgumentTextParts > _command:getNumberOfArguments()) then
+    error(Exception("Too many arguments"));
+  end
+
+  -- Create an associative array from the input text parts
+  local inputArguments = {};
+  if (numberOfArgumentTextParts > 0) then
+    
+    -- Fetch the argument names
+    local arguments = _command:getArguments();
+    
+    for index, argument in ipairs(arguments) do
+      local argumentValue = _argumentTextParts[index];
+      inputArguments[argument:getName()] = self:castArgumentToType(argument, argumentValue);
     end
 
-    self:executeCommand(command, arguments, _cn);
-
-  else
-    Output:print(Output:getColor("error") .. "[ERROR] Unknown command '" .. commandName .. "', check your spelling and try again", _cn);
   end
+
+  return inputArguments;
 
 end
 
 ---
--- Executes a command.
+-- Casts an argument input string to the arguments type.
 --
--- @tparam BaseCommand _command The command
--- @tparam string[] _arguments The arguments
--- @tparam int _cn The client number of the player who tries to execute the command
+-- @tparam CommandArgument _argument The argument
+-- @tparam string _argumentValue The input argument value
 --
-function CommandParser:executeCommand(_command, _arguments, _cn)
+-- @raise Error in case of wrong input value type
+-- @raise Error in case of invalid argument type
+--
+function CommandParser:castArgumentToType(_argument, _argumentValue)
 
-  local player = self.parentCommandHandler:getParentGemaMod():getPlayers()[_cn];
+  local exceptionMessage = nil;
 
-  if (player:getLevel() >= _command:getRequiredLevel()) then
-
-    if (#_arguments < _command:getNumberOfRequiredArguments()) then
-      Output:print(Output:getColor("error") .. "[ERROR] Not enough arguments.", _cn);
-
-    elseif (#_arguments > _command:getNumberOfArguments()) then
-      Output:print(Output:getColor("error") .. "[ERROR] Too many arguments", _cn);
-
+  if (_argument:getType() == "string") then
+    return _argumentValue;
+  
+  elseif (_argument:getType() == "integer") then
+    if (_argumentValue:match("^%d+$") ~= nil) then
+      return tonumber(_argumentValue);
     else
-      _command:execute(_cn, _arguments);
+      exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a integer.";
+    end
 
+  elseif (_argument:getType() == "float") then
+    if (_argumentValue:match("^%d+%.%d+$") ~= nil) then
+      return tonumber(_argumentValue);
+    else
+      exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a floating point number.";
+    end
+  
+  elseif (_argument:getType() == "bool") then
+    if (_argumentValue == "true") then
+      return true;
+    elseif (_argumentValue == "false") then
+      return false;
+    else
+      exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a boolean ('true' or 'false').";
     end
 
   else
-    Output:print(Output:getColor("error") .. "[ERROR] You do not have the permission to use this command!", _cn);
+    exceptionMessage = "Invalid argument type '" .. _argument:getType() .. "' in argument " .. _argument:getShortName() .. ".";
+  end
+
+  if (exceptionMessage) then
+    error(Exception(exceptionMessage));
   end
 
 end

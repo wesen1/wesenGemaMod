@@ -12,7 +12,7 @@ local MapTop = require("Tops/MapTop/MapTop");
 local MapTopCacher = require("Tops/MapTop/MapTopCacher");
 local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
 local Player = require("Player/Player");
-local TableUtils = require("Utils/TableUtils");
+local TableUtils = require("Util/TableUtils");
 
 ---
 -- Checks whether the MapTopCacher class works as expected.

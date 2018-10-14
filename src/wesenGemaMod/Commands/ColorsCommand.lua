@@ -5,56 +5,63 @@
 -- @license MIT
 --
 
-local BaseCommand = require("Commands/BaseCommand");
-local Output = require("Outputs/Output");
+local BaseCommand = require("CommandHandler/BaseCommand");
 
 ---
 -- Command !colors.
 -- Displays all available colors to a player
+-- ColorsCommand inherits from BaseCommand
 --
 -- @type ColorsCommand
 --
-local ColorsCommand = {};
-
--- ColorsCommand inherits from BaseCommand
-setmetatable(ColorsCommand, {__index = BaseCommand});
+local ColorsCommand = setmetatable({}, {__index = BaseCommand});
 
 
 ---
 -- ColorsCommand constructor.
 --
--- @tparam CommandLister _parentCommandLister The parent command lister
+-- @tparam CommandList _parentCommandList The parent command list
 --
 -- @treturn ColorsCommand The ColorsCommand instance
 --
-function ColorsCommand:__construct(_parentCommandLister)
+function ColorsCommand:__construct(_parentCommandList)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "colors", 0, "Colors");
+  local instance = BaseCommand(
+    _parentCommandList,
+    "!colors",
+    0,
+    "Colors",
+    {},
+    "Shows a list of all available colors"
+  );
   setmetatable(instance, {__index = ColorsCommand});
-
-  instance:setDescription("Shows a list of all available colors");
 
   return instance;
 
 end
 
+getmetatable(ColorsCommand).__call = ColorsCommand.__construct;
+
+
+-- Public Methods
+
 ---
 -- Displays all available colors to a player.
 --
--- @tparam int _cn The client number of the player who executed the command
--- @tparam string[] _args The list of arguments which were passed by the player
+-- @tparam Player _player The player who executed the command
+-- @tparam string[] _arguments The list of arguments which were passed by the player
 --
-function ColorsCommand:execute(_cn, _args)
+function ColorsCommand:execute(_player, _arguments)
 
   local symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-  local output = "";
+  local outputText = "";
 
   for i = 1, #symbols do
     local symbol = symbols:sub(i,i);
-    output = output .. "\f" .. symbol .. " " .. symbol;
+    outputText = outputText .. "\f" .. symbol .. " " .. symbol;
   end
 
-  Output:print(output, _cn);
+  self.output:print(outputText, _player);
 
 end
 

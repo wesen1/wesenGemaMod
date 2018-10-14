@@ -5,64 +5,37 @@
 -- @license MIT
 --
 
-local MapHandler = require("Maps/MapHandler");
-local MapChecker = require("Maps/MapChecker");
-local Output = require("Outputs/Output");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local PlayerCallMapVoteHandler = require("EventHandler/PlayerCallMapVoteHandler");
 
 ---
 -- Class that handles player vote calls.
+-- PlayerCallVoteHandler inherits from BaseEventHandler
 --
 -- @type PlayerCallVoteHandler
 --
-local PlayerCallVoteHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-PlayerCallVoteHandler.parentGemaMod = "";
+local PlayerCallVoteHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- PlayerCallVoteHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerCallVoteHandler The PlayerCallVoteHandler instance
 --
-function PlayerCallVoteHandler:__construct(_parentGemaMod)
+function PlayerCallVoteHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerCallVoteHandler});
 
-  instance.parentGemaMod = _parentGemaMod;
+  instance.playerCallMapVoteHandler = PlayerCallMapVoteHandler(_parentGemaMode);
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerCallVoteHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerCallVoteHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerCallVoteHandler).__call = PlayerCallVoteHandler.__construct;
 
 
 -- Class Methods
@@ -70,7 +43,7 @@ end
 ---
 -- Event handler which is called when a player calls a vote.
 --
--- @tparam int _cn The client number of the player that called the vote
+-- @tparam Player _player The player that called the vote
 -- @tparam int _type The vote type
 -- @tparam string _text The map name, kick reason, etc.
 -- @tparam int _number1 The game mode, target cn, etc.
@@ -79,39 +52,17 @@ end
 --
 -- @treturn int|nil PLUGIN_BLOCK if a voted map is auto removed or nil
 --
-function PlayerCallVoteHandler:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
+function PlayerCallVoteHandler:onPlayerCallVote(_player, _type, _text, _number1, _number2, _voteError)
+
+  local returnValue = nil;
 
   -- If vote is a map vote
   if (_type == SA_MAP) then
+    returnValue = self.playerCallMapVoteHandler:onPlayerCallMapVote(_player, _text, _number1, _number2, _voteError);
+  end
 
-    -- If the map vote is invalid
-    if (_voteError == VOTEE_INVALID) then
-
-      if (mapexists(_text)) then
-        MapHandler:removeMap(self.parentGemaMod:getDataBase(),
-                             _text,
-                             self.parentGemaMod:getMapTop(),
-                             self.parentGemaMod:getMapRotEditor()
-        );
-
-        local infoMessage = "[INFO] The map \"" .. _text .. "\" was automatically deleted because it wasn't playable";
-        Output:print(Output:getColor("info") .. infoMessage, _cn);
-        return PLUGIN_BLOCK;
-
-      else
-        Output:print(Output:getColor("error") .. "[ERROR] The map \"" .. _text .. "\" could not be found on the server.", _cn);
-      end
-
-    elseif (_voteError == VOTEE_NOERROR) then
-
-      if (self.parentGemaMod:getIsActive() and (_number1 ~= GM_CTF or not MapChecker:isGema(_text))) then
-        Output:print(Output:getColor("info") .. "[INFO] The gema mode will be automatically disabled when this vote passes.");
-      elseif (not self.parentGemaMod:getIsActive() and _number1 == GM_CTF and MapChecker:isGema(_text)) then
-        Output:print(Output:getColor("info") .. "[INFO] The gema mode will be automatically enabled when this vote passes.");
-      end
-
-    end
-
+  if (returnValue ~= nil) then
+    return returnValue;
   end
 
 end

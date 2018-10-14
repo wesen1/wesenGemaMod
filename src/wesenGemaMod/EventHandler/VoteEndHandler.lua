@@ -5,64 +5,34 @@
 -- @license MIT
 --
 
-local MapChecker = require("Maps/MapChecker");
-local MapRotSwitcher = require("Maps/MapRot/MapRotSwitcher");
-local Output = require("Outputs/Output");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
 
 ---
 -- Class that handles vote ends.
+-- VoteEndHandler inherits from BaseEventHandler
 --
 -- @type VoteEndHandler 
 --
-local VoteEndHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-VoteEndHandler.parentGemaMod = "";
+local VoteEndHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- VoteEndHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn VoteEndHandler The VoteEndHandler instance
 --
-function VoteEndHandler:__construct(_parentGemaMod)
+function VoteEndHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = VoteEndHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function VoteEndHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function VoteEndHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(VoteEndHandler).__call = VoteEndHandler.__construct;
 
 
 -- Class Methods
@@ -71,28 +41,51 @@ end
 -- Event handler which is called when a vote ends.
 --
 -- @tparam int _result The result of the vote
--- @tparam int _cn The client number of the player who called the vote
+-- @tparam Player _player The player who called the vote
 -- @tparam int _type The vote type
 -- @tparam string _text The map name, kick reason, etc.
 -- @tparam int _number1 The game mode, target cn, etc.
 -- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
 --
-function VoteEndHandler:onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
+function VoteEndHandler:onVoteEnd(_result, _player, _type, _text, _number1, _number2)
+
+  if (_type == SA_MAP) then
+    self:onMapVoteEnd(_result, _player, _text, _number1, _number2);
+  end
+
+end
+
+---
+-- Handles map vote results.
+--
+-- @tparam int _result The result of the vote
+-- @tparam Player _player The player who called the vote
+-- @tparam string _mapName The map name
+-- @tparam int _gameMode The game mode
+-- @tparam int _minutes The minutes to load the map for
+--
+function VoteEndHandler:onMapVoteEnd(_result, _player, _mapName, _gameMode, _minutes)
+
+  local mapRot = self.parentGemaMode:getMapRot();
 
   if (_result == 1) then
-    -- Vote passed
+  -- Vote passed
 
-    if (_type == SA_MAP) then
+    local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+    local isNextEnvironmentGemaCompatible = environmentHandler:isNextEnvironmentGemaCompatible();
 
-      if (self.parentGemaMod:getIsActive() and (_number1 ~= GM_CTF or not MapChecker:isGema(_text))) then
-        MapRotSwitcher:switchToRegularMapRot();
-        Output:print(Output:getColor("info") .. "[INFO] Regular maprot loaded.");
-      elseif (not self.parentGemaMod:getIsActive() and _number1 == GM_CTF and MapChecker:isGema(_text)) then
-        MapRotSwitcher:switchToGemaMapRot();
-        Output:print(Output:getColor("info") .. "[INFO] Gema map rot loaded.");
-      end
-
+    if (self.parentGemaMode:getIsActive() and not isNextEnvironmentGemaCompatible) then
+      mapRot:loadRegularMapRot();
+      self.output:printInfo("Regular maprot loaded.");
+    elseif (not self.parentGemaMode:getIsActive() and isNextEnvironmentGemaCompatible) then
+      mapRot:loadGemaMapRot();
+      self.output:printInfo("Gema map rot loaded.");
     end
+
+  else
+
+    -- Reset the next environment back to the maprots next environment
+    self.parentGemaMode:setNextEnvironment(mapRot:getNextEnvironment());
 
   end
 

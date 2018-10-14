@@ -9,10 +9,11 @@ local luasql = require("luasql.mysql");
 ---
 -- Handles database access.
 -- The class does only work when the database server is on the same machine like the assaultcube server
+-- @todo: Replace by ORM!
 --
 -- @type DataBase
 --
-local DataBase = {};
+local DataBase = setmetatable({}, {});
 
 ---
 -- The database user
@@ -47,8 +48,7 @@ DataBase.dataBaseName = "";
 --
 function DataBase:__construct(_user, _password, _dataBaseName)
 
-  local instance = {};
-  setmetatable(instance, {__index = DataBase});
+  local instance = setmetatable({}, {__index = DataBase});
 
   instance.user = _user;
   instance.password = _password;
@@ -57,6 +57,8 @@ function DataBase:__construct(_user, _password, _dataBaseName)
   return instance;
 
 end
+
+getmetatable(DataBase).__call = DataBase.__construct;
 
 
 -- Getters and setters

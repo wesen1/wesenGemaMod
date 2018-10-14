@@ -5,14 +5,15 @@
 -- @license MIT
 --
 
-local MapHandler = require("Maps/MapHandler");
+-- TODO: MapHandler will be replaced by Map ORM class
+local MapHandler = require("Map/MapHandler");
 
 ---
 -- Handles saving records to the database.
 --
 -- @type MapTopSaver
 --
-local MapTopSaver = {};
+local MapTopSaver = setmetatable({}, {});
 
 
 ---
@@ -22,12 +23,13 @@ local MapTopSaver = {};
 --
 function MapTopSaver:__construct()
 
-  local instance = {};
-  setmetatable(instance, {__index = MapTopSaver});
+  local instance = setmetatable({}, {__index = MapTopSaver});
 
   return instance;
 
 end
+
+getmetatable(MapTopSaver).__call = MapTopSaver.__construct;
 
 
 -- Class Methods
@@ -41,9 +43,19 @@ end
 --
 function MapTopSaver:addRecord(_dataBase, _record, _mapName)
 
+  -- TODO: Add players to database on demand (on map upload, on record)
   local player = _record:getPlayer();
-  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
+  if (not player:getId()) then
+    player:savePlayer();
+  end
 
+  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
+  if (not mapId) then
+    MapHandler:saveMapName(_dataBase, _mapName);
+    mapId = MapHandler:fetchMapId(_dataBase, _mapName);
+  end
+
+  -- Check if the player has a record
   local sql = "SELECT records.id "
            .. "FROM records "
            .. "INNER JOIN players ON records.player = players.id "
@@ -52,7 +64,6 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
            .. "AND maps.id = " .. mapId .. ";";
 
   local result = _dataBase:query(sql, true);
-
   if (#result == 0) then
 
     -- insert new record

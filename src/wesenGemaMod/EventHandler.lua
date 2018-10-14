@@ -9,7 +9,7 @@ local FlagActionHandler = require("EventHandler/FlagActionHandler");
 local MapChangeHandler = require("EventHandler/MapChangeHandler");
 local PlayerCallVoteHandler = require("EventHandler/PlayerCallVoteHandler");
 local PlayerConnectHandler = require("EventHandler/PlayerConnectHandler");
-local PlayerDisconnectHandler = require("EventHandler/PlayerDisconnectHandler");
+local PlayerDisconnectAfterHandler = require("EventHandler/PlayerDisconnectAfterHandler");
 local PlayerNameChangeHandler = require("EventHandler/PlayerNameChangeHandler");
 local PlayerRoleChangeHandler = require("EventHandler/PlayerRoleChangeHandler");
 local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
@@ -24,7 +24,7 @@ local VoteEndHandler = require("EventHandler/VoteEndHandler");
 --
 -- @type EventHandler
 --
-local EventHandler = {};
+local EventHandler = setmetatable({}, {});
 
 
 ---
@@ -32,91 +32,91 @@ local EventHandler = {};
 --
 -- @tfield FlagActionHandler flagActionHandler
 --
-EventHandler.flagActionHandler = "";
+EventHandler.flagActionHandler = nil;
 
 ---
 -- The map change event handler
 --
 -- @tfield MapChangeHandler mapChangeHandler
 --
-EventHandler.mapChangeHandler = "";
+EventHandler.mapChangeHandler = nil;
 
 ---
 -- The player call vote event handler
 --
 -- @tfield PlayerCallVoteHandler playerCallVoteHandler
 --
-EventHandler.playerCallVoteHandler = "";
+EventHandler.playerCallVoteHandler = nil;
 
 ---
 -- The player connect event handler
 --
 -- @tfield PlayerConnectHandler playerConnectHandler
 --
-EventHandler.playerConnectHandler = "";
+EventHandler.playerConnectHandler = nil;
 
 ---
--- The player disconnect event handler
+-- The player disconnect event after handler
 --
--- @tfield PlayerDisconnectHandler playerDisconnectHandler
+-- @tfield PlayerDisconnectAfterHandler playerDisconnectHandler
 --
-EventHandler.playerDisconnectHandler = "";
+EventHandler.playerDisconnectAfterHandler = nil;
 
 ---
 -- The player name change event handler
 --
 -- @tfield PlayerNameChangeHandler playerNameChangeHandler
 --
-EventHandler.playerNameChangeHandler = "";
+EventHandler.playerNameChangeHandler = nil;
 
 ---
 -- The player role change event handler
 --
 -- @tfield PlayerRoleChangeHandler playerRoleChangeHandler
 --
-EventHandler.playerRoleChangeHandler = "";
+EventHandler.playerRoleChangeHandler = nil;
 
 ---
 -- The player say text event handler
 --
 -- @tfield PlayerSayTextHandler playerSayTextHandler
 --
-EventHandler.playerSayTextHandler = "";
+EventHandler.playerSayTextHandler = nil;
 
 ---
 -- The player send map event handler
 --
 -- @tfield PlayerSendMapHandler playerSendMapHandler
 --
-EventHandler.playerSendMapHandler = "";
+EventHandler.playerSendMapHandler = nil;
 
 ---
 -- The player shoot handler
 --
 -- @tfield PlayerShootHandler playerShootHandler
 --
-EventHandler.playerShootHandler = "";
+EventHandler.playerShootHandler = nil;
 
 ---
 -- The player spawn event handler
 --
 -- @tfield PlayerSpawnHandler playerSpawnHandler
 --
-EventHandler.playerSpawnHandler = "";
+EventHandler.playerSpawnHandler = nil;
 
 ---
 -- The player spawn after event handler
 --
 -- @tfield PlaySpawnAfterHandler playerSpawnAfterHandler
 --
-EventHandler.playerSpawnAfterHandler = "";
+EventHandler.playerSpawnAfterHandler = nil;
 
 ---
 -- The vote end handler
 --
 -- @tfield VoteEndHandler voteEndHandler
 --
-EventHandler.voteEndHandler = "";
+EventHandler.voteEndHandler = nil;
 
 
 ---
@@ -128,26 +128,27 @@ EventHandler.voteEndHandler = "";
 --
 function EventHandler:__construct(_parentGemaMod)
 
-  local instance = {};
-  setmetatable(instance, {__index = EventHandler});
+  local instance = setmetatable({}, {__index = EventHandler});
 
-  instance.flagActionHandler = FlagActionHandler:__construct(_parentGemaMod);
-  instance.mapChangeHandler = MapChangeHandler:__construct(_parentGemaMod);
-  instance.playerCallVoteHandler = PlayerCallVoteHandler:__construct(_parentGemaMod);
-  instance.playerConnectHandler = PlayerConnectHandler:__construct(_parentGemaMod);
-  instance.playerDisconnectHandler = PlayerDisconnectHandler:__construct(_parentGemaMod);
-  instance.playerNameChangeHandler = PlayerNameChangeHandler:__construct(_parentGemaMod);
-  instance.playerRoleChangeHandler = PlayerRoleChangeHandler:__construct(_parentGemaMod);
-  instance.playerSayTextHandler = PlayerSayTextHandler:__construct(_parentGemaMod);
-  instance.playerSendMapHandler = PlayerSendMapHandler:__construct(_parentGemaMod);
-  instance.playerShootHandler = PlayerShootHandler:__construct(_parentGemaMod);
-  instance.playerSpawnHandler = PlayerSpawnHandler:__construct(_parentGemaMod);
-  instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler:__construct(_parentGemaMod);
-  instance.voteEndHandler = VoteEndHandler:__construct(_parentGemaMod);
+  instance.flagActionHandler = FlagActionHandler(_parentGemaMod);
+  instance.mapChangeHandler = MapChangeHandler(_parentGemaMod);
+  instance.playerCallVoteHandler = PlayerCallVoteHandler(_parentGemaMod);
+  instance.playerConnectHandler = PlayerConnectHandler(_parentGemaMod);
+  instance.playerDisconnectAfterHandler = PlayerDisconnectAfterHandler(_parentGemaMod);
+  instance.playerNameChangeHandler = PlayerNameChangeHandler(_parentGemaMod);
+  instance.playerRoleChangeHandler = PlayerRoleChangeHandler(_parentGemaMod);
+  instance.playerSayTextHandler = PlayerSayTextHandler(_parentGemaMod);
+  instance.playerSendMapHandler = PlayerSendMapHandler(_parentGemaMod);
+  instance.playerShootHandler = PlayerShootHandler(_parentGemaMod);
+  instance.playerSpawnHandler = PlayerSpawnHandler(_parentGemaMod);
+  instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler(_parentGemaMod);
+  instance.voteEndHandler = VoteEndHandler(_parentGemaMod);
 
   return instance;
 
 end
+
+getmetatable(EventHandler).__call = EventHandler.__construct;
 
 
 -- Getters and setters
@@ -162,30 +163,12 @@ function EventHandler:getFlagActionHandler()
 end
 
 ---
--- Sets the flag action handler.
---
--- @tparam FlagActionHandler _flagActionHandler The flag action handler
---
-function EventHandler:setFlagActionHandler(_flagActionHandler)
-  self.flagActionHandler = _flagActionHandler;
-end
-
----
 -- Returns the map change handler.
 --
 -- @treturn MapChangeHandler The map change handler
 --
 function EventHandler:getMapChangeHandler()
   return self.mapChangeHandler;
-end
-
----
--- Sets the map change handler.
---
--- @tparam MapChangeHandler _mapChangeHandler The map change handler
---
-function EventHandler:setMapChangeHandler(_mapChangeHandler)
-  self.mapChangeHandler = _mapChangeHandler;
 end
 
 ---
@@ -198,15 +181,6 @@ function EventHandler:getPlayerCallVoteHandler()
 end
 
 ---
--- Sets the player call vote handler.
---
--- @tparam PlayerCallVoteHandler _playerCallVoteHandler The player call vote handler
---
-function EventHandler:setPlayerCallVoteHandler(_playerCallVoteHandler)
-  self.playerCallVoteHandler = _playerCallVoteHandler;
-end
-
----
 -- Returns the player connect handler.
 --
 -- @treturn PlayerConnectHandler The player connect handler
@@ -216,30 +190,12 @@ function EventHandler:getPlayerConnectHandler()
 end
 
 ---
--- Sets the player connect handler.
+-- Returns the player disconnect after handler.
 --
--- @tparam PlayerConnectHandler _playerConnectHandler The player connect handler
+-- @treturn PlayerDisconnectAfterHandler The player disconnect after handler
 --
-function EventHandler:setPlayerConnectHandler(_playerConnectHandler)
-  self.playerConnectHandler = _playerConnectHandler;
-end
-
----
--- Returns the player disconnect handler.
---
--- @treturn PlayerDisconnectHandler The player disconnect handler
---
-function EventHandler:getPlayerDisconnectHandler()
-  return self.playerDisconnectHandler;
-end
-
----
--- Sets the player disconnect handler.
---
--- @tparam PlayerDisconnectHandler _playerDisconnectHandler The player disconnect handler
---
-function EventHandler:setPlayerDisconnectHandler(_playerDisconnectHandler)
-  self.playerDisconnectHandler = _playerDisconnectHandler;
+function EventHandler:getPlayerDisconnectAfterHandler()
+  return self.playerDisconnectAfterHandler;
 end
 
 ---
@@ -252,30 +208,12 @@ function EventHandler:getPlayerNameChangeHandler()
 end
 
 ---
--- Sets the player name change handler.
---
--- @tparam PlayerNameChangeHandler _playerNameChangeHandler The player name change handler
---
-function EventHandler:setPlayerNameChangeHandler(_playerNameChangeHandler)
-  self.playerNameChangeHandler = _playerNameChangeHandler;
-end
-
----
 -- Returns the player role change handler.
 --
 -- @treturn PlayerRoleChangeHandler The player role change handler
 --
 function EventHandler:getPlayerRoleChangeHandler()
   return self.playerRoleChangeHandler;
-end
-
----
--- Sets the player role change handler.
---
--- @tparam PlayerRoleChangeHandler _playerRoleChangeHandler The player role change handler
---
-function EventHandler:setPlayerRoleChangeHandler(_playerRoleChangeHandler)
-  self.playerRoleChangeHandler = _playerRoleChangeHandler;
 end
 
 ---
@@ -288,30 +226,12 @@ function EventHandler:getPlayerSayTextHandler()
 end
 
 ---
--- Sets the player say text handler.
---
--- @tparam PlayerSayTextHandler _playerSayTextHandler The player say text handler
---
-function EventHandler:setPlayerSayTextHandler(_playerSayTextHandler)
-  self.playerSayTextHandler = _playerSayTextHandler;
-end
-
----
 -- Returns the player send map handler.
 --
 -- @treturn PlayerSendMapHandler The player send map handler
 --
 function EventHandler:getPlayerSendMapHandler()
   return self.playerSendMapHandler;
-end
-
----
--- Sets the player send map handler.
---
--- @tparam PlayerSendMapHandler _playerSendMapHandler The player send map handler
---
-function EventHandler:setPlayerSendMapHandler(_playerSendMapHandler)
-  self.playerSendMapHandler = _playerSendMapHandler;
 end
 
 ---
@@ -324,30 +244,12 @@ function EventHandler:getPlayerShootHandler()
 end
 
 ---
--- Sets the player shoot handler.
---
--- @tparam PlayerShootHandler _playerShootHandler The player shoot handler
---
-function EventHandler:setPlayerShootHandler(_playerShootHandler)
-  self.playerShootHandler = _playerShootHandler;
-end
-
----
 -- Returns the player spawn handler.
 --
 -- @treturn PlayerSpawnHandler The player spawn handler
 --
 function EventHandler:getPlayerSpawnHandler()
   return self.playerSpawnHandler;
-end
-
----
--- Sets the player spawn handler.
---
--- @tparam PlayerSpawnHandler _playerSpawnHandler The player spawn handler
---
-function EventHandler:setPlayerSpawnHandler(_playerSpawnHandler)
-  self.playerSpawnHandler = _playerSpawnHandler;
 end
 
 ---
@@ -360,30 +262,12 @@ function EventHandler:getPlayerSpawnAfterHandler()
 end
 
 ---
--- Sets the player spawn after handler.
---
--- @tparam PlayerSpawnAfterHandler _playerSpawnAfterHandler The player spawn after handler
---
-function EventHandler:setPlayerSpawnAfterHandler(_playerSpawnAfterHandler)
-  self.playerSpawnAfterHandler = _playerSpawnAfterHandler;
-end
-
----
 -- Returns the vote end handler.
 --
 -- @treturn VoteEndHandler The vote end handler
 --
 function EventHandler:getVoteEndHandler()
   return self.voteEndHandler;
-end
-
----
--- Sets the vote end handler.
---
--- @tparam VoteEndHandler _voteEndHandler The vote end handler
---
-function EventHandler:setVoteEndHandler(_voteEndHandler)
-  self.voteEndHandler = _voteEndHandler;
 end
 
 

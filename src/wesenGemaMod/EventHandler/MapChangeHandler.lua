@@ -5,66 +5,37 @@
 -- @license MIT
 --
 
-local MapChecker = require("Maps/MapChecker");
-local Output = require("Outputs/Output");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
 
 ---
 -- Class that handles map changes.
+-- MapChangeHandler inherits from BaseEventHandler
 --
 -- @type MapChangeHandler
 --
-local MapChangeHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-MapChangeHandler.parentGemaMod = "";
+local MapChangeHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- MapChangeHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn MapChangeHandler The MapChangeHandler instance
 --
-function MapChangeHandler:__construct(_parentGemaMod)
+function MapChangeHandler:__construct(_parentGemaMode)
 
-  local instance = {};
-  setmetatable(instance, {__index = MapChangeHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
+  local instance = BaseEventHandler(_parentGemaMode);
+  setmetatable(instance, {__index = MapChangeHandler});  
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function MapChangeHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function MapChangeHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(MapChangeHandler).__call = MapChangeHandler.__construct;
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Event handler which is called when the map is changed.
@@ -74,31 +45,54 @@ end
 --
 function MapChangeHandler:onMapChange(_mapName, _gameMode)
 
-  if (self.parentGemaMod:getIsActive()) then
+  self:updateGemaModeState();
 
-    if (not MapChecker:isGema(_mapName) or _gameMode ~= GM_CTF) then
-      self.parentGemaMod:setIsActive(false);
-      Output:print(Output:getColor("info") .. "[INFO] The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
-      return;
+  -- If gema mode is still active
+  if (self.parentGemaMode:getIsActive()) then
+
+    local mapTopHandler = self.parentGemaMode:getMapTopHandler();
+    local mapTop = mapTopHandler:getMapTop("main");
+
+    -- Load the map records for the map
+    mapTop:loadRecords(self.parentGemaMode:getDataBase(), _mapName);
+
+    -- Print the map statistics for the map
+    for cn, player in pairs(self.parentGemaMode:getPlayerList():getPlayers()) do
+      mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop, player);
     end
+    
+  end
 
-    local mapTop = self.parentGemaMod:getMapTop();
+end
 
-    mapTop:setMapName(_mapName);
-    mapTop:loadRecords(_mapName);
 
-    for cn, player in pairs(self.parentGemaMod:getPlayers()) do
-      mapTop:printMapStatistics(cn);
-    end
+-- Private Methods
 
-    self.parentGemaMod:setRemainingExtendMinutes(20);
+---
+-- Updates the gema mode state if necessary.
+-- The gema mod environment must be updated before this method is called.
+--
+function MapChangeHandler:updateGemaModeState()
 
-  else
-    if (MapChecker:isGema(_mapName) and _gameMode == GM_CTF) then
-      self.parentGemaMod:setIsActive(true);
-      Output:print(Output:getColor("info") .. "[INFO] The gema mode was automatically enabled.");
-      self:onMapChange(_mapName, _gameMode);
-    end
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+  local mapRot = self.parentGemaMode:getMapRot();
+  
+  -- Update the environments
+  environmentHandler:changeToNextEnvironment(mapRot);
+  
+  -- Check the current environment
+  local isCurrentEnvironmentGemaCompatible = environmentHandler:isCurrentEnvironmentGemaCompatible();
+
+  -- Check whether gema mode must be disabled or enabled
+  if (self.parentGemaMode:getIsActive() and not isCurrentEnvironmentGemaCompatible) then
+    self.parentGemaMode:setIsActive(false);
+    self.output:printInfo("The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
+    -- TODO: Update server name
+
+  elseif (not self.parentGemaMode:getIsActive() and isCurrentEnvironmentGemaCompatible) then
+    self.parentGemaMode:setIsActive(true);
+    self.output:printInfo("The gema mode was automatically enabled.");
+    -- TODO: Update server name
   end
 
 end

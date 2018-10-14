@@ -35,7 +35,7 @@ function TestPlayer:setUp()
 
   -- Overwrite Output dependency with mock
   local outputMock = mach.mock_object(Output, "OutputMock");
-  package.loaded["Outputs/Output"] = outputMock;
+  package.loaded["Output/Output"] = outputMock;
 
   outputMock.getColor
             :should_be_called_with("playerTextDefault")
@@ -56,12 +56,12 @@ end
 function TestPlayer:resetDependencies()
 
   package.loaded["DataBase"] = nil;
-  package.loaded["Outputs/Output"] = nil;
+  package.loaded["Output/Output"] = nil;
   package.loaded["Player/PlayerInformationLoader"] = nil;
   package.loaded["Player/PlayerInformationSaver"] = nil;
 
   DataBase = require("DataBase");
-  Output = require("Outputs/Output");
+  Output = require("Output/Output");
   PlayerInformationLoader = require("Player/PlayerInformationLoader");
   PlayerInformationSaver = require("Player/PlayerInformationSaver");
 

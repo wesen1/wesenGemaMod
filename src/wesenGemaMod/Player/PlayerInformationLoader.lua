@@ -5,12 +5,14 @@
 -- @license MIT
 --
 
+-- TODO: Move to ORM class
+
 ---
 -- Loads player information to the database.
 --
 -- @type PlayerInformationLoader
 --
-local PlayerInformationLoader = {};
+local PlayerInformationLoader = setmetatable({}, {});
 
 
 -- Class Methods

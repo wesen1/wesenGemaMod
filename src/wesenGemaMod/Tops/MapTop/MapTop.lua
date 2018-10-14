@@ -5,122 +5,76 @@
 -- @license MIT
 --
 
-local MapTopCacher = require("Tops/MapTop/MapTopCacher");
+local MapRecordList = require("Tops/MapTop/MapRecordList/MapRecordList");
 local MapTopLoader = require("Tops/MapTop/MapTopLoader");
-local MapTopPrinter = require("Tops/MapTop/MapTopPrinter");
 local MapTopSaver = require("Tops/MapTop/MapTopSaver");
 
 ---
--- Handles listing, printing and saving the records of the current map.
+-- Handles listing, loading and saving the records of the current map.
 --
 -- @type MapTop
 --
-local MapTop = {};
+local MapTop = setmetatable({}, {});
 
 
 ---
--- The name of the current map
+-- The name of the last map for which the map top was initialized
 --
--- @tfield string mapName
+-- @tfield string lastMapName
 --
-MapTop.mapName = "";
+MapTop.lastMapName = nil;
 
 ---
--- The map top cacher
+-- The map record list
 --
--- @tfield MapTopCacher mapTopCacher
+-- @tfield MapRecordList mapRecordList
 --
-MapTop.mapTopCacher = "";
+MapTop.mapRecordList = nil;
 
 ---
 -- The map top loader
 --
 -- @tfield MapTopLoader mapTopLoader
 --
-MapTop.mapTopLoader = "";
-
----
--- The map top printer
---
--- @tfield MapTopPrinter mapTopPrinter
---
-MapTop.mapTopPrinter = "";
+MapTop.mapTopLoader = nil;
 
 ---
 -- The map top saver
 --
 -- @tfield MapTopSaver mapTopSaver
 --
-MapTop.mapTopSaver = "";
-
----
--- The parent gema mod
---
--- @tfield GemaMod parentGemaMod
---
-MapTop.parentGemaMod = "";
+MapTop.mapTopSaver = nil;
 
 
 ---
 -- MapTop constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
 -- @treturn MapTop The MapTop instance
 --
-function MapTop:__construct(_parentGemaMod)
+function MapTop:__construct()
 
-  local instance = {};
-  setmetatable(instance, {__index = MapTop});
+  local instance = setmetatable({}, {__index = MapTop});
 
-  instance.mapName = "";
-  instance.mapTopCacher = MapTopCacher:__construct(instance);
-  instance.mapTopLoader = MapTopLoader:__construct(instance);
-  instance.mapTopPrinter = MapTopPrinter:__construct(instance);
-  instance.mapTopSaver = MapTopSaver:__construct();
-  instance.parentGemaMod = _parentGemaMod;
+  instance.mapRecordList = MapRecordList();
+  instance.mapTopLoader = MapTopLoader();
+  instance.mapTopSaver = MapTopSaver();
 
   return instance;
 
 end
 
+getmetatable(MapTop).__call = MapTop.__construct;
+
 
 -- Getters and setters
 
 ---
--- Returns the map name.
+-- Returns the map record list.
 --
--- @treturn string The map name
+-- @treturn MapRecordList The map record list
 --
-function MapTop:getMapName()
-  return self.mapName;
-end
-
----
--- Sets the map name.
---
--- @tparam string _mapName The map name
---
-function MapTop:setMapName(_mapName)
-  self.mapName = _mapName;
-end
-
----
--- Returns the map top cacher.
---
--- @treturn MapTopCacher The map top cacher
---
-function MapTop:getMapTopCacher()
-  return self.mapTopCacher;
-end
-
----
--- Sets the map top cacher.
---
--- @tparam MapTopCacher _mapTopCacher The map top cacher
---
-function MapTop:setMapTopCacher(_mapTopCacher)
-  self.mapTopCacher = _mapTopCacher;
+function MapTop:getMapRecordList()
+  return self.mapRecordList;
 end
 
 ---
@@ -133,33 +87,6 @@ function MapTop:getMapTopLoader()
 end
 
 ---
--- Sets the map top loader.
---
--- @tparam MapTopLoader _mapTopLoader The map top loader
---
-function MapTop:setMapTopLoader(_mapTopLoader)
-  self.mapTopLoader = _mapTopLoader;
-end
-
----
--- Returns the map top printer.
---
--- @treturn MapTopPrinter The map top printer
---
-function MapTop:getMapTopPrinter()
-  return self.mapTopPrinter;
-end
-
----
--- Sets the map top printer.
---
--- @tparam MapTopPrinter _mapTopPrinter The map top printer
---
-function MapTop:setMapTopPrinter(_mapTopPrinter)
-  self.mapTopPrinter = _mapTopPrinter;
-end
-
----
 -- Returns the map top saver.
 --
 -- @treturn MapTopSaver The map top saver
@@ -168,146 +95,19 @@ function MapTop:getMapTopSaver()
   return self.mapTopSaver;
 end
 
----
--- Sets the map top saver.
---
--- @tparam MapTopSaver _mapTopSaver The map top saver
---
-function MapTop:setMapTopSaver(_mapTopSaver)
-  self.mapTopSaver = _mapTopSaver;
-end
 
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function MapTop:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function MapTop:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
-
-
--- Class Methods
+-- Public Methods
 
 ---
 -- Saves a maprecord if it is better than the previous maprecord of the player.
 --
 -- @tparam MapRecord _newMapRecord The maprecord which will be checked
 --
-function MapTop:addRecord(_newMapRecord)
+function MapTop:addRecord(_dataBase, _newMapRecord)
 
-  local saveRecord = false;
-  local existingPlayerMapRecord = self.mapTopCacher:getRecordByPlayer(_newMapRecord:getPlayer());
-  local previousRank = nil;
-
-  if (existingPlayerMapRecord == nil) then
-    saveRecord = true;
-
-  else
-
-    if (existingPlayerMapRecord:getMilliseconds() > _newMapRecord:getMilliseconds()) then
-      saveRecord = true;
-      previousRank = existingPlayerMapRecord:getRank();
-    end
-
-  end
-
-  if (saveRecord) then
-    self.mapTopCacher:addRecord(_newMapRecord, previousRank);
-    self.mapTopSaver:addRecord(self.parentGemaMod:getDataBase(), _newMapRecord, self.mapName);
-  end
-
-end
-
----
--- Returns the rank of a specific player name.
---
--- @tparam Player _player The player
---
--- @treturn int|nil The rank of the player or nil if no rank was found
---
-function MapTop:getRank(_player)
-
-  local record = self.mapTopCacher:getRecordByPlayer(_player);
-
-  if (record == nil) then
-    return nil;
-  else
-    return record:getRank();
-  end
-
-end
-
----
--- Returns a single record of the record list.
---
--- @tparam int _rank The rank of the record
---
--- @treturn MapRecord|nil The record or nil if no record with this rank exists
---
-function MapTop:getRecord(_rank)
-  return self.mapTopCacher:getRecordByRank(_rank);
-end
-
----
--- Returns whether a player name is unique in the list of maprecords.
---
--- @tparam string _playerName The player name
---
--- @treturn bool True if the player name is unique in the list of maprecords, false otherwise
---
-function MapTop:isPlayerNameUnique(_playerName)
-  
-  local counter = 0;
-  for index, mapRecord in ipairs(self.mapTopCacher:getRecords()) do
-
-    if (mapRecord:getPlayer():getName() == _playerName) then
-      counter = counter + 1;
-      if (counter > 1) then
-        break;
-      end
-    end
-
-  end
-
-  if (counter > 1) then
-    return false;
-  else
-    return true;
-  end
-
-end
-
----
--- Returns the number of records in the maptop.
---
--- @treturn int The number of records
---
-function MapTop:getNumberOfRecords()
-  return self.mapTopCacher:getNumberOfRecords();
-end
-
----
--- Returns whether the maptop is empty.
---
--- @treturn bool True: The maptop is empty
---               False: The maptop is not empty
---
-function MapTop:isEmpty()
-
-  if (self:getNumberOfRecords() == 0) then
-    return true;
-  else
-    return false;
+  if (self.mapRecordList:isPersonalBestTime(_newMapRecord)) then
+    self.mapRecordList:addRecord(_newMapRecord);
+    self.mapTopSaver:addRecord(_dataBase, _newMapRecord, self.lastMapName);
   end
 
 end
@@ -317,54 +117,13 @@ end
 --
 -- @tparam string _mapName The map name
 --
-function MapTop:loadRecords(_mapName)
+function MapTop:loadRecords(_dataBase, _mapName)
 
-  local dataBase = self.parentGemaMod:getDataBase();
-  self.mapTopCacher:setRecords(self.mapTopLoader:fetchRecords(dataBase, _mapName));
-
-end
-
----
--- Gets the rank for a specific time without changing the records list.
---
--- @tparam int _milliseconds The record in milliseconds
---
--- @treturn int The rank
---
-function MapTop:predictRank(_milliseconds)
-
-  local mapRecords = self.mapTopCacher:getRecords();
-
-  for rank = 1, #mapRecords, 1 do
-
-    local record = mapRecords[rank];
-
-    if (record:getMilliseconds() > _milliseconds) then
-      return rank;
-    end
-
+  if (self.lastMapName ~= _mapName) then
+    self.lastMapName = _mapName;
+    self.mapTopLoader:fetchRecords(_dataBase, _mapName, self.mapRecordList);
   end
 
-  return self:getNumberOfRecords() + 1;
-
-end
-
----
--- Prints statistics about the current map.
---
--- @tparam int _cn The client number of the player to which the statistics will be printed
---
-function MapTop:printMapStatistics(_cn)
-  self.mapTopPrinter:printMapStatistics(_cn);
-end
-
----
--- Prints the map top to a player.
---
--- @tparam int _cn  The client number of the player to which the map top will be printed
---
-function MapTop:printMapTop(_cn)
-  self.mapTopPrinter:printMapTop(_cn);
 end
 
 

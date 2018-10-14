@@ -27,11 +27,11 @@ TestPlayerInformationLoader = {};
 function TestPlayerInformationLoader:resetDependencies()
 
   package.loaded["DataBase"] = nil;
-  package.loaded["Outputs/Output"] = nil;
+  package.loaded["Output/Output"] = nil;
   package.loaded["Player/PlayerInformationLoader"] = nil;
 
   DataBase = require("DataBase");
-  Output = require("Outputs/Output");
+  Output = require("Output/Output");
   PlayerInformationLoader = require("Player/PlayerInformationLoader");
 
 end
