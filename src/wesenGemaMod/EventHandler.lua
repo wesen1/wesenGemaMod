@@ -58,7 +58,7 @@ EventHandler.playerConnectHandler = nil;
 ---
 -- The player disconnect event after handler
 --
--- @tfield PlayerDisconnectAfterHandler playerDisconnectHandler
+-- @tfield PlayerDisconnectAfterHandler playerDisconnectAfterHandler
 --
 EventHandler.playerDisconnectAfterHandler = nil;
 
@@ -122,27 +122,27 @@ EventHandler.voteEndHandler = nil;
 ---
 -- EventHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn EventHandler The EventHandler instance
 --
-function EventHandler:__construct(_parentGemaMod)
+function EventHandler:__construct(_parentGemaMode)
 
   local instance = setmetatable({}, {__index = EventHandler});
 
-  instance.flagActionHandler = FlagActionHandler(_parentGemaMod);
-  instance.mapChangeHandler = MapChangeHandler(_parentGemaMod);
-  instance.playerCallVoteHandler = PlayerCallVoteHandler(_parentGemaMod);
-  instance.playerConnectHandler = PlayerConnectHandler(_parentGemaMod);
-  instance.playerDisconnectAfterHandler = PlayerDisconnectAfterHandler(_parentGemaMod);
-  instance.playerNameChangeHandler = PlayerNameChangeHandler(_parentGemaMod);
-  instance.playerRoleChangeHandler = PlayerRoleChangeHandler(_parentGemaMod);
-  instance.playerSayTextHandler = PlayerSayTextHandler(_parentGemaMod);
-  instance.playerSendMapHandler = PlayerSendMapHandler(_parentGemaMod);
-  instance.playerShootHandler = PlayerShootHandler(_parentGemaMod);
-  instance.playerSpawnHandler = PlayerSpawnHandler(_parentGemaMod);
-  instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler(_parentGemaMod);
-  instance.voteEndHandler = VoteEndHandler(_parentGemaMod);
+  instance.flagActionHandler = FlagActionHandler(_parentGemaMode);
+  instance.mapChangeHandler = MapChangeHandler(_parentGemaMode);
+  instance.playerCallVoteHandler = PlayerCallVoteHandler(_parentGemaMode);
+  instance.playerConnectHandler = PlayerConnectHandler(_parentGemaMode);
+  instance.playerDisconnectAfterHandler = PlayerDisconnectAfterHandler(_parentGemaMode);
+  instance.playerNameChangeHandler = PlayerNameChangeHandler(_parentGemaMode);
+  instance.playerRoleChangeHandler = PlayerRoleChangeHandler(_parentGemaMode);
+  instance.playerSayTextHandler = PlayerSayTextHandler(_parentGemaMode);
+  instance.playerSendMapHandler = PlayerSendMapHandler(_parentGemaMode);
+  instance.playerShootHandler = PlayerShootHandler(_parentGemaMode);
+  instance.playerSpawnHandler = PlayerSpawnHandler(_parentGemaMode);
+  instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler(_parentGemaMode);
+  instance.voteEndHandler = VoteEndHandler(_parentGemaMode);
 
   return instance;
 

@@ -11,7 +11,7 @@ package.path = package.path .. ";" .. lfs.currentdir() .. "/../src/wesenGemaMod/
 -- Require luacov to get coverage information about the tests
 require("luacov");
 
-local luaunit = require("luaunit");
+local luaunit = require("tests/luaunit-custom");
 unpack = unpack or table.unpack;
 
 require("tests/globals");

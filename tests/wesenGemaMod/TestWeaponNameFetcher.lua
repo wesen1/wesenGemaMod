@@ -6,7 +6,7 @@
 --
 
 local luaunit = require("luaunit");
-local WeaponNameFetcher = require("WeaponNameFetcher");
+local WeaponNameFetcher = require("WeaponHandler/WeaponNameFetcher");
 
 ---
 -- Checks whether the WeaponNameFetcher works as expected.

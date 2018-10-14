@@ -9,8 +9,8 @@ local luaunit = require("luaunit");
 local mach = require("mach");
 
 local MapTop = require("Tops/MapTop/MapTop");
-local MapTopCacher = require("Tops/MapTop/MapTopCacher");
-local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
+local MapRecordList = require("Tops/MapTop/MapRecordList/MapRecordList");
+local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
 local Player = require("Player/Player");
 local TableUtils = require("Util/TableUtils");
 

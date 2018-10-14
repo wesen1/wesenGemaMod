@@ -8,16 +8,16 @@
 local luaunit = require("luaunit");
 local mach = require("mach");
 
-local MapHandler = require("Maps/MapHandler");
+local MapHandler = require("Map/MapHandler");
 
 local mapHandlerMock = mach.mock_object(MapHandler, "MapHandlerMock");
-package.loaded["Maps/MapHandler"] = mapHandlerMock;
+package.loaded["Map/MapHandler"] = mapHandlerMock;
 package.loaded["Tops/MapTop/MapTopLoader"] = nil;
 
 local DataBase = require("DataBase");
 local MapTop = require("Tops/MapTop/MapTop");
 local MapTopLoader = require("Tops/MapTop/MapTopLoader");
-local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
+local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
 local Player = require("Player/Player");
 
 
@@ -188,4 +188,4 @@ end
 
 
 -- Restore real dependencies
-package.loaded["Maps/MapHandler"] = require("Maps/MapHandler");
+package.loaded["Map/MapHandler"] = require("Map/MapHandler");

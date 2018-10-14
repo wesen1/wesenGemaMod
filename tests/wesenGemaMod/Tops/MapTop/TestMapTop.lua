@@ -8,13 +8,13 @@
 local luaunit = require("luaunit");
 local mach = require("mach");
 
-local GemaMod = require("GemaMod");
+local GemaMod = require("GemaMode");
 local MapTop = require("Tops/MapTop/MapTop");
-local MapTopCacher = require("Tops/MapTop/MapTopCacher");
+local MapRecordList = require("Tops/MapTop/MapRecordList/MapRecordList");
 local MapTopLoader = require("Tops/MapTop/MapTopLoader");
 local MapTopPrinter = require("Tops/MapTop/MapTopPrinter");
 local MapTopSaver = require("Tops/MapTop/MapTopSaver");
-local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
+local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
 local Player = require("Player/Player");
 
 ---
@@ -180,7 +180,7 @@ end
 --
 function TestMapTop:testCanGetRank()
 
-  local mapTopCacherMock = mach.mock_object(MapTopCacher, "MapTopCacherMock");
+  local mapTopCacherMock = mach.mock_object(MapRecordList, "MapRecordListMock");
   self.mapTop:setMapTopCacher(mapTopCacherMock);
 
   local testPlayer = Player:__construct("pro", "123.123.123.123");
