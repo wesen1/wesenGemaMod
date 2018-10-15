@@ -77,9 +77,9 @@ getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
 function ExtendTimeCommand:execute(_player, _arguments)
 
   local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler();
-  local mapName = environmentHandler:getCurrentEnvironment():getMapName();
+  local environment = environmentHandler:getCurrentEnvironment();
   
-  self.remainingTimeExtender:extendTime(_player, mapName, _arguments.numberOfMinutes);
+  self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
 
   -- TODO: Add color for extend minutes?
   self.output:printInfo(

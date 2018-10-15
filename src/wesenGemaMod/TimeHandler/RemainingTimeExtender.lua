@@ -25,11 +25,11 @@ local RemainingTimeExtender = setmetatable({}, {});
 RemainingTimeExtender.remainingExtendMinutes = nil;
 
 ---
--- The name of the last map for which the time was extended
+-- The last environment for which the time was extended
 --
--- @tfield string lastMapName
+-- @tfield Environment lastEnvironment
 --
-RemainingTimeExtender.lastMapName = nil;
+RemainingTimeExtender.lastEnvironment = nil;
 
 
 ---
@@ -41,7 +41,7 @@ function RemainingTimeExtender:__construct()
   
   local instance = setmetatable({}, {__index = RemainingTimeExtender});
 
-  instance.lastMapName = nil;
+  instance.lastEnvironment = nil;
 
   return instance;
 
@@ -56,17 +56,18 @@ getmetatable(RemainingTimeExtender).__call = RemainingTimeExtender.__construct;
 -- Extends the time by <x> minutes.
 --
 -- @tparam Player _player The player who tries to extend the time
--- @tparam string _mapName The name of the current map
+-- @tparam Environment _environment The current environment
 -- @tparam int _numberOfExtendMinutes The number of minutes by which the time shall be extended
 --
-function RemainingTimeExtender:extendTime(_player, _mapName, _numberOfExtendMinutes)
+function RemainingTimeExtender:extendTime(_player, _environment, _numberOfExtendMinutes)
 
   local numberOfExtendMilliseconds = _numberOfExtendMinutes * 60 * 1000;
 
   self:validateNumberOfExtendMilliseconds(numberOfExtendMilliseconds);
 
-  self:updateLastMapName(_mapName);
+  self:updateLastEnvironment(_environment);
   self:subtractMinutesFromRemainingExtendMinutes(_player, _numberOfExtendMinutes);
+
   settimeleftmillis(gettimeleftmillis() + numberOfExtendMilliseconds);
 
 end
@@ -75,14 +76,14 @@ end
 -- Private Methods
 
 ---
--- Updates the last map name if necessary and resets the remaining extend minutes if the last map name was updated.
+-- Updates the last environment if necessary and resets the remaining extend minutes if the last environment was updated.
 --
--- @tparam string _mapName The map name
+-- @tparam Environment _environment The current environment
 --
-function RemainingTimeExtender:updateLastMapName(_mapName)
+function RemainingTimeExtender:updateLastEnvironment(_environment)
   
-  if (self.lastMapName ~= _mapName) then
-    self.lastMapName = _mapName;
+  if (self.lastEnvironment ~= _environment) then
+    self.lastEnvironment = _environment;
 
     -- @todo: Config value "Number of Extend Minutes per map"
     self.remainingExtendMinutes = 20;
@@ -127,6 +128,7 @@ end
 --
 function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExtendMilliseconds)
 
+  --@todo: Fix this, this command still ends the game ...
   -- The extend time command allows only time extension in minutes, so the minimum value is 1 * 60 * 1000
   if (_numberOfExtendMilliseconds < 60000) then
     error(Exception("The number of added minutes may not be smaller than 1."));
@@ -135,11 +137,9 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
     local timeLeftInMilliseconds = gettimeleftmillis();
 
     -- (2 ^ 31 - 1) is the highest allowed time left, everything higher will make the current game end
-    if (_numberOfExtendMilliseconds >= 2147483647 - timeLeftInMilliseconds) then
+    if (_numberOfExtendMilliseconds > 2147483647 - (timeLeftInMilliseconds + getgamemillis())) then
       -- The maximum allowed time in minutes is 35791:23.6469999998
       error(Exception("The time remaining may not exceed 35791 minutes."));
-    else
-      print(timeLeftInMilliseconds + _numberOfExtendMilliseconds);
     end
   end
 
