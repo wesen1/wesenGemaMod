@@ -4,9 +4,9 @@
 -- @release 0.1
 -- @license MIT
 --
-local luaunit = require("luaunit");
-local TableUtils = require("Util/TableUtils");
+local luaunit = require("tests/luaunit-custom");
 
+local TableUtils = require("Util/TableUtils");
 
 ---
 -- Checks whether the table utils work as expected.
@@ -36,8 +36,8 @@ function TestTableUtils:testCanSliceTable()
     -- End index > length
     { 3, 10, { 3, 4, 5 } },
 
-    -- Start index and end index > length
-    { 17, 20, { 5 } },
+    -- Start index > length
+    { 17, 20, { } },
 
     -- End index = not a number
     { 2, "g", { 2, 3, 4, 5 } },

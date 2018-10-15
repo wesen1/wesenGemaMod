@@ -151,7 +151,7 @@ end
 getmetatable(EventHandler).__call = EventHandler.__construct;
 
 
--- Getters and setters
+-- Getters and Setters
 
 ---
 -- Returns the flag action handler.

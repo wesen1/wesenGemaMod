@@ -23,5 +23,25 @@ function luaunit.assertInstanceOf(_object, _class)
 
 end
 
+function luaunit.assertError(_expectedExceptionMessage, _functionCall)
+
+  local status, exception = pcall(_functionCall);
+
+  if (not status) then
+
+    local exceptionMessage = exception:getMessage();
+    if (exceptionMessage == _expectedExceptionMessage) then
+      return true;
+    else
+      error("Unexpected exception message.\n"
+         .. "Expected \"" .. _expectedExceptionMessage .. "\", Got: \"" .. exceptionMessage .. "\"");
+    end
+
+  else
+    error("No exception occurred while calling the function");
+  end
+
+end
+
 
 return luaunit;

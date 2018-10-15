@@ -46,6 +46,9 @@ end
 
 getmetatable(WeaponNameFetcher).__call = WeaponNameFetcher.__construct;
 
+
+-- Public Methods
+
 ---
 -- Converts weapon ids to weapon names.
 --

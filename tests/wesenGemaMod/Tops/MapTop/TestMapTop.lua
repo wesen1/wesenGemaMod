@@ -8,7 +8,7 @@
 local luaunit = require("luaunit");
 local mach = require("mach");
 
-local GemaMod = require("GemaMode");
+local GemaMode = require("GemaMode");
 local MapTop = require("Tops/MapTop/MapTop");
 local MapRecordList = require("Tops/MapTop/MapRecordList/MapRecordList");
 local MapTopLoader = require("Tops/MapTop/MapTopLoader");
@@ -307,56 +307,6 @@ function TestMapTop:testCanGetNumberOfRecords()
 end
 
 ---
--- Checks whether the maptop can check whether it is empty.
---
-function TestMapTop:testCanCheckIfIsEmpty()
-
-  local mapTopCacherMock = mach.mock_object(MapTopCacher, "MapTopCacherMock");
-  self.mapTop:setMapTopCacher(mapTopCacherMock);
-
-  local testNumbersOfRecords = {
-    {
-      ["numberOfRecords"] = 4,
-      ["expectedIsEmptyState"] = false
-    },
-    {
-      ["numberOfRecords"] = 1,
-      ["expectedIsEmptyState"] = false
-    },
-    {
-      ["numberOfRecords"] = 0,
-      ["expectedIsEmptyState"] = true
-    },
-    {
-      ["numberOfRecords"] = 7,
-      ["expectedIsEmptyState"] = false
-    },
-    {
-      ["numberOfRecords"] = 13,
-      ["expectedIsEmptyState"] = false
-    },
-    {
-      ["numberOfRecords"] = 61,
-      ["expectedIsEmptyState"] = false
-    }
-  };
-
-  for index, testSet in ipairs(testNumbersOfRecords) do
-
-    mapTopCacherMock.getNumberOfRecords
-                    :should_be_called()
-                    :and_will_return(testSet["numberOfRecords"])
-                    :when(
-                      function ()
-                        luaunit.assertEquals(self.mapTop:isEmpty(), testSet["expectedIsEmptyState"]);
-                      end
-                    );
-
-  end
-
-end
-
----
 -- Checks whether the maptop can load the records for a map.
 --
 function TestMapTop:testCanLoadRecords()
@@ -489,41 +439,5 @@ function TestMapTop:testCanPredictRank()
     );
 
   end
-
-end
-
----
--- Checks whether the maptop can print statistics about the current map.
---
-function TestMapTop:testCanPrintMapStatistics()
-
-  local mapTopPrinterMock = mach.mock_object(MapTopPrinter, "MapTopPrinterMock");
-  self.mapTop:setMapTopPrinter(mapTopPrinterMock);
-
-  mapTopPrinterMock.printMapStatistics
-                   :should_be_called_with(9)
-                   :when(
-                     function ()
-                       self.mapTop:printMapStatistics(9);
-                     end
-                   );
-
-end
-
----
--- Checks whether the maptop can print the maptop of the current map.
---
-function TestMapTop:testCanPrintMapTop()
-
-  local mapTopPrinterMock = mach.mock_object(MapTopPrinter, "MapTopPrinterMock");
-  self.mapTop:setMapTopPrinter(mapTopPrinterMock);
-
-  mapTopPrinterMock.printMapTop
-                   :should_be_called_with(12)
-                   :when(
-                     function ()
-                       self.mapTop:printMapTop(12);
-                     end
-                   );
 
 end

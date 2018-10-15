@@ -5,18 +5,21 @@
 -- @license MIT
 --
 
+local Exception = require("Util/Exception");
+
 ---
--- Class that provides additional string functions.
+-- Provides additional string functions.
 --
 -- @type StringUtils
 --
 local StringUtils = {};
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Splits a string everytime the delimiter appears in it.
+-- This function is based on the example from PeterPrade on http://lua-users.org/wiki/SplitJoin
 --
 -- @tparam string _text The string
 -- @tparam string _delimiter The delimiter at which the string will be split
@@ -25,13 +28,33 @@ local StringUtils = {};
 --
 function StringUtils:split(_text, _delimiter)
 
-  local text = _text .. _delimiter;
+  if (_delimiter == "") then
+    error(Exception("The delimiter must contain at least one symbol."));
+  end
+
+  local text = _text;
   local words = {};
 
-  for word in text:gmatch("([^" .. _delimiter .. "]*)" .. _delimiter) do
+  local stringPosition = 1
+  while 1 do
 
-    if (#word > 0) then
+    local delimiterStartPosition, delimiterEndPosition = text:find(_delimiter, stringPosition)
+
+    -- Get the next word
+    local word = "";
+    if (delimiterStartPosition) then
+      word = text:sub(stringPosition, delimiterStartPosition - 1);
+      stringPosition = delimiterEndPosition + 1;
+    else
+      word = text:sub(stringPosition);
+    end
+
+    if (word ~= "") then
       table.insert(words, word);
+    end
+
+    if (not delimiterStartPosition) then
+      break;
     end
 
   end

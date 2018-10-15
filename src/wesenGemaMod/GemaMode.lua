@@ -16,7 +16,7 @@ local Output = require("Output/Output");
 local PlayerList = require("Player/PlayerList");
 
 ---
--- Wrapper class for the gema mod.
+-- Wrapper class for the gema mode.
 --
 -- @type GemaMode
 --

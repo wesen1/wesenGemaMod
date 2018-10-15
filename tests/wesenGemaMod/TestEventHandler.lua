@@ -27,6 +27,8 @@ local VoteEndHandler = require("EventHandler/VoteEndHandler");
 ---
 -- Checks whether the EventHandler wrapper class works as expected.
 --
+-- @type TestEventHandler
+--
 TestEventHandler = {};
 
 
@@ -45,9 +47,11 @@ function TestEventHandler:testCanBeConstructed()
                         :multiple_times(14)
                         :when(
                           function()
-                            eventHandler = EventHandler:__construct(gemaModeMock);
+                            eventHandler = EventHandler(gemaModeMock);
                           end
                         );
+
+  luaunit.assertInstanceOf(eventHandler, EventHandler);
 
   -- Check whether the event handlers are instances of the EventHandler classes
   luaunit.assertInstanceOf(eventHandler:getFlagActionHandler(), FlagActionHandler);
