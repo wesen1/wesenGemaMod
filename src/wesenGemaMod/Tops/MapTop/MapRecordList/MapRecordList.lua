@@ -100,6 +100,11 @@ function MapRecordList:addRecord(_newRecord)
   -- Set the parent map record list of the new record
   _newRecord:setParentMapRecordList(self);
 
+  -- Update the cached record
+  if (self.getRecordByPlayerLastPlayer and self.getRecordByPlayerLastPlayer:equals(_newRecord:getPlayer())) then
+    self.getRecordByPlayerLastRecord = _newRecord;
+  end
+
 end
 
 ---
