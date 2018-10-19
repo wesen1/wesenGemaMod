@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local TimePrinter = require("TimeHandler/TimePrinter");
 local WeaponNameFetcher = require("WeaponHandler/WeaponNameFetcher");
 
 ---
@@ -21,6 +22,13 @@ local MapRecordPrinter = setmetatable({}, {});
 -- @tfield Output output
 --
 MapRecordPrinter.output = nil;
+
+---
+-- The time printer
+--
+-- @tfield TimePrinter timePrinter
+--
+MapRecordPrinter.timePrinter = nil;
 
 ---
 -- The weapon name fetcher
@@ -42,6 +50,7 @@ function MapRecordPrinter:__construct(_output)
   local instance = setmetatable({}, {__index = MapRecordPrinter});
 
   instance.output = _output;
+  instance.timePrinter = TimePrinter();
   instance.weaponNameFetcher = WeaponNameFetcher();
 
   return instance;
@@ -171,45 +180,12 @@ end
 function MapRecordPrinter:getTimeString(_mapRecord)
 
   if (not _mapRecord:getTimeString()) then
-    local timeString = self:generateTimeString(_mapRecord:getMilliseconds());
+    local milliseconds = _mapRecord:getMilliseconds();
+    local timeString = self.timePrinter:generateTimeString(milliseconds, "%02i:%02s,%03v");
     _mapRecord:setTimeString(timeString);
   end
 
   return _mapRecord:getTimeString();
-
-end
-
----
--- Returns a time in milliseconds in the format "Minutes:Seconds,Milliseconds".
---
--- @tparam int _milliseconds The time in milliseconds
---
--- @treturn string The record in the format "Minutes:Seconds,Milliseconds"
---
-function MapRecordPrinter:generateTimeString(_milliseconds)
-
-  local milliseconds = math.fmod(_milliseconds, 1000);
-  local seconds = (_milliseconds - milliseconds) / 1000;
-  local minutes = math.floor(seconds / 60);
-  seconds = seconds - (minutes * 60);
-
-  if (milliseconds < 10) then
-    milliseconds = "00" .. milliseconds
-
-  elseif (milliseconds < 100) then
-    milliseconds = "0" .. milliseconds;
-
-  end
-
-  if (seconds < 10) then
-    seconds = "0" .. seconds;
-  end
-
-  if (minutes < 10) then
-    minutes = "0" .. minutes;
-  end
-
-  return minutes .. ":" .. seconds .. "," .. milliseconds;
 
 end
 
@@ -241,7 +217,7 @@ function MapRecordPrinter:getRankString(_mapRecord)
     -- The current record will always be set here, because no current record means new personal best time
     if (currentRecord:getMilliseconds() < _mapRecord:getMilliseconds()) then
       rankString = self.output:getColor("scoreRecordSlower") .. "(But has a better record)";
-    elseif (currentRecord:getMilliseconds() == self.parentMapRecord:getMilliseconds()) then
+    elseif (currentRecord:getMilliseconds() == _mapRecord:getMilliseconds()) then
       rankString = self.output:getColor("scoreRecordTied") .. "(Tied his current record)";
     end
   

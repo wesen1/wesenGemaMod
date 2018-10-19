@@ -55,7 +55,8 @@ function ExtendTimeCommand:__construct(_parentCommandList)
   );
   setmetatable(instance, {__index = ExtendTimeCommand});
 
-  instance.remainingTimeExtender = RemainigTimeExtender();
+  -- @todo: Config value "Number of Extend Minutes per map"
+  instance.remainingTimeExtender = RemainigTimeExtender(20);
 
   return instance;
 

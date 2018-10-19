@@ -35,8 +35,8 @@ function StringUtils:split(_text, _delimiter)
   local text = _text;
   local words = {};
 
-  local stringPosition = 1
-  while 1 do
+  local stringPosition = 1;
+  while (true) do
 
     local delimiterStartPosition, delimiterEndPosition = text:find(_delimiter, stringPosition)
 

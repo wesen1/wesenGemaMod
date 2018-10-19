@@ -6,6 +6,7 @@
 --
 
 local Exception = require("Util/Exception");
+local TimePrinter = require("TimeHandler/TimePrinter");
 
 ---
 -- Extends the remaining time by <x> minutes.
@@ -14,6 +15,19 @@ local Exception = require("Util/Exception");
 --
 local RemainingTimeExtender = setmetatable({}, {});
 
+
+---
+-- The time printer
+--
+-- @tparam TimePrinter timePrinter
+--
+RemainingTimeExtender.timePrinter = nil;
+
+---
+-- The number of minutes by which the time can be extended per map
+-- The remaining extend minutes will be reset to this value when a map change is detected by this class.
+--
+RemainingTimeExtender.numberOfExtendMinutesPerMap = nil;
 
 ---
 -- The number of remaining extend minutes that can be used by every player
@@ -35,12 +49,16 @@ RemainingTimeExtender.lastEnvironment = nil;
 ---
 -- RemainingTimeExtender constructor.
 --
+-- @tparam int _numberOfExtendMinutesPerMap The number of extend minutes per map
+--
 -- @treturn RemainingTimeExtender The RemainingTimeExtender instance
 --
-function RemainingTimeExtender:__construct()
+function RemainingTimeExtender:__construct(_numberOfExtendMinutesPerMap)
   
   local instance = setmetatable({}, {__index = RemainingTimeExtender});
 
+  instance.timePrinter = TimePrinter();
+  instance.numberOfExtendMinutesPerMap = _numberOfExtendMinutesPerMap;
   instance.lastEnvironment = nil;
 
   return instance;
@@ -65,11 +83,11 @@ function RemainingTimeExtender:extendTime(_player, _environment, _numberOfExtend
 
   local numberOfExtendMilliseconds = _numberOfExtendMinutes * 60 * 1000;
 
+  self:updateLastEnvironment(_environment);
+
   -- Check the number of extend minutes
   self:checkAllowedExtendMinutesOfPlayer(_player, _numberOfExtendMinutes);
   self:validateNumberOfExtendMilliseconds(numberOfExtendMilliseconds);
-
-  self:updateLastEnvironment(_environment);
   
   -- Subtract the number of extend minutes from the remaining extend minutes
   if (_player:getLevel() == 0) then
@@ -151,9 +169,34 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
 
     if (_numberOfExtendMilliseconds > maximumNumberOfExtendMilliseconds) then
 
-      --@todo: Need time parser class for this message and maprecord printer!
-      --@todo: Add special error message in case of 0 more minutes possible
-      error(Exception("The time remaining may not exceed 35791 minutes."));
+      local timeString = self.timePrinter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i");
+
+      -- Get the error message
+      local errorMessage = "";
+
+      if (timeString == "0") then
+
+        -- This condition checks whether the maximum number of extend milliseconds + the possible
+        -- extension time because of the distance of getgamemillis() to a full minute is more than
+        -- one minute.
+        if (maximumNumberOfExtendMilliseconds + (60000 - getgamemillis()) > 60000) then
+
+          -- The wait time is calculated as the distance of the maximum number of extend
+          -- milliseconds to a full minute. This is only done under the previous condition that the
+          -- maximum number of extend milliseconds can become greater than one minute.
+          local waitTime = 60000 - maximumNumberOfExtendMilliseconds;
+          local waitTimeString = self.timePrinter:generateTimeString(waitTime, "%02s,%03v");
+
+          errorMessage = "The time can only be extended by 1 more minute in " .. waitTimeString .. " seconds.";
+        else
+          errorMessage = "The time can not be extended any further.";
+        end
+
+      else
+        errorMessage = "The time can only be extended by " .. timeString .. " more minutes.";
+      end
+
+      error(Exception(errorMessage));
     end
   end
 
@@ -168,9 +211,7 @@ function RemainingTimeExtender:updateLastEnvironment(_environment)
   
   if (self.lastEnvironment ~= _environment) then
     self.lastEnvironment = _environment;
-
-    -- @todo: Config value "Number of Extend Minutes per map"
-    self.remainingExtendMinutes = 20;
+    self.remainingExtendMinutes = self.numberOfExtendMinutesPerMap;
   end
 
 end
