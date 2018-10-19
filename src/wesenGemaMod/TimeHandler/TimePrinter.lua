@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
-local StringUtils = require("Util/StringUtils");
-
 ---
 -- Handles converting times in milliseconds to readable formats.
 --

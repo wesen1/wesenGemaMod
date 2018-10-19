@@ -54,7 +54,7 @@ RemainingTimeExtender.lastEnvironment = nil;
 -- @treturn RemainingTimeExtender The RemainingTimeExtender instance
 --
 function RemainingTimeExtender:__construct(_numberOfExtendMinutesPerMap)
-  
+
   local instance = setmetatable({}, {__index = RemainingTimeExtender});
 
   instance.timePrinter = TimePrinter();
@@ -88,7 +88,7 @@ function RemainingTimeExtender:extendTime(_player, _environment, _numberOfExtend
   -- Check the number of extend minutes
   self:checkAllowedExtendMinutesOfPlayer(_player, _numberOfExtendMinutes);
   self:validateNumberOfExtendMilliseconds(numberOfExtendMilliseconds);
-  
+
   -- Subtract the number of extend minutes from the remaining extend minutes
   if (_player:getLevel() == 0) then
     self.remainingExtendMinutes = self.remainingExtendMinutes - _numberOfExtendMinutes;
@@ -111,7 +111,7 @@ end
 -- @raise Error when the player may not extend the time by this number of extend minutes
 --
 function RemainingTimeExtender:checkAllowedExtendMinutesOfPlayer(_player, _numberOfExtendMinutes)
-  
+
   if (_player:getLevel() == 0) then
 
     if (self.remainingExtendMinutes == 0) then
@@ -119,9 +119,9 @@ function RemainingTimeExtender:checkAllowedExtendMinutesOfPlayer(_player, _numbe
     elseif (self.remainingExtendMinutes < _numberOfExtendMinutes) then
       error(Exception("The time may be extended by only " .. self.remainingExtendMinutes .. " more minutes."));
     end
-  
+
   end
-  
+
 end
 
 ---
@@ -208,7 +208,7 @@ end
 -- @tparam Environment _environment The current environment
 --
 function RemainingTimeExtender:updateLastEnvironment(_environment)
-  
+
   if (self.lastEnvironment ~= _environment) then
     self.lastEnvironment = _environment;
     self.remainingExtendMinutes = self.numberOfExtendMinutesPerMap;
