@@ -57,6 +57,18 @@ end
 getmetatable(GemaModeStateUpdater).__call = GemaModeStateUpdater.__construct;
 
 
+-- Getters and Setters
+
+---
+-- Returns the environment handler.
+--
+-- @treturn EnvironmentHandler The environment handler
+--
+function GemaModeStateUpdater:getEnvironmentHandler()
+  return self.environmentHandler;
+end
+
+
 -- Public Methods
 
 ---

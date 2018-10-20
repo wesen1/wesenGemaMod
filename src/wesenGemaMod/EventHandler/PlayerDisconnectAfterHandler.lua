@@ -46,6 +46,7 @@ getmetatable(PlayerDisconnectAfterHandler).__call = PlayerDisconnectAfterHandler
 --
 function PlayerDisconnectAfterHandler:onPlayerDisconnectAfter(_cn, _reason)
 
+  --@todo: Fix this by moving this to a PlayerDisconnect handler
   if (_reason == DISC_BANREFUSE) then
     local infoMessage = string.format("%s could not connect [banned]", getname(_cn));
     self.output:printInfo(infoMessage);
