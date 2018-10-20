@@ -7,8 +7,8 @@
 
 local CommandLoader = require("CommandHandler/CommandLoader");
 local DataBase = require("DataBase");
-local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
+local GemaModeStateUpdater = require("GemaModeStateUpdater");
 local MapRot = require("MapRot/MapRot");
 local MapRotGenerator = require("MapRot/MapRotGenerator");
 local MapTopHandler = require("Tops/MapTopHandler");
@@ -44,18 +44,18 @@ GemaMode.commandLoader = nil;
 GemaMode.dataBase = nil;
 
 ---
--- The environment handler
---
--- @tparam EnvironmentHandler environmentHandler
---
-GemaMode.environmentHandler = nil;
-
----
 -- The event handler
 --
 -- @tfield EventHandler eventHandler
 --
 GemaMode.eventHandler = nil;
+
+---
+-- The gema mode state updater
+--
+-- @tfield GemaModeStateUpdater gemaModeStateUpdater
+--
+GemaMode.gemaModeStateUpdater = nil;
 
 ---
 -- The map top handler
@@ -120,9 +120,12 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.output = Output();
   instance.playerList = PlayerList();
 
-  instance.environmentHandler = EnvironmentHandler(instance.mapRot);
+  -- Must be created after the output was created
   instance.eventHandler = EventHandler(instance);
   instance.mapTopHandler = MapTopHandler(instance.output);
+
+  -- Must be created after the map rot was created
+  instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
 
   --@todo: Config value for this
   instance.isActive = true;
@@ -164,21 +167,21 @@ function GemaMode:getDataBase()
 end
 
 ---
--- Returns the environment handler.
---
--- @treturn EnvironmentHandler The environment handler
---
-function GemaMode:getEnvironmentHandler()
-  return self.environmentHandler;
-end
-
----
 -- Returns the event handler.
 --
 -- @treturn EventHandler The event handler
 --
 function GemaMode:getEventHandler()
   return self.eventHandler;
+end
+
+---
+-- Returns the gema mode state updater.
+--
+-- @treturn GemaModeStateUpdater The gema mode state updater
+--
+function GemaMode:getGemaModeStateUpdater()
+  return self.gemaModeStateUpdater;
 end
 
 ---

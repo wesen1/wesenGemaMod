@@ -72,33 +72,18 @@ end
 
 ---
 -- Updates the gema mode state if necessary.
--- The gema mod environment must be updated before this method is called.
 --
 function MapChangeHandler:updateGemaModeState()
 
-  --@todo: Move auto gema mode switching stuff to own class
-  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
-  local mapRot = self.parentGemaMode:getMapRot();
-  
-  -- Update the environments
-  environmentHandler:changeToNextEnvironment(mapRot);
-  
-  -- Check the current environment
-  local isCurrentEnvironmentGemaCompatible = environmentHandler:isCurrentEnvironmentGemaCompatible();
+  local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
+  local newGemaModeState = gemaModeStateUpdater:switchToNextEnvironment();
 
-  -- Check whether gema mode must be disabled or enabled
-  if (self.parentGemaMode:getIsActive() and not isCurrentEnvironmentGemaCompatible) then
-    self.parentGemaMode:setIsActive(false);
-    self.output:printInfo("The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
-    --@todo: Update server name
-
-  elseif (not self.parentGemaMode:getIsActive() and isCurrentEnvironmentGemaCompatible) then
-    self.parentGemaMode:setIsActive(true);
+  if (newGemaModeState == true) then
     self.output:printInfo("The gema mode was automatically enabled.");
-    --@todo: Update server name
+  elseif (newGemaModeState == false) then
+    self.output:printInfo("The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
   end
 
 end
-
 
 return MapChangeHandler;

@@ -131,19 +131,14 @@ end
 --
 function PlayerCallMapVoteHandler:onValidMapVote(_player, _mapName, _gameMode, _minutes)
 
-  --@todo: Move auto gema mode switching stuff to own class
-  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+  local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
+  gemaModeStateUpdater:setNextEnvironment(Environment(_mapName, _gameMode));
 
-  -- Update the next environment
-  environmentHandler:setNextEnvironment(Environment(_mapName, _gameMode));
-
-  -- Check the next environment
-  local isNextEnvironmentGemaCompatible = environmentHandler:isNextEnvironmentGemaCompatible();
-
-  if (self.parentGemaMode:getIsActive() and not isNextEnvironmentGemaCompatible) then
-    self.output:printInfo("The gema mode will be automatically disabled if this vote passes.");
-  elseif (not self.parentGemaMode:getIsActive() and isNextEnvironmentGemaCompatible) then
+  local nextGemaModeStateUpdate = gemaModeStateUpdater:getNextGemaModeStateUpdate();
+  if (nextGemaModeStateUpdate == true) then
     self.output:printInfo("The gema mode will be automatically enabled if this vote passes.");
+  elseif (nextGemaModeStateUpdate == false) then
+    self.output:printInfo("The gema mode will be automatically disabled if this vote passes.");
   end
 
 end

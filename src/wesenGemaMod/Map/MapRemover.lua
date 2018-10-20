@@ -45,7 +45,7 @@ getmetatable(MapRemover).__call = MapRemover.__construct;
 --
 function MapRemover:removeMap(_dataBase, _mapName, _mapRot)
 
-  local mapId = MapHandler:fetchMapId(_mapName);
+  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
 
   if (self:mapHasRecords(_dataBase, mapId)) then
     error(Exception("Could not delete map \"" .. _mapName .. "\": There are map records for this map!"));

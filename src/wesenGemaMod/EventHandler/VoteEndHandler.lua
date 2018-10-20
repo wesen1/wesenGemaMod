@@ -66,28 +66,24 @@ end
 --
 function VoteEndHandler:onMapVoteEnd(_result, _player, _mapName, _gameMode, _minutes)
 
-  --@todo: Move auto gema mode switching stuff to own class
-  local mapRot = self.parentGemaMode:getMapRot();
+  local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
 
   if (_result == 1) then
-  -- Vote passed
+    -- Vote passed
 
-    local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
-    local isNextEnvironmentGemaCompatible = environmentHandler:isNextEnvironmentGemaCompatible();
+    local mapRot = self.parentGemaMode:getMapRot();
 
-    if (self.parentGemaMode:getIsActive() and not isNextEnvironmentGemaCompatible) then
-      mapRot:loadRegularMapRot();
-      self.output:printInfo("Regular maprot loaded.");
-    elseif (not self.parentGemaMode:getIsActive() and isNextEnvironmentGemaCompatible) then
+    local nextGemaModeStateUpdate = gemaModeStateUpdater:getNextGemaModeStateUpdate();
+    if (nextGemaModeStateUpdate == true) then
       mapRot:loadGemaMapRot();
       self.output:printInfo("Gema map rot loaded.");
+    elseif (nextGemaModeStateUpdate == false) then
+      mapRot:loadRegularMapRot();
+      self.output:printInfo("Regular maprot loaded.");
     end
 
   else
-
-    -- Reset the next environment back to the maprots next environment
-    self.parentGemaMode:setNextEnvironment(mapRot:getNextEnvironment());
-
+    gemaModeStateUpdater:resetNextEnvironment();
   end
 
 end

@@ -100,7 +100,7 @@ end
 --
 -- @tparam MapRot The current maprot
 --
-function EnvironmentHandler:changeToNextEnvironment(_mapRot)
+function EnvironmentHandler:switchToNextEnvironment(_mapRot)
   self.currentEnvironment = self.nextEnvironment;
   self.nextEnvironment = _mapRot:getNextEnvironment();
 end
