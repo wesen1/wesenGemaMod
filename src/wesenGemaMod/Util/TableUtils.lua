@@ -5,6 +5,9 @@
 -- @license MIT
 --
 
+--@todo: Force constructor usage to this class
+--@todo: Split this class into table and object utils (object = clone + instanceof)
+
 ---
 -- Class that provides additional table functions.
 --

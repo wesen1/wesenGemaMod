@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
--- TODO: Move to ORM class
+-- @todo: Replace by ORM Player class
 
 ---
 -- Loads player information to the database.

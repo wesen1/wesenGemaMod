@@ -12,6 +12,8 @@
 --
 local TextWidthCalculator = setmetatable({}, {});
 
+--@todo: Refactor this class
+
 
 ---
 -- The name of the font config file

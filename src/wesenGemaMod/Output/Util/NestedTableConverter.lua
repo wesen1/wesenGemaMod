@@ -7,6 +7,8 @@
 
 local TableUtils = require("Util/TableUtils");
 
+--@todo: Refactor this class
+
 ---
 -- Converts a nested table to a single table.
 --

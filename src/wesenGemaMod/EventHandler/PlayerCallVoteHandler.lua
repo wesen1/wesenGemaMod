@@ -54,15 +54,9 @@ getmetatable(PlayerCallVoteHandler).__call = PlayerCallVoteHandler.__construct;
 --
 function PlayerCallVoteHandler:onPlayerCallVote(_player, _type, _text, _number1, _number2, _voteError)
 
-  local returnValue = nil;
-
   -- If vote is a map vote
   if (_type == SA_MAP) then
-    returnValue = self.playerCallMapVoteHandler:onPlayerCallMapVote(_player, _text, _number1, _number2, _voteError);
-  end
-
-  if (returnValue ~= nil) then
-    return returnValue;
+    return self.playerCallMapVoteHandler:onPlayerCallMapVote(_player, _text, _number1, _number2, _voteError);
   end
 
 end

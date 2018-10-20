@@ -54,8 +54,7 @@ getmetatable(MapTopCommand).__call = MapTopCommand.__construct;
 --
 function MapTopCommand:execute(_player, _arguments)
   local mapTopHandler = self.parentCommandList:getParentGemaMode():getMapTopHandler();
-  local mapTop = mapTopHandler:getMapTop("main");
-  mapTopHandler:getMapTopPrinter():printMapTop(mapTop, _player);
+  mapTopHandler:printMapTop("main", _player);
 end
 
 

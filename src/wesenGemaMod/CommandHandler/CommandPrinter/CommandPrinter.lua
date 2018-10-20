@@ -58,15 +58,15 @@ function CommandPrinter:generateCommandString(_command, _showOptionalArguments)
 
   for i, argument in ipairs(_command:getArguments()) do
 
-    if (argument["isRequired"]) then
+    if (not argument:getIsOptional()) then
       commandString = commandString
-                   .. self.output:getColor("optionalArgument")
-                   .. " <" .. argument["name"] .. ">";
+                   .. self.output:getColor("requiredArgument")
+                   .. " <" .. argument:getShortName() .. ">";
 
     elseif (_showOptionalArguments) then
       commandString = commandString
-                   .. self.output:getColor("requiredArgument")
-                   .. " <" .. argument["name"] .. ">";
+                   .. self.output:getColor("optionalArgument")
+                   .. " <" .. argument:getShortName() .. ">";
     end
 
   end

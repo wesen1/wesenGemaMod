@@ -66,6 +66,7 @@ end
 --
 function VoteEndHandler:onMapVoteEnd(_result, _player, _mapName, _gameMode, _minutes)
 
+  --@todo: Move auto gema mode switching stuff to own class
   local mapRot = self.parentGemaMode:getMapRot();
 
   if (_result == 1) then

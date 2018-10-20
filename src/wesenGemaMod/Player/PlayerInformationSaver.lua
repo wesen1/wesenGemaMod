@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
--- TODO: Move to ORM class
+--@todo: Repalce by ORM Player class
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 
 ---

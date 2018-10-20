@@ -8,6 +8,8 @@
 local NestedTableConverter = require("Output/Util/NestedTableConverter");
 local TextWidthCalculator = require("Output/Util/TextWidthCalculator");
 
+--@todo: Refactor this class
+
 ---
 -- Generates row output strings from tables.
 -- @todo Fix this and NestedTableConverter ...

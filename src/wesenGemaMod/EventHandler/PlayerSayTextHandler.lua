@@ -71,7 +71,6 @@ getmetatable(PlayerSayTextHandler).__call = PlayerSayTextHandler.__construct;
 function PlayerSayTextHandler:onPlayerSayText(_player, _text)
 
   local logText = string.format("[%s] %s says: '%s'", _player:getIp(), _player:getName(), _text);
-
   logline(ACLOG_INFO, logText);
 
   if (self.parentGemaMode:getIsActive()) then

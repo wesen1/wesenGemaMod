@@ -91,4 +91,27 @@ function MapTopHandler:getMapTop(_mapTopId)
 end
 
 
+-- Public Methods
+
+---
+-- Prints a maptop to a player.
+--
+-- @tparam string _mapTopId The maptop id
+-- @tparam Player _player The player to print the maptop to
+--
+-- @raise Error when the maptop id is invalid
+--
+function MapTopHandler:printMapTop(_mapTopId, _player)
+
+  local mapTop = self:getMapTop(_mapTopId);
+  
+  if (mapTop) then
+    self.mapTopPrinter:printMapTop(mapTop, _player);
+  else
+    error(Exception("No maptop with the id \"" .. _mapTopId .. "\" exists."));
+  end
+
+end
+
+
 return MapTopHandler;

@@ -103,11 +103,11 @@ function CommandHelpTextPrinter:getArgumentOutputList(_command)
 
   for i, argument in ipairs(_command:getArguments()) do
 
-    local argumentName = "<" .. argument["name"] .. ">";
-    local argumentDescription = self.output:getColor("helpDescription") .. ": " .. argument["description"];
+    local argumentName = "<" .. argument:getName() .. ">";
+    local argumentDescription = self.output:getColor("helpDescription") .. ": " .. argument:getDescription();
 
     -- Set the output color for the argument name
-    if (argument["isRequired"]) then
+    if (not argument:getIsOptional()) then
       argumentName = self.output:getColor("requiredArgument") .. argumentName;
     else
       argumentName = self.output:getColor("optionalArgument") .. argumentName;

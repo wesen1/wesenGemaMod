@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+--@todo: Refactor this class
+
 ---
 -- Checks whether map names are valid gema map names.
 --

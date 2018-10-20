@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+--@todo: Force constructor on this class too
+
 local Exception = require("Util/Exception");
 
 ---

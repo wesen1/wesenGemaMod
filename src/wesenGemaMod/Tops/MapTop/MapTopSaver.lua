@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
--- TODO: MapHandler will be replaced by Map ORM class
+--@todo: Replace by Map ORM class
 local MapHandler = require("Map/MapHandler");
 
 ---

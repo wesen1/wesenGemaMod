@@ -7,7 +7,9 @@
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
 local Environment = require("EnvironmentHandler/Environment");
+local Exception = require("Util/Exception");
 local MapRemover = require("Map/MapRemover");
+local TableUtils = require("Util/TableUtils");
 
 ---
 -- Handles map votes.
@@ -89,11 +91,8 @@ function PlayerCallMapVoteHandler:onInvalidMapVote(_player, _mapName, _gameMode,
     -- The map exists but the vote is invalid, this means that the map can not be loaded because it is unplayable
     self:removeUnplayableMap(_mapName);
     return PLUGIN_BLOCK;
-
-  else
-    self.output:printError("The map \"" .. _mapName .. "\" could not be found on the server.", _player);
   end
-  
+
 end
 
 ---
@@ -104,14 +103,18 @@ end
 --
 function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
 
-  local status, errorMessage = pcall(self.mapRemover:removeMap(
+  local status, exception = pcall(self.mapRemover:removeMap(
     self.parentGemaMode:getDataBase(),
     _mapName,
     self.parentGemaMode:getMapRot()
   ));
 
   if (not status) then
-    self.output:printError(errorMessage);
+    if (TableUtils:isInstanceOf(exception, Exception)) then
+      self.output:printError(exception:getMessage(), _player);
+    else
+      error(exception);
+    end
   else
     self.output:printInfo("The map \"" .. _mapName .. "\" was automatically deleted because it wasn't playable.", _player);
   end
@@ -128,6 +131,7 @@ end
 --
 function PlayerCallMapVoteHandler:onValidMapVote(_player, _mapName, _gameMode, _minutes)
 
+  --@todo: Move auto gema mode switching stuff to own class
   local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
 
   -- Update the next environment

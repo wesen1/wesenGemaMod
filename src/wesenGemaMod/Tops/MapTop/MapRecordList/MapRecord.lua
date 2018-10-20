@@ -7,7 +7,7 @@
 
 ---
 -- Stores information about a single record.
--- @todo: Move to ORM class
+-- @todo: Replace by ORM MapRecord class
 --
 -- @type MapRecord
 --

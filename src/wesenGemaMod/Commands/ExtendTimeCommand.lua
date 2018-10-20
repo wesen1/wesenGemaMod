@@ -82,7 +82,7 @@ function ExtendTimeCommand:execute(_player, _arguments)
   
   self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
 
-  -- TODO: Add color for extend minutes?
+  -- @todo: Add color for extend minutes?
   self.output:printInfo(
     self.output:getPlayerNameColor(_player:getLevel()) .. _player:getName()
  .. self.output:getColor("info") .. " extended the time by " .. _arguments.numberOfMinutes .. " minutes."

@@ -17,6 +17,8 @@ package.path = package.path .. ";lua/scripts/wesenGemaMod/?.lua";
 local GemaMode = require("GemaMode");
 
 local gemaMode = GemaMode(
+
+  --@todo: pass whole config to gema mode
   cfg.getvalue("gemamod", "dataBaseUser"),
   cfg.getvalue("gemamod", "dataBasePassword"),
   cfg.getvalue("gemamod", "dataBaseName")
@@ -60,12 +62,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK if a voted map is auto removed or nil
 --
 function onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
-
-  local pluginBlock = gemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError);
-  if (pluginBlock) then
-    return pluginBlock;
-  end
-
+  return gemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError);
 end
 
 ---
@@ -120,12 +117,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK if the player says normal text or nil
 --
 function onPlayerSayText(_cn, _text)
-
-  local pluginBlock = gemaMode:onPlayerSayText(_cn, _text);
-  if (pluginBlock) then
-    return pluginBlock;
-  end
-
+  return gemaMode:onPlayerSayText(_cn, _text);
 end
 
 ---
@@ -144,13 +136,7 @@ end
 -- @treturn int|nil Upload error if map is not a gema or nil
 --
 function onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
-
-  local uploadError = gemaMode:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError);
-
-  if (uploadError) then
-    return uploadError;
-  end
-
+  return gemaMode:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError);
 end
 
 ---

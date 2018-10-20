@@ -60,7 +60,9 @@ function MapChangeHandler:onMapChange(_mapName, _gameMode)
     for cn, player in pairs(self.parentGemaMode:getPlayerList():getPlayers()) do
       mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop, player);
     end
-    
+
+      --@todo: Use setmotd() for greeting + map statistics stuff, or just edit the file
+
   end
 
 end
@@ -74,6 +76,7 @@ end
 --
 function MapChangeHandler:updateGemaModeState()
 
+  --@todo: Move auto gema mode switching stuff to own class
   local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
   local mapRot = self.parentGemaMode:getMapRot();
   
@@ -87,12 +90,12 @@ function MapChangeHandler:updateGemaModeState()
   if (self.parentGemaMode:getIsActive() and not isCurrentEnvironmentGemaCompatible) then
     self.parentGemaMode:setIsActive(false);
     self.output:printInfo("The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
-    -- TODO: Update server name
+    --@todo: Update server name
 
   elseif (not self.parentGemaMode:getIsActive() and isCurrentEnvironmentGemaCompatible) then
     self.parentGemaMode:setIsActive(true);
     self.output:printInfo("The gema mode was automatically enabled.");
-    -- TODO: Update server name
+    --@todo: Update server name
   end
 
 end

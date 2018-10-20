@@ -124,6 +124,7 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.eventHandler = EventHandler(instance);
   instance.mapTopHandler = MapTopHandler(instance.output);
 
+  --@todo: Config value for this
   instance.isActive = true;
 
   return instance;
@@ -301,13 +302,9 @@ end
 --
 function GemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
 
-  local pluginBlock = self.eventHandler:getPlayerCallVoteHandler():onPlayerCallVote(
+  return self.eventHandler:getPlayerCallVoteHandler():onPlayerCallVote(
     self.playerList:getPlayer(_cn), _type, _text, _number1, _number2, _voteError
   );
-  
-  if (pluginBlock) then
-    return pluginBlock;
-  end
   
 end
 
@@ -364,13 +361,9 @@ end
 --
 function GemaMode:onPlayerSayText(_cn, _text)
 
-  local pluginBlock = self.eventHandler:getPlayerSayTextHandler():onPlayerSayText(
+  return self.eventHandler:getPlayerSayTextHandler():onPlayerSayText(
     self.playerList:getPlayer(_cn), _text
   );
-
-  if (pluginBlock) then
-    return pluginBlock;
-  end
 
 end
 
@@ -391,13 +384,9 @@ end
 --
 function GemaMode:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
-  local uploadError = self.eventHandler:getPlayerSendMapHandler():onPlayerSendMap(
+  return self.eventHandler:getPlayerSendMapHandler():onPlayerSendMap(
     _mapName, self.playerList:getPlayer(_cn), _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError
   );
-
-  if (uploadError) then
-    return uploadError;
-  end
 
 end
 
