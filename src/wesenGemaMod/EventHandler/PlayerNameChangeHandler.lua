@@ -50,7 +50,7 @@ function PlayerNameChangeHandler:onPlayerNameChange (_player, _newName)
   -- @todo: Replace partial Player by ORM ..
   local dataBase = self.parentGemaMode:getDataBase();
   _player:setName(_newName);
-  
+
   -- @todo: Save player on demand (when he scores or uploads a map)
   _player:savePlayer(dataBase);
 

@@ -26,7 +26,7 @@ local MapChangeHandler = setmetatable({}, {__index = BaseEventHandler});
 function MapChangeHandler:__construct(_parentGemaMode)
 
   local instance = BaseEventHandler(_parentGemaMode);
-  setmetatable(instance, {__index = MapChangeHandler});  
+  setmetatable(instance, {__index = MapChangeHandler});
 
   return instance;
 

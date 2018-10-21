@@ -176,7 +176,7 @@ function TestMapTopLoader:testCanFetchRecords()
                 :when(
                   function ()
                     local records = self.mapTopLoader:fetchRecords(dataBaseMock, "noob_map");
-                    
+
                     for index, record in ipairs(records) do
                       luaunit.assertTrue(record:equals(expectedRecordsList[index]));
                     end

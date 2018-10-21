@@ -108,7 +108,7 @@ function SavedMapRot:removeMap(_mapName)
     end
 
   end
-  
+
   io.close(tmpFile);
 
   -- Replace the map rot file by the temporary file

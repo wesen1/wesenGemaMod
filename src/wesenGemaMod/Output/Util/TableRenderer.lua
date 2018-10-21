@@ -35,7 +35,7 @@ function TableRenderer:__construct()
   local instance = setmetatable({}, { __index = TableRenderer });
 
   instance.textWidthCalculator = TextWidthCalculator("font_default", true);
-  
+
   return instance;
 
 end

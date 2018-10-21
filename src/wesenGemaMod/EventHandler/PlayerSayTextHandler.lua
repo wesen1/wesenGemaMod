@@ -46,7 +46,7 @@ function PlayerSayTextHandler:__construct(_parentGemaMode)
 
   local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerSayTextHandler});
-  
+
   instance.commandParser = CommandParser();
   instance.commandExecutor = CommandExecutor();
 
@@ -76,7 +76,7 @@ function PlayerSayTextHandler:onPlayerSayText(_player, _text)
   if (self.parentGemaMode:getIsActive()) then
 
     if (self.commandParser:isCommand(_text)) then
-      
+
       local status, exception = pcall(self.handleCommand, self, _player, _text);
       if (not status) then
         if (TableUtils:isInstanceOf(exception, Exception)) then

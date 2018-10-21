@@ -66,7 +66,7 @@ function CommandExecutor:executeCommand(_command, _arguments, _player)
 
     -- Adjust the input arguments (if needed)
     local arguments = _command:adjustInputArguments(_arguments);
-      
+
     -- Execute the command
     return _command:execute(_player, arguments);
 

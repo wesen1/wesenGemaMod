@@ -88,7 +88,7 @@ function CachedMapRot:removeMap(_mapName)
       table.insert(updatedMapRot, mapRotEntry);
     end
   end
-  
+
   setwholemaprot(updatedMapRot);
 
 end

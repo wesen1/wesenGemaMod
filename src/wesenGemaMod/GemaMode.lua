@@ -204,7 +204,7 @@ end
 
 ---
 -- Returns the map top handler.
--- 
+--
 -- @treturn MapTop The map top handler
 --
 function GemaMode:getMapTopHandler()
@@ -222,7 +222,7 @@ end
 
 ---
 -- Returns the player list.
--- 
+--
 -- @treturn PlayerList The player list
 --
 function GemaMode:getPlayerList()
@@ -308,7 +308,7 @@ function GemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteE
   return self.eventHandler:getPlayerCallVoteHandler():onPlayerCallVote(
     self.playerList:getPlayer(_cn), _type, _text, _number1, _number2, _voteError
   );
-  
+
 end
 
 ---

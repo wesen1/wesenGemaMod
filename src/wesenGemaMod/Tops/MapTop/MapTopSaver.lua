@@ -69,7 +69,7 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
     -- insert new record
     local sql = "INSERT INTO records "
              .. "(milliseconds, player, map, weapon_id, team_id, created_at) "
-             .. "VALUES (" 
+             .. "VALUES ("
                .. _record:getMilliseconds() .. ","
                .. player:getId() .. ","
                .. mapId .. ","

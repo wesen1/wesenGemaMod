@@ -89,7 +89,7 @@ function MapTopPrinter:printMapTop(_mapTop, _player)
     if (numberOfRecords < numberOfDisplayRecords) then
       numberOfDisplayRecords = numberOfRecords;
     end
-    
+
     local startRank = 1;
     local endRank = startRank + (numberOfDisplayRecords - 1);
 
@@ -150,7 +150,7 @@ function MapTopPrinter:printMapStatistics(_mapTop, _player)
       mapTopSummary = string.format(mapTopSummary, numberOfRecords, "");
     else
       mapTopSummary = string.format(mapTopSummary, numberOfRecords, "s");
-    end    
+    end
 
     self.output:print(mapTopSummary, _player);
 
@@ -194,33 +194,33 @@ end
 function MapTopPrinter:getMapTopTitle(_startRank, _numberOfDisplayRecords)
 
   local mapTopTitle = nil;
-  
+
   if (_startRank == 1) then
     mapTopTitle = self.output:getColor("mapTopInfo") .. "The "
                .. self.output:getColor("mapTopNumberOfRecords") .. "%d "
                .. self.output:getColor("mapTopInfo") .. "best player%s of this map %s:";
-               
+
     if (_numberOfDisplayRecords == 1) then
       mapTopTitle = string.format(mapTopTitle, _numberOfDisplayRecords, "", "is");
     else
       mapTopTitle = string.format(mapTopTitle, _numberOfDisplayRecords, "s", "are");
     end
-  
+
   else
-    
+
     mapTopTitle = self.output:getColor("mapTopInfo") .. "Rank "
                .. self.output:getColor("mapTopRank") .. _startRank;
-    
+
     if (_numberOfDisplayRecords == 1) then
       mapTopTitle = mapTopTitle .. self.output:getColor("mapTopInfo") .. " is:";
     else
-      
+
       local endRank = _startRank + (_numberOfDisplayRecords - 1);
       mapTopTitle = mapTopTitle .. self.output:getColor("mapTopInfo") .. " to "
                                 .. self.output:getColor("mapTopRank") .. endRank
                                 .. self.output:getColor("mapTopInfo") .. " are:";
     end
-    
+
   end
 
   return mapTopTitle;

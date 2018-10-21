@@ -104,11 +104,11 @@ function CommandParser:parseCommand(_inputText, _commandList)
   self.arguments = nil;
 
   local inputTextParts = StringUtils:split(_inputText, " ");
-  
+
   -- Find the command
   local commandName = string.lower(inputTextParts[1]);
-  local command = _commandList:getCommand(commandName);  
-  
+  local command = _commandList:getCommand(commandName);
+
   if (not command) then
     error(Exception("Unknown command '" .. commandName .. "', check your spelling and try again"));
   end
@@ -146,10 +146,10 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
   -- Create an associative array from the input text parts
   local inputArguments = {};
   if (numberOfArgumentTextParts > 0) then
-    
+
     -- Fetch the argument names
     local arguments = _command:getArguments();
-    
+
     for index, argument in ipairs(arguments) do
       local argumentValue = _argumentTextParts[index];
       inputArguments[argument:getName()] = self:castArgumentToType(argument, argumentValue);
@@ -176,7 +176,7 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
 
   if (_argument:getType() == "string") then
     return _argumentValue;
-  
+
   elseif (_argument:getType() == "integer") then
     if (_argumentValue:match("^%d+$") ~= nil) then
       return tonumber(_argumentValue);
@@ -190,7 +190,7 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
     else
       exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a floating point number.";
     end
-  
+
   elseif (_argument:getType() == "bool") then
     if (_argumentValue == "true") then
       return true;

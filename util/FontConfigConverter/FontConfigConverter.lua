@@ -44,7 +44,7 @@ function FontConfigConverter:convertFontConfig(_filePath, _fileName)
 
     end
 
-  end 
+  end
 
 end
 
@@ -60,7 +60,7 @@ function FontConfigConverter:readFile(_filePath)
   local lines = {};
   local file = io.open(_filePath, "rb");
 
-  for line in io.lines(_filePath) do 
+  for line in io.lines(_filePath) do
     table.insert(lines, line);
   end
 

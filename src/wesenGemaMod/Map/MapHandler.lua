@@ -53,7 +53,7 @@ end
 function MapHandler:saveMapName(_dataBase, _mapName, _uploadPlayer)
 
   local mapName = _dataBase:sanitize(_mapName);
-  
+
   local uploadPlayerId = "NULL";
   if (_uploadPlayer) then
     uploadPlayerId = _uploadPlayer:getId();

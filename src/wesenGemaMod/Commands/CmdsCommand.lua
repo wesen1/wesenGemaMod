@@ -45,7 +45,7 @@ function CmdsCommand:__construct(_parentCommandList)
     { "!commands" }
   );
   setmetatable(instance, {__index = CmdsCommand});
-  
+
   instance.commandListPrinter = CommandListPrinter(instance.output);
 
   return instance;

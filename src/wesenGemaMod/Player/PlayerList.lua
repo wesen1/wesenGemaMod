@@ -29,9 +29,9 @@ PlayerList.players = nil;
 -- @treturn PlayerList The PlayerList instance
 --
 function PlayerList:__construct()
-  
+
   local instance = setmetatable({}, { __index = PlayerList });
-  
+
   instance.players = {};
 
   return instance;
@@ -57,7 +57,7 @@ end
 
 ---
 -- Adds a player to the players list.
--- 
+--
 -- @tparam DataBase _dataBase The database
 -- @tparam int _cn The client number of the player
 --
@@ -115,7 +115,7 @@ function PlayerList:getNumberOfPlayersWithIp(_ip)
   -- countConnections is called before the player list is updated, therefore
   -- isconnected() and getip() are used here instead of an iteration over the player list
   local ip = getip(_cn);
-  
+
   local amountConnections = 0;
   for i = 0, 15, 1 do
     if (isconnected(i) and getip(i) == ip) then

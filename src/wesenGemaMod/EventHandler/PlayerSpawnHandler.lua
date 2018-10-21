@@ -11,7 +11,7 @@ local BaseEventHandler = require("EventHandler/BaseEventHandler");
 -- Class that handles player spawns.
 -- PlayerSpawnHandler inherits from BaseEventHandler
 --
--- @type PlayerSpawnHandler 
+-- @type PlayerSpawnHandler
 --
 local PlayerSpawnHandler = setmetatable({}, {__index = BaseEventHandler});
 

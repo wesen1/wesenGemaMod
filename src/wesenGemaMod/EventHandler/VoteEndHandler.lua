@@ -11,7 +11,7 @@ local BaseEventHandler = require("EventHandler/BaseEventHandler");
 -- Class that handles vote ends.
 -- VoteEndHandler inherits from BaseEventHandler
 --
--- @type VoteEndHandler 
+-- @type VoteEndHandler
 --
 local VoteEndHandler = setmetatable({}, {__index = BaseEventHandler});
 

@@ -174,7 +174,7 @@ function TestMapTopCacher:testCanGetRecordByPlayer()
   records[6] = testMapRecordA;
 
   self.mapTopCacher:setRecords(records);
-  
+
   luaunit.assertEquals(self.mapTopCacher:getRecordByPlayer(testPlayerA), testMapRecordA);
   luaunit.assertNil(self.mapTopCacher:getRecordByPlayer(testPlayerC));
 

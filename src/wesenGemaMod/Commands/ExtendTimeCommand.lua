@@ -80,7 +80,7 @@ function ExtendTimeCommand:execute(_player, _arguments)
   --@todo: EnvironmentHandler should be in gema mode and not in gema mode state updater
   local environmentHandler = self.parentCommandList:getParentGemaMode():getGemaModeStateUpdater():getEnvironmentHandler();
   local environment = environmentHandler:getCurrentEnvironment();
-  
+
   self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
 
   -- @todo: Add color for extend minutes?

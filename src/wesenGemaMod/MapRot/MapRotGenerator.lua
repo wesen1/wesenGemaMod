@@ -31,7 +31,7 @@ MapRotGenerator.mapNameChecker = nil;
 function MapRotGenerator:__construct()
 
   local instance = setmetatable({}, {__index = MapRotGenerator});
-  
+
   instance.mapNameChecker = MapNameChecker();
 
   return instance;
@@ -61,7 +61,7 @@ function MapRotGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
       local mapName = luaFile:gsub(".cgz", "");
 
       if (not self.mapNameChecker:isValidMapName(mapName)) then
-        
+
         logline(ACLOG_DEBUG, "Deleting " .. mapName);
         os.remove(_mapsDirectory .. "/" .. luaFile);
 

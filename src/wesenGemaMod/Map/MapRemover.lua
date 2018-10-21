@@ -22,7 +22,7 @@ local MapRemover = setmetatable({}, {});
 -- @treturn MapRemover The MapRemover instance
 --
 function MapRemover:__construct()
-  
+
   local instance = setmetatable({}, {__index = MapRemover});
 
   return instance;
@@ -49,7 +49,7 @@ function MapRemover:removeMap(_dataBase, _mapName, _mapRot)
 
   if (self:mapHasRecords(_dataBase, mapId)) then
     error(Exception("Could not delete map \"" .. _mapName .. "\": There are map records for this map!"));
-  else    
+  else
 
     -- Remove the map from the database
     local sql = "DELETE FROM maps "

@@ -69,7 +69,7 @@ function PlayerScoreAttempt:__construct(_parentPlayer)
   instance.startTime = -1;
   instance.weaponId = -1;
   instance.teamId = -1;
-  
+
   return instance;
 
 end
@@ -199,7 +199,7 @@ function PlayerScoreAttempt:getMapRecord(_parentMapRecordList)
   end
 
   return MapRecord(
-    TableUtils:copy(self.parentPlayer), 
+    TableUtils:copy(self.parentPlayer),
     self.endTime - self.startTime,
     self.weaponId,
     self.teamId,

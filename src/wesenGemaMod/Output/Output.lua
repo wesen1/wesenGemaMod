@@ -40,15 +40,15 @@ Output.tableRenderer = nil;
 -- @treturn Output The Output instance
 --
 function Output:__construct()
-  
+
   local instance = setmetatable({}, { __index = Output });
 
   -- @todo: Config value for color scheme name
   instance.colorLoader = ColorLoader("colors");
   instance.tableRenderer = TableRenderer();
-  
+
   return instance;
-  
+
 end
 
 getmetatable(Output).__call = Output.__construct;
@@ -66,7 +66,7 @@ function Output:print(_text, _player)
 
   -- -1 targets all connected players
   local cn = -1;
-  
+
   if (_player ~= nil) then
     cn = _player:getCn();
   end
@@ -119,7 +119,7 @@ end
 function Output:playerSayText(_text, _player)
 
   -- sayas is used here so that the players can still use local commands like ignore
-  sayas(_text, _player, false, false); 
+  sayas(_text, _player, false, false);
 end
 
 ---
@@ -152,7 +152,7 @@ function Output:getTeamColor(_teamId)
     return self:getColor("teamRVSF");
   elseif (_teamId == TEAM_CLA) then
     return self:getColor("teamCLA");
-  end 
+  end
 
 end
 

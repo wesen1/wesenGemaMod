@@ -37,7 +37,7 @@ function PlayerSendMapHandler:__construct(_parentGemaMode)
 
   local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerSendMapHandler});
-  
+
   instance.mapNameChecker = MapNameChecker();
 
   return instance;
@@ -70,7 +70,7 @@ function PlayerSendMapHandler:onPlayerSendMap(_mapName, _player, _revision, _map
   if (_uploadError == UE_NOERROR) then
 
     if (self.mapNameChecker:isGemaMapName(_mapName)) then
-      
+
       local dataBase = self.parentGemaMode:getDataBase();
       MapHandler:saveMap(dataBase, _mapName, _player);
 

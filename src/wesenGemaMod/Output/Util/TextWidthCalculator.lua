@@ -65,7 +65,7 @@ getmetatable(TextWidthCalculator).__call = TextWidthCalculator.__construct;
 ---
 -- Calculates and returns the width of _text.
 -- The text may not contain the special characters "\n" and "\t".
--- The function automatically removes "\f<colorId>" parts of strings. 
+-- The function automatically removes "\f<colorId>" parts of strings.
 --
 -- @tparam string _text The text
 --

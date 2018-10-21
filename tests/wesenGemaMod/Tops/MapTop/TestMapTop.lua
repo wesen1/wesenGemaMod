@@ -84,7 +84,7 @@ function TestMapTop:testCanAddRecords()
 
   self.mapTop:setMapTopCacher(mapTopCacherMock);
   self.mapTop:setMapTopSaver(mapTopSaverMock);
-  
+
   local testPlayerNew = Player:__construct("testplayer", "10.0.0.0");
   local testPlayerExisting = Player:__construct("testplayer", "10.0.0.0");
 

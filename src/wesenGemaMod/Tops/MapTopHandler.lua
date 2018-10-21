@@ -38,12 +38,12 @@ MapTopHandler.mapTopPrinter = nil;
 -- @treturn MapTopHandler The MapTopHandler instance
 --
 function MapTopHandler:__construct(_output)
-  
+
   local instance = setmetatable({}, {__index = MapTopHandler});
 
   instance.mapTops = {};
   instance.mapTopPrinter = MapTopPrinter(_output);
-  
+
   return instance;
 
 end
@@ -104,7 +104,7 @@ end
 function MapTopHandler:printMapTop(_mapTopId, _player)
 
   local mapTop = self:getMapTop(_mapTopId);
-  
+
   if (mapTop) then
     self.mapTopPrinter:printMapTop(mapTop, _player);
   else

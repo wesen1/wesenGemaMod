@@ -10,6 +10,8 @@ local MapNameChecker = require("Map/MapNameChecker");
 ---
 -- Stores the current and next environments for analyzation.
 --
+-- @type EnvironmentHandler
+--
 local EnvironmentHandler = setmetatable({}, {});
 
 
@@ -46,7 +48,7 @@ function EnvironmentHandler:__construct(_mapRot)
 
   instance.mapNameChecker = MapNameChecker();
   instance.nextEnvironment = _mapRot:getNextEnvironment();
-  
+
   return instance;
 
 end

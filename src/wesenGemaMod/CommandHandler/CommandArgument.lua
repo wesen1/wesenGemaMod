@@ -67,7 +67,7 @@ function CommandArgument:__construct(_name, _isOptional, _type, _shortName, _des
   local instance = setmetatable({}, { __index = CommandArgument })
 
   instance.name = _name;
-  
+
   if (_isOptional ~= nil) then
     instance.isOptional = _isOptional;
   end
@@ -75,13 +75,13 @@ function CommandArgument:__construct(_name, _isOptional, _type, _shortName, _des
   if (_type) then
     instance.type = _type;
   end
-  
+
   if (_shortName) then
     instance.shortName = _shortName;
   else
     instance.shortName = _name;
   end
-  
+
   if (_description) then
     instance.description = _description;
   end

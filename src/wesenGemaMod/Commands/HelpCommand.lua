@@ -95,7 +95,7 @@ end
 --
 function HelpCommand:adjustInputArguments(_arguments)
 
-  local arguments = _arguments;  
+  local arguments = _arguments;
 
   if (arguments.commandName:sub(1,1) ~= "!") then
     arguments.commandName = "!" .. arguments.commandName;

@@ -38,7 +38,7 @@ CommandHelpTextPrinter.output = nil;
 -- @treturn CommandHelpTextPrinter The CommandHelpTextPrinter instance
 --
 function CommandHelpTextPrinter:__construct(_output)
-  
+
   local instance = setmetatable({}, {__index = CommandHelpTextPrinter});
 
   instance.commandPrinter = CommandPrinter(_output);

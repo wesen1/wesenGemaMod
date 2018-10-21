@@ -28,7 +28,7 @@ After that you should be able to connect to your test server by typing ````/conn
 
 ### Connecting to the database ###
 
-Address: 127.0.0.1  
-Port: 3306  
-User: root  
+Address: 127.0.0.1
+Port: 3306
+User: root
 Password: root

@@ -85,7 +85,7 @@ function MapRecordList:addRecord(_newRecord)
     self.records[currentRank] = nil;
   else
     currentRank = self:getNumberOfRecords() + 1;
-  end    
+  end
 
   -- Move the records between the old rank and the new rank up by one rank
   for i = currentRank - 1, _newRecord:getRank(), -1 do
@@ -146,7 +146,7 @@ function MapRecordList:getRecordByPlayer(_player)
 
   for rank, record in ipairs(self.records) do
     if (record:getPlayer():equals(_player)) then
-      
+
       self.getRecordByPlayerLastPlayer = _player;
       self.getRecordByPlayerLastRecord = record;
 
@@ -239,7 +239,7 @@ end
 -- @treturn bool True if the player name is unique in the list of map records, false otherwise
 --
 function MapRecordList:isPlayerNameUnique(_playerName)
-  
+
   local counter = 0;
   for index, mapRecord in ipairs(self.records) do
 

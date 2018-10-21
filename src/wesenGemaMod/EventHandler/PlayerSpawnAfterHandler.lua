@@ -11,7 +11,7 @@ local BaseEventHandler = require("EventHandler/BaseEventHandler");
 -- Class that handles player spawns.
 -- PlayerSpawnAfterHandler inherits from BaseEventHandler
 --
--- @type PlayerSpawnAfterHandler 
+-- @type PlayerSpawnAfterHandler
 --
 local PlayerSpawnAfterHandler = setmetatable({}, {__index = BaseEventHandler});
 
@@ -47,7 +47,7 @@ getmetatable(PlayerSpawnAfterHandler).__call = PlayerSpawnAfterHandler.__constru
 function PlayerSpawnAfterHandler:onPlayerSpawnAfter(_player)
 
   if (self.parentGemaMode:getIsActive()) then
-    
+
     -- The team id set in the PlayerSpawnAfterHandler because @todo
     _player:getScoreAttempt():setTeamId(getteam(_player:getCn()));
   end

@@ -37,7 +37,7 @@ Environment.gameModeId = nil;
 -- @treturn Environment The Environment instance
 --
 function Environment:__construct(_mapName, _gameModeId)
-  
+
   local instance = setmetatable({}, {__index = Environment});
 
   instance.mapName = _mapName;

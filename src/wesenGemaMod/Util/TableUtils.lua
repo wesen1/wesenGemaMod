@@ -108,7 +108,7 @@ end
 -- @tparam table _associativeTable The table with associative indexes
 --
 -- @treturn int The length of the table
--- 
+--
 function TableUtils:getTableLength(_associativeTable)
 
   local numberOfElements = 0;

@@ -39,7 +39,7 @@ function WeaponNameFetcher:__construct()
     [GUN_KNIFE] = "Knife Only",
     [GUN_PISTOL] = "Pistol Only"
   }
-  
+
   return instance;
 
 end

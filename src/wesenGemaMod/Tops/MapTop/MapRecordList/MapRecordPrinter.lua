@@ -94,11 +94,11 @@ function MapRecordPrinter:getMapTopOutputTableRow(_mapRecord, _maximumRankLength
 
   local playerName = _mapRecord:getPlayer():getName();
   local isPlayerNameUnique = _mapRecord:getParentMapRecordList():isPlayerNameUnique(playerName);
-  
+
   local weaponName = self.weaponNameFetcher:getWeaponName(_mapRecord:getWeapon());
 
   local mapTopEntry = {};
-  
+
   -- Column 1: Rank, time and player name
   mapTopEntry[1] = self.output:getColor("mapRecordRank") .. rankString .. ") "
                 .. self.output:getColor("mapRecordTime") .. self:getTimeString(_mapRecord)
@@ -116,10 +116,10 @@ function MapRecordPrinter:getMapTopOutputTableRow(_mapRecord, _maximumRankLength
 
   -- Column 3: Weapon name in team color
   mapTopEntry[3] = self.output:getTeamColor(_mapRecord:getTeam()) .. weaponName;
-  
+
   -- Column 4: Date
   mapTopEntry[4] = self.output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", _mapRecord:getCreatedAt());
-  
+
   return mapTopEntry;
 
 end
@@ -202,9 +202,9 @@ function MapRecordPrinter:getRankString(_mapRecord)
   local rankString = nil;
   local mapRecordList = _mapRecord:getParentMapRecordList();
   local currentRecord = mapRecordList:getRecordByPlayer(_mapRecord:getPlayer());
-  
+
   if (mapRecordList:isPersonalBestTime(_mapRecord)) then
-    
+
     local numberOfRecords = mapRecordList:getNumberOfRecords();
     if (currentRecord == nil) then
       -- This method is called before the record is added to the map record list, so the number of records must be increased by one
@@ -220,11 +220,11 @@ function MapRecordPrinter:getRankString(_mapRecord)
     elseif (currentRecord:getMilliseconds() == _mapRecord:getMilliseconds()) then
       rankString = self.output:getColor("scoreRecordTied") .. "(Tied his current record)";
     end
-  
+
   end
 
   return rankString;
-  
+
 end
 
 

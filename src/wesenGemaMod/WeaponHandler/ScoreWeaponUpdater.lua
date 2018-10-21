@@ -41,7 +41,7 @@ function ScoreWeaponUpdater:updateScoreWeapon(_scoreAttempt, _weaponUsed)
 
   if (not _scoreAttempt:isFinished()) then
 
-    local updatedScoreWeaponId = self:getUpdatedScoreWeaponId(_scoreAttempt, _weaponUsed);  
+    local updatedScoreWeaponId = self:getUpdatedScoreWeaponId(_scoreAttempt, _weaponUsed);
     if (updatedScoreWeaponId) then
       _scoreAttempt:setWeaponId(updatedScoreWeaponId);
     end

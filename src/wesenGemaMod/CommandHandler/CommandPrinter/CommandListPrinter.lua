@@ -38,7 +38,7 @@ CommandListPrinter.output = nil;
 -- @treturn CommandListPrinter The CommandListPrinter instance
 --
 function CommandListPrinter:__construct(_output)
-  
+
   local instance = setmetatable({}, {__index = CommandListPrinter});
 
   instance.output = _output;
@@ -62,7 +62,7 @@ getmetatable(CommandListPrinter).__call = CommandListPrinter.__construct;
 -- @tparam int _player The player
 --
 function CommandListPrinter:printGroupedCommands(_commandList, _maximumLevel, _indent, _player)
-  
+
   local rows = {};
   local groupedCommands = _commandList:getGroupedCommands();
 

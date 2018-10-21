@@ -97,7 +97,7 @@ function BaseCommand:__construct(_parentCommandList, _name, _requiredLevel, _gro
   instance.parentCommandList = _parentCommandList;
   instance.output = _parentCommandList:getParentGemaMode():getOutput();
   instance.name = _name;
-  
+
   if (_requiredLevel) then
     instance.requiredLevel = _requiredLevel;
   end
@@ -105,17 +105,17 @@ function BaseCommand:__construct(_parentCommandList, _name, _requiredLevel, _gro
   if (_group) then
     instance.group = _group;
   end
-  
+
   if (_description) then
     instance.description = _description;
   end
-  
+
   if (_arguments) then
     instance.arguments = _arguments;
   else
     instance.aliases = {};
   end
-  
+
   if (_aliases) then
     instance.aliases = _aliases;
   else

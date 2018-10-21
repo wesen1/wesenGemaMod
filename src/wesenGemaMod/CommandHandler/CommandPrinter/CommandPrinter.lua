@@ -31,7 +31,7 @@ CommandPrinter.output = nil;
 function CommandPrinter:__construct(_output)
 
   local instance = setmetatable({}, {__index = CommandPrinter});
-  
+
   instance.output = _output;
 
   return instance;

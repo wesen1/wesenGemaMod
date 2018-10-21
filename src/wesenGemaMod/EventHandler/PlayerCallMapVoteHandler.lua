@@ -63,13 +63,13 @@ getmetatable(PlayerCallMapVoteHandler).__call = PlayerCallMapVoteHandler.__const
 -- @treturn int|nil PLUGIN_BLOCK or nil
 --
 function PlayerCallMapVoteHandler:onPlayerCallMapVote(_player, _mapName, _gameMode, _minutes, _voteError)
-  
+
   if (_voteError == VOTEE_INVALID) then
     return self:onInvalidMapVote(_player, _mapName, _gameMode, _minutes);
   elseif (_voteError == VOTEE_NOERROR) then
     return self:onValidMapVote(_player, _mapName, _gameMode, _minutes);
   end
-  
+
 end
 
 
@@ -86,7 +86,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK or nil
 --
 function PlayerCallMapVoteHandler:onInvalidMapVote(_player, _mapName, _gameMode, _minutes)
-  
+
   if (mapexists(_mapName)) then
     -- The map exists but the vote is invalid, this means that the map can not be loaded because it is unplayable
     self:removeUnplayableMap(_mapName);

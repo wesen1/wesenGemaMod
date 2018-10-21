@@ -44,7 +44,7 @@ function MapRot:__construct(_mapRotFilePath)
   instance.cachedMapRot = CachedMapRot();
   instance.savedMapRot = SavedMapRot(_mapRotFilePath);
   instance.cachedMapRot:load(instance.savedMapRot);
-  
+
   return instance;
 
 end
@@ -69,7 +69,7 @@ end
 --
 -- @tparam string _mapName The map name
 --
-function MapRot:addMap(_mapName)  
+function MapRot:addMap(_mapName)
   self.cachedMapRot:addMap(_mapName);
   self.savedMapRot:addMap(_mapName);
 end

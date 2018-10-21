@@ -71,7 +71,7 @@ function FlagActionHandler:onFlagAction(_player, _action, _flag)
 
     elseif (_action == FA_DROP or _action == FA_LOST) then
       -- instant flag reset (gameplay affecting)
-      self:resetFlag(_player, _flag)      
+      self:resetFlag(_player, _flag);
     end
 
   end

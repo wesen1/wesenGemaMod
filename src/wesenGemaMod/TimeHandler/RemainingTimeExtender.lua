@@ -165,7 +165,7 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
 
     -- The time left milliseconds must be subtracted too because the time extension is done by
     -- setting the remaining milliseconds to "<time left milliseconds> + <extend milliseconds>"
-    local maximumNumberOfExtendMilliseconds = maximumIntegerValue - gettimeleftmillis() - additionalMilliseconds;    
+    local maximumNumberOfExtendMilliseconds = maximumIntegerValue - gettimeleftmillis() - additionalMilliseconds;
 
     if (_numberOfExtendMilliseconds > maximumNumberOfExtendMilliseconds) then
 

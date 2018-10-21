@@ -57,7 +57,7 @@ function PlayerConnectHandler:onPlayerConnect(_cn)
 
   local dataBase = self.parentGemaMode:getDataBase();
   local playerList = self.parentGemaMode:getPlayerList();
-  
+
   -- Add the player to the player list
   playerList:addPlayer(dataBase, _cn);
 
@@ -89,7 +89,7 @@ end
 -- @tparam Player player The player who connected
 --
 function PlayerConnectHandler:checkNumberOfConnections(player)
-  
+
   local playerList = self.parentGemaMode:getPlayerList();
 
   local numberOfPlayerConnections = playerList:getNumberOfPlayersWithIp(player:getIp());
