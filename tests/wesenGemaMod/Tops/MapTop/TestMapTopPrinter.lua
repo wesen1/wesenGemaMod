@@ -1,4 +1,4 @@
-local luaunit = require("tests/luaunit-custom");
+local luaunit = require("luaunit-custom");
 local mach = require("mach");
 
 local TestMapTopPrinter = {};

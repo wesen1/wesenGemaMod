@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local luaunit = require("tests/luaunit-custom");
+local luaunit = require("luaunit-custom");
 local mach = require("mach");
 
 local GemaMode = require("GemaMode");
