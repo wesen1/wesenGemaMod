@@ -104,7 +104,7 @@ end
 --
 function Output:printTable(_table, _player, _isOneDimensionalTable)
 
-  for index, rowOutputString in ipairs(self.tableRenderer:getRowOutputStrings(_table, _isOneDimensionalTable)) do
+  for _, rowOutputString in ipairs(self.tableRenderer:getRowOutputStrings(_table, _isOneDimensionalTable)) do
     self:print(rowOutputString, _player);
   end
 

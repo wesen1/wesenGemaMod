@@ -56,7 +56,7 @@ function CommandPrinter:generateCommandString(_command, _showOptionalArguments)
   local commandString = self.output:getColor("command" .. _command:getRequiredLevel())
                      .. _command:getName();
 
-  for i, argument in ipairs(_command:getArguments()) do
+  for _, argument in ipairs(_command:getArguments()) do
 
     if (not argument:getIsOptional()) then
       commandString = commandString

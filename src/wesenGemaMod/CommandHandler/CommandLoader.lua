@@ -47,7 +47,7 @@ function CommandLoader:loadCommands(_parentGemaMode)
   local commandList = CommandList(_parentGemaMode);
 
   --@todo: Fix path to relative path here..
-  for index, commandClassName in ipairs(self:getCommandClassNames("lua/scripts/wesenGemaMod/Commands")) do
+  for _, commandClassName in ipairs(self:getCommandClassNames("lua/scripts/wesenGemaMod/Commands")) do
     local command = require("Commands/" .. commandClassName);
     commandList:addCommand(command);
   end

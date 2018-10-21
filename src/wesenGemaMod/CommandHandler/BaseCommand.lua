@@ -206,7 +206,7 @@ function BaseCommand:getNumberOfRequiredArguments()
 
   local count = 0;
 
-  for i, argument in ipairs(self.arguments) do
+  for _, argument in ipairs(self.arguments) do
     if (argument:getIsOptional() == false) then
       count = count + 1;
     end
@@ -234,12 +234,10 @@ end
 --
 function BaseCommand:hasAlias(_alias)
 
-  for i, alias in pairs(self.aliases) do
-
+  for _, alias in pairs(self.aliases) do
     if (alias:lower() == _alias:lower()) then
       return true;
     end
-
   end
 
   return false;

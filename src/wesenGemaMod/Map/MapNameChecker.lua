@@ -126,12 +126,10 @@ end
 --
 function MapNameChecker:mapNameContainsImplicitWord(_mapName)
 
-  for index, implicitWord in ipairs(self.implicitWords) do
-
+  for _, implicitWord in ipairs(self.implicitWords) do
     if (_mapName:find(implicitWord)) then
       return true;
     end
-
   end
 
   return false;

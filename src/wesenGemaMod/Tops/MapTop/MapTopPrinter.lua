@@ -116,7 +116,7 @@ function MapTopPrinter:printMapTop(_mapTop, _player)
 
     if (not mapTopContainsIp) then
 
-      for index, mapTopEntry in ipairs(mapTopEntries) do
+      for _, mapTopEntry in ipairs(mapTopEntries) do
         mapTopEntry[2] = mapTopEntry[3];
         mapTopEntry[3] = mapTopEntry[4];
         mapTopEntry[4] = nil;

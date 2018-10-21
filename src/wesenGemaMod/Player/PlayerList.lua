@@ -103,7 +103,7 @@ end
 function PlayerList:getNumberOfPlayersWithIp(_ip)
 
   local numberOfConnections = 0;
-  for cn, player in pairs(self.players) do
+  for _, player in pairs(self.players) do
     if (player:getIp() == _ip) then
       numberOfConnections = numberOfConnections + 1;
     end

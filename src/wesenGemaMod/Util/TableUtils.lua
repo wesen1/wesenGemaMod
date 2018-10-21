@@ -69,7 +69,7 @@ end
 --
 function TableUtils:inTable(_needle, _haystack)
 
-  for index, string in pairs(_haystack) do
+  for _, string in pairs(_haystack) do
 
     if (_needle == string) then
       return true;
@@ -92,7 +92,7 @@ function TableUtils:tableSum(_table)
 
   local sum = 0;
 
-  for i, number in pairs(_table) do
+  for _, number in pairs(_table) do
     sum = sum + number;
   end
 
@@ -112,7 +112,7 @@ end
 function TableUtils:getTableLength(_associativeTable)
 
   local numberOfElements = 0;
-  for index, value in pairs(_associativeTable) do
+  for _, _ in pairs(_associativeTable) do
     numberOfElements = numberOfElements + 1;
   end
 

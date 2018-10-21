@@ -56,10 +56,8 @@ function MapChangeHandler:onMapChange(_mapName, _gameMode)
     -- Load the map records for the map
     mapTop:loadRecords(self.parentGemaMode:getDataBase(), _mapName);
 
-    -- Print the map statistics for the map
-    for cn, player in pairs(self.parentGemaMode:getPlayerList():getPlayers()) do
-      mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop, player);
-    end
+    -- Print the map statistics for the map to all players
+    mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop);
 
       --@todo: Use setmotd() for greeting + map statistics stuff, or just edit the file
 

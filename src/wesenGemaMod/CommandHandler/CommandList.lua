@@ -208,7 +208,7 @@ function CommandList:getCommand(_commandName)
   end
 
   -- Check aliases
-  for commandName, command in pairs(self.commands) do
+  for _, command in pairs(self.commands) do
     if (command:hasAlias(_commandName)) then
       return command;
     end

@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local Exception = require("Util/Exception");
 local MapTopPrinter = require("Tops/MapTop/MapTopPrinter");
 local MapTop = require("Tops/MapTop/MapTop");
 

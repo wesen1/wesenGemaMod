@@ -144,7 +144,7 @@ function MapRecordList:getRecordByPlayer(_player)
     return self.getRecordByPlayerLastRecord;
   end
 
-  for rank, record in ipairs(self.records) do
+  for _, record in ipairs(self.records) do
     if (record:getPlayer():equals(_player)) then
 
       self.getRecordByPlayerLastPlayer = _player;
@@ -241,7 +241,7 @@ end
 function MapRecordList:isPlayerNameUnique(_playerName)
 
   local counter = 0;
-  for index, mapRecord in ipairs(self.records) do
+  for _, mapRecord in ipairs(self.records) do
 
     if (mapRecord:getPlayer():getName() == _playerName) then
       counter = counter + 1;

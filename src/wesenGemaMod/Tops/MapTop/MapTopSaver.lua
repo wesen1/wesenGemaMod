@@ -56,44 +56,44 @@ function MapTopSaver:addRecord(_dataBase, _record, _mapName)
   end
 
   -- Check if the player has a record
-  local sql = "SELECT records.id "
-           .. "FROM records "
-           .. "INNER JOIN players ON records.player = players.id "
-           .. "INNER JOIN maps ON records.map = maps.id "
-           .. "WHERE records.player = " .. player:getId() .. " "
-           .. "AND maps.id = " .. mapId .. ";";
+  local selectExistingRecordsql = "SELECT records.id "
+                               .. "FROM records "
+                               .. "INNER JOIN players ON records.player = players.id "
+                               .. "INNER JOIN maps ON records.map = maps.id "
+                               .. "WHERE records.player = " .. player:getId() .. " "
+                               .. "AND maps.id = " .. mapId .. ";";
 
-  local result = _dataBase:query(sql, true);
+  local result = _dataBase:query(selectExistingRecordsql, true);
   if (#result == 0) then
 
     -- insert new record
-    local sql = "INSERT INTO records "
-             .. "(milliseconds, player, map, weapon_id, team_id, created_at) "
-             .. "VALUES ("
-               .. _record:getMilliseconds() .. ","
-               .. player:getId() .. ","
-               .. mapId .. ","
-               .. _record:getWeapon() .. ","
-               .. _record:getTeam() .. ","
-               .. "FROM_UNIXTIME(" .. _record:getCreatedAt() .. ")"
-             .. ");";
+    local insertRecordsql = "INSERT INTO records "
+                         .. "(milliseconds, player, map, weapon_id, team_id, created_at) "
+                         .. "VALUES ("
+                         .. _record:getMilliseconds() .. ","
+                         .. player:getId() .. ","
+                         .. mapId .. ","
+                         .. _record:getWeapon() .. ","
+                         .. _record:getTeam() .. ","
+                         .. "FROM_UNIXTIME(" .. _record:getCreatedAt() .. ")"
+                         .. ");";
 
-    _dataBase:query(sql, false);
+    _dataBase:query(insertRecordsql, false);
 
   else
 
     local recordId = result[1].id;
 
     -- update existing record
-    local sql = "UPDATE records "
-             .. "SET "
-             .. "milliseconds = " .. _record:getMilliseconds() .. ","
-             .. "weapon_id = " .. _record:getWeapon() .. ","
-             .. "team_id = " .. _record:getTeam() .. ","
-             .. "created_at = FROM_UNIXTIME(" .. _record:getCreatedAt() .. ") "
-             .. "WHERE id = " .. recordId .. ";";
+    local updateRecordsql = "UPDATE records "
+                         .. "SET "
+                         .. "milliseconds = " .. _record:getMilliseconds() .. ","
+                         .. "weapon_id = " .. _record:getWeapon() .. ","
+                         .. "team_id = " .. _record:getTeam() .. ","
+                         .. "created_at = FROM_UNIXTIME(" .. _record:getCreatedAt() .. ") "
+                         .. "WHERE id = " .. recordId .. ";";
 
-    _dataBase:query(sql, false);
+    _dataBase:query(updateRecordsql, false);
 
   end
 

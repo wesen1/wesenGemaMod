@@ -83,7 +83,7 @@ function CachedMapRot:removeMap(_mapName)
   local mapRot = getwholemaprot();
   local updatedMapRot = {};
 
-  for i, mapRotEntry in pairs(mapRot) do
+  for _, mapRotEntry in pairs(mapRot) do
     if (mapRotEntry["map"] ~= _mapName) then
       table.insert(updatedMapRot, mapRotEntry);
     end

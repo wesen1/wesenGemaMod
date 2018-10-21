@@ -66,7 +66,7 @@ function CommandListPrinter:printGroupedCommands(_commandList, _maximumLevel, _i
   local rows = {};
   local groupedCommands = _commandList:getGroupedCommands();
 
-  for index, level in ipairs(_commandList:getSortedCommandLevels()) do
+  for _, level in ipairs(_commandList:getSortedCommandLevels()) do
 
     if (_maximumLevel < level) then
       break;
@@ -74,11 +74,11 @@ function CommandListPrinter:printGroupedCommands(_commandList, _maximumLevel, _i
 
     local commandGroups = groupedCommands[level];
 
-    for level, groupName in ipairs(_commandList:getSortedCommandGroupNames()[level]) do
+    for _, groupName in ipairs(_commandList:getSortedCommandGroupNames()[level]) do
 
       local groupCommandString = "";
 
-      for index, commandName in ipairs(commandGroups[groupName]) do
+      for _, commandName in ipairs(commandGroups[groupName]) do
         local command = _commandList:getCommand(commandName);
         groupCommandString = groupCommandString .. self.commandPrinter:generateCommandString(command, false) .. "   ";
       end
