@@ -81,14 +81,14 @@ end
 --
 function PlayerInformationLoader:fetchPlayerId(_dataBase, _player, _nameId, _ipId)
 
-  local nameId = -1;
+  local nameId;
   if (_nameId == nil) then
     nameId = self:fetchNameId(_dataBase, _player:getName());
   else
     nameId = _nameId;
   end
 
-  local ipId = -1;
+  local ipId;
   if (_ipId == nil) then
     ipId = self:fetchIpId(_dataBase, _player:getIp());
   else

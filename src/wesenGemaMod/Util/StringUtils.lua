@@ -43,7 +43,7 @@ function StringUtils:split(_text, _delimiter)
     local delimiterStartPosition, delimiterEndPosition = text:find(_delimiter, stringPosition)
 
     -- Get the next word
-    local word = "";
+    local word;
     if (delimiterStartPosition) then
       word = text:sub(stringPosition, delimiterStartPosition - 1);
       stringPosition = delimiterEndPosition + 1;

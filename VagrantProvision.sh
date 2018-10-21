@@ -27,6 +27,9 @@ luarocks install mach
 luarocks install penlight
 luarocks install ldoc
 
+# Install luacheck
+luarocks install luacheck
+
 
 # Configure remote database login with the "root" user
 sql="UPDATE mysql.user SET host='%' WHERE user='root';

@@ -172,7 +172,7 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
       local timeString = self.timePrinter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i");
 
       -- Get the error message
-      local errorMessage = "";
+      local errorMessage;
 
       if (timeString == "0") then
 
@@ -203,7 +203,8 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
 end
 
 ---
--- Updates the last environment if necessary and resets the remaining extend minutes if the last environment was updated.
+-- Updates the last environment if necessary and resets the remaining extend minutes
+-- if the last environment was updated.
 --
 -- @tparam Environment _environment The current environment
 --

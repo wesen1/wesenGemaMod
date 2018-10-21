@@ -77,7 +77,7 @@ end
 function MapRecordList:addRecord(_newRecord)
 
   -- Get the current rank
-  local currentRank = nil;
+  local currentRank;
 
   local currentRecord = self:getRecordByPlayer(_newRecord:getPlayer());
   if (currentRecord) then

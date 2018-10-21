@@ -193,7 +193,7 @@ end
 --
 function MapTopPrinter:getMapTopTitle(_startRank, _numberOfDisplayRecords)
 
-  local mapTopTitle = nil;
+  local mapTopTitle;
 
   if (_startRank == 1) then
     mapTopTitle = self.output:getColor("mapTopInfo") .. "The "

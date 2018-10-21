@@ -62,7 +62,8 @@ getmetatable(TimePrinter).__call = TimePrinter.__construct;
 -- %s: Seconds
 -- %v: Milliseconds
 --
--- You can also specify automatic padding by adding <pad symbol><total number of symbols> between the % and the format specifier id, e.g. "%02i" will print "4" as "04"
+-- You can also specify automatic padding by adding <pad symbol><total number of symbols> between
+-- the % and the format specifier id, e.g. "%02i" will print "4" as "04"
 --
 -- @tparam int _milliseconds The time in milliseconds
 -- @tparam string _format The format for the time
@@ -86,7 +87,8 @@ end
 -- Private Methods
 
 ---
--- Converts a time in milliseconds to minutes, seconds and milliseconds and saves the result in the class attributes "minutes", "seconds" and "milliseconds".
+-- Converts a time in milliseconds to minutes, seconds and milliseconds and saves the result in the
+-- class attributes "minutes", "seconds" and "milliseconds".
 --
 -- @tparam int _totalMilliseconds The time in milliseconds
 --

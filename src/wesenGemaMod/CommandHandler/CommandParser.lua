@@ -90,7 +90,8 @@ function CommandParser:isCommand(_text)
 end
 
 ---
--- Splits an input text into command name and arguments and saves the results in the class attributes command and arguments.
+-- Splits an input text into command name and arguments and saves the results in
+-- the class attributes command and arguments.
 --
 -- @tparam string _inputText The input text in the format "!commandName args"
 -- @tparam CommandList _commandList The command list
@@ -172,7 +173,7 @@ end
 --
 function CommandParser:castArgumentToType(_argument, _argumentValue)
 
-  local exceptionMessage = nil;
+  local exceptionMessage;
 
   if (_argument:getType() == "string") then
     return _argumentValue;
@@ -201,7 +202,12 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
     end
 
   else
-    exceptionMessage = "Invalid argument type '" .. _argument:getType() .. "' in argument " .. _argument:getShortName() .. ".";
+    local exceptionMessageFormat = "Invalid argument type '%s' in argument %s.";
+    exceptionMessage = string.format(
+      exceptionMessageFormat,
+      _argument:getType(),
+      _argument:getShortName()
+    );
   end
 
   if (exceptionMessage) then

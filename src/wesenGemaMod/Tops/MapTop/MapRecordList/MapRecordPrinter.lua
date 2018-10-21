@@ -191,7 +191,9 @@ end
 
 ---
 -- Returns the rank string.
--- Will return (rank x of y) if the record is a new personal best time or "(But has a better record)"/("Tied his current record").
+-- Will return "(rank x of y)" if the record is a new personal best time, "(Tied his current record)"
+-- if the time is the same like the current record or "(But has a better record)" if the time
+-- is slower than the current record of the player.
 --
 -- @tparam MapRecord _mapRecord The map record
 --
@@ -207,11 +209,13 @@ function MapRecordPrinter:getRankString(_mapRecord)
 
     local numberOfRecords = mapRecordList:getNumberOfRecords();
     if (currentRecord == nil) then
-      -- This method is called before the record is added to the map record list, so the number of records must be increased by one
+      -- This method is called before the record is added to the map record list,
+      -- so the number of records must be increased by one
       numberOfRecords = numberOfRecords + 1;
     end
 
-    rankString = self.output:getColor("mapRecordRank") .. "(Rank " .. _mapRecord:getRank() .. " of " .. numberOfRecords .. ")";
+    local rankStringFormat = self.output:getColor("mapRecordRank") .. "(Rank %d of %d)";
+    rankString = string.format(rankStringFormat, _mapRecord:getRank(), numberOfRecords);
 
   else
     -- The current record will always be set here, because no current record means new personal best time

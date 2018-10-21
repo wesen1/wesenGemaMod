@@ -60,7 +60,7 @@ function MapRemover:removeMap(_dataBase, _mapName, _mapRot)
     _mapRot:removeMap(_mapName);
 
     -- Remove the map cgz and cfg files
-    removemap(_mapName, _mapTop);
+    removemap(_mapName);
 
     return true;
 
