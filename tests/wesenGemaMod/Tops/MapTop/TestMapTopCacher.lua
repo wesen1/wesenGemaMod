@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit");
+local luaunit = require("tests/luaunit-custom");
 local mach = require("mach");
 
 local MapTop = require("Tops/MapTop/MapTop");
@@ -19,7 +19,7 @@ local TableUtils = require("Util/TableUtils");
 --
 -- @type TestMapTopCacher
 --
-TestMapTopCacher = {};
+local TestMapTopCacher = {};
 
 
 ---
@@ -202,3 +202,6 @@ function TestMapTopCacher:testCanGetNumberOfRecords()
   end
 
 end
+
+
+return TestMapTopCacher;

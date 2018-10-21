@@ -1,6 +1,7 @@
 ---
 -- The lua unit test suite
 --
+
 local lfs = require("lfs");
 
 package.path = package.path .. ";" .. lfs.currentdir() .. "/../src/wesenGemaMod/?.lua"
@@ -20,7 +21,7 @@ require("tests/globals");
 ---
 -- Requires all lua files in _testDirectoryPath.
 --
-function requireTests(_testDirectoryPath)
+local function requireTests(_testDirectoryPath)
 
   for luaFileName in lfs.dir(_testDirectoryPath) do
 
@@ -37,7 +38,8 @@ function requireTests(_testDirectoryPath)
           package.path = package.path .. ";" .. _testDirectoryPath .. "/?.lua";
         end
 
-        require(luaFileName:gsub(".lua", ""));
+        local className = luaFileName:gsub(".lua", "");
+        _G[className] = require(className);
       end
 
     end

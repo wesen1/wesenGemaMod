@@ -13,7 +13,7 @@ local WeaponNameFetcher = require("WeaponHandler/WeaponNameFetcher");
 --
 -- @type TestWeaponNameFetcher
 --
-TestWeaponNameFetcher = {};
+local TestWeaponNameFetcher = {};
 
 
 ---
@@ -62,3 +62,6 @@ function TestWeaponNameFetcher:testCanFetchWeaponName()
   end
 
 end
+
+
+return TestWeaponNameFetcher;

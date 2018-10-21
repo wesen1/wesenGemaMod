@@ -29,7 +29,7 @@ local VoteEndHandler = require("EventHandler/VoteEndHandler");
 --
 -- @type TestEventHandler
 --
-TestEventHandler = {};
+local TestEventHandler = {};
 
 
 ---
@@ -69,3 +69,6 @@ function TestEventHandler:testCanBeConstructed()
   luaunit.assertInstanceOf(eventHandler:getVoteEndHandler(), VoteEndHandler);
 
 end
+
+
+return TestEventHandler;

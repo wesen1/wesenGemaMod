@@ -4,7 +4,7 @@
 -- @release 0.1
 -- @license MIT
 --
-local luaunit = require("luaunit");
+local luaunit = require("tests/luaunit-custom");
 local mach = require("mach");
 
 local DataBase = "";
@@ -17,7 +17,7 @@ local PlayerInformationLoader = "";
 --
 -- @type TestPlayerInformationLoader
 --
-TestPlayerInformationLoader = {};
+local TestPlayerInformationLoader = {};
 
 
 ---
@@ -512,3 +512,6 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
   end
 
 end
+
+
+return TestPlayerInformationLoader;

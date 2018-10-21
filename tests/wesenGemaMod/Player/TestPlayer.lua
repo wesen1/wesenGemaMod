@@ -4,7 +4,7 @@
 -- @release 0.1
 -- @license MIT
 --
-local luaunit = require("luaunit");
+local luaunit = require("tests/luaunit-custom");
 local mach = require("mach");
 
 local DataBase = "";
@@ -20,7 +20,7 @@ local outputMockTextColor = "\f0";
 --
 -- @type TestPlayer
 --
-TestPlayer = {};
+local TestPlayer = {};
 
 
 ---
@@ -269,3 +269,6 @@ function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
   luaunit.assertEquals(testPlayer:getId(), _playerId);
 
 end
+
+
+return TestPlayer;

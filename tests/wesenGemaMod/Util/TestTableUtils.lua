@@ -13,7 +13,7 @@ local TableUtils = require("Util/TableUtils");
 --
 -- @type TestTableUtils
 --
-TestTableUtils = {};
+local TestTableUtils = {};
 
 
 ---
@@ -177,3 +177,6 @@ function TestTableUtils:testCanCopyTable()
   luaunit.assertEquals(testTable["points"], 0);
 
 end
+
+
+return TestTableUtils;

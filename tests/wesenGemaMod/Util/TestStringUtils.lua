@@ -4,6 +4,7 @@
 -- @release 0.1
 -- @license MIT
 --
+
 local luaunit = require("tests/luaunit-custom");
 
 local StringUtils = require("Util/StringUtils");
@@ -13,7 +14,7 @@ local StringUtils = require("Util/StringUtils");
 --
 -- @type TestStringUtils
 --
-TestStringUtils = {};
+local TestStringUtils = {};
 
 
 ---
@@ -77,3 +78,6 @@ function TestStringUtils:testCanHandleEmptySplitString()
   );
 
 end
+
+
+return TestStringUtils;

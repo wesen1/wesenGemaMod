@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit");
+local luaunit = require("tests/luaunit-custom");
 local mach = require("mach");
 
 local GemaMode = require("GemaMode");
@@ -22,7 +22,7 @@ local Player = require("Player/Player");
 --
 -- @type TestMapTop
 --
-TestMapTop = {};
+local TestMapTop = {};
 
 
 ---
@@ -441,3 +441,6 @@ function TestMapTop:testCanPredictRank()
   end
 
 end
+
+
+return TestMapTop;

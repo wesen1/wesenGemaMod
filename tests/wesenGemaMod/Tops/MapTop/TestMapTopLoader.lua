@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit");
+local luaunit = require("tests/luaunit-custom");
 local mach = require("mach");
 
 local MapHandler = require("Map/MapHandler");
@@ -24,7 +24,7 @@ local Player = require("Player/Player");
 ---
 -- Checks whether the MapTopLoader works as expected.
 --
-TestMapTopLoader = {};
+local TestMapTopLoader = {};
 
 
 ---
@@ -186,6 +186,8 @@ function TestMapTopLoader:testCanFetchRecords()
 
 end
 
-
 -- Restore real dependencies
 package.loaded["Map/MapHandler"] = require("Map/MapHandler");
+
+
+return TestMapTopLoader;
