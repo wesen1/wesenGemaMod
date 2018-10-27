@@ -25,10 +25,11 @@ local StringUtils = {};
 --
 -- @tparam string _text The string
 -- @tparam string _delimiter The delimiter at which the string will be split
+-- @tparam bool _keepEmptyTextParts If set to true empty text parts will be included in the result
 --
 -- @treturn string[] The splits
 --
-function StringUtils:split(_text, _delimiter)
+function StringUtils:split(_text, _delimiter, _keepEmptyTextParts)
 
   if (_delimiter == "") then
     error(Exception("The delimiter must contain at least one symbol."));
@@ -51,7 +52,7 @@ function StringUtils:split(_text, _delimiter)
       word = text:sub(stringPosition);
     end
 
-    if (word ~= "") then
+    if (_keepEmptyTextParts or word ~= "") then
       table.insert(words, word);
     end
 

@@ -12,6 +12,7 @@
 --
 local BaseCommand = setmetatable({}, {});
 
+
 ---
 -- The main command name (with leading "!")
 -- Command names must must be lowercase
@@ -21,7 +22,7 @@ local BaseCommand = setmetatable({}, {});
 BaseCommand.name = nil;
 
 ---
--- The alternative command names (must not contain a leading "!" and must be lowercase)
+-- The alternative command names (must contain a leading "!" and must be lowercase)
 --
 -- @tfield string[] aliases
 --
@@ -42,7 +43,7 @@ BaseCommand.requiredLevel = 0;
 -- List of arguments that can/must be passed when calling the command
 -- Arguments will be displayed in the order in which they were added with BaseCommand:addArgument()
 --
--- @tfield table arguments
+-- @tfield CommandArgument[] arguments
 --
 BaseCommand.arguments = {};
 
@@ -207,7 +208,7 @@ function BaseCommand:getNumberOfRequiredArguments()
   local count = 0;
 
   for _, argument in ipairs(self.arguments) do
-    if (argument:getIsOptional() == false) then
+    if (not argument:getIsOptional()) then
       count = count + 1;
     end
   end

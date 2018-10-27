@@ -6,10 +6,11 @@
 --
 
 local ColorLoader = require("Output/Util/ColorLoader");
-local TableRenderer = require("Output/Util/TableRenderer");
+local TableRenderer = require("Output/TableRenderer/TableRenderer");
 
 
 --@todo: Add text templates for all texts because annoying getColor("") calls
+--@todo: Check if templates must be cached for performance
 
 ---
 -- Handles outputs of texts to clients.

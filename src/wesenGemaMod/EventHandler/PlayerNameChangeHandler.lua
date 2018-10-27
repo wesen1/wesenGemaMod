@@ -51,6 +51,8 @@ function PlayerNameChangeHandler:onPlayerNameChange (_player, _newName)
   local dataBase = self.parentGemaMode:getDataBase();
   _player:setName(_newName);
 
+  --@todo: Fix case that player uses script to change name and gets autokicked for spam
+
   -- @todo: Save player on demand (when he scores or uploads a map)
   _player:savePlayer(dataBase);
 

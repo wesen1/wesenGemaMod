@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+--@todo: CommandListPrinter should contain the grouped command names, levels, etc.
+
 local CommandPrinter = require("CommandHandler/CommandPrinter/CommandPrinter");
 
 ---
