@@ -20,6 +20,13 @@ GUN_PISTOL = 1;
 TEAM_CLA = 0;
 TEAM_RVSF = 1;
 
+-- Log levels
+ACLOG_DEBUG = 0;
+ACLOG_VERBOSE = 1;
+ACLOG_INFO = 2;
+ACLOG_WARNING = 3;
+ACLOG_ERROR = 4;
+
 -- Config methods
 cfg = {};
 

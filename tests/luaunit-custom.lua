@@ -7,7 +7,7 @@ local luaunit = require("luaunit");
 
 function luaunit.assertInstanceOf(_object, _class)
 
-  local metaTable = getmetatable(_object)
+  local metaTable = getmetatable(_object);
   if (metaTable == nil) then
     error("The object is not an instance of the specified class");
   else
