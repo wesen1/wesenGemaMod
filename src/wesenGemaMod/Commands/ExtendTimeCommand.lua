@@ -55,7 +55,6 @@ function ExtendTimeCommand:__construct(_parentCommandList)
   );
   setmetatable(instance, {__index = ExtendTimeCommand});
 
-  -- @todo: Config value "Number of Extend Minutes per map"
   instance.remainingTimeExtender = RemainigTimeExtender(20);
 
   return instance;
@@ -83,10 +82,11 @@ function ExtendTimeCommand:execute(_player, _arguments)
 
   self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
 
-  -- @todo: Add color for extend minutes?
   self.output:printInfo(
     self.output:getPlayerNameColor(_player:getLevel()) .. _player:getName()
- .. self.output:getColor("info") .. " extended the time by " .. _arguments.numberOfMinutes .. " minutes."
+ .. self.output:getColor("info") .. " extended the time by "
+ .. self.output:getColor("extendMinutes") .. _arguments.numberOfMinutes
+ .. self.output:getColor("info") .. " minutes."
   );
 
 end

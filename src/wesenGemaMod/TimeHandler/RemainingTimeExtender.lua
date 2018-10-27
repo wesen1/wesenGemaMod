@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+--@todo: Use extend minutes colors in error messages?
+
 local Exception = require("Util/Exception");
 local TimePrinter = require("TimeHandler/TimePrinter");
 
