@@ -46,6 +46,7 @@ function PlayerSpawnHandler:handleEvent(_player)
 
   if (self.parentGemaMode:getIsActive()) then
     _player:getScoreAttempt():start();
+    _player:getScoreAttempt():setTeamId(getteam(_player:getCn()));
   end
 
 end

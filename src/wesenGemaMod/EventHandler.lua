@@ -17,7 +17,6 @@ local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
 local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
 local PlayerShootHandler = require("EventHandler/PlayerShootHandler");
 local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
-local PlayerSpawnAfterHandler = require("EventHandler/PlayerSpawnAfterHandler");
 local VoteEndHandler = require("EventHandler/VoteEndHandler");
 
 ---
@@ -113,13 +112,6 @@ EventHandler.playerShootHandler = nil;
 EventHandler.playerSpawnHandler = nil;
 
 ---
--- The player spawn after event handler
---
--- @tfield PlaySpawnAfterHandler playerSpawnAfterHandler
---
-EventHandler.playerSpawnAfterHandler = nil;
-
----
 -- The vote end handler
 --
 -- @tfield VoteEndHandler voteEndHandler
@@ -150,7 +142,6 @@ function EventHandler:__construct(_parentGemaMode)
   instance.playerSendMapHandler = PlayerSendMapHandler(_parentGemaMode);
   instance.playerShootHandler = PlayerShootHandler(_parentGemaMode);
   instance.playerSpawnHandler = PlayerSpawnHandler(_parentGemaMode);
-  instance.playerSpawnAfterHandler = PlayerSpawnAfterHandler(_parentGemaMode);
   instance.voteEndHandler = VoteEndHandler(_parentGemaMode);
 
   return instance;
@@ -268,15 +259,6 @@ end
 --
 function EventHandler:getPlayerSpawnHandler()
   return self.playerSpawnHandler;
-end
-
----
--- Returns the player spawn after handler.
---
--- @treturn PlayerSpawnAfterHandler The player spawn after handler
---
-function EventHandler:getPlayerSpawnAfterHandler()
-  return self.playerSpawnAfterHandler;
 end
 
 ---

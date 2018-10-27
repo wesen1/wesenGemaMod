@@ -22,7 +22,6 @@ local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
 local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
 local PlayerShootHandler = require("EventHandler/PlayerShootHandler");
 local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
-local PlayerSpawnAfterHandler = require("EventHandler/PlayerSpawnAfterHandler");
 local VoteEndHandler = require("EventHandler/VoteEndHandler");
 
 ---
@@ -45,7 +44,7 @@ function TestEventHandler:testCanBeConstructed()
   -- "PlayerCallVoteHandler" has a sub event handler "PlayerCallMapVoteHandler", therefore
   -- there is 1 more call then there are classes inside the event handler
   gemaModeMock.getOutput:should_be_called()
-                        :multiple_times(15)
+                        :multiple_times(14)
                         :when(
                           function()
                             eventHandler = EventHandler(gemaModeMock);
@@ -67,7 +66,6 @@ function TestEventHandler:testCanBeConstructed()
   luaunit.assertInstanceOf(eventHandler:getPlayerSendMapHandler(), PlayerSendMapHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerShootHandler(), PlayerShootHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerSpawnHandler(), PlayerSpawnHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerSpawnAfterHandler(), PlayerSpawnAfterHandler);
   luaunit.assertInstanceOf(eventHandler:getVoteEndHandler(), VoteEndHandler);
 
 end

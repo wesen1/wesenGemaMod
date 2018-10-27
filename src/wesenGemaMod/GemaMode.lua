@@ -432,22 +432,11 @@ end
 
 ---
 -- Event handler which is called when a player spawns.
--- Initializes the start time of the player that spawned
 --
 -- @tparam int _cn The client number of the player who spawned
 --
 function GemaMode:onPlayerSpawn(_cn)
   self.eventHandler:getPlayerSpawnHandler():handleEvent(self.playerList:getPlayer(_cn));
-end
-
----
--- Event handler which is called after a player spawned.
--- Sets the players team and weapon.
---
--- @tparam int _cn The client number of the player who spawned
---
-function GemaMode:onPlayerSpawnAfter(_cn)
-  self.eventHandler:getPlayerSpawnAfterHandler():handleEvent(self.playerList:getPlayer(_cn));
 end
 
 ---

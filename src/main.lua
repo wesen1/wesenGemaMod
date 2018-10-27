@@ -169,16 +169,6 @@ function onPlayerSpawn(_cn)
 end
 
 ---
--- Event handler which is called after a player spawned.
--- Sets the players team and weapon.
---
--- @tparam int _cn The client number of the player who spawned
---
-function onPlayerSpawnAfter(_cn)
-  gemaMode:onPlayerSpawnAfter(_cn);
-end
-
----
 -- Event handler which is called when a vote ends.
 --
 -- @tparam int _result The result of the vote
