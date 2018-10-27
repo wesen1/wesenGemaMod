@@ -7,8 +7,6 @@
 
 --@todo: Force constructor on this class too
 
-local Exception = require("Util/Exception");
-
 ---
 -- Provides additional string functions.
 --

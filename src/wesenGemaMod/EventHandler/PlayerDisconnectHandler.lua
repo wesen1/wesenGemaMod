@@ -47,7 +47,8 @@ function PlayerDisconnectHandler:handleEvent(_cn, _reason)
 
   if (_reason == DISC_BANREFUSE) then
 
-    -- This message is printed on player disconnect because on player disconnect after the getname() method will return nil for the _cn
+    -- This message is printed on player disconnect because on player disconnect after
+    -- the getname() method will return nil for the _cn
     local infoMessage = string.format("%s could not connect [banned]", getname(_cn));
     self.output:printInfo(infoMessage);
   end

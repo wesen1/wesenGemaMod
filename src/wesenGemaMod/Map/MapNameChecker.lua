@@ -147,8 +147,6 @@ end
 --
 function MapNameChecker:mapNameContainsCodes(_mapName)
 
-  local mapNameLetter;
-
   local codePosition = 1;
   local numberOfCodes = #self.codes;
   local numberOfCodeMatches = 0;
