@@ -7,6 +7,7 @@
 
 local CommandLoader = require("CommandHandler/CommandLoader");
 local DataBase = require("DataBase");
+local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
 local MapRot = require("MapRot/MapRot");
@@ -42,6 +43,13 @@ GemaMode.commandLoader = nil;
 -- @tfield DataBase dataBase
 --
 GemaMode.dataBase = nil;
+
+---
+-- The environment handler
+--
+-- @tfield EnvironmentHandler environmentHandler
+--
+GemaMode.environmentHandler = nil;
 
 ---
 -- The event handler
@@ -115,6 +123,7 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
 
   instance.commandLoader = CommandLoader();
   instance.dataBase = DataBase(_dataBaseUser, _dataBasePassword, _dataBaseName);
+  instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
   instance.mapRot = MapRot("config/maprot_gema.cfg");
   instance.mapRotGenerator = MapRotGenerator();
   instance.output = Output();
@@ -125,7 +134,7 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.mapTopHandler = MapTopHandler(instance.output);
 
   -- Must be created after the map rot was created
-  instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
+  instance.environmentHandler = EnvironmentHandler(instance.mapRot);
 
   --@todo: Config value for this
   instance.isActive = true;
@@ -164,6 +173,15 @@ end
 --
 function GemaMode:getDataBase()
   return self.dataBase;
+end
+
+---
+-- Returns the environment handler.
+--
+-- @treturn EnvironmentHandler The environment handler
+--
+function GemaMode:getEnvironmentHandler()
+  return self.environmentHandler;
 end
 
 ---

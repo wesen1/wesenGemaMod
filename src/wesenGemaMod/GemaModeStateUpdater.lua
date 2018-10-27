@@ -5,27 +5,11 @@
 -- @license MIT
 --
 
-local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
-
 ---
 -- Handles updating the gema modes state.
 --
 local GemaModeStateUpdater = setmetatable({}, {});
 
-
----
--- The environment handler
---
--- @tfield EnvironmentHandler environmentHandler
---
-GemaModeStateUpdater.environmentHandler = nil;
-
----
--- The map rot
---
--- @tfield MapRot mapRot
---
-GemaModeStateUpdater.mapRot = nil;
 
 ---
 -- The parent gema mode
@@ -46,8 +30,6 @@ function GemaModeStateUpdater:__construct(_parentGemaMode)
 
   local instance = setmetatable({}, {__index = GemaModeStateUpdater});
 
-  instance.mapRot = _parentGemaMode:getMapRot();
-  instance.environmentHandler = EnvironmentHandler(_parentGemaMode:getMapRot());
   instance.parentGemaMode = _parentGemaMode;
 
   return instance;
@@ -57,32 +39,22 @@ end
 getmetatable(GemaModeStateUpdater).__call = GemaModeStateUpdater.__construct;
 
 
--- Getters and Setters
-
----
--- Returns the environment handler.
---
--- @treturn EnvironmentHandler The environment handler
---
-function GemaModeStateUpdater:getEnvironmentHandler()
-  return self.environmentHandler;
-end
-
-
 -- Public Methods
 
 ---
 -- Sets the next environment.
 --
 function GemaModeStateUpdater:setNextEnvironment(_nextEnvironment)
-  self.environmentHandler:setNextEnvironment(_nextEnvironment);
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+  environmentHandler:setNextEnvironment(_nextEnvironment);
 end
 
 ---
 -- Resets the next environment back to the maprots next environment.
 --
 function GemaModeStateUpdater:resetNextEnvironment()
-  self.environmentHandler:setNextEnvironment(self.mapRot:getNextEnvironment());
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+  environmentHandler:setNextEnvironment(self.mapRot:getNextEnvironment());
 end
 
 ---
@@ -99,7 +71,9 @@ function GemaModeStateUpdater:switchToNextEnvironment()
     --@todo: Update server name
   end
 
-  self.environmentHandler:switchToNextEnvironment(self.mapRot);
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+  local mapRot = self.parentGemaMode:getMapRot();
+  environmentHandler:switchToNextEnvironment(mapRot);
 
   return nextGemaModeStateUpdate;
 
@@ -132,7 +106,9 @@ function GemaModeStateUpdater:getNextGemaModeState()
 
   local nextGemaModeState = self.parentGemaMode:getIsActive();
 
-  local isNextEnvironmentGemaCompatible = self.environmentHandler:isNextEnvironmentGemaCompatible();
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
+  local isNextEnvironmentGemaCompatible = environmentHandler:isNextEnvironmentGemaCompatible();
+
   if (self.parentGemaMode:getIsActive() and not isNextEnvironmentGemaCompatible) then
     nextGemaModeState = false;
   elseif (not self.parentGemaMode:getIsActive() and isNextEnvironmentGemaCompatible) then

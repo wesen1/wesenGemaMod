@@ -76,8 +76,7 @@ getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
 --
 function ExtendTimeCommand:execute(_player, _arguments)
 
-  --@todo: EnvironmentHandler should be in gema mode and not in gema mode state updater
-  local environmentHandler = self.parentCommandList:getParentGemaMode():getGemaModeStateUpdater():getEnvironmentHandler();
+  local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler();
   local environment = environmentHandler:getCurrentEnvironment();
 
   self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
