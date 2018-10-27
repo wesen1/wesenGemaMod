@@ -47,7 +47,7 @@ function PlayerSayTextHandler:__construct(_parentGemaMode)
   local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerSayTextHandler});
 
-  instance.commandParser = CommandParser();
+  instance.commandParser = CommandParser(instance.output);
   instance.commandExecutor = CommandExecutor();
 
   return instance;

@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local ArgumentPrinter = require("CommandHandler/CommandPrinter/ArgumentPrinter");
 local CommandPrinter = require("CommandHandler/CommandPrinter/CommandPrinter");
 
 ---
@@ -14,6 +15,13 @@ local CommandPrinter = require("CommandHandler/CommandPrinter/CommandPrinter");
 --
 local CommandHelpTextPrinter = setmetatable({}, {});
 
+
+---
+-- The argument printer
+--
+-- @tfield ArgumentPrinter argumentPrinter
+--
+CommandHelpTextPrinter.argumentPrinter = nil;
 
 ---
 -- The command printer
@@ -41,6 +49,7 @@ function CommandHelpTextPrinter:__construct(_output)
 
   local instance = setmetatable({}, {__index = CommandHelpTextPrinter});
 
+  instance.argumentPrinter = ArgumentPrinter(_output);
   instance.commandPrinter = CommandPrinter(_output);
   instance.output = _output;
 
@@ -103,30 +112,30 @@ end
 function CommandHelpTextPrinter:getArgumentOutputList(_command)
 
   local arguments = {};
+  local isFirstArgument = true;
 
   for i, argument in ipairs(_command:getArguments()) do
 
-    local argumentName = "<" .. argument:getName() .. ">";
+    local argumentString = self.argumentPrinter:getFullArgumentString(argument);
     local argumentDescription = self.output:getColor("helpDescription") .. argument:getDescription();
 
-    -- Set the output color for the argument name
-    if (not argument:getIsOptional()) then
-      argumentName = self.output:getColor("requiredArgument") .. argumentName;
-    else
-      argumentName = self.output:getColor("optionalArgument") .. argumentName;
+    if (argument:getIsOptional()) then
       argumentDescription = argumentDescription .. " (Optional)";
     end
 
     -- Determine the prefix of the argumentName
-    if (i == 1) then
+    if (isFirstArgument) then
+      
       -- The first argument is in the same line like the title "Arguments", so it must contain a colon
-      argumentName = ": " .. argumentName;
+      argumentString = ": " .. argumentString;
+      isFirstArgument = false;
+
     else
       -- All other lines may not contain colons
-      argumentName = "  " .. argumentName;
+      argumentString = "  " .. argumentString;
     end
 
-    table.insert(arguments, {argumentName, argumentDescription});
+    table.insert(arguments, {argumentString, argumentDescription});
 
   end
 

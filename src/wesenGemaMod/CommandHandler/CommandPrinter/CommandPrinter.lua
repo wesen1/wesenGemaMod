@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+local ArgumentPrinter = require("CommandHandler/CommandPrinter/ArgumentPrinter");
+
 ---
 -- Generates strings to display single commands.
 --
@@ -12,6 +14,13 @@
 --
 local CommandPrinter = setmetatable({}, {});
 
+
+---
+-- The argument printer
+--
+-- @tfield ArgumentPrinter argumentPrinter
+--
+CommandPrinter.argumentPrinter = nil;
 
 ---
 -- The output
@@ -32,6 +41,7 @@ function CommandPrinter:__construct(_output)
 
   local instance = setmetatable({}, {__index = CommandPrinter});
 
+  instance.argumentPrinter = ArgumentPrinter(_output);
   instance.output = _output;
 
   return instance;
@@ -57,18 +67,7 @@ function CommandPrinter:generateCommandString(_command, _showOptionalArguments)
                      .. _command:getName();
 
   for _, argument in ipairs(_command:getArguments()) do
-
-    if (not argument:getIsOptional()) then
-      commandString = commandString
-                   .. self.output:getColor("requiredArgument")
-                   .. " <" .. argument:getShortName() .. ">";
-
-    elseif (_showOptionalArguments) then
-      commandString = commandString
-                   .. self.output:getColor("optionalArgument")
-                   .. " <" .. argument:getShortName() .. ">";
-    end
-
+    commandString = commandString .. " " .. self.argumentPrinter:getShortArgumentString(argument);
   end
 
   return commandString;

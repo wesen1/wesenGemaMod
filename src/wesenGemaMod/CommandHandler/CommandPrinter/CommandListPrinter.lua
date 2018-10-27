@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
---@todo: CommandListPrinter should contain the grouped command names, levels, etc.
-
 local CommandPrinter = require("CommandHandler/CommandPrinter/CommandPrinter");
 
 ---
@@ -59,8 +57,8 @@ getmetatable(CommandListPrinter).__call = CommandListPrinter.__construct;
 -- Prints the list of available commands to a player.
 --
 -- @tparam CommandList _commandList The command list
--- @tparam int _maximumLevel The highest command level for that commands are ṕrinted
--- @tparam String _indent The indention string to add in front of each output line
+-- @tparam int _maximumLevel The highest command level for that commands are printed
+-- @tparam string _indent The indention string to add in front of each output line
 -- @tparam int _player The player
 --
 function CommandListPrinter:printGroupedCommands(_commandList, _maximumLevel, _indent, _player)

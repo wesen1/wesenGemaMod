@@ -9,7 +9,7 @@ local lfs = require("lfs");
 local CommandList = require("CommandHandler/CommandList");
 
 ---
--- Loads all commands from the Commands directory.
+-- Loads all commands from a specified commands directory.
 --
 -- @type CommandLoader
 --
@@ -37,7 +37,7 @@ getmetatable(CommandLoader).__call = CommandLoader.__construct;
 -- Public Methods
 
 ---
--- Loads all commands from the Commands directory and returns a CommandList.
+-- Loads all commands from a specified commands directory and returns a CommandList.
 --
 -- @tparam GemaMode _parentGemaMode The parent gema mode for the CommandList
 -- @tparam string _commandClassesDirectoryPath The path to the command classes directory
@@ -71,7 +71,7 @@ function CommandLoader:getCommandClassNames(_commandClassesDirectoryPath)
 
   local commandClassNames = {};
 
-  -- iterate over each file in the Commands directory
+  -- Iterate over each file in the Commands directory
   for luaFile in lfs.dir(_commandClassesDirectoryPath) do
 
     -- If the file name ends with "Command.lua"

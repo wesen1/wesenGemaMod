@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local ArgumentPrinter = require("CommandHandler/CommandPrinter/ArgumentPrinter");
 local Exception = require("Util/Exception");
 local StringUtils = require("Util/StringUtils");
 local TableUtils = require("Util/TableUtils");
@@ -16,6 +17,13 @@ local TableUtils = require("Util/TableUtils");
 --
 local CommandParser = setmetatable({}, {});
 
+
+---
+-- The argument printer
+--
+-- @tfield ArgumentPrinter argumentPrinter
+--
+CommandParser.argumentPrinter = nil;
 
 ---
 -- The last parsed command
@@ -35,11 +43,15 @@ CommandParser.arguments = nil;
 ---
 -- CommandParser constructor.
 --
+-- @tparam Output _output The output
+--
 -- @treturn CommandParser The CommandParser instance
 --
-function CommandParser:__construct()
+function CommandParser:__construct(_output)
 
   local instance = setmetatable({}, {__index = CommandParser});
+
+  instance.argumentPrinter = ArgumentPrinter(_output);
 
   return instance;
 
@@ -139,7 +151,10 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
 
   -- Check whether the number of arguments is valid
   if (numberOfArgumentTextParts < _command:getNumberOfRequiredArguments()) then
-    error(Exception("Not enough arguments."));
+
+    local missingArgumentsString = self:getMissingArgumentsString(_command, numberOfArgumentTextParts);
+    error(Exception("Not enough arguments. (Missing arguments: " .. missingArgumentsString .. ")"));
+
   elseif (numberOfArgumentTextParts > _command:getNumberOfArguments()) then
     error(Exception("Too many arguments"));
   end
@@ -159,6 +174,37 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
   end
 
   return inputArguments;
+
+end
+
+---
+-- Returns the missing arguments string for a command.
+--
+-- @tparam BaseCommand _command The command
+-- @tparam int _numberOfPassedArguments The number of passed arguments
+--
+-- @treturn string The missing arguments string
+--
+function CommandParser:getMissingArgumentsString(_command, _numberOfPassedArguments)
+
+  local requiredArguments = _command:getRequiredArguments();
+
+  local missingArgumentsString = "";
+  local isFirstArgument = true;
+  for i = _numberOfPassedArguments + 1, #requiredArguments, 1 do
+
+    if (isFirstArgument) then
+      isFirstArgument = false;
+    else
+      missingArgumentsString = missingArgumentsString .. ", ";
+    end
+
+    local argumentString = self.argumentPrinter:getShortArgumentString(requiredArguments[i]);
+    missingArgumentsString = missingArgumentsString .. argumentString .. "\f3";
+
+  end
+
+  return missingArgumentsString;
 
 end
 

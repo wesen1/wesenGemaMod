@@ -199,22 +199,30 @@ end
 -- Public Methods
 
 ---
--- Returns the amount of required arguments of this command.
+-- Returns the list of required arguments of this command.
+--
+-- @treturn CommandArgument[] The list of required arguments of this command
+--
+function BaseCommand:getRequiredArguments()
+
+  local requiredArguments = {};
+  for _, argument in ipairs(self.arguments) do
+    if (not argument:getIsOptional()) then
+      table.insert(requiredArguments, argument);
+    end
+  end
+
+  return requiredArguments;
+
+end
+
+---
+-- Returns the number of required arguments of this command.
 --
 -- @treturn int The number of required arguments
 --
 function BaseCommand:getNumberOfRequiredArguments()
-
-  local count = 0;
-
-  for _, argument in ipairs(self.arguments) do
-    if (not argument:getIsOptional()) then
-      count = count + 1;
-    end
-  end
-
-  return count;
-
+  return #self:getRequiredArguments();
 end
 
 ---
