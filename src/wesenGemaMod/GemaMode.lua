@@ -256,7 +256,7 @@ end
 function GemaMode:initialize()
 
   logline(ACLOG_DEBUG, "Loading commands ...");
-  self.commandList = self.commandLoader:loadCommands(self);
+  self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
 
   logline(ACLOG_DEBUG, "Generating gema maprot ...");
   self.mapRot:switchToGemaMapRot();

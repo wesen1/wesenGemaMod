@@ -40,14 +40,15 @@ getmetatable(CommandLoader).__call = CommandLoader.__construct;
 -- Loads all commands from the Commands directory and returns a CommandList.
 --
 -- @tparam GemaMode _parentGemaMode The parent gema mode for the CommandList
+-- @tparam string _commandClassesDirectoryPath The path to the command classes directory
 --
--- @todo: Add parameter: commandsFolder
-function CommandLoader:loadCommands(_parentGemaMode)
+-- @treturn CommandList The command list that contains the loaded commands
+--
+function CommandLoader:loadCommands(_parentGemaMode, _commandClassesDirectoryPath)
 
   local commandList = CommandList(_parentGemaMode);
 
-  --@todo: Fix path to relative path here..
-  for _, commandClassName in ipairs(self:getCommandClassNames("lua/scripts/wesenGemaMod/Commands")) do
+  for _, commandClassName in ipairs(self:getCommandClassNames(_commandClassesDirectoryPath)) do
     local command = require("Commands/" .. commandClassName);
     commandList:addCommand(command);
   end
@@ -64,7 +65,7 @@ end
 --
 -- @tparam string _commandClassesDirectoryPath The path to the command classes directory
 --
--- @treturn table The list of command class names
+-- @treturn string[] The list of command class names
 --
 function CommandLoader:getCommandClassNames(_commandClassesDirectoryPath)
 
