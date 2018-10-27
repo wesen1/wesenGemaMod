@@ -123,6 +123,7 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
 
   instance.commandLoader = CommandLoader();
   instance.dataBase = DataBase(_dataBaseUser, _dataBasePassword, _dataBaseName);
+  instance.environmentHandler = EnvironmentHandler();
   instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
   instance.mapRot = MapRot("config/maprot_gema.cfg");
   instance.mapRotGenerator = MapRotGenerator();
@@ -132,9 +133,6 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   -- Must be created after the output was created
   instance.eventHandler = EventHandler(instance);
   instance.mapTopHandler = MapTopHandler(instance.output);
-
-  -- Must be created after the map rot was created
-  instance.environmentHandler = EnvironmentHandler(instance.mapRot);
 
   --@todo: Config value for this
   instance.isActive = true;
@@ -279,6 +277,8 @@ function GemaMode:initialize()
   logline(ACLOG_DEBUG, "Generating gema maprot ...");
   self.mapRot:switchToGemaMapRot();
   self.mapRotGenerator:generateGemaMapRot(self.mapRot, "packages/maps/servermaps/incoming");
+
+  self.environmentHandler:initialize(self.mapRot);
 
   logline(ACLOG_DEBUG, "Initializing maptops ...");
   self.mapTopHandler:initialize();

@@ -47,7 +47,6 @@ function EnvironmentHandler:__construct(_mapRot)
   local instance = setmetatable({}, {__index = EnvironmentHandler});
 
   instance.mapNameChecker = MapNameChecker();
-  instance.nextEnvironment = _mapRot:getNextEnvironment();
 
   return instance;
 
@@ -96,6 +95,15 @@ end
 
 
 -- Public Methods
+
+---
+-- Initializes the environment handler.
+--
+-- @tparam MapRot _mapRot The map rot
+--
+function EnvironmentHandler:initialize(_mapRot)
+  self.nextEnvironment = _mapRot:getNextEnvironment();
+end
 
 ---
 -- Updates the currentEnvironment and nextEnvironment variables.

@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
---@todo: Replace by ORM Map class
-
 ---
 -- Provides functions to load and save maps.
 --

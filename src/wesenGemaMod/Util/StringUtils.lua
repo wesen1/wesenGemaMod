@@ -32,37 +32,48 @@ local StringUtils = {};
 function StringUtils:split(_text, _delimiter, _keepEmptyTextParts)
 
   if (_delimiter == "") then
-    error(Exception("The delimiter must contain at least one symbol."));
+    -- Split the string into characters
+    local characters = {};
+
+    for character in _text:gmatch(".") do
+      table.insert(characters, character);
+    end
+
+    return characters;
+
+  else
+    -- Split the string into words with the delimiter
+
+    local text = _text;
+    local words = {};
+
+    local stringPosition = 1;
+    while (true) do
+
+      local delimiterStartPosition, delimiterEndPosition = text:find(_delimiter, stringPosition)
+
+      -- Get the next word
+      local word;
+      if (delimiterStartPosition) then
+        word = text:sub(stringPosition, delimiterStartPosition - 1);
+        stringPosition = delimiterEndPosition + 1;
+      else
+        word = text:sub(stringPosition);
+      end
+
+      if (_keepEmptyTextParts or word ~= "") then
+        table.insert(words, word);
+      end
+
+      if (not delimiterStartPosition) then
+        break;
+      end
+
+    end
+
+    return words;
+
   end
-
-  local text = _text;
-  local words = {};
-
-  local stringPosition = 1;
-  while (true) do
-
-    local delimiterStartPosition, delimiterEndPosition = text:find(_delimiter, stringPosition)
-
-    -- Get the next word
-    local word;
-    if (delimiterStartPosition) then
-      word = text:sub(stringPosition, delimiterStartPosition - 1);
-      stringPosition = delimiterEndPosition + 1;
-    else
-      word = text:sub(stringPosition);
-    end
-
-    if (_keepEmptyTextParts or word ~= "") then
-      table.insert(words, word);
-    end
-
-    if (not delimiterStartPosition) then
-      break;
-    end
-
-  end
-
-  return words;
 
 end
 
