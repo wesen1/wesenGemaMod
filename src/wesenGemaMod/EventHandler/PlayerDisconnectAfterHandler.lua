@@ -38,19 +38,12 @@ getmetatable(PlayerDisconnectAfterHandler).__call = PlayerDisconnectAfterHandler
 -- Class Methods
 
 ---
--- Event handler which is called when a player disconnects.
--- Unsets the player object of the cn and prints an error message in case of a banned player trying to connect
+-- Event handler which is called after a player disconnected.
 --
 -- @tparam int _cn The client number of the player who disconnected
 -- @tparam int _reason The disconnect reason
 --
 function PlayerDisconnectAfterHandler:handleEvent(_cn, _reason)
-
-  --@todo: Fix this by moving this to a PlayerDisconnect handler
-  if (_reason == DISC_BANREFUSE) then
-    local infoMessage = string.format("%s could not connect [banned]", getname(_cn));
-    self.output:printInfo(infoMessage);
-  end
 
   -- The player is removed from the list of players after he fully disconnected because a flag action
   -- event will be fired when he holds the flag before disconnecting

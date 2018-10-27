@@ -75,8 +75,17 @@ function onPlayerConnect(_cn)
 end
 
 ---
--- Event handler which is called when a player disconnected.
--- Unsets the player object of the cn and prints an error message in case of a banned player trying to connect
+-- Event handler which is called when a player disconnects.
+--
+-- @tparam int _cn The client number of the player who disconnected
+-- @tparam int _reason The disconnect reason
+--
+function onPlayerDisconnect(_cn, _reason)
+  gemaMode:onPlayerDisconnect(_cn, _reason);
+end
+
+---
+-- Event handler which is called after a player disconnected.
 --
 -- @tparam int _cn The client number of the player who disconnected
 -- @tparam int _reason The disconnect reason

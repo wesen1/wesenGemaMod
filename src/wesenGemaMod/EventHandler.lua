@@ -9,6 +9,7 @@ local FlagActionHandler = require("EventHandler/FlagActionHandler");
 local MapChangeHandler = require("EventHandler/MapChangeHandler");
 local PlayerCallVoteHandler = require("EventHandler/PlayerCallVoteHandler");
 local PlayerConnectHandler = require("EventHandler/PlayerConnectHandler");
+local PlayerDisconnectHandler = require("EventHandler/PlayerDisconnectHandler");
 local PlayerDisconnectAfterHandler = require("EventHandler/PlayerDisconnectAfterHandler");
 local PlayerNameChangeHandler = require("EventHandler/PlayerNameChangeHandler");
 local PlayerRoleChangeHandler = require("EventHandler/PlayerRoleChangeHandler");
@@ -54,6 +55,13 @@ EventHandler.playerCallVoteHandler = nil;
 -- @tfield PlayerConnectHandler playerConnectHandler
 --
 EventHandler.playerConnectHandler = nil;
+
+---
+-- The player disconnect event handler
+--
+-- @tfield PlayerDisconnectHandler playerDisconnectHandler
+--
+EventHandler.playerDisconnectHandler = nil;
 
 ---
 -- The player disconnect event after handler
@@ -134,6 +142,7 @@ function EventHandler:__construct(_parentGemaMode)
   instance.mapChangeHandler = MapChangeHandler(_parentGemaMode);
   instance.playerCallVoteHandler = PlayerCallVoteHandler(_parentGemaMode);
   instance.playerConnectHandler = PlayerConnectHandler(_parentGemaMode);
+  instance.playerDisconnectHandler = PlayerDisconnectHandler(_parentGemaMode);
   instance.playerDisconnectAfterHandler = PlayerDisconnectAfterHandler(_parentGemaMode);
   instance.playerNameChangeHandler = PlayerNameChangeHandler(_parentGemaMode);
   instance.playerRoleChangeHandler = PlayerRoleChangeHandler(_parentGemaMode);
@@ -187,6 +196,15 @@ end
 --
 function EventHandler:getPlayerConnectHandler()
   return self.playerConnectHandler;
+end
+
+---
+-- Returns the player disconnect handler.
+--
+-- @treturn PlayerDisconnectHandler The player disconnect handler
+--
+function EventHandler:getPlayerDisconnectHandler()
+  return self.playerDisconnectHandler;
 end
 
 ---

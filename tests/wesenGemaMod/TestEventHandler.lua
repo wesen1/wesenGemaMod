@@ -14,6 +14,7 @@ local FlagActionHandler = require("EventHandler/FlagActionHandler");
 local MapChangeHandler = require("EventHandler/MapChangeHandler");
 local PlayerCallVoteHandler = require("EventHandler/PlayerCallVoteHandler");
 local PlayerConnectHandler = require("EventHandler/PlayerConnectHandler");
+local PlayerDisconnectHandler = require("EventHandler/PlayerDisconnectHandler");
 local PlayerDisconnectAfterHandler = require("EventHandler/PlayerDisconnectAfterHandler");
 local PlayerNameChangeHandler = require("EventHandler/PlayerNameChangeHandler");
 local PlayerRoleChangeHandler = require("EventHandler/PlayerRoleChangeHandler");
@@ -44,7 +45,7 @@ function TestEventHandler:testCanBeConstructed()
   -- "PlayerCallVoteHandler" has a sub event handler "PlayerCallMapVoteHandler", therefore
   -- there is 1 more call then there are classes inside the event handler
   gemaModeMock.getOutput:should_be_called()
-                        :multiple_times(14)
+                        :multiple_times(15)
                         :when(
                           function()
                             eventHandler = EventHandler(gemaModeMock);
@@ -58,6 +59,7 @@ function TestEventHandler:testCanBeConstructed()
   luaunit.assertInstanceOf(eventHandler:getMapChangeHandler(), MapChangeHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerCallVoteHandler(), PlayerCallVoteHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerConnectHandler(), PlayerConnectHandler);
+  luaunit.assertInstanceOf(eventHandler:getPlayerDisconnectHandler(), PlayerDisconnectHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerDisconnectAfterHandler(), PlayerDisconnectAfterHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerNameChangeHandler(), PlayerNameChangeHandler);
   luaunit.assertInstanceOf(eventHandler:getPlayerRoleChangeHandler(), PlayerRoleChangeHandler);
