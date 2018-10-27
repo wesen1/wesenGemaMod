@@ -64,7 +64,7 @@ getmetatable(PlayerSendMapHandler).__call = PlayerSendMapHandler.__construct;
 --
 -- @treturn int|nil Upload error if map is not a gema or nil
 --
-function PlayerSendMapHandler:onPlayerSendMap(_mapName, _player, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
+function PlayerSendMapHandler:handleEvent(_mapName, _player, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
   -- if upload is not rejected
   if (_uploadError == UE_NOERROR) then

@@ -8,6 +8,7 @@
 ---
 -- Parent class for event handlers.
 -- Stores a parent gema mode and a output.
+-- Each event handler must provide a public method "handleEvent".
 --
 -- @type BaseEventHandler
 --

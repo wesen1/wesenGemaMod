@@ -47,7 +47,7 @@ getmetatable(VoteEndHandler).__call = VoteEndHandler.__construct;
 -- @tparam int _number1 The game mode, target cn, etc.
 -- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
 --
-function VoteEndHandler:onVoteEnd(_result, _player, _type, _text, _number1, _number2)
+function VoteEndHandler:handleEvent(_result, _player, _type, _text, _number1, _number2)
 
   if (_type == SA_MAP) then
     self:onMapVoteEnd(_result, _player, _text, _number1, _number2);

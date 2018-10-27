@@ -42,7 +42,7 @@ getmetatable(PlayerSpawnHandler).__call = PlayerSpawnHandler.__construct;
 --
 -- @tparam Player _player The player who spawned
 --
-function PlayerSpawnHandler:onPlayerSpawn(_player)
+function PlayerSpawnHandler:handleEvent(_player)
 
   if (self.parentGemaMode:getIsActive()) then
     _player:getScoreAttempt():start();

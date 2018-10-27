@@ -43,7 +43,7 @@ getmetatable(MapChangeHandler).__call = MapChangeHandler.__construct;
 -- @tparam string _mapName The name of the new map
 -- @tparam int _gameMode The game mode
 --
-function MapChangeHandler:onMapChange(_mapName, _gameMode)
+function MapChangeHandler:handleEvent(_mapName, _gameMode)
 
   self:updateGemaModeState();
 
@@ -58,8 +58,6 @@ function MapChangeHandler:onMapChange(_mapName, _gameMode)
 
     -- Print the map statistics for the map to all players
     mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop);
-
-      --@todo: Use setmotd() for greeting + map statistics stuff, or just edit the file
 
   end
 
@@ -83,5 +81,6 @@ function MapChangeHandler:updateGemaModeState()
   end
 
 end
+
 
 return MapChangeHandler;

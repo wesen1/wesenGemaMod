@@ -44,7 +44,7 @@ getmetatable(PlayerRoleChangeHandler).__call = PlayerRoleChangeHandler.__constru
 -- @tparam int _player The player whose role changed
 -- @tparam int _newRole The new role
 --
-function PlayerRoleChangeHandler:onPlayerRoleChange (_player, _newRole)
+function PlayerRoleChangeHandler:handleEvent(_player, _newRole)
 
   if (self.parentGemaMode:getIsActive()) then
 

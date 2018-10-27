@@ -44,7 +44,7 @@ getmetatable(PlayerDisconnectAfterHandler).__call = PlayerDisconnectAfterHandler
 -- @tparam int _cn The client number of the player who disconnected
 -- @tparam int _reason The disconnect reason
 --
-function PlayerDisconnectAfterHandler:onPlayerDisconnectAfter(_cn, _reason)
+function PlayerDisconnectAfterHandler:handleEvent(_cn, _reason)
 
   --@todo: Fix this by moving this to a PlayerDisconnect handler
   if (_reason == DISC_BANREFUSE) then

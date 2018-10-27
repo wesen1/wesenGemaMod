@@ -296,7 +296,7 @@ end
 -- @tparam int _flag The id of the flag whose state was changed
 --
 function GemaMode:onFlagAction(_cn, _action, _flag)
-  self.eventHandler:getFlagActionHandler():onFlagAction(self.playerList:getPlayer(_cn), _action, _flag);
+  self.eventHandler:getFlagActionHandler():handleEvent(self.playerList:getPlayer(_cn), _action, _flag);
 end
 
 ---
@@ -306,7 +306,7 @@ end
 -- @tparam int _gameMode The game mode
 --
 function GemaMode:onMapChange(_mapName, _gameMode)
-  self.eventHandler:getMapChangeHandler():onMapChange(_mapName, _gameMode);
+  self.eventHandler:getMapChangeHandler():handleEvent(_mapName, _gameMode);
 end
 
 ---
@@ -323,7 +323,7 @@ end
 --
 function GemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
 
-  return self.eventHandler:getPlayerCallVoteHandler():onPlayerCallVote(
+  return self.eventHandler:getPlayerCallVoteHandler():handleEvent(
     self.playerList:getPlayer(_cn), _type, _text, _number1, _number2, _voteError
   );
 
@@ -335,7 +335,7 @@ end
 -- @tparam int _cn The client number of the player who connected
 --
 function GemaMode:onPlayerConnect(_cn)
-  self.eventHandler:getPlayerConnectHandler():onPlayerConnect(_cn);
+  self.eventHandler:getPlayerConnectHandler():handleEvent(_cn);
 end
 
 ---
@@ -346,7 +346,7 @@ end
 -- @tparam int _reason The disconnect reason
 --
 function GemaMode:onPlayerDisconnectAfter(_cn, _reason)
-  self.eventHandler:getPlayerDisconnectAfterHandler():onPlayerDisconnectAfter(_cn, _reason);
+  self.eventHandler:getPlayerDisconnectAfterHandler():handleEvent(_cn, _reason);
 end
 
 ---
@@ -357,7 +357,7 @@ end
 -- @tparam string _newName The new name of the player
 --
 function GemaMode:onPlayerNameChange(_cn, _newName)
-  self.eventHandler:getPlayerNameChangeHandler():onPlayerNameChange(self.playerList:getPlayer(_cn), _newName);
+  self.eventHandler:getPlayerNameChangeHandler():handleEvent(self.playerList:getPlayer(_cn), _newName);
 end
 
 ---
@@ -368,7 +368,7 @@ end
 -- @tparam int _newRole The new role
 --
 function GemaMode:onPlayerRoleChange (_cn, _newRole)
-  self.eventHandler:getPlayerRoleChangeHandler():onPlayerRoleChange(self.playerList:getPlayer(_cn), _newRole);
+  self.eventHandler:getPlayerRoleChangeHandler():handleEvent(self.playerList:getPlayer(_cn), _newRole);
 end
 
 ---
@@ -382,7 +382,7 @@ end
 --
 function GemaMode:onPlayerSayText(_cn, _text)
 
-  return self.eventHandler:getPlayerSayTextHandler():onPlayerSayText(
+  return self.eventHandler:getPlayerSayTextHandler():handleEvent(
     self.playerList:getPlayer(_cn), _text
   );
 
@@ -405,7 +405,7 @@ end
 --
 function GemaMode:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
-  return self.eventHandler:getPlayerSendMapHandler():onPlayerSendMap(
+  return self.eventHandler:getPlayerSendMapHandler():handleEvent(
     _mapName, self.playerList:getPlayer(_cn), _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError
   );
 
@@ -418,7 +418,7 @@ end
 -- @tparam int _weapon The weapon with which the player shot
 --
 function GemaMode:onPlayerShoot(_cn, _weapon)
-  self.eventHandler:getPlayerShootHandler():onPlayerShoot(self.playerList:getPlayer(_cn), _weapon);
+  self.eventHandler:getPlayerShootHandler():handleEvent(self.playerList:getPlayer(_cn), _weapon);
 end
 
 ---
@@ -428,7 +428,7 @@ end
 -- @tparam int _cn The client number of the player who spawned
 --
 function GemaMode:onPlayerSpawn(_cn)
-  self.eventHandler:getPlayerSpawnHandler():onPlayerSpawn(self.playerList:getPlayer(_cn));
+  self.eventHandler:getPlayerSpawnHandler():handleEvent(self.playerList:getPlayer(_cn));
 end
 
 ---
@@ -438,7 +438,7 @@ end
 -- @tparam int _cn The client number of the player who spawned
 --
 function GemaMode:onPlayerSpawnAfter(_cn)
-  self.eventHandler:getPlayerSpawnAfterHandler():onPlayerSpawnAfter(self.playerList:getPlayer(_cn));
+  self.eventHandler:getPlayerSpawnAfterHandler():handleEvent(self.playerList:getPlayer(_cn));
 end
 
 ---
@@ -452,7 +452,7 @@ end
 -- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
 --
 function GemaMode:onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
-  self.eventHandler:getVoteEndHandler():onVoteEnd(
+  self.eventHandler:getVoteEndHandler():handleEvent(
     _result, self.playerList:getPlayer(_cn), _type, _text, _number1, _number2
   );
 end

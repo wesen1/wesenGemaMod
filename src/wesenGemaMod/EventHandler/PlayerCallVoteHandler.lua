@@ -52,11 +52,11 @@ getmetatable(PlayerCallVoteHandler).__call = PlayerCallVoteHandler.__construct;
 --
 -- @treturn int|nil PLUGIN_BLOCK if a voted map is auto removed or nil
 --
-function PlayerCallVoteHandler:onPlayerCallVote(_player, _type, _text, _number1, _number2, _voteError)
+function PlayerCallVoteHandler:handleEvent(_player, _type, _text, _number1, _number2, _voteError)
 
   -- If vote is a map vote
   if (_type == SA_MAP) then
-    return self.playerCallMapVoteHandler:onPlayerCallMapVote(_player, _text, _number1, _number2, _voteError);
+    return self.playerCallMapVoteHandler:handleEvent(_player, _text, _number1, _number2, _voteError);
   end
 
 end

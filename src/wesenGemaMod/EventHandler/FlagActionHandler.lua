@@ -55,9 +55,7 @@ getmetatable(FlagActionHandler).__call = FlagActionHandler.__construct;
 -- @tparam int _action The id of the flag action
 -- @tparam int _flag The id of the flag whose state was changed
 --
-function FlagActionHandler:onFlagAction(_player, _action, _flag)
-
-  --@todo: Fix when player disconnects while holding the flag!
+function FlagActionHandler:handleEvent(_player, _action, _flag)
 
   if (self.parentGemaMode:getIsActive()) then
 

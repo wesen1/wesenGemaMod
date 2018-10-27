@@ -125,7 +125,7 @@ function CommandHelpTextPrinter:getArgumentOutputList(_command)
 
     -- Determine the prefix of the argumentName
     if (isFirstArgument) then
-      
+
       -- The first argument is in the same line like the title "Arguments", so it must contain a colon
       argumentString = ": " .. argumentString;
       isFirstArgument = false;

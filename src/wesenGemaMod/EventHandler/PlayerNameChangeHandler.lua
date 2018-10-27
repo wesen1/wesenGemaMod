@@ -45,9 +45,8 @@ getmetatable(PlayerNameChangeHandler).__call = PlayerNameChangeHandler.__constru
 -- @tparam int _player The player who changed his name
 -- @tparam string _newName The new name of the player
 --
-function PlayerNameChangeHandler:onPlayerNameChange (_player, _newName)
+function PlayerNameChangeHandler:handleEvent(_player, _newName)
 
-  -- @todo: Replace partial Player by ORM ..
   local dataBase = self.parentGemaMode:getDataBase();
   _player:setName(_newName);
 

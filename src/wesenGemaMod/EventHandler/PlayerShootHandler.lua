@@ -54,7 +54,7 @@ getmetatable(PlayerShootHandler).__call = PlayerShootHandler.__construct;
 -- @tparam int _player The player who shot
 -- @tparam int _weapon The weapon with which the player shot
 --
-function PlayerShootHandler:onPlayerShoot(_player, _weapon)
+function PlayerShootHandler:handleEvent(_player, _weapon)
 
   if (self.parentGemaMode:getIsActive()) then
     self.scoreWeaponUpdater:updateScoreWeapon(_player:getScoreAttempt(), _weapon);

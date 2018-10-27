@@ -44,7 +44,7 @@ getmetatable(PlayerSpawnAfterHandler).__call = PlayerSpawnAfterHandler.__constru
 --
 -- @tparam Player _player The player who spawned
 --
-function PlayerSpawnAfterHandler:onPlayerSpawnAfter(_player)
+function PlayerSpawnAfterHandler:handleEvent(_player)
 
   if (self.parentGemaMode:getIsActive()) then
 

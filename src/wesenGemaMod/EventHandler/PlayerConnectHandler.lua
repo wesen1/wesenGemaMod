@@ -36,7 +36,6 @@ function PlayerConnectHandler:__construct(_parentGemaMode)
   local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerConnectHandler});
 
-  -- @todo: Add config value for this
   instance.maximumNumberOfConnectionsWithSameIp = 2;
 
   return instance;
@@ -53,7 +52,7 @@ getmetatable(PlayerConnectHandler).__call = PlayerConnectHandler.__construct;
 --
 -- @tparam int _cn The client number of the player who connected
 --
-function PlayerConnectHandler:onPlayerConnect(_cn)
+function PlayerConnectHandler:handleEvent(_cn)
 
   local dataBase = self.parentGemaMode:getDataBase();
   local playerList = self.parentGemaMode:getPlayerList();

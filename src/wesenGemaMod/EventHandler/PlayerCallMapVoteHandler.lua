@@ -62,7 +62,7 @@ getmetatable(PlayerCallMapVoteHandler).__call = PlayerCallMapVoteHandler.__const
 --
 -- @treturn int|nil PLUGIN_BLOCK or nil
 --
-function PlayerCallMapVoteHandler:onPlayerCallMapVote(_player, _mapName, _gameMode, _minutes, _voteError)
+function PlayerCallMapVoteHandler:handleEvent(_player, _mapName, _gameMode, _minutes, _voteError)
 
   if (_voteError == VOTEE_INVALID) then
     return self:onInvalidMapVote(_player, _mapName, _gameMode, _minutes);

@@ -68,7 +68,7 @@ getmetatable(PlayerSayTextHandler).__call = PlayerSayTextHandler.__construct;
 --
 -- @treturn int|nil PLUGIN_BLOCK if the gema mode is active or nil
 --
-function PlayerSayTextHandler:onPlayerSayText(_player, _text)
+function PlayerSayTextHandler:handleEvent(_player, _text)
 
   local logText = string.format("[%s] %s says: '%s'", _player:getIp(), _player:getName(), _text);
   logline(ACLOG_INFO, logText);
