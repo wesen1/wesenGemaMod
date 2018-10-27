@@ -6,7 +6,7 @@ Description
 
 Gema mod for AssaultCube Lua servers.
 
-The records are saved in a minimal database and the commands are built in a way that allows you to easily add new commands.
+Saves the times that players needed to score on a gema map in a database and provides several commands that the players can use.
 
 
 Installation
@@ -28,7 +28,7 @@ After that you should be able to connect to your test server by typing ````/conn
 
 ### Connecting to the database ###
 
-Address: 127.0.0.1
-Port: 3306
-User: root
+Address: 127.0.0.1 <br>
+Port: 3306 <br>
+User: root <br>
 Password: root
