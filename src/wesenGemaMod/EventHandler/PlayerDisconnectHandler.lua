@@ -40,7 +40,7 @@ getmetatable(PlayerDisconnectHandler).__call = PlayerDisconnectHandler.__constru
 ---
 -- Event handler which is called when a player disconnects.
 --
--- @tparam int _cn The cn of the player who disconnected
+-- @tparam int _cn The client number of the player who disconnected
 -- @tparam int _reason The disconnect reason
 --
 function PlayerDisconnectHandler:handleEvent(_cn, _reason)

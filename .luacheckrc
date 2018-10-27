@@ -74,6 +74,7 @@ globals = {
   "onMapChange",
   "onPlayerCallVote",
   "onPlayerConnect",
+  "onPlayerDisconnect",
   "onPlayerDisconnectAfter",
   "onPlayerNameChange",
   "onPlayerRoleChange",
@@ -81,7 +82,6 @@ globals = {
   "onPlayerSendMap",
   "onPlayerShoot",
   "onPlayerSpawn",
-  "onPlayerSpawnAfter",
   "onVoteEnd",
 
 
