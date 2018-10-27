@@ -61,22 +61,25 @@ getmetatable(CommandHelpTextPrinter).__call = CommandHelpTextPrinter.__construct
 --
 function CommandHelpTextPrinter:printHelpText(_command, _player)
 
-  -- @todo: Add required level to description
   local rows = {
     [1] = {
       self.output:getColor("helpTitle") .. "Usage ",
-        ": " .. self.commandPrinter:generateCommandString(_command, true)
+      ": " .. self.commandPrinter:generateCommandString(_command, true)
     },
     [2] = {
-        self.output:getColor("helpTitle") .. "Description ",
-        ": " .. self.output:getColor("helpDescription") .. _command:getDescription()
+      self.output:getColor("helpTitle") .. "Description ",
+      ": " .. self.output:getColor("helpDescription") .. _command:getDescription()
+    },
+    [3] = {
+      self.output:getColor("helpTitle") .. "Required Level ",
+      ": " .. self.output:getColor("helpLevel") .. self.output:getPlayerLevelName(_command:getRequiredLevel())
     }
   }
 
   local commandHasArguments = _command:getNumberOfArguments() > 0;
   if (commandHasArguments) then
 
-    rows[3] = {
+    rows[4] = {
       self.output:getColor("helpTitle") .. "Arguments",
       self:getArgumentOutputList(_command)
     }

@@ -124,6 +124,27 @@ function Output:playerSayText(_text, _player)
 end
 
 ---
+-- Returns the name for a player level.
+-- This will be either "unarmed" (Level 0) or "admin" (Level 1)
+--
+-- @tparam int _playerLevel The player level
+--
+-- @treturn string The name for the player level
+--
+function Output:getPlayerLevelName(_playerLevel)
+
+  if (_playerLevel == 0) then
+    return "unarmed";
+  elseif (_playerLevel == 1) then
+    return "admin";
+  end
+
+end
+
+
+-- Colors
+
+---
 -- Returns the player name color based on the players level.
 --
 -- @tparam int _playerLevel The level of the player
