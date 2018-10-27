@@ -8,10 +8,6 @@
 local ColorLoader = require("Output/Util/ColorLoader");
 local TableRenderer = require("Output/TableRenderer/TableRenderer");
 
-
---@todo: Add text templates for all texts because annoying getColor("") calls
---@todo: Check if templates must be cached for performance
-
 ---
 -- Handles outputs of texts to clients.
 --
@@ -44,7 +40,6 @@ function Output:__construct()
 
   local instance = setmetatable({}, { __index = Output });
 
-  -- @todo: Config value for color scheme name
   instance.colorLoader = ColorLoader("colors");
   instance.tableRenderer = TableRenderer();
 

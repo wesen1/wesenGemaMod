@@ -40,7 +40,6 @@ function TableColumnTabCalculator:__construct()
 
   local instance = setmetatable({}, {__index = TableColumnTabCalculator});
 
-  --@todo: Make font config a gema mode config option
   instance.textWidthCalculator = TextWidthCalculator("font_default", true);
 
   local tabWidth = instance.textWidthCalculator:getCharacterWidth("\t");

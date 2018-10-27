@@ -5,7 +5,6 @@
 -- @license MIT
 --
 
---@todo: Replace by Map ORM class
 local MapHandler = require("Map/MapHandler");
 
 ---
@@ -43,7 +42,6 @@ getmetatable(MapTopSaver).__call = MapTopSaver.__construct;
 --
 function MapTopSaver:addRecord(_dataBase, _record, _mapName)
 
-  -- TODO: Add players to database on demand (on map upload, on record)
   local player = _record:getPlayer();
   if (not player:getId()) then
     player:savePlayer();

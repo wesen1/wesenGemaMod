@@ -5,7 +5,6 @@
 -- @license MIT
 --
 
---@todo: Repalce by ORM Player class
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 
 ---

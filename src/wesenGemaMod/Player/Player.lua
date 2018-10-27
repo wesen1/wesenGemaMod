@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
--- TODO: Partially move to orm class, rename this to gemaplayer?
-
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 local PlayerInformationSaver = require("Player/PlayerInformationSaver");
 local PlayerScoreAttempt = require("Player/PlayerScoreAttempt");

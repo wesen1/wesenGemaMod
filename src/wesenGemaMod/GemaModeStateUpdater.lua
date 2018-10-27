@@ -68,7 +68,6 @@ function GemaModeStateUpdater:switchToNextEnvironment()
 
   if (nextGemaModeStateUpdate ~= nil) then
     self.parentGemaMode:setIsActive(nextGemaModeStateUpdate);
-    --@todo: Update server name
   end
 
   local environmentHandler = self.parentGemaMode:getEnvironmentHandler();

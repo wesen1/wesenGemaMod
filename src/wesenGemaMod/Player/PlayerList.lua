@@ -67,8 +67,6 @@ function PlayerList:addPlayer(_dataBase, _cn)
   local playerName = getname(_cn);
 
   self.players[_cn] = Player(_cn, playerName, playerIp);
-
-  -- TODO: Save player on demand (only when he scores or uploads a map ...)
   self.players[_cn]:savePlayer(_dataBase);
 
 end

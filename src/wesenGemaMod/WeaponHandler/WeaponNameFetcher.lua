@@ -18,7 +18,15 @@ local WeaponNameFetcher = setmetatable({}, {});
 -- @tfield string[] weaponNames
 --
 WeaponNameFetcher.weaponNames = nil;
-
+WeaponNameFetcher.weaponNames = {
+  [GUN_ASSAULT] = "Assault Rifle",
+  [GUN_SUBGUN] = "Submachine Gun",
+  [GUN_CARBINE] = "Carbine",
+  [GUN_SNIPER] = "Sniper Rifle",
+  [GUN_SHOTGUN] = "Shotgun",
+  [GUN_KNIFE] = "Knife Only",
+  [GUN_PISTOL] = "Pistol Only"
+};
 
 ---
 -- WeaponNameFetcher constructor.
@@ -28,17 +36,6 @@ WeaponNameFetcher.weaponNames = nil;
 function WeaponNameFetcher:__construct()
 
   local instance = setmetatable({}, {__index = WeaponNameFetcher});
-
-  --@todo: Make these constants? (Same in MapNameChecker)
-  instance.weaponNames = {
-    [GUN_ASSAULT] = "Assault Rifle",
-    [GUN_SUBGUN] = "Submachine Gun",
-    [GUN_CARBINE] = "Carbine",
-    [GUN_SNIPER] = "Sniper Rifle",
-    [GUN_SHOTGUN] = "Shotgun",
-    [GUN_KNIFE] = "Knife Only",
-    [GUN_PISTOL] = "Pistol Only"
-  }
 
   return instance;
 

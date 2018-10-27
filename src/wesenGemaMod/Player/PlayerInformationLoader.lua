@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
--- @todo: Replace by ORM Player class
-
 ---
 -- Loads player information to the database.
 --

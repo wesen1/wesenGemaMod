@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
---@todo: Use extend minutes colors in error messages?
-
 local Exception = require("Util/Exception");
 local TimePrinter = require("TimeHandler/TimePrinter");
 
@@ -96,7 +94,6 @@ function RemainingTimeExtender:extendTime(_player, _environment, _numberOfExtend
     self.remainingExtendMinutes = self.remainingExtendMinutes - _numberOfExtendMinutes;
   end
 
-  --@todo: Fix number of milliseconds in clients (clockdisplay 1)
   settimeleftmillis(gettimeleftmillis() + numberOfExtendMilliseconds);
 
 end

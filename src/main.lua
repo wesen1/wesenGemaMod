@@ -16,13 +16,7 @@ package.path = package.path .. ";lua/scripts/wesenGemaMod/?.lua";
 
 local GemaMode = require("GemaMode");
 
-local gemaMode = GemaMode(
-
-  --@todo: pass whole config to gema mode
-  cfg.getvalue("gemamod", "dataBaseUser"),
-  cfg.getvalue("gemamod", "dataBasePassword"),
-  cfg.getvalue("gemamod", "dataBaseName")
-);
+local gemaMode = GemaMode(cfg.totable("gemamod"));
 gemaMode:initialize();
 
 

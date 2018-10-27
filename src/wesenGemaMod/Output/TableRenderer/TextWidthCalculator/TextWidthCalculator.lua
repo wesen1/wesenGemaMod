@@ -66,7 +66,6 @@ getmetatable(TextWidthCalculator).__call = TextWidthCalculator.__construct;
 function TextWidthCalculator:getTextWidth(_text)
 
   -- Exclude "\f*" strings (colors) from width calculation because these characters will not be printed to the screen
-  --@todo: What happens if player or mapname contains \fx?
   local text = _text:gsub("(%\f[A-Za-z0-9])", "");
 
   local textWidth = 0;

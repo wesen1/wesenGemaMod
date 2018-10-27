@@ -150,8 +150,6 @@ function TableRenderer:mergeSubRows(_outputTable)
 
         end
 
-        --@todo: Center the other sub rows (ceil(numRows/2) - 1)
-
       else
         outputTable[y + totalNumberOfInsertedRows][x] = tableField;
       end

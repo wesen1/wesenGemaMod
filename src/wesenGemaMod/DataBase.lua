@@ -9,7 +9,6 @@ local luasql = require("luasql.mysql");
 ---
 -- Handles database access.
 -- The class does only work when the database server is on the same machine like the assaultcube server
--- @todo: Replace by ORM!
 --
 -- @type DataBase
 --

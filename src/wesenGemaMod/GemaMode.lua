@@ -117,12 +117,16 @@ GemaMode.isActive = nil;
 --
 -- @treturn GemaMode The GemaMode instance
 --
-function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
+function GemaMode:__construct(_configuration)
 
   local instance = setmetatable({}, {__index = GemaMode});
 
   instance.commandLoader = CommandLoader();
-  instance.dataBase = DataBase(_dataBaseUser, _dataBasePassword, _dataBaseName);
+  instance.dataBase = DataBase(
+    _configuration.dataBaseUser,
+    _configuration.dataBasePassword,
+    _configuration.dataBaseName
+  );
   instance.environmentHandler = EnvironmentHandler();
   instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
   instance.mapRot = MapRot("config/maprot_gema.cfg");
@@ -134,7 +138,6 @@ function GemaMode:__construct(_dataBaseUser, _dataBasePassword, _dataBaseName)
   instance.eventHandler = EventHandler(instance);
   instance.mapTopHandler = MapTopHandler(instance.output);
 
-  --@todo: Config value for this
   instance.isActive = true;
 
   return instance;
