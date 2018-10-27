@@ -6,7 +6,6 @@
 --
 
 local TableColumnTabCalculator = require("Output/TableRenderer/TableColumnTabCalculator");
-local TableUtils = require("Util/TableUtils");
 
 ---
 -- Returns the output rows for a table.
@@ -92,7 +91,7 @@ end
 --
 function TableRenderer:convertFieldTablesToRows(_outputTable)
 
-  local outputTable = {};  
+  local outputTable = {};
 
   for y, tableRow in ipairs(_outputTable) do
 
@@ -122,7 +121,7 @@ function TableRenderer:mergeSubRows(_outputTable)
 
   local outputTable = {};
   local totalNumberOfInsertedRows = 0;
-  
+
   for y, tableRow in ipairs(_outputTable) do
 
     local numberOfInsertedRows = 0;
@@ -181,7 +180,7 @@ function TableRenderer:addTabsToFields(_outputTable)
   if (_outputTable) then
 
     outputTable = _outputTable;
-    local numberOfColumns = #outputTable[1];  
+    local numberOfColumns = #outputTable[1];
 
     for x = 1, numberOfColumns - 1, 1 do
 

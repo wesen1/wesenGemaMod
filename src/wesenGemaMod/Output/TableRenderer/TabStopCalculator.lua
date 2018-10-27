@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception");
-
 ---
 -- Calculates the next tab stop for a specific text pixel position.
 --
