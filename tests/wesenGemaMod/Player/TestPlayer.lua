@@ -7,8 +7,6 @@
 
 local DataBase = require("DataBase");
 local Player = require("Player/Player");
-local PlayerInformationLoader = require("Player/PlayerInformationLoader");
-local PlayerInformationSaver = require("Player/PlayerInformationSaver");
 local TestCase = require("TestFrameWork/TestCase");
 
 ---
