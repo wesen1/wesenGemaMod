@@ -17,13 +17,6 @@ local MapTopPrinter = setmetatable({}, {});
 
 
 ---
--- The parent map top
---
--- @tfield MapTop parentMapTop
---
-MapTopPrinter.parentMapTop = nil;
-
----
 -- The map record printer
 --
 -- @tfield MapRecordPrinter mapRecordPrinter

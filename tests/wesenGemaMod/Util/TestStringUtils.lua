@@ -5,16 +5,15 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit-custom");
-
 local StringUtils = require("Util/StringUtils");
+local TestCase = require("TestFrameWork/TestCase");
 
 ---
 -- Checks whether the string utils work as expected.
 --
 -- @type TestStringUtils
 --
-local TestStringUtils = {};
+local TestStringUtils = setmetatable({}, {__index = TestCase});
 
 
 ---
@@ -26,6 +25,9 @@ function TestStringUtils:testCanSplitStringByDelimiter()
 
     -- Empty string
     { "", "a", { } },
+
+    -- Empty delimiter
+    { "abc", "", { "a", "b", "c" } },
 
     -- Single letter delimiter
     { "abacdaeafg", "a", { "b", "cd", "e", "fg" } },
@@ -61,21 +63,7 @@ end
 function TestStringUtils:canSplitStringByDelimiter(_text, _delimiter, _expectedResult)
 
   local result = StringUtils:split(_text, _delimiter);
-  luaunit.assertEquals(result, _expectedResult);
-
-end
-
----
--- Checks whether the split method can handle empty delimiters.
---
-function TestStringUtils:testCanHandleEmptySplitString()
-
-  luaunit.assertError(
-    "The delimiter must contain at least one symbol.",
-    function ()
-      StringUtils:split("abc", "");
-    end
-  );
+  self.assertEquals(result, _expectedResult);
 
 end
 

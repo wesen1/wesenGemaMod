@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit-custom");
+local TestCase = require("TestFrameWork/TestCase");
 local WeaponNameFetcher = require("WeaponHandler/WeaponNameFetcher");
 
 ---
@@ -13,7 +13,7 @@ local WeaponNameFetcher = require("WeaponHandler/WeaponNameFetcher");
 --
 -- @type TestWeaponNameFetcher
 --
-local TestWeaponNameFetcher = {};
+local TestWeaponNameFetcher = setmetatable({}, {__index = TestCase});
 
 
 ---
@@ -22,17 +22,17 @@ local TestWeaponNameFetcher = {};
 function TestWeaponNameFetcher:testCanBeConstructed()
 
   local weaponNameFetcher = WeaponNameFetcher();
-  luaunit.assertInstanceOf(weaponNameFetcher, WeaponNameFetcher);
+  self.assertInstanceOf(weaponNameFetcher, WeaponNameFetcher);
 
   local weaponNames = weaponNameFetcher.weaponNames;
 
-  luaunit.assertEquals(weaponNames[GUN_ASSAULT], "Assault Rifle");
-  luaunit.assertEquals(weaponNames[GUN_SUBGUN], "Submachine Gun");
-  luaunit.assertEquals(weaponNames[GUN_CARBINE], "Carbine");
-  luaunit.assertEquals(weaponNames[GUN_SNIPER], "Sniper Rifle");
-  luaunit.assertEquals(weaponNames[GUN_SHOTGUN], "Shotgun");
-  luaunit.assertEquals(weaponNames[GUN_KNIFE], "Knife Only");
-  luaunit.assertEquals(weaponNames[GUN_PISTOL], "Pistol Only");
+  self.assertEquals(weaponNames[GUN_ASSAULT], "Assault Rifle");
+  self.assertEquals(weaponNames[GUN_SUBGUN], "Submachine Gun");
+  self.assertEquals(weaponNames[GUN_CARBINE], "Carbine");
+  self.assertEquals(weaponNames[GUN_SNIPER], "Sniper Rifle");
+  self.assertEquals(weaponNames[GUN_SHOTGUN], "Shotgun");
+  self.assertEquals(weaponNames[GUN_KNIFE], "Knife Only");
+  self.assertEquals(weaponNames[GUN_PISTOL], "Pistol Only");
 
 end
 
@@ -44,21 +44,21 @@ function TestWeaponNameFetcher:testCanFetchWeaponName()
   local weaponNameFetcher = WeaponNameFetcher();
 
   -- Valid weapon ids
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_ASSAULT), "Assault Rifle");
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_SUBGUN), "Submachine Gun");
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_CARBINE), "Carbine");
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_SNIPER), "Sniper Rifle");
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_SHOTGUN), "Shotgun");
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_KNIFE), "Knife Only");
-  luaunit.assertEquals(weaponNameFetcher:getWeaponName(GUN_PISTOL), "Pistol Only");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_ASSAULT), "Assault Rifle");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_SUBGUN), "Submachine Gun");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_CARBINE), "Carbine");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_SNIPER), "Sniper Rifle");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_SHOTGUN), "Shotgun");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_KNIFE), "Knife Only");
+  self.assertEquals(weaponNameFetcher:getWeaponName(GUN_PISTOL), "Pistol Only");
 
   -- Invalid weapon ids
   for i = 7, 17, 1 do
-    luaunit.assertEquals(weaponNameFetcher:getWeaponName(i), "Unknown Weapon ID (" .. i .. ")");
+    self.assertEquals(weaponNameFetcher:getWeaponName(i), "Unknown Weapon ID (" .. i .. ")");
   end
 
   for i = -10, -1, 1 do
-    luaunit.assertEquals(weaponNameFetcher:getWeaponName(i), "Unknown Weapon ID (" .. i .. ")");
+    self.assertEquals(weaponNameFetcher:getWeaponName(i), "Unknown Weapon ID (" .. i .. ")");
   end
 
 end

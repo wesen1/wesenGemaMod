@@ -5,9 +5,6 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit-custom");
-local mach = require("mach");
-
 local GemaMode = require("GemaMode");
 local EventHandler = require("EventHandler");
 local FlagActionHandler = require("EventHandler/FlagActionHandler");
@@ -22,6 +19,7 @@ local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
 local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
 local PlayerShootHandler = require("EventHandler/PlayerShootHandler");
 local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
+local TestCase = require("TestFrameWork/TestCase");
 local VoteEndHandler = require("EventHandler/VoteEndHandler");
 
 ---
@@ -29,7 +27,7 @@ local VoteEndHandler = require("EventHandler/VoteEndHandler");
 --
 -- @type TestEventHandler
 --
-local TestEventHandler = {};
+local TestEventHandler = setmetatable({}, {__index = TestCase});
 
 
 ---
@@ -37,8 +35,8 @@ local TestEventHandler = {};
 --
 function TestEventHandler:testCanBeConstructed()
 
-  local gemaModeMock = mach.mock_object(GemaMode, "GemaModeMock");
-  local eventHandler = nil;
+  local gemaModeMock = self:getMock(GemaMode, "GemaModeMock");
+  local eventHandler;
 
   -- Each event handler will fetch the output
   -- "PlayerCallVoteHandler" has a sub event handler "PlayerCallMapVoteHandler", therefore
@@ -51,22 +49,22 @@ function TestEventHandler:testCanBeConstructed()
                           end
                         );
 
-  luaunit.assertInstanceOf(eventHandler, EventHandler);
+  self.assertInstanceOf(eventHandler, EventHandler);
 
   -- Check whether the event handlers are instances of the EventHandler classes
-  luaunit.assertInstanceOf(eventHandler:getFlagActionHandler(), FlagActionHandler);
-  luaunit.assertInstanceOf(eventHandler:getMapChangeHandler(), MapChangeHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerCallVoteHandler(), PlayerCallVoteHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerConnectHandler(), PlayerConnectHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerDisconnectHandler(), PlayerDisconnectHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerDisconnectAfterHandler(), PlayerDisconnectAfterHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerNameChangeHandler(), PlayerNameChangeHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerRoleChangeHandler(), PlayerRoleChangeHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerSayTextHandler(), PlayerSayTextHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerSendMapHandler(), PlayerSendMapHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerShootHandler(), PlayerShootHandler);
-  luaunit.assertInstanceOf(eventHandler:getPlayerSpawnHandler(), PlayerSpawnHandler);
-  luaunit.assertInstanceOf(eventHandler:getVoteEndHandler(), VoteEndHandler);
+  self.assertInstanceOf(eventHandler:getFlagActionHandler(), FlagActionHandler);
+  self.assertInstanceOf(eventHandler:getMapChangeHandler(), MapChangeHandler);
+  self.assertInstanceOf(eventHandler:getPlayerCallVoteHandler(), PlayerCallVoteHandler);
+  self.assertInstanceOf(eventHandler:getPlayerConnectHandler(), PlayerConnectHandler);
+  self.assertInstanceOf(eventHandler:getPlayerDisconnectHandler(), PlayerDisconnectHandler);
+  self.assertInstanceOf(eventHandler:getPlayerDisconnectAfterHandler(), PlayerDisconnectAfterHandler);
+  self.assertInstanceOf(eventHandler:getPlayerNameChangeHandler(), PlayerNameChangeHandler);
+  self.assertInstanceOf(eventHandler:getPlayerRoleChangeHandler(), PlayerRoleChangeHandler);
+  self.assertInstanceOf(eventHandler:getPlayerSayTextHandler(), PlayerSayTextHandler);
+  self.assertInstanceOf(eventHandler:getPlayerSendMapHandler(), PlayerSendMapHandler);
+  self.assertInstanceOf(eventHandler:getPlayerShootHandler(), PlayerShootHandler);
+  self.assertInstanceOf(eventHandler:getPlayerSpawnHandler(), PlayerSpawnHandler);
+  self.assertInstanceOf(eventHandler:getVoteEndHandler(), VoteEndHandler);
 
 end
 

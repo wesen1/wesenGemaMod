@@ -14,9 +14,10 @@ local lfs = require("lfs");
 -- Require luacov to get coverage information about the tests
 require("luacov");
 
-local luaunit = require("luaunit-custom");
+local luaunit = require("TestFrameWork/LuaUnitCustom");
 unpack = unpack or table.unpack;
 
+-- Require the global variables that are provided by the lua server
 require("globals");
 
 

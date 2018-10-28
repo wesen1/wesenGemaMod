@@ -77,24 +77,6 @@ function MapTop:getMapRecordList()
   return self.mapRecordList;
 end
 
----
--- Returns the map top loader.
---
--- @treturn MapTopLoader The map top loader
---
-function MapTop:getMapTopLoader()
-  return self.mapTopLoader;
-end
-
----
--- Returns the map top saver.
---
--- @treturn MapTopSaver The map top saver
---
-function MapTop:getMapTopSaver()
-  return self.mapTopSaver;
-end
-
 
 -- Public Methods
 

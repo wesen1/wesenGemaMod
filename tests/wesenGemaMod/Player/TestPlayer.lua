@@ -4,69 +4,27 @@
 -- @release 0.1
 -- @license MIT
 --
-local luaunit = require("luaunit-custom");
-local mach = require("mach");
 
-local DataBase = "";
-local Output = "";
-local PlayerInformationLoader = "";
-local PlayerInformationSaver = "";
-local Player = "";
-local outputMockTextColor = "\f0";
-
+local DataBase = require("DataBase");
+local Player = require("Player/Player");
+local PlayerInformationLoader = require("Player/PlayerInformationLoader");
+local PlayerInformationSaver = require("Player/PlayerInformationSaver");
+local TestCase = require("TestFrameWork/TestCase");
 
 ---
 -- Checks whether the Player class works as expected.
 --
 -- @type TestPlayer
 --
-local TestPlayer = {};
+local TestPlayer = setmetatable({}, {__index = TestCase});
 
 
----
--- Method that is called before each test is started.
---
 function TestPlayer:setUp()
+  TestCase.setUp(self);
 
-  self:resetDependencies();
-
-  -- Unload Player module
-  package.loaded["Player/Player"] = nil;
-
-  -- Overwrite Output dependency with mock
-  local outputMock = mach.mock_object(Output, "OutputMock");
-  package.loaded["Output/Output"] = outputMock;
-
-  outputMock.getColor
-            :should_be_called_with("playerTextDefault")
-            :and_will_return(outputMockTextColor)
-            :when(
-              function()
-                Player = require("Player/Player");
-              end
-            );
+  self.testPlayer = Player("a", "1.2.3.4");
 
 end
-
-
----
--- Replaces the loaded dependencies of the test by the real dependencies.
--- This function must be called before starting each test.
---
-function TestPlayer:resetDependencies()
-
-  package.loaded["DataBase"] = nil;
-  package.loaded["Output/Output"] = nil;
-  package.loaded["Player/PlayerInformationLoader"] = nil;
-  package.loaded["Player/PlayerInformationSaver"] = nil;
-
-  DataBase = require("DataBase");
-  Output = require("Output/Output");
-  PlayerInformationLoader = require("Player/PlayerInformationLoader");
-  PlayerInformationSaver = require("Player/PlayerInformationSaver");
-
-end
-
 
 ---
 -- Checks whether the getters/setters work as expected.
@@ -101,39 +59,25 @@ end
 --
 function TestPlayer:canGetAttributes(_id, _name, _ip, _level, _startTime, _team, _textColor, _weapon)
 
-  self:resetDependencies();
-
-  local testPlayer = Player:__construct("test", "1.1.1.1");
+  local testPlayer = Player(0, "test", "1.1.1.1");
 
   -- Check default values
-  luaunit.assertEquals(testPlayer:getId(), -1);
-  luaunit.assertEquals(testPlayer:getName(), "test");
-  luaunit.assertEquals(testPlayer:getIp(), "1.1.1.1");
-  luaunit.assertEquals(testPlayer:getLevel(), 0);
-  luaunit.assertEquals(testPlayer:getStartTime(), 0);
-  luaunit.assertEquals(testPlayer:getTeam(), -1);
-  luaunit.assertEquals(testPlayer:getTextColor(), outputMockTextColor);
-  luaunit.assertEquals(testPlayer:getWeapon(), -1);
+  self.assertEquals(testPlayer:getId(), -1);
+  self.assertEquals(testPlayer:getName(), "test");
+  self.assertEquals(testPlayer:getIp(), "1.1.1.1");
+  self.assertEquals(testPlayer:getLevel(), 0);
 
   -- Set test values
   testPlayer:setId(_id);
   testPlayer:setName(_name);
   testPlayer:setIp(_ip);
   testPlayer:setLevel(_level);
-  testPlayer:setStartTime(_startTime);
-  testPlayer:setTeam(_team);
-  testPlayer:setTextColor(_textColor);
-  testPlayer:setWeapon(_weapon);
 
-  -- CHeck whether test values were set
-  luaunit.assertEquals(testPlayer:getId(), _id);
-  luaunit.assertEquals(testPlayer:getName(), _name);
-  luaunit.assertEquals(testPlayer:getIp(), _ip);
-  luaunit.assertEquals(testPlayer:getLevel(), _level);
-  luaunit.assertEquals(testPlayer:getStartTime(), _startTime);
-  luaunit.assertEquals(testPlayer:getTeam(), _team);
-  luaunit.assertEquals(testPlayer:getTextColor(), _textColor);
-  luaunit.assertEquals(testPlayer:getWeapon(), _weapon);
+  -- Check whether test values were set
+  self.assertEquals(testPlayer:getId(), _id);
+  self.assertEquals(testPlayer:getName(), _name);
+  self.assertEquals(testPlayer:getIp(), _ip);
+  self.assertEquals(testPlayer:getLevel(), _level);
 
 end
 
@@ -142,29 +86,28 @@ end
 --
 function TestPlayer:testCanCheckWhetherPlayersAreEqual()
 
-  self:resetDependencies();
   local playerA = Player:__construct("player_expert", "123.12.2.4");
   local playerB = Player:__construct("player_expert", "123.12.2.4");
 
   -- Check that the objects are not the same table
-  luaunit.assertNotEquals(tostring(playerA), tostring(playerB));
+  self.assertNotEquals(tostring(playerA), tostring(playerB));
 
   -- Name and ip match
-  luaunit.assertTrue(playerA:equals(playerB));
+  self.assertTrue(playerA:equals(playerB));
 
   -- Name matches, ip does not match
   playerB:setIp("1.1.1.1");
-  luaunit.assertFalse(playerA:equals(playerB));
+  self.assertFalse(playerA:equals(playerB));
 
   -- Ip matches, name does not match
   playerB:setIp("123.12.2.4");
   playerB:setName("player_pro");
-  luaunit.assertFalse(playerA:equals(playerB));
+  self.assertFalse(playerA:equals(playerB));
 
   -- Ip and name do not match
   playerB:setIp("1.1.1.1");
   playerB:setName("pro");
-  luaunit.assertFalse(playerA:equals(playerB));
+  self.assertFalse(playerA:equals(playerB));
 
 end
 
@@ -173,7 +116,7 @@ end
 --
 function TestPlayer:testCanGetIpString()
 
-  local testPlayer = Player:__construct("hello", "1.1.1.1");
+  local testPlayer = Player(0, "hello", "1.1.1.1");
   local testValueSets = {
     { ["ip"] = "1.1.1.1", ["expectedIpString"] = "1.1.1.x" },
     { ["ip"] = "127.0.0.1", ["expectedIpString"] = "127.0.0.x" },
@@ -184,8 +127,8 @@ function TestPlayer:testCanGetIpString()
   }
 
   for index, testValueSet in ipairs(testValueSets) do
-    testPlayer:setIp(testValueSet["ip"]);
-    luaunit.assertEquals(testPlayer:getIpString(), testValueSet["expectedIpString"]);
+    testPlayer.ip = testValueSet["ip"];
+    self.assertEquals(testPlayer:getIpString(), testValueSet["expectedIpString"]);
   end
 
 end
@@ -218,46 +161,30 @@ end
 --
 function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
 
-  self:resetDependencies();
+  local playerInformationLoaderMock = self:getDependencyMock(
+                                        "Player/PlayerInformationLoader",
+                                        "Player/Player",
+                                        "PlayerInformationLoaderMock"
+                                      );
+  local playerInformationSaverMock = self:getDependencyMock(
+                                       "Player/PlayerInformationSaver",
+                                       "Player/Player",
+                                       "PlayerInformationSaverMock"
+                                     );
 
-  -- Overwrite PlayerInformationLoader dependency with mock
-  local PlayerInformationLoaderMock = mach.mock_object(PlayerInformationLoader, "PlayerInformationLoaderMock");
-  package.loaded["Player/PlayerInformationLoader"] = PlayerInformationLoaderMock;
+  Player = require("Player/Player");
 
-  -- Overwrite PlayerInformationSaver dependency with mock
-  local PlayerInformationSaverMock = mach.mock_object(PlayerInformationSaver, "PlayerInformationSaverMock");
-  package.loaded["Player/PlayerInformationSaver"] = PlayerInformationSaverMock;
+  local testPlayer = Player(0, _playerName, _playerIp);
+  local dataBaseMock = self:getMock(DataBase, "DataBaseMock");
 
-
-  -- Unload player module
-  package.loaded["Player/Player"] = nil
-
-  local Player = "";
-  local outputMockTextColor = "\f0";
-
-  -- Overwrite Output dependency with mock
-  local outputMock = mach.mock_object(Output, "OutputMock");
-  package.loaded["Outputs/Output"] = outputMock;
-
-  outputMock.getColor
-            :should_be_called_with("playerTextDefault")
-            :and_will_return(outputMockTextColor)
-            :when(
-              function()
-                Player = require("Player/Player");
-              end
-            );
-
-
-  local testPlayer = Player:__construct(_playerName, _playerIp);
-  local dataBaseMock = mach.mock_object(DataBase, "DataBaseMock");
-
-  PlayerInformationSaverMock.savePlayer
+  playerInformationSaverMock.savePlayer
                             :should_be_called_with(dataBaseMock, testPlayer)
                             :and_will_return(nil)
                             :and_then(
-                              PlayerInformationLoaderMock.fetchPlayerId
-                                                         :should_be_called_with(dataBaseMock, testPlayer)
+                              playerInformationLoaderMock.fetchPlayerId
+                                                         :should_be_called_with(
+                                                           dataBaseMock, testPlayer
+                                                         )
                                                          :and_will_return(_playerId)
                             )
                             :when(
@@ -266,7 +193,7 @@ function TestPlayer:canSavePlayer(_playerName, _playerIp, _playerId)
                               end
                             );
 
-  luaunit.assertEquals(testPlayer:getId(), _playerId);
+  self.assertEquals(testPlayer:getId(), _playerId);
 
 end
 

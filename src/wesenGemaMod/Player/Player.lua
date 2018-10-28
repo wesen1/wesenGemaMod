@@ -206,7 +206,7 @@ end
 --
 function Player:getIpString()
 
-  local ipOctets = StringUtils:split(self.ip, ".");
+  local ipOctets = StringUtils:split(self.ip, "%.");
   return ipOctets[1] .. "." .. ipOctets[2] .. "." .. ipOctets[3] .. ".x";
 
 end
