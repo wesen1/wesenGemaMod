@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
---@todo: Force constructor on this class too
-
 ---
 -- Provides additional string functions.
 --
@@ -19,7 +17,9 @@ local StringUtils = {};
 
 ---
 -- Splits a string everytime the delimiter appears in it.
--- This function is based on the example from PeterPrade on http://lua-users.org/wiki/SplitJoin
+--
+-- This function is based on the example from PeterPrade
+-- @see http://lua-users.org/wiki/SplitJoin
 --
 -- @tparam string _text The string
 -- @tparam string _delimiter The delimiter at which the string will be split

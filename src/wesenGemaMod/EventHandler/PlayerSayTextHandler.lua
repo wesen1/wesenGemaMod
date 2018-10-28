@@ -9,7 +9,7 @@ local BaseEventHandler = require("EventHandler/BaseEventHandler");
 local CommandParser = require("CommandHandler/CommandParser");
 local CommandExecutor = require("CommandHandler/CommandExecutor");
 local Exception = require("Util/Exception");
-local TableUtils = require("Util/TableUtils");
+local ObjectUtils = require("Util/ObjectUtils");
 
 ---
 -- Class that handles players saying texts.
@@ -79,7 +79,7 @@ function PlayerSayTextHandler:handleEvent(_player, _text)
 
       local status, exception = pcall(self.handleCommand, self, _player, _text);
       if (not status) then
-        if (TableUtils:isInstanceOf(exception, Exception)) then
+        if (ObjectUtils:isInstanceOf(exception, Exception)) then
           self.output:printError(exception:getMessage(), _player);
         else
           error(exception);

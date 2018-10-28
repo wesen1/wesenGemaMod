@@ -9,7 +9,7 @@ local BaseEventHandler = require("EventHandler/BaseEventHandler");
 local Environment = require("EnvironmentHandler/Environment");
 local Exception = require("Util/Exception");
 local MapRemover = require("Map/MapRemover");
-local TableUtils = require("Util/TableUtils");
+local ObjectUtils = require("Util/ObjectUtils");
 
 ---
 -- Handles map votes.
@@ -110,7 +110,7 @@ function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
   ));
 
   if (not status) then
-    if (TableUtils:isInstanceOf(exception, Exception)) then
+    if (ObjectUtils:isInstanceOf(exception, Exception)) then
       self.output:printError(exception:getMessage(), _player);
     else
       error(exception);

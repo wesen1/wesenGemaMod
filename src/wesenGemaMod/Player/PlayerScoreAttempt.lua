@@ -7,7 +7,7 @@
 
 local Exception = require("Util/Exception");
 local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
-local TableUtils = require("Util/TableUtils");
+local ObjectUtils = require("Util/ObjectUtils");
 
 ---
 -- Saves information about a players score attempt and provides methods to update the score attempt.
@@ -199,7 +199,7 @@ function PlayerScoreAttempt:getMapRecord(_parentMapRecordList)
   end
 
   return MapRecord(
-    TableUtils:copy(self.parentPlayer),
+    ObjectUtils:clone(self.parentPlayer),
     self.endTime - self.startTime,
     self.weaponId,
     self.teamId,
