@@ -5,67 +5,49 @@
 -- @license MIT
 --
 
-local MapChecker = require("Maps/MapChecker");
-local MapHandler = require("Maps/MapHandler");
-local Output = require("Outputs/Output");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local MapHandler = require("Map/MapHandler");
+local MapNameChecker = require("Map/MapNameChecker");
 
 ---
 -- Class that handles player sent maps.
+-- PlayerSendMapHandler inherits from BaseEventHandler
 --
 -- @type PlayerSendMapHandler
 --
-local PlayerSendMapHandler = {};
+local PlayerSendMapHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
--- The parent gema mod to which this EventHandler belongs
+-- The map name checker
 --
--- @tfield GemaMod parentGemaMod
+-- @tparam MapNameChecker mapNameChecker
 --
-PlayerSendMapHandler.parentGemaMod = "";
+PlayerSendMapHandler.mapNameChecker = nil;
 
 
 ---
 -- PlayerSendMapHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerSendMapHandler The PlayerSendMapHandler instance
 --
-function PlayerSendMapHandler:__construct(_parentGemaMod)
+function PlayerSendMapHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerSendMapHandler});
 
-  instance.parentGemaMod = _parentGemaMod;
+  instance.mapNameChecker = MapNameChecker();
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerSendMapHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerSendMapHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerSendMapHandler).__call = PlayerSendMapHandler.__construct;
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Event handler which is called when a player tries to send a map to the server.
@@ -73,7 +55,7 @@ end
 -- Saves the map name in the database if it accepts the upload
 --
 -- @tparam string _mapName The map name
--- @tparam int _cn The client number of the player
+-- @tparam Player _player The player
 -- @tparam int _revision The map revision
 -- @tparam int _mapsize The map size
 -- @tparam int _cfgsize The cfg size
@@ -82,19 +64,17 @@ end
 --
 -- @treturn int|nil Upload error if map is not a gema or nil
 --
-function PlayerSendMapHandler:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
+function PlayerSendMapHandler:handleEvent(_mapName, _player, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
   -- if upload is not rejected
   if (_uploadError == UE_NOERROR) then
 
-    if (MapChecker:isGema(_mapName)) then
+    if (self.mapNameChecker:isGemaMapName(_mapName)) then
 
-      local uploadPlayer = self.parentGemaMod:getPlayers()[_cn];
+      local dataBase = self.parentGemaMode:getDataBase();
+      MapHandler:saveMap(dataBase, _mapName, _player);
 
-      MapHandler:saveMapName(self.parentGemaMod:getDataBase(), _mapName, uploadPlayer);
-      self.parentGemaMod:getMapRotEditor():addMapToMapRotConfigFile(_mapName);
-      self.parentGemaMod:getMapRotEditor():addMapToLoadedMapRot(_mapName);
-
+      self.parentGemaMode:getMapRot():addMap(_mapName);
     end
 
   end

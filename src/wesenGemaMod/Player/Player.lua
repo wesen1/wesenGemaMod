@@ -5,17 +5,17 @@
 -- @license MIT
 --
 
-local Output = require("Outputs/Output");
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 local PlayerInformationSaver = require("Player/PlayerInformationSaver");
-local StringUtils = require("Utils/StringUtils");
+local PlayerScoreAttempt = require("Player/PlayerScoreAttempt");
+local StringUtils = require("Util/StringUtils");
 
 ---
 -- Stores information about a single player.
 --
 -- @type Player
 --
-local Player = {};
+local Player = setmetatable({}, {});
 
 
 ---
@@ -24,6 +24,13 @@ local Player = {};
 -- @tfield int id
 --
 Player.id = -1;
+
+---
+-- The client number of the player
+--
+-- @tfield int cn
+--
+Player.cn = -1;
 
 ---
 -- The player name
@@ -47,59 +54,39 @@ Player.ip = "";
 Player.level = 0;
 
 ---
--- The spawn time in milliseconds
--- This value is used to calculate the time that the player needed to score
+-- The players score attempt
 --
--- @tfield int startTime
+-- @tfield PlayerScoreAttempt scoreAttempt
 --
-Player.startTime = 0;
-
----
--- The current team of the player
---
--- @tfield int team
---
-Player.team = -1;
-
----
--- The current weapon of the player
---
--- @tfield int weapon
---
-Player.weapon = -1;
-
----
--- The color of the texts that the player says to other clients
---
--- @tfield string textColor
---
-Player.textColor = Output:getColor("playerTextDefault");
+Player.scoreAttempt = nil;
 
 
 ---
 -- Player Constructor.
 --
+-- @tparam int _cn The client number of the player
 -- @tparam string _name The player name
 -- @tparam string _ip The player ip
 --
 -- @treturn Player The Player instance
 --
-function Player:__construct(_name, _ip)
+function Player:__construct(_cn, _name, _ip)
 
-  local instance = {};
-  setmetatable(instance, {__index = Player});
+  local instance = setmetatable({}, {__index = Player});
 
   instance.id = -1;
+  instance.cn = _cn;
   instance.name = _name;
   instance.ip = _ip;
   instance.level = 0;
-  instance.startTime = 0;
-  instance.team = -1;
-  instance.weapon = -1;
+  instance.scoreAttempt = PlayerScoreAttempt(instance);
 
   return instance;
 
 end
+
+getmetatable(Player).__call = Player.__construct;
+
 
 ---
 -- Returns whether a player object equals this player.
@@ -135,6 +122,15 @@ end
 --
 function Player:setId(_id)
   self.id = _id;
+end
+
+---
+-- Returns the client number of the player.
+--
+-- @treturn int The client number of the player
+--
+function Player:getCn()
+  return self.cn;
 end
 
 ---
@@ -192,75 +188,12 @@ function Player:setLevel(_level)
 end
 
 ---
--- Returns the start time.
+-- Returns the players score attempt.
 --
--- @treturn int The start time
+-- @treturn PlayerScoreAttempt The players score attempt
 --
-function Player:getStartTime()
-  return self.startTime;
-end
-
----
--- Sets the start time.
---
--- @tparam int _startTime The start time
---
-function Player:setStartTime(_startTime)
-  self.startTime = _startTime;
-end
-
----
--- Returns the current team of the player.
---
--- @treturn int The current team of the player
---
-function Player:getTeam()
-  return self.team;
-end
-
----
--- Sets the current team of the player.
---
--- @tparam int _team The current team of the player
---
-function Player:setTeam(_team)
-  self.team = _team;
-end
-
----
--- Returns the current weapon of the player.
---
--- @treturn int The current weapon of the player
---
-function Player:getWeapon()
-  return self.weapon;
-end
-
----
--- Sets the current weapon of the player.
---
--- @tparam int _weapon The current weapon of the player
---
-function Player:setWeapon(_weapon)
-  self.weapon = _weapon;
-end
-
----
--- Returns the text color.
---
--- @treturn string The text color
---
-function Player:getTextColor()
-  return self.textColor;
-end
-
----
--- Sets the text color.
---
--- @tparam string _textColor The text color
---
-function Player:setTextColor(_textColor)
-  self.textColor = _textColor;
+function Player:getScoreAttempt()
+  return self.scoreAttempt;
 end
 
 
@@ -273,7 +206,7 @@ end
 --
 function Player:getIpString()
 
-  local ipOctets = StringUtils:split(self.ip, ".");
+  local ipOctets = StringUtils:split(self.ip, "%.");
   return ipOctets[1] .. "." .. ipOctets[2] .. "." .. ipOctets[3] .. ".x";
 
 end

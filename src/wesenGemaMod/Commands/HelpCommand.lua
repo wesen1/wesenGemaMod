@@ -5,64 +5,103 @@
 -- @license MIT
 --
 
-local BaseCommand = require("Commands/BaseCommand");
-local CommandParser = require("CommandHandler/CommandParser");
-local CommandPrinter = require("CommandHandler/CommandPrinter");
-local Output = require("Outputs/Output");
+local BaseCommand = require("CommandHandler/BaseCommand");
+local CommandArgument = require("CommandHandler/CommandArgument");
+local CommandHelpTextPrinter = require("CommandHandler/CommandPrinter/CommandHelpTextPrinter");
+local Exception = require("Util/Exception");
 
 ---
 -- Command !help.
--- Prints help texts for each command
+-- Prints help texts for each command.
+-- ColorsCommand inherits from BaseCommand
 --
 -- @type HelpCommand
 --
-local HelpCommand = {};
+local HelpCommand = setmetatable({}, {__index = BaseCommand});
 
--- ColorsCommand inherits from BaseCommand
-setmetatable(HelpCommand, {__index = BaseCommand});
+
+---
+-- The command help text printer
+--
+-- @tfield CommandHelpTextPrinter The command help text printer
+--
+HelpCommand.commandHelpTextPrinter = nil;
 
 
 ---
 -- HelpCommand constructor.
 --
--- @tparam CommandLister _parentCommandLister The parent command lister
+-- @tparam CommandList _parentCommandList The parent command list
 --
 -- @treturn HelpCommand The HelpCommand instance
 --
-function HelpCommand:__construct(_parentCommandLister)
+function HelpCommand:__construct(_parentCommandList)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "help", 0);
+  local commandNameArgument = CommandArgument(
+    "commandName",
+    false,
+    "string",
+    "cmd",
+    "The command name"
+  );
+
+  local instance = BaseCommand(
+    _parentCommandList,
+    "!help",
+    0,
+    nil,
+    { commandNameArgument },
+    "Shows a commands description and it's arguments",
+    { "!man" }
+  );
   setmetatable(instance, {__index = HelpCommand});
 
-  instance:addAlias("man");
-  instance:addArgument("cmd", true, "Command name");
-  instance:setDescription("Shows a commands description and it's arguments");
+  instance.commandHelpTextPrinter = CommandHelpTextPrinter(instance.output);
 
   return instance;
 
 end
 
+getmetatable(HelpCommand).__call = HelpCommand.__construct;
+
+
+-- Public Methods
+
 ---
 -- Displays the help text for a command to the player.
 --
--- @tparam int _cn The client number of the player who executed the command
--- @tparam string[] _args The list of arguments which were passed by the player
+-- @tparam Player _player The player who executed the command
+-- @tparam string[] _arguments The list of arguments which were passed by the player
 --
-function HelpCommand:execute(_cn, _args)
+-- @raise Error in case of unknown command
+--
+function HelpCommand:execute(_player, _arguments)
 
-  local inputCommand = string.lower(_args[1]);
-
-  if (_args[1]:sub(1,1) ~= "!") then
-    inputCommand = "!" .. inputCommand;
-  end
-
-  local command = self.parentCommandLister:getCommand(inputCommand);
-
+  local command = self.parentCommandList:getCommand(_arguments.commandName);
   if (command) then
-    CommandPrinter:printHelpText(command, _cn);
+    self.commandHelpTextPrinter:printHelpText(command, _player);
   else
-    Output:print(Output:getColor("error") .. "[ERROR] Unknown command '" .. inputCommand .. "'", _cn);
+    error(Exception("Unknown command '" .. _arguments.commandName .. "'"));
   end
+
+end
+
+---
+-- Adjusts the input arguments.
+--
+-- @tparam String[] The list of arguments
+--
+-- @treturn String[] The updated list of arguments
+--
+function HelpCommand:adjustInputArguments(_arguments)
+
+  local arguments = _arguments;
+
+  if (arguments.commandName:sub(1,1) ~= "!") then
+    arguments.commandName = "!" .. arguments.commandName;
+  end
+
+  return arguments;
 
 end
 

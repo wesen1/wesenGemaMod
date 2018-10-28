@@ -5,35 +5,44 @@
 -- @license MIT
 --
 
-local luaunit = require("luaunit");
-local mach = require("mach");
-
-local MapHandler = require("Maps/MapHandler");
-
-local mapHandlerMock = mach.mock_object(MapHandler, "MapHandlerMock");
-package.loaded["Maps/MapHandler"] = mapHandlerMock;
-package.loaded["Tops/MapTop/MapTopLoader"] = nil;
+--local mach = require("mach");
 
 local DataBase = require("DataBase");
-local MapTop = require("Tops/MapTop/MapTop");
+local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
+local MapRecordList = require("Tops/MapTop/MapRecordList/MapRecordList");
 local MapTopLoader = require("Tops/MapTop/MapTopLoader");
-local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
 local Player = require("Player/Player");
-
+local TestCase = require("TestFrameWork/TestCase");
 
 ---
 -- Checks whether the MapTopLoader works as expected.
 --
-TestMapTopLoader = {};
+local TestMapTopLoader = setmetatable({}, {__index = TestCase});
 
+
+TestMapTopLoader.mapHandlerMock = nil;
+
+TestMapTopLoader.mapTopLoader = nil;
+
+TestMapTopLoader.mapRecordListMock = nil;
 
 ---
 -- Method that is called before each test is executed.
 --
 function TestMapTopLoader:setUp()
 
-  self.mapTopMock = mach.mock_object(MapTop, "MapTopMock");
-  self.mapTopLoader = MapTopLoader:__construct(self.mapTopMock);
+  TestCase.setUp(self);
+
+  -- Initialize the mocks
+  self.mapHandlerMock = self:getDependencyMock(
+    "Map/MapHandler", "Tops/MapTop/MapTopLoader", "MapHandlerMock"
+  );
+  MapTopLoader = require("Tops/MapTop/MapTopLoader");
+
+  self.mapRecordListMock = self:getMock(MapRecordList, "MapRecordListMock");
+
+  -- Initialize the map top loader test instance
+  self.mapTopLoader = MapTopLoader();
 
 end
 
@@ -42,46 +51,55 @@ end
 --
 function TestMapTopLoader:tearDown()
 
-  self.mapTopMock = nil;
+  TestCase.tearDown(self);
+
+  self.mapHandlerMock = nil;
+  self.mapRecordListMock = nil;
   self.mapTopLoader = nil;
 
 end
 
 
+-- Fetch record tests
+
 ---
--- Checks whether the getters/setters work as expected.
+-- Checks whether map records for a map that does not exist in the database are fetched as expected.
 --
-function TestMapTopLoader:testCanGetAttributes()
+function TestMapTopLoader:testCanFetchRecordsForNonExistingMap()
 
-  local mapTopMock = mach.mock_object(MapTop, "TestMapTopMock");
+  local dataBaseMock = self:getMock(DataBase, "DataBaseMock");
+  local testMapName = "not_a_map";
 
-  self.mapTopLoader:setParentMapTop(mapTopMock);
-  luaunit.assertEquals(self.mapTopLoader:getParentMapTop(), mapTopMock);
+  -- Map name not found, return empty list
+  self.mapRecordListMock.clear
+                        :should_be_called()
+                        :and_then(
+                          self.mapHandlerMock.fetchMapId
+                                             :should_be_called_with(
+                                               dataBaseMock, testMapName
+                                             )
+                                             :and_will_return(nil)
+                        )
+                        :when(
+                          function()
+                            self.mapTopLoader:fetchRecords(
+                              dataBaseMock, testMapName, self.mapRecordListMock
+                            );
+                          end
+                        );
 
 end
 
 ---
--- Checks whether the maptop loader can fetch records as expected.
+-- Checks whether an empty list of map records can be fetched for a map that does exist in the database.
 --
-function TestMapTopLoader:testCanFetchRecords()
+function TestMapTopLoader:testCanFetchEmptyRecordListForExistingMap()
 
-  local dataBaseMock = mach.mock_object(DataBase, "DataBaseMock");
-  local expectedQuery = "";
-
-  -- Map name not found
-  mapHandlerMock.fetchMapId
-                :should_be_called_with(dataBaseMock, "not_a_map")
-                :and_will_return(nil)
-                :when(
-                  function ()
-                    local records = self.mapTopLoader:fetchRecords(dataBaseMock, "not_a_map");
-                    luaunit.assertEquals(records, {});
-                  end
-                );
-
+  local dataBaseMock = self:getMock(DataBase, "DataBaseMock");
+  local testMapName = "pro_map";
 
   -- No records in database for this map
-  expectedQuery = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
+  local expectedQuery = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
            .. "FROM records "
            .. "INNER JOIN maps ON records.map = maps.id "
            .. "INNER JOIN players ON records.player = players.id "
@@ -90,24 +108,38 @@ function TestMapTopLoader:testCanFetchRecords()
            .. "WHERE maps.id = 5 "
            .. "ORDER BY milliseconds ASC;";
 
-  mapHandlerMock.fetchMapId
-                :should_be_called_with(dataBaseMock, "pro_map")
-                :and_will_return(5)
-                :and_then(
-                  dataBaseMock.query
-                              :should_be_called_with(expectedQuery, true)
-                              :and_will_return({})
-                )
-                :when(
-                  function ()
-                    local records = self.mapTopLoader:fetchRecords(dataBaseMock, "pro_map");
-                    luaunit.assertEquals(records, {});
-                  end
-                );
+  self.mapRecordListMock.clear
+                        :should_be_called()
+                        :and_then(
+                          self.mapHandlerMock.fetchMapId
+                                             :should_be_called_with(dataBaseMock, testMapName)
+                                             :and_will_return(5)
+                        ):and_then(
+                          dataBaseMock.query
+                                      :should_be_called_with(expectedQuery, true)
+                                      :and_will_return({})
+                       )
+                       :when(
+                         function()
+                           self.mapTopLoader:fetchRecords(
+                             dataBaseMock, testMapName, self.mapRecordListMock
+                           );
+                         end
+                       );
 
+end
+
+
+---
+-- Checks whether a list of multiple map records can be fetched for a existing map.
+--
+function TestMapTopLoader:testCanFetchRecordListForExistingMap()
+
+  local dataBaseMock = self:getMock(DataBase, "DataBaseMock");
+  local testMapName = "noob_map";
 
   -- Some records in database for this map
-  expectedQuery = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
+  local expectedQuery = "SELECT milliseconds, weapon_id, team_id, UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
            .. "FROM records "
            .. "INNER JOIN maps ON records.map = maps.id "
            .. "INNER JOIN players ON records.player = players.id "
@@ -146,17 +178,17 @@ function TestMapTopLoader:testCanFetchRecords()
     }
   }
 
-  local expectedPlayerA = Player:__construct("trottel", "127.0.0.1");
-  local expectedPlayerB = Player:__construct("trottelB", "127.0.0.1");
-  local expectedPlayerC = Player:__construct("trottelC", "127.0.0.1");
+  local expectedPlayerA = Player("trottel", "127.0.0.1");
+  local expectedPlayerB = Player("trottelB", "127.0.0.1");
+  local expectedPlayerC = Player("trottelC", "127.0.0.1");
 
   expectedPlayerA:setId(1);
   expectedPlayerB:setId(2);
   expectedPlayerC:setId(3);
 
-  local expectedMapRecordA = MapRecord:__construct(expectedPlayerA, 5012, 2, 1, self.mapTopMock, 1);
-  local expectedMapRecordB = MapRecord:__construct(expectedPlayerB, 7034, 3, 1, self.mapTopMock, 2);
-  local expectedMapRecordC = MapRecord:__construct(expectedPlayerC, 25740, 4, 1, self.mapTopMock, 3);
+  local expectedMapRecordA = MapRecord(expectedPlayerA, 5012, 2, 1, self.mapTopMock, 1);
+  local expectedMapRecordB = MapRecord(expectedPlayerB, 7034, 3, 1, self.mapTopMock, 2);
+  local expectedMapRecordC = MapRecord(expectedPlayerC, 25740, 4, 1, self.mapTopMock, 3);
 
   expectedMapRecordA:setCreatedAt(1235123);
   expectedMapRecordB:setCreatedAt(12351232);
@@ -164,28 +196,50 @@ function TestMapTopLoader:testCanFetchRecords()
 
 
   local expectedRecordsList = { expectedMapRecordA, expectedMapRecordB, expectedMapRecordC }
+  local mapRecordId = 1;
 
-  mapHandlerMock.fetchMapId
-                :should_be_called_with(dataBaseMock, "noob_map")
-                :and_will_return(7)
-                :and_then(
-                  dataBaseMock.query
-                              :should_be_called_with(expectedQuery, true)
-                              :and_will_return(testDataBaseEntries)
-                )
-                :when(
-                  function ()
-                    local records = self.mapTopLoader:fetchRecords(dataBaseMock, "noob_map");
-                    
-                    for index, record in ipairs(records) do
-                      luaunit.assertTrue(record:equals(expectedRecordsList[index]));
-                    end
+  local function addRecordMatcher(_addedMapRecord, _expectedMapRecord)
+    mapRecordId = mapRecordId + 1;
+    return _addedMapRecord:equals(_expectedMapRecord);
+  end
 
-                  end
-                );
+  self.mapRecordListMock.clear
+                        :should_be_called()
+                        :and_then(
+                          self.mapHandlerMock.fetchMapId
+                                             :should_be_called_with(dataBaseMock, testMapName)
+                                             :and_will_return(7)
+                        ):and_then(
+                          dataBaseMock.query
+                                      :should_be_called_with(expectedQuery, true)
+                                      :and_will_return(testDataBaseEntries)
+                        ):and_then(
+                          self.mapRecordListMock.addRecord
+                                                :should_be_called_with_any_arguments()
+                                                --[[:should_be_called_with(
+                                                  mach.match(
+                                                    expectedRecordsList[mapRecordId],
+                                                    addRecordMatcher
+                                                  )
+                                                )--]]
+                                                :multiple_times(3)--]]
+                        ):when(
+                          function()
+
+                            self.mapTopLoader:fetchRecords(
+                              dataBaseMock, testMapName, self.mapRecordListMock
+                            );
+
+                            --for index, record in ipairs(records) do
+                              --self.assertTrue(record:equals(expectedRecordsList[index]));
+                           -- end
+
+                         end
+                       );
 
 end
 
+--@todo: Fix check which map records are added
+--@todo: Add test for single map record returned
 
--- Restore real dependencies
-package.loaded["Maps/MapHandler"] = require("Maps/MapHandler");
+return TestMapTopLoader;

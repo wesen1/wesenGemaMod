@@ -58,7 +58,7 @@ askYesNoQuestion()
   #
   # Convert user input to lowercase
   # Source: https://stackoverflow.com/a/11392488
-  #  
+  #
   userDecision=$(echo "$userDecision" | tr '[:upper:]' '[:lower:]')
 
   if [ "$userDecision" == "yes" ] || [ "$userDecision" == "y" ]; then

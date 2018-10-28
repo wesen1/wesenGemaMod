@@ -1,87 +1,57 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2018 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local Output = require("Outputs/Output");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
 
 ---
 -- Class that handles player disconnects.
+-- PlayerDisconnectHandler inherits from BaseEventHandler
 --
 -- @type PlayerDisconnectHandler
 --
-local PlayerDisconnectHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs.
---
--- @tfield GemaMod parentGemaMod
---
-PlayerDisconnectHandler.parentGemaMod = "";
+local PlayerDisconnectHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- PlayerDisconnectHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerDisconnectHandler The PlayerDisconnectHandler instance
 --
-function PlayerDisconnectHandler:__construct(_parentGemaMod)
+function PlayerDisconnectHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerDisconnectHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerDisconnectHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerDisconnectHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerDisconnectHandler).__call = PlayerDisconnectHandler.__construct;
 
 
 -- Class Methods
 
 ---
 -- Event handler which is called when a player disconnects.
--- Unsets the player object of the cn and prints an error message in case of a banned player trying to connect
 --
 -- @tparam int _cn The client number of the player who disconnected
 -- @tparam int _reason The disconnect reason
 --
-function PlayerDisconnectHandler:onPlayerDisconnect(_cn, _reason)
+function PlayerDisconnectHandler:handleEvent(_cn, _reason)
 
   if (_reason == DISC_BANREFUSE) then
 
-    local errorMessage = string.format("[INFO] %s could not connect [banned]", getname(_cn));
-    Output:print(Output:getColor("info") .. errorMessage);
-
+    -- This message is printed on player disconnect because on player disconnect after
+    -- the getname() method will return nil for the _cn
+    local infoMessage = string.format("%s could not connect [banned]", getname(_cn));
+    self.output:printInfo(infoMessage);
   end
-
-  self.parentGemaMod:removePlayer(_cn);
 
 end
 

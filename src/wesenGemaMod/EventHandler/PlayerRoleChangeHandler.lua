@@ -5,60 +5,34 @@
 -- @license MIT
 --
 
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+
 ---
 -- Class that handles player role changes.
+-- PlayerRoleChangeHandler inherits from BaseEventHandler
 --
 -- @type PlayerRoleChangeHandler
 --
-local PlayerRoleChangeHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-PlayerRoleChangeHandler.parentGemaMod = "";
+local PlayerRoleChangeHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- PlayerRoleChangeHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerRoleChangeHandler The PlayerRoleChangeHandler instance
 --
-function PlayerRoleChangeHandler:__construct(_parentGemaMod)
+function PlayerRoleChangeHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerRoleChangeHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerRoleChangeHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerRoleChangeHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerRoleChangeHandler).__call = PlayerRoleChangeHandler.__construct;
 
 
 -- Class Methods
@@ -67,19 +41,17 @@ end
 -- Event handler which is called when a player role changes (admin login/logout).
 -- Sets the player level according to the role change
 --
--- @tparam int _cn The client number of the player whose role changed
+-- @tparam int _player The player whose role changed
 -- @tparam int _newRole The new role
 --
-function PlayerRoleChangeHandler:onPlayerRoleChange (_cn, _newRole)
+function PlayerRoleChangeHandler:handleEvent(_player, _newRole)
 
-  if (self.parentGemaMod:getIsActive()) then
-
-    local player = self.parentGemaMod:getPlayers()[_cn];
+  if (self.parentGemaMode:getIsActive()) then
 
     if (_newRole == CR_ADMIN) then
-      player:setLevel(1);
+      _player:setLevel(1);
     elseif (_newRole == CR_DEFAULT) then
-      player:setLevel(0);
+      _player:setLevel(0);
     end
 
   end

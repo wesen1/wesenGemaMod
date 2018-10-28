@@ -12,7 +12,7 @@ local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 --
 -- @type PlayerSaver
 --
-local PlayerInformationSaver = {};
+local PlayerInformationSaver = setmetatable({}, {});
 
 
 -- Class Methods

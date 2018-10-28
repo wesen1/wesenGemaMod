@@ -5,143 +5,111 @@
 -- @license MIT
 --
 
-local Output = require("Outputs/Output");
-local TableOutput = require("Outputs/TableOutput");
-local WeaponNameFetcher = require("WeaponNameFetcher");
+local WeaponNameFetcher = require("WeaponHandler/WeaponNameFetcher");
+local MapRecordPrinter = require("Tops/MapTop/MapRecordList/MapRecordPrinter");
 
 ---
 -- Handles printing of maptop related values.
 --
 -- @type MapTopPrinter
 --
-local MapTopPrinter = {};
+local MapTopPrinter = setmetatable({}, {});
 
 
 ---
--- The parent map top
+-- The map record printer
 --
--- @tfield MapTop parentMapTop
+-- @tfield MapRecordPrinter mapRecordPrinter
 --
-MapTopPrinter.parentMapTop = "";
+MapTopPrinter.mapRecordPrinter = nil;
+
+---
+-- The output
+--
+-- @tfield Output output
+--
+MapTopPrinter.output = nil;
+
+---
+-- The weapon name fetcher
+--
+-- @tfield WeaponNameFetcher weaponNameFetcher
+--
+MapTopPrinter.weaponNameFetcher = nil;
 
 
 ---
 -- MapTopPrinter constructor.
 --
--- @tparam MapTop _parentMapTop The parent map top
+-- @tparam Output _output The output
 --
 -- @treturn MapTopPrinter The MapTopPrinter instance
 --
-function MapTopPrinter:__construct(_parentMapTop)
+function MapTopPrinter:__construct(_output)
 
-  local instance = {};
-  setmetatable(instance, {__index = MapTopPrinter});
+  local instance = setmetatable({}, {__index = MapTopPrinter});
 
-  instance.parentMapTop = _parentMapTop;
+  instance.output = _output;
+
+  instance.mapRecordPrinter = MapRecordPrinter(_output);
+  instance.weaponNameFetcher = WeaponNameFetcher();
 
   return instance;
 
 end
 
-
--- Getters and Setters
-
----
--- Returns the parent map top.
---
--- @treturn MapTop The parent map top
---
-function MapTopPrinter:getParentMapTop()
-  return self.parentMapTop;
-end
-
----
--- Sets the parent map top.
---
--- @tparam MapTop _parentMapTop The parent map top
---
-function MapTopPrinter:setParentMapTop(_parentMapTop)
-  self.parentMapTop = _parentMapTop;
-end
+getmetatable(MapTopPrinter).__call = MapTopPrinter.__construct;
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Prints the maptop to a player.
 --
--- @tparam int _cn The client number of the player to which the maptop will be printed
+-- @tparam int _player The player to which the maptop will be printed
 --
-function MapTopPrinter:printMapTop(_cn)
+function MapTopPrinter:printMapTop(_mapTop, _player)
 
-  if (self.parentMapTop:isEmpty()) then
-    Output:print(Output:getColor("emptyTop") .. "No records found for this map.", _cn);
+  local mapRecordList = _mapTop:getMapRecordList();
+
+  if (mapRecordList:getNumberOfRecords() == 0) then
+    self.output:print(self.output:getColor("emptyTop") .. "No records found for this map.", _player);
   else
 
-    local amountDisplayRecords = 5;
-    local amountRecords = self.parentMapTop:getNumberOfRecords();
-
-    if (amountRecords < 5) then
-      amountDisplayRecords = amountRecords;
+    -- Get the number of display records
+    local numberOfDisplayRecords = 5;
+    local numberOfRecords = mapRecordList:getNumberOfRecords();
+    if (numberOfRecords < numberOfDisplayRecords) then
+      numberOfDisplayRecords = numberOfRecords;
     end
-
-    local mapTopTitle = Output:getColor("mapTopInfo") .. "The "
-                     .. Output:getColor("mapTopNumberOfRecords") .. "%d "
-                     .. Output:getColor("mapTopInfo") .. "best player%s of this map %s:";
-
-    if (amountDisplayRecords == 1) then
-      mapTopTitle = string.format(mapTopTitle, amountDisplayRecords, "", "is");
-    else
-      mapTopTitle = string.format(mapTopTitle, amountDisplayRecords, "s", "are");
-    end
-
-    Output:print(mapTopTitle, _cn);
 
     local startRank = 1;
-    local limit = 4;
+    local endRank = startRank + (numberOfDisplayRecords - 1);
 
-    if (amountRecords < startRank + limit) then
-      limit = amountRecords - startRank;
-    end
+    local mapTopTitle = self:getMapTopTitle(startRank, numberOfDisplayRecords);
+    self.output:print(mapTopTitle, _player);
 
 
-    local maxRankLength = string.len(startRank + limit);
+    local maxRankLength = string.len(endRank);
 
     local mapTopEntries = {};
     local mapTopContainsIp = false;
 
-    for i = startRank, startRank + limit, 1 do
+    for i = startRank, endRank, 1 do
 
-      local rank = string.rep("0", maxRankLength - string.len(i)) .. i;
-      local record = self.parentMapTop:getRecord(i);
-
-      local mapTopEntry = {
-        [1] = Output:getColor("mapRecordRank") .. rank .. ") "
-     .. Output:getColor("mapRecordTime") .. record:getDisplayString()
-     .. Output:getColor("mapRecordInfo") .. " by "
-     .. Output:getColor("mapRecordName") .. record:getPlayer():getName(),
-
-        [3] = Output:getTeamColor(record:getTeam()) .. WeaponNameFetcher:getWeaponName(record:getWeapon()),
-
-        [4] = Output:getColor("mapRecordTimeStamp") .. os.date("%Y-%m-%d", record:getCreatedAt())
-      }
-
-      if (not self.parentMapTop:isPlayerNameUnique(record:getPlayer():getName())) then
-        mapTopEntry[2] = Output:getColor("mapRecordInfo") .. " ("
-                      .. Output:getColor("ip") .. record:getPlayer():getIpString()
-                      .. Output:getColor("mapRecordInfo") .. ")";
-        mapTopContainsIp = true;
-      else
-        mapTopEntry[2] = " ";
-      end
-
+      local record = mapRecordList:getRecordByRank(i);
+      local mapTopEntry = self.mapRecordPrinter:getMapTopOutputTableRow(record, maxRankLength);
       table.insert(mapTopEntries, mapTopEntry);
+
+      if (mapTopEntry[2] ~= " ") then
+        mapTopContainsIp = true;
+      end
 
     end
 
     if (not mapTopContainsIp) then
 
-      for index, mapTopEntry in ipairs(mapTopEntries) do
+      for _, mapTopEntry in ipairs(mapTopEntries) do
         mapTopEntry[2] = mapTopEntry[3];
         mapTopEntry[3] = mapTopEntry[4];
         mapTopEntry[4] = nil;
@@ -149,7 +117,7 @@ function MapTopPrinter:printMapTop(_cn)
 
     end
 
-    TableOutput:printTable(mapTopEntries, _cn, true);
+    self.output:printTable(mapTopEntries, _player, true);
 
   end
 
@@ -158,40 +126,97 @@ end
 ---
 -- Prints statistics about the current map.
 --
--- @tparam int _cn The client number of the player to which the statistics will be printed
+-- @tparam MapTop _mapTop The map top
+-- @tparam Player _player The player to which the statistics will be printed
 --
-function MapTopPrinter:printMapStatistics(_cn)
+function MapTopPrinter:printMapStatistics(_mapTop, _player)
 
-  if (self.parentMapTop:isEmpty()) then
-    Output:print(Output:getColor("emptyTop") .. "No records found for this map.", _cn);
+  local mapRecordList = _mapTop:getMapRecordList();
+  local numberOfRecords = mapRecordList:getNumberOfRecords();
+  if (numberOfRecords > 0) then
+
+    local mapTopSummary = self.output:getColor("mapTopInfo") .. "This map was finished by "
+                      .. self.output:getColor("mapTopNumberOfRecords") .. "%d "
+                      .. self.output:getColor("mapTopInfo") .. "player%s";
+
+    if (numberOfRecords == 1) then
+      mapTopSummary = string.format(mapTopSummary, numberOfRecords, "");
+    else
+      mapTopSummary = string.format(mapTopSummary, numberOfRecords, "s");
+    end
+
+    self.output:print(mapTopSummary, _player);
+
+  end
+
+  self:printBestMapRecord(_mapTop, _player);
+
+end
+
+---
+-- Prints the best map record to a player.
+--
+-- @tparam MapTop _mapTop The map top
+-- @tparam Player _player The player
+--
+function MapTopPrinter:printBestMapRecord(_mapTop, _player)
+
+  local mapRecordList = _mapTop:getMapRecordList();
+
+  if (mapRecordList:getNumberOfRecords() == 0) then
+    self.output:print(self.output:getColor("emptyTop") .. "No records found for this map.", _player);
+  else
+    local bestMapRecord = mapRecordList:getRecordByRank(1);
+    self.mapRecordPrinter:printBestMapRecord(bestMapRecord, _player);
+  end
+
+end
+
+
+
+-- Private Methods
+
+---
+-- Returns the map top title.
+--
+-- @tparam int _startRank The start rank of displayed records
+-- @tparam int _endRank The end rank of the displayed records
+--
+-- @treturn string The map top title
+--
+function MapTopPrinter:getMapTopTitle(_startRank, _numberOfDisplayRecords)
+
+  local mapTopTitle;
+
+  if (_startRank == 1) then
+    mapTopTitle = self.output:getColor("mapTopInfo") .. "The "
+               .. self.output:getColor("mapTopNumberOfRecords") .. "%d "
+               .. self.output:getColor("mapTopInfo") .. "best player%s of this map %s:";
+
+    if (_numberOfDisplayRecords == 1) then
+      mapTopTitle = string.format(mapTopTitle, _numberOfDisplayRecords, "", "is");
+    else
+      mapTopTitle = string.format(mapTopTitle, _numberOfDisplayRecords, "s", "are");
+    end
 
   else
 
-    local bestRecord = self.parentMapTop:getRecord(1);
-    local amountRecords = self.parentMapTop:getNumberOfRecords();
+    mapTopTitle = self.output:getColor("mapTopInfo") .. "Rank "
+               .. self.output:getColor("mapTopRank") .. _startRank;
 
-    local mapTopSummary = Output:getColor("mapTopInfo") .. "This map was finished by "
-                     .. Output:getColor("mapTopNumberOfRecords") .. "%d "
-                     .. Output:getColor("mapTopInfo") .. "player%s";
-
-    if (amountRecords == 1) then
-      mapTopSummary = string.format(mapTopSummary, amountRecords, "");
+    if (_numberOfDisplayRecords == 1) then
+      mapTopTitle = mapTopTitle .. self.output:getColor("mapTopInfo") .. " is:";
     else
-      mapTopSummary = string.format(mapTopSummary, amountRecords, "s");
+
+      local endRank = _startRank + (_numberOfDisplayRecords - 1);
+      mapTopTitle = mapTopTitle .. self.output:getColor("mapTopInfo") .. " to "
+                                .. self.output:getColor("mapTopRank") .. endRank
+                                .. self.output:getColor("mapTopInfo") .. " are:";
     end
 
-    Output:print(mapTopSummary, _cn);
-    Output:print(
-      Output:getColor("mapRecordInfo") .. "The best record of this map is "
-   .. Output:getColor("mapRecordTime") .. bestRecord:getDisplayString()
-   .. Output:getColor("mapRecordInfo") .. " by "
-   .. Output:getColor("mapRecordName") .. bestRecord:getPlayer():getName()
-   .. Output:getColor("mapRecordInfo") .. " with "
-   .. Output:getTeamColor(bestRecord:getTeam()) .. WeaponNameFetcher:getWeaponName(bestRecord:getWeapon()),
-      _cn
-    );
-
   end
+
+  return mapTopTitle;
 
 end
 

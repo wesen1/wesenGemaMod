@@ -6,92 +6,76 @@
 --
 
 local lfs = require("lfs");
+local CommandList = require("CommandHandler/CommandList");
 
 ---
--- Loads all commands from the Commands directory.
+-- Loads all commands from a specified commands directory.
 --
 -- @type CommandLoader
 --
-local CommandLoader = {};
-
-
----
--- The parent command handler
---
--- @tfield CommandHandler parentCommandHandler
---
-CommandLoader.parentCommandHandler = "";
+local CommandLoader = setmetatable({}, {});
 
 
 ---
 -- CommandLoader constructor.
 --
--- @tparam CommandHandler _parentCommandHandler The parent command handler
+-- @tparam GemaMod _parentGemaMod The parent gema mod
 --
 -- @treturn CommandLoader The CommandLoader instance
 --
-function CommandLoader:__construct(_parentCommandHandler)
+function CommandLoader:__construct()
 
-  local instance = {};
-  setmetatable(instance, {__index = CommandLoader});
-
-  instance.parentCommandHandler = _parentCommandHandler;
+  local instance = setmetatable({}, {__index = CommandLoader});
 
   return instance;
 
 end
 
+getmetatable(CommandLoader).__call = CommandLoader.__construct;
 
--- Getters and setters
 
----
--- Returns the parent command handler.
---
--- @treturn CommandHandler The parent command handler
---
-function CommandLoader:getParentCommandHandler()
-  return self.parentCommandHandler;
-end
+-- Public Methods
 
 ---
--- Sets the parent command handler.
+-- Loads all commands from a specified commands directory and returns a CommandList.
 --
--- @tparam CommandHandler _parentCommandHandler The parent command handler
+-- @tparam GemaMode _parentGemaMode The parent gema mode for the CommandList
+-- @tparam string _commandClassesDirectoryPath The path to the command classes directory
 --
-function CommandLoader:setParentCommandHandler(_parentCommandHandler)
-  self.parentCommandHandler = _parentCommandHandler;
-end
-
-
--- Class Methods
-
----
--- Loads all commands from the Commands directory and adds them to _commandLister.
+-- @treturn CommandList The command list that contains the loaded commands
 --
--- @tparam CommandLister _commandLister The command lister
---
-function CommandLoader:loadCommands(_commandLister)
+function CommandLoader:loadCommands(_parentGemaMode, _commandClassesDirectoryPath)
 
-  for index, commandClassName in ipairs(self:getCommandClassNames()) do
+  local commandList = CommandList(_parentGemaMode);
+
+  for _, commandClassName in ipairs(self:getCommandClassNames(_commandClassesDirectoryPath)) do
     local command = require("Commands/" .. commandClassName);
-    _commandLister:addCommand(command);
+    commandList:addCommand(command);
   end
 
+  return commandList;
+
 end
+
+
+-- Private Methods
 
 ---
 -- Returns the list of command class names from the Commands folder sorted by name.
 --
--- @treturn table The list of command class names
+-- @tparam string _commandClassesDirectoryPath The path to the command classes directory
 --
-function CommandLoader:getCommandClassNames()
+-- @treturn string[] The list of command class names
+--
+function CommandLoader:getCommandClassNames(_commandClassesDirectoryPath)
 
   local commandClassNames = {};
 
-  -- iterate over each file in the Commands directory
-  for luaFile in lfs.dir("lua/scripts/wesenGemaMod/Commands") do
+  -- Iterate over each file in the Commands directory
+  for luaFile in lfs.dir(_commandClassesDirectoryPath) do
 
-    if (luaFile ~= "." and luaFile ~= ".." and luaFile ~= "BaseCommand.lua") then
+    -- If the file name ends with "Command.lua"
+    if (luaFile:match("^.+%Command.lua$")) then
       local commandClassName = luaFile:gsub(".lua", "");
       table.insert(commandClassNames, commandClassName);
     end

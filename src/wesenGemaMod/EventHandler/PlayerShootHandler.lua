@@ -5,60 +5,45 @@
 -- @license MIT
 --
 
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local ScoreWeaponUpdater = require("WeaponHandler/ScoreWeaponUpdater");
+
 ---
 -- Class that handles player shots.
+-- PlayerShootHandler inherits from BaseEventHandler
 --
 -- @type PlayerShootHandler
 --
-local PlayerShootHandler = {};
+local PlayerShootHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
--- The parent gema mod to which this EventHandler belongs
+-- The score weapon updater
 --
--- @tfield GemaMod parentGemaMod
+-- @tfield ScoreWeaponUpdater scoreWeaponUpdater
 --
-PlayerShootHandler.parentGemaMod = "";
+PlayerShootHandler.scoreWeaponUpdater = nil;
 
 
 ---
 -- PlayerShootHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerShootHandler The PlayerShootHandler instance
 --
-function PlayerShootHandler:__construct(_parentGemaMod)
+function PlayerShootHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerShootHandler});
 
-  instance.parentGemaMod = _parentGemaMod;
+  instance.scoreWeaponUpdater = ScoreWeaponUpdater();
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerShootHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerShootHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(PlayerShootHandler).__call = PlayerShootHandler.__construct;
 
 
 -- Class Methods
@@ -66,49 +51,13 @@ end
 ---
 -- Event handler that is called when a player shoots.
 --
--- @tparam int _cn The client number of the player who shot
+-- @tparam int _player The player who shot
 -- @tparam int _weapon The weapon with which the player shot
 --
-function PlayerShootHandler:onPlayerShoot(_cn, _weapon)
+function PlayerShootHandler:handleEvent(_player, _weapon)
 
-  if (self.parentGemaMod:getIsActive()) then
-
-    local player = self.parentGemaMod:getPlayers()[_cn];
-
-    if (_weapon ~= GUN_KNIFE and _weapon ~= GUN_GRENADE) then
-
-      if (player:getWeapon() == GUN_KNIFE) then
-
-        if (self:isWeaponPistol(_weapon)) then
-          player:setWeapon(GUN_PISTOL);
-        else
-          player:setWeapon(getprimary(_cn));
-        end
-
-      elseif (player:getWeapon() == GUN_PISTOL and not self:isWeaponPistol(_weapon)) then
-        player:setWeapon(getprimary(_cn));
-      end
-
-    end
-
-  end
-
-end
-
----
--- Returns whether a weapon is a pistol.
---
--- @tparam int _weapon The weapon id
---
--- @treturn bool true: The weapon is a pistol
---               false: The weapon is not a pistol
---
-function PlayerShootHandler:isWeaponPistol(_weapon)
-
-  if (_weapon == GUN_PISTOL or _weapon == GUN_AKIMBO) then
-    return true;
-  else
-    return false;
+  if (self.parentGemaMode:getIsActive()) then
+    self.scoreWeaponUpdater:updateScoreWeapon(_player:getScoreAttempt(), _weapon);
   end
 
 end

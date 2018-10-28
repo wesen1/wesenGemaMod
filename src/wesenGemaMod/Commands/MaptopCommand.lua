@@ -5,50 +5,56 @@
 -- @license MIT
 --
 
-local BaseCommand = require("Commands/BaseCommand");
-local Output = require("Outputs/Output");
+local BaseCommand = require("CommandHandler/BaseCommand");
 
 ---
 -- Command !maptop.
 -- Displays the best records of a map to a player
+-- MapTopCommand inherits from BaseCommand
 --
 -- @type MapTopCommand
 --
-local MapTopCommand = {};
-
--- MapTopCommand inherits from BaseCommand
-setmetatable(MapTopCommand, {__index = BaseCommand});
+local MapTopCommand = setmetatable({}, {__index = BaseCommand});
 
 
 ---
 -- MapTopCommand constructor.
 --
--- @tparam CommandLister _parentCommandLister The parent command lister
+-- @tparam CommandList _parentCommandList The parent command list
 --
 -- @treturn MapTopCommand The MapTopCommand instance
 --
-function MapTopCommand:__construct(_parentCommandLister)
+function MapTopCommand:__construct(_parentCommandList)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "maptop", 0, "Map records");
+  local instance = BaseCommand(
+    _parentCommandList,
+    "!maptop",
+    0,
+    "Map records",
+    {},
+    "Shows the 5 best players of a map",
+    { "!mtop" }
+  );
   setmetatable(instance, {__index = MapTopCommand});
-
-  instance:addAlias("mtop");
-  instance:setDescription("Shows the 5 best players of a map");
 
   return instance;
 
 end
 
+getmetatable(MapTopCommand).__call = MapTopCommand.__construct;
+
+
+-- Public Methods
 
 ---
 -- Displays the 5 best players of a map to a player.
 --
--- @tparam int _cn The client number of the player who executed the command
--- @tparam string[] _args The list of arguments which were passed by the player
+-- @tparam Player _player The player who executed the command
+-- @tparam string[] _arguments The list of arguments which were passed by the player
 --
-function MapTopCommand:execute(_cn, _args)
-  local mapTop = self.parentCommandLister:getParentCommandHandler():getParentGemaMod():getMapTop();
-  mapTop:printMapTop(_cn);
+function MapTopCommand:execute(_player, _arguments)
+  local mapTopHandler = self.parentCommandList:getParentGemaMode():getMapTopHandler();
+  mapTopHandler:printMapTop("main", _player);
 end
 
 

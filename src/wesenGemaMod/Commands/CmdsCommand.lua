@@ -5,51 +5,67 @@
 -- @license MIT
 --
 
-local BaseCommand = require("Commands/BaseCommand");
+local BaseCommand = require("CommandHandler/BaseCommand");
+local CommandListPrinter = require("CommandHandler/CommandPrinter/CommandListPrinter");
 
 ---
 -- Command !cmds.
 -- Displays all available commands to a player
+-- CmdsCommand inherits from BaseCommand
 --
 -- @type CmdsCommand
 --
-local CmdsCommand = {};
+local CmdsCommand = setmetatable({}, {__index = BaseCommand});
 
--- CmdsCommand inherits from BaseCommand
-setmetatable(CmdsCommand, {__index = BaseCommand});
+
+---
+-- The command list printer
+--
+-- @tfield CommandListPrinter commandListPrinter
+--
+CmdsCommand.commandListPrinter = nil;
 
 
 ---
 -- CmdsCommand constructor.
 --
--- @tparam CommandLister _parentCommandLister The parent command lister
+-- @tparam CommandList _parentCommandList The parent command list
 --
 -- @treturn CmdsCommand The CmdsCommand instance
 --
-function CmdsCommand:__construct(_parentCommandLister)
+function CmdsCommand:__construct(_parentCommandList)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "cmds", 0);
+  local instance = BaseCommand(
+    _parentCommandList,
+    "!cmds",
+    0,
+    nil,
+    {},
+    "Displays a list of all commands that a player can use.",
+    { "!commands" }
+  );
   setmetatable(instance, {__index = CmdsCommand});
 
-  instance:addAlias("commands");
-  instance:setDescription("Displays a list of all commands that a player can use.");
+  instance.commandListPrinter = CommandListPrinter(instance.output);
 
   return instance;
 
 end
 
+getmetatable(CmdsCommand).__call = CmdsCommand.__construct;
+
+
+-- Public Methods
 
 ---
 -- Displays an auto generated list of all commands.
 --
--- @tparam int _cn The client number of the player who executed the command
--- @tparam string[] _args The list of arguments which were passed by the player
+-- @tparam Player _player The player who executed the command
+-- @tparam string[] _arguments The list of arguments which were passed by the player
 --
-function CmdsCommand:execute(_cn, _args)
-
-  local commandPrinter = self.parentCommandLister:getParentCommandHandler():getCommandPrinter();
-  commandPrinter:printCommandList(_cn, self.parentCommandLister);
-
+function CmdsCommand:execute(_player, _arguments)
+  self.output:print(self.output:getColor("cmdsTitle") .. "Available commands:", _player);
+  self.commandListPrinter:printGroupedCommands(self.parentCommandList, _player:getLevel(), " ", _player);
 end
 
 

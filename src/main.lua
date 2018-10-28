@@ -14,14 +14,10 @@ PLUGIN_VERSION = 0.1;
 --
 package.path = package.path .. ";lua/scripts/wesenGemaMod/?.lua";
 
-local GemaMod = require("GemaMod");
+local GemaMode = require("GemaMode");
 
-local gemaMod = GemaMod:__construct(
-  cfg.getvalue("gemamod", "dataBaseUser"),
-  cfg.getvalue("gemamod", "dataBasePassword"),
-  cfg.getvalue("gemamod", "dataBaseName")
-);
-gemaMod:initialize();
+local gemaMode = GemaMode(cfg.totable("gemamod"));
+gemaMode:initialize();
 
 
 -- Bind events to the event handlers
@@ -34,7 +30,7 @@ gemaMod:initialize();
 -- @tparam int _flag The id of the flag whose state was changed
 --
 function onFlagAction(_cn, _action, _flag)
-  gemaMod:onFlagAction(_cn, _action, _flag);
+  gemaMode:onFlagAction(_cn, _action, _flag);
 end
 
 ---
@@ -44,7 +40,7 @@ end
 -- @tparam int _gameMode The game mode
 --
 function onMapChange(_mapName, _gameMode)
-  gemaMod:onMapChange(_mapName, _gameMode);
+  gemaMode:onMapChange(_mapName, _gameMode);
 end
 
 ---
@@ -60,13 +56,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK if a voted map is auto removed or nil
 --
 function onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
-
-  local pluginBlock = gemaMod:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError);
-
-  if (pluginBlock) then
-    return pluginBlock;
-  end
-
+  return gemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError);
 end
 
 ---
@@ -75,18 +65,27 @@ end
 -- @tparam int _cn The client number of the player who connected
 --
 function onPlayerConnect(_cn)
-  gemaMod:onPlayerConnect(_cn);
+  gemaMode:onPlayerConnect(_cn);
 end
 
 ---
 -- Event handler which is called when a player disconnects.
--- Unsets the player object of the cn and prints an error message in case of a banned player trying to connect
 --
 -- @tparam int _cn The client number of the player who disconnected
 -- @tparam int _reason The disconnect reason
 --
 function onPlayerDisconnect(_cn, _reason)
-  gemaMod:onPlayerDisconnect(_cn, _reason);
+  gemaMode:onPlayerDisconnect(_cn, _reason);
+end
+
+---
+-- Event handler which is called after a player disconnected.
+--
+-- @tparam int _cn The client number of the player who disconnected
+-- @tparam int _reason The disconnect reason
+--
+function onPlayerDisconnectAfter(_cn, _reason)
+  gemaMode:onPlayerDisconnectAfter(_cn, _reason);
 end
 
 ---
@@ -97,7 +96,7 @@ end
 -- @tparam string _newName The new name of the player
 --
 function onPlayerNameChange(_cn, _newName)
-  gemaMod:onPlayerNameChange(_cn, _newName);
+  gemaMode:onPlayerNameChange(_cn, _newName);
 end
 
 ---
@@ -108,7 +107,7 @@ end
 -- @tparam int _newRole The new role
 --
 function onPlayerRoleChange (_cn, _newRole)
-  gemaMod:onPlayerRoleChange(_cn, _newRole);
+  gemaMode:onPlayerRoleChange(_cn, _newRole);
 end
 
 ---
@@ -121,13 +120,7 @@ end
 -- @treturn int|nil PLUGIN_BLOCK if the player says normal text or nil
 --
 function onPlayerSayText(_cn, _text)
-
-  local pluginBlock = gemaMod:onPlayerSayText(_cn, _text);
-
-  if (pluginBlock) then
-    return pluginBlock;
-  end
-
+  return gemaMode:onPlayerSayText(_cn, _text);
 end
 
 ---
@@ -146,13 +139,7 @@ end
 -- @treturn int|nil Upload error if map is not a gema or nil
 --
 function onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
-
-  local uploadError = gemaMod:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError);
-
-  if (uploadError) then
-    return uploadError;
-  end
-
+  return gemaMode:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError);
 end
 
 ---
@@ -162,7 +149,7 @@ end
 -- @tparam int _weapon The weapon with which the player shot
 --
 function onPlayerShoot(_cn, _weapon)
-  gemaMod:onPlayerShoot(_cn, _weapon);
+  gemaMode:onPlayerShoot(_cn, _weapon);
 end
 
 ---
@@ -172,17 +159,7 @@ end
 -- @tparam int _cn The client number of the player who spawned
 --
 function onPlayerSpawn(_cn)
-  gemaMod:onPlayerSpawn(_cn);
-end
-
----
--- Event handler which is called after a player spawned.
--- Sets the players team and weapon.
---
--- @tparam int _cn The client number of the player who spawned
---
-function onPlayerSpawnAfter(_cn)
-  gemaMod:onPlayerSpawnAfter(_cn);
+  gemaMode:onPlayerSpawn(_cn);
 end
 
 ---
@@ -196,5 +173,5 @@ end
 -- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
 --
 function onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
-  gemaMod:onVoteEnd(_result, _cn, _type, _text, _number1, _number2);
+  gemaMode:onVoteEnd(_result, _cn, _type, _text, _number1, _number2);
 end

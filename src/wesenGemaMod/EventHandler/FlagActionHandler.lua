@@ -5,84 +5,71 @@
 -- @license MIT
 --
 
-local MapRecord = require("Tops/MapTop/MapRecord/MapRecord");
-local TableUtils = require("Utils/TableUtils");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local MapRecordPrinter = require("Tops/MapTop/MapRecordList/MapRecordPrinter");
 
 ---
 -- Class that handles flag actions.
+-- FlagActionHandler inherits from BaseEventHandler
 --
 -- @type FlagActionHandler
 --
-local FlagActionHandler = {};
+local FlagActionHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
--- The parent gema mod to which this EventHandler belongs
+-- The map record printer
 --
--- @tfield GemaMod parentGemaMod
+-- @tfield MapRecordPrinter mapRecord Printer
 --
-FlagActionHandler.parentGemaMod = "";
+FlagActionHandler.mapRecordPrinter = nil;
 
 
 ---
 -- FlagActionHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn FlagActionHandler The FlagActionHandler instance
 --
-function FlagActionHandler:__construct(_parentGemaMod)
+function FlagActionHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = FlagActionHandler});
 
-  instance.parentGemaMod = _parentGemaMod;
+  instance.mapRecordPrinter = MapRecordPrinter(instance.output);
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function FlagActionHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function FlagActionHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(FlagActionHandler).__call = FlagActionHandler.__construct;
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Event handler that is called when the state of the flag is changed.
 --
--- @tparam int _cn The client number of the player who changed the state
+-- @tparam Player _player The player who changed the state
 -- @tparam int _action The id of the flag action
 -- @tparam int _flag The id of the flag whose state was changed
 --
-function FlagActionHandler:onFlagAction(_cn, _action, _flag)
+function FlagActionHandler:handleEvent(_player, _action, _flag)
 
-  if (self.parentGemaMod:getIsActive()) then
+  if (self.parentGemaMode:getIsActive()) then
 
-    -- instant flag reset (gameplay affecting)
-    if (_action == FA_DROP or _action == FA_LOST) then
-      self:resetFlag(_cn, _flag)
+    if (_action == FA_SCORE) then
 
-    elseif (_action == FA_SCORE) then
-      self:registerRecord(_cn, getsvtick());
+      local scoreAttempt = _player:getScoreAttempt();
+      if (not scoreAttempt:isFinished()) then
+        scoreAttempt:finish();
+        self:registerRecord(scoreAttempt);
+      end
+
+    elseif (_action == FA_DROP or _action == FA_LOST) then
+      -- instant flag reset (gameplay affecting)
+      self:resetFlag(_player, _flag);
     end
 
   end
@@ -90,48 +77,32 @@ function FlagActionHandler:onFlagAction(_cn, _action, _flag)
 end
 
 
+-- Private Methods
+
 ---
 -- Adds a record to the maptop and prints the score message.
 --
--- @tparam int _cn The player client number of the player who scored
--- @tparam int _endTime The time in milliseconds when the player scored
+-- @tparam PlayerScoreAttempt scoreAttempt The players score attempt
 --
-function FlagActionHandler:registerRecord(_cn, _endTime)
+function FlagActionHandler:registerRecord(scoreAttempt)
 
-  local scorePlayer = self.parentGemaMod:getPlayers()[_cn];
+  local dataBase = self.parentGemaMode:getDataBase();
+  local mapTop = self.parentGemaMode:getMapTopHandler():getMapTop("main");
+  local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList());
 
-  -- If the player scores again
-  if scorePlayer:getStartTime() == 0 then
-    return;
-  end
-
-  local millisecondsNeededToScore = _endTime - scorePlayer:getStartTime();
-  scorePlayer:setStartTime(0);
-
-  if millisecondsNeededToScore == 0 then
-    return;
-  end
-
-  local record = MapRecord:__construct(
-                                  TableUtils:copy(scorePlayer), 
-                                  millisecondsNeededToScore,
-                                  scorePlayer:getWeapon(),
-                                  scorePlayer:getTeam(),
-                                  self.parentGemaMod:getMapTop()
-  );
-  record:printScoreRecord();
-  self.parentGemaMod:getMapTop():addRecord(record);
+  self.mapRecordPrinter:printScoreRecord(record);
+  mapTop:addRecord(dataBase, record);
 
 end
 
 ---
--- Triggers the flag action that the player with _cn returns the flag.
+-- Triggers the flag action "player <name> returned the flag".
 --
--- @tparam int _cn The player client number of the player who dropped the flag
+-- @tparam int _player The player who dropped the flag
 -- @tparam int _flag The flag id of the flag that was dropped
 --
-function FlagActionHandler:resetFlag(_cn, _flag)
-  flagaction(_cn, FA_RESET, _flag);
+function FlagActionHandler:resetFlag(_player, _flag)
+  flagaction(_player:getCn(), FA_RESET, _flag);
 end
 
 

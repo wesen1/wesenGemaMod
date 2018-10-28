@@ -5,54 +5,61 @@
 -- @license MIT
 --
 
-local BaseCommand = require("Commands/BaseCommand");
-local Output = require("Outputs/Output");
+local BaseCommand = require("CommandHandler/BaseCommand");
 
 ---
 -- Command !rules.
 -- Displays the gema rules to a player
+-- RulesCommand inherits from BaseCommand
 --
 -- @type RulesCommand
 --
-local RulesCommand = {};
-
--- RulesCommand inherits from BaseCommand
-setmetatable(RulesCommand, {__index = BaseCommand});
+local RulesCommand = setmetatable({}, {__index = BaseCommand});
 
 
 ---
 -- RulesCommand constructor.
 --
--- @tparam CommandLister _parentCommandLister The parent command lister
+-- @tparam CommandList _parentCommandList The parent command list
 --
 -- @treturn RulesCommand The RulesCommand instance
 --
-function RulesCommand:__construct(_parentCommandLister)
+function RulesCommand:__construct(_parentCommandList)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "rules", 0);
+  local instance = BaseCommand(
+    _parentCommandList,
+    "!rules",
+    0,
+    nil,
+    {},
+    "Shows the gema rules"
+  );
   setmetatable(instance, {__index = RulesCommand});
-
-  instance:setDescription("Shows the gema rules");
 
   return instance;
 
 end
 
+getmetatable(RulesCommand).__call = RulesCommand.__construct;
+
+
+-- Public Methods
+
 ---
 -- Displays the gema rules to a player.
 --
--- @tparam int _cn The client number of the player who executed the command
--- @tparam string[] _args The list of arguments which were passed by the player
+-- @tparam Player _player The player who executed the command
+-- @tparam string[] _arguments The list of arguments which were passed by the player
 --
-function RulesCommand:execute(_cn, _args)
+function RulesCommand:execute(_player, _arguments)
 
   -- Gema rules
-  Output:print(Output:getColor("rulesGemaTitle") .. "Gema rules:", _cn);
-  Output:print(Output:getColor("rulesGemaText") .. "1. The goal is to reach the flags and score as fast as possible.", _cn);
-  Output:print(Output:getColor("rulesGemaText") .. "2. Killing other players on purpose is not allowed.", _cn);
-  Output:print(Output:getColor("infoWarning") .. "You may only play on this server when you agree to follow the rules above.", _cn);
-  Output:print(Output:getColor("infoWarning") .. "Breaking the rules may result in kicks or bans.", _cn);
-  Output:print(Output:getColor("info") .. "Read the extended server information for additional server specific rules.", _cn);
+  self.output:print(self.output:getColor("rulesGemaTitle") .. "Gema rules:", _player);
+  self.output:print(self.output:getColor("rulesGemaText") .. "1. The goal is to reach the flags and score as fast as possible.", _player);
+  self.output:print(self.output:getColor("rulesGemaText") .. "2. Killing other players on purpose is not allowed.", _player);
+  self.output:print(self.output:getColor("infoWarning") .. "You may only play on this server when you agree to follow the rules above.", _player);
+  self.output:print(self.output:getColor("infoWarning") .. "Breaking the rules may result in kicks or bans.", _player);
+  self.output:print(self.output:getColor("info") .. "Read the extended server information for additional server specific rules.", _player);
 
 end
 

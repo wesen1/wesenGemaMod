@@ -5,66 +5,37 @@
 -- @license MIT
 --
 
-local MapChecker = require("Maps/MapChecker");
-local Output = require("Outputs/Output");
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
 
 ---
 -- Class that handles map changes.
+-- MapChangeHandler inherits from BaseEventHandler
 --
 -- @type MapChangeHandler
 --
-local MapChangeHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-MapChangeHandler.parentGemaMod = "";
+local MapChangeHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- MapChangeHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn MapChangeHandler The MapChangeHandler instance
 --
-function MapChangeHandler:__construct(_parentGemaMod)
+function MapChangeHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = MapChangeHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
-
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function MapChangeHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function MapChangeHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
+getmetatable(MapChangeHandler).__call = MapChangeHandler.__construct;
 
 
--- Class Methods
+-- Public Methods
 
 ---
 -- Event handler which is called when the map is changed.
@@ -72,33 +43,41 @@ end
 -- @tparam string _mapName The name of the new map
 -- @tparam int _gameMode The game mode
 --
-function MapChangeHandler:onMapChange(_mapName, _gameMode)
+function MapChangeHandler:handleEvent(_mapName, _gameMode)
 
-  if (self.parentGemaMod:getIsActive()) then
+  self:updateGemaModeState();
 
-    if (not MapChecker:isGema(_mapName) or _gameMode ~= GM_CTF) then
-      self.parentGemaMod:setIsActive(false);
-      Output:print(Output:getColor("info") .. "[INFO] The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
-      return;
-    end
+  -- If gema mode is still active
+  if (self.parentGemaMode:getIsActive()) then
 
-    local mapTop = self.parentGemaMod:getMapTop();
+    local mapTopHandler = self.parentGemaMode:getMapTopHandler();
+    local mapTop = mapTopHandler:getMapTop("main");
 
-    mapTop:setMapName(_mapName);
-    mapTop:loadRecords(_mapName);
+    -- Load the map records for the map
+    mapTop:loadRecords(self.parentGemaMode:getDataBase(), _mapName);
 
-    for cn, player in pairs(self.parentGemaMod:getPlayers()) do
-      mapTop:printMapStatistics(cn);
-    end
+    -- Print the map statistics for the map to all players
+    mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop);
 
-    self.parentGemaMod:setRemainingExtendMinutes(20);
+  end
 
-  else
-    if (MapChecker:isGema(_mapName) and _gameMode == GM_CTF) then
-      self.parentGemaMod:setIsActive(true);
-      Output:print(Output:getColor("info") .. "[INFO] The gema mode was automatically enabled.");
-      self:onMapChange(_mapName, _gameMode);
-    end
+end
+
+
+-- Private Methods
+
+---
+-- Updates the gema mode state if necessary.
+--
+function MapChangeHandler:updateGemaModeState()
+
+  local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
+  local newGemaModeState = gemaModeStateUpdater:switchToNextEnvironment();
+
+  if (newGemaModeState == true) then
+    self.output:printInfo("The gema mode was automatically enabled.");
+  elseif (newGemaModeState == false) then
+    self.output:printInfo("The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
   end
 
 end

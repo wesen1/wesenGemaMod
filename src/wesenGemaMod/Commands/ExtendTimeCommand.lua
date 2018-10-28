@@ -5,128 +5,88 @@
 -- @license MIT
 --
 
-local BaseCommand = require("Commands/BaseCommand");
-local Output = require("Outputs/Output");
+local BaseCommand = require("CommandHandler/BaseCommand");
+local CommandArgument = require("CommandHandler/CommandArgument");
+local RemainigTimeExtender = require("TimeHandler/RemainingTimeExtender");
 
 ---
 -- Command !extend.
 -- Extends the remaining time by a specific amount of time
+-- ExtendTimeCommand inherits from BaseCommand
 --
 -- @type ExtendTimeCommand
 --
-local ExtendTimeCommand = {};
+local ExtendTimeCommand = setmetatable({}, {__index = BaseCommand});
 
--- ExtendTimeCommand inherits from BaseCommand
-setmetatable(ExtendTimeCommand, {__index = BaseCommand});
+
+---
+-- The remaining time extender
+--
+-- @tfield RemainingTimeExtender remainingTimeExtender
+--
+ExtendTimeCommand.remainingTimeExtender = nil;
 
 
 ---
 -- ExtendTimeCommand constructor.
 --
--- @tparam CommandLister _parentCommandLister The parent command lister
+-- @tparam CommandList _parentCommandList The parent command list
 --
 -- @treturn ExtendTimeCommand The ExtendTimeCommand instance
 --
-function ExtendTimeCommand:__construct(_parentCommandLister)
+function ExtendTimeCommand:__construct(_parentCommandList)
 
-  local instance = BaseCommand:__construct(_parentCommandLister, "extend", 0, "Time");
+  local numberOfMinutesArgument = CommandArgument(
+    "numberOfMinutes",
+    false,
+    "integer",
+    "min",
+    "The number of minutes to add to the remaining time"
+  );
+
+  local instance = BaseCommand(
+    _parentCommandList,
+    "!extend",
+    0,
+    "Time",
+    { numberOfMinutesArgument },
+    "Extends the remaining time by a specific amount of time. The time can be extended by 20 minutes per map, but admins may extend the time further than that.",
+    { "!ext", "!extendTime" }
+  );
   setmetatable(instance, {__index = ExtendTimeCommand});
 
-  instance:addAlias("ext");
-  instance:addAlias("extendTime");
-  instance:addArgument("numberOfMinutes", true, "The number of minutes to add to the remaining time");
-  instance:setDescription("Extends the remaining time by a specific amount of time. The time can be extended by 20 minutes per map, but admins may extend the time further than that.");
+  instance.remainingTimeExtender = RemainigTimeExtender(20);
 
   return instance;
 
 end
 
+getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
+
+
+-- Public Methods
 
 ---
 -- Extends the remaining time by a specific amount of time.
 --
--- @tparam int _cn The client number of the player who executed the command
--- @tparam string[] _args The list of arguments which were passed by the player
+-- @tparam Player _player The player who executed the command
+-- @tparam string[] _arguments The list of arguments which were passed by the player
 --
-function ExtendTimeCommand:execute(_cn, _args)
-
-  local inputMinutes = tonumber(_args[1]);
-  local errorMessage = self:checkInputMinutes(inputMinutes);
-
-  local parentGemaMod = self.parentCommandLister:getParentCommandHandler():getParentGemaMod();
-  local player = parentGemaMod:getPlayers()[_cn];
-
-  if (not errorMessage) then
-    errorMessage = self:subtractMinutesFromRemainingExtendMinutes(player, inputMinutes);
-  end
-
-  if (errorMessage) then
-    Output:print(Output:getColor("error") .. errorMessage, _cn);
-    return;
-  end
-
-  settimeleft(gettimeleft() + inputMinutes);
-
-
-  Output:print(Output:getColor("info") .. "[INFO] "
-            .. Output:getPlayerNameColor(player:getLevel()) .. player:getName()
-            .. Output:getColor("info") .. " extended the time by " .. inputMinutes .. " minutes.");
-
-end
-
----
--- Checks whether the input minutes are valid.
+-- @raise Error while extending the time
 --
--- @tparam int _inputMinutes The input minutes
---
--- @treturn string|nil The error message or nil
---
-function ExtendTimeCommand:checkInputMinutes(_inputMinutes)
+function ExtendTimeCommand:execute(_player, _arguments)
 
-  local timeLeft = gettimeleft();
-  local errorMessage = nil;
+  local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler();
+  local environment = environmentHandler:getCurrentEnvironment();
 
-  if (_inputMinutes == nil) then
-    errorMessage = "[ERROR] The entered number of added minutes is not a number.";
-  elseif (_inputMinutes < 1) then
-    errorMessage = "[ERROR] The number of added minutes may not be smaller than 1.";
-  elseif (timeLeft + _inputMinutes > 35790) then
-    errorMessage = "[ERROR] The time remaining may not exceed 35790 minutes.";
-  end
+  self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
 
-  return errorMessage;
-
-end
-
----
--- Subtracts _inputMinutes from the remainig extend minutes.
--- Returns an error if the amount of minutes exceeds the remaining extend minutes.
---
--- @tparam Player _player The player who used !extend
--- @tparam int _inputMinutes The input minutes
---
--- @treturn string|nil The error message or nil
---
-function ExtendTimeCommand:subtractMinutesFromRemainingExtendMinutes(_player, _inputMinutes)
-
-  local parentGemaMod = self.parentCommandLister:getParentCommandHandler():getParentGemaMod();
-  local errorMessage = nil;
-
-  if (_player:getLevel() == 0) then
-
-    local remainingExtendMinutes = parentGemaMod:getRemainingExtendMinutes();
-
-    if (remainingExtendMinutes == 0) then
-      errorMessage = "[ERROR] The time may not be further extended. Ask an admin to extend the time.";
-    elseif (remainingExtendMinutes < _inputMinutes) then
-      errorMessage = "[ERROR] The time may be extended by only " .. remainingExtendMinutes .. " more minutes.";
-    else
-      parentGemaMod:setRemainingExtendMinutes(remainingExtendMinutes - _inputMinutes);
-    end
-
-  end
-
-  return errorMessage;
+  self.output:printInfo(
+    self.output:getPlayerNameColor(_player:getLevel()) .. _player:getName()
+ .. self.output:getColor("info") .. " extended the time by "
+ .. self.output:getColor("extendMinutes") .. _arguments.numberOfMinutes
+ .. self.output:getColor("info") .. " minutes."
+  );
 
 end
 

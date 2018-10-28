@@ -4,37 +4,18 @@
 -- @release 0.1
 -- @license MIT
 --
-local luaunit = require("luaunit");
-local mach = require("mach");
 
-local DataBase = "";
-local Output = "";
-local PlayerInformationLoader = "";
-
+local DataBase = require("DataBase");
+local Player = require("Player/Player");
+local PlayerInformationLoader = require("Player/PlayerInformationLoader");
+local TestCase = require("TestFrameWork/TestCase");
 
 ---
 -- Checks whether the PlayerInformationLoader class works as expected.
 --
 -- @type TestPlayerInformationLoader
 --
-TestPlayerInformationLoader = {};
-
-
----
--- Replaces the loaded dependencies of the test by the real dependencies.
--- This function must be called before starting each test.
---
-function TestPlayerInformationLoader:resetDependencies()
-
-  package.loaded["DataBase"] = nil;
-  package.loaded["Outputs/Output"] = nil;
-  package.loaded["Player/PlayerInformationLoader"] = nil;
-
-  DataBase = require("DataBase");
-  Output = require("Outputs/Output");
-  PlayerInformationLoader = require("Player/PlayerInformationLoader");
-
-end
+local TestPlayerInformationLoader = setmetatable({}, {__index = TestCase});
 
 
 ---
@@ -47,7 +28,7 @@ end
 --
 function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedDataBaseCalls, _methodName, _additionalMethodArguments, _expectedReturnValue)
 
-  local dataBaseMock = mach.mock_object(DataBase, "DataBaseMock");
+  local dataBaseMock = self:getMock(DataBase, "DataBaseMock");
 
   local expectedFunctionCalls = "";
   local returnValue = -1;
@@ -76,7 +57,7 @@ function TestPlayerInformationLoader:canReadInformationFromDataBase(_expectedDat
                          end
                        );
 
-  luaunit.assertEquals(returnValue, _expectedReturnValue);
+  self.assertEquals(returnValue, _expectedReturnValue);
 
 end
 
@@ -84,8 +65,6 @@ end
 -- Checks whether ip ids can be fetched as expected.
 --
 function TestPlayerInformationLoader:testCanFetchIpId()
-
-  self:resetDependencies();
 
   local testValues = {
 
@@ -180,8 +159,6 @@ end
 -- Checks whether name ids can be fetched as expected.
 --
 function TestPlayerInformationLoader:testCanFetchNameId()
-
-  self:resetDependencies();
 
   local testValues = {
 
@@ -306,27 +283,6 @@ end
 --
 function TestPlayerInformationLoader:testCanFetchPlayerId()
 
-  self:resetDependencies();
-
-  local Player = "";
-  local outputMockTextColor = "\f0";
-
-  -- Unload Player module
-  package.loaded["Player/Player"] = nil;
-
-  -- Overwrite Output dependency with mock
-  local outputMock = mach.mock_object(Output, "Output");
-  package.loaded["Outputs/Output"] = outputMock;
-
-  outputMock.getColor
-            :should_be_called_with("playerTextDefault")
-            :and_will_return(outputMockTextColor)
-            :when(
-              function()
-                Player = require("Player/Player");
-              end
-            );
-
   local testValues = {
 
     -- Valid results
@@ -356,7 +312,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("mega", "123.124.125.126") },
+      { Player(0, "mega", "123.124.125.126") },
       100
     },
 
@@ -375,7 +331,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("ultra", "75.45.125.136"), 5 },
+      { Player(0, "ultra", "75.45.125.136"), 5 },
       74
     },
 
@@ -399,7 +355,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("hyper", "123.124.125.126"), nil, 137 },
+      { Player(0, "hyper", "123.124.125.126"), nil, 137 },
       96
     },
 
@@ -413,7 +369,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("mega", "123.124.125.126"), 778, 21 },
+      { Player(0, "mega", "123.124.125.126"), 778, 21 },
       72
     },
 
@@ -445,7 +401,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("hello", "140.1.12.99") },
+      { Player(0, "hello", "140.1.12.99") },
       nil
     },
 
@@ -464,7 +420,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("yourNameIs", "137.12.40.93"), 54 },
+      { Player(0, "yourNameIs", "137.12.40.93"), 54 },
       nil
     },
 
@@ -488,7 +444,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("goodBye", "140.1.12.99"), nil, 47 },
+      { Player(0, "goodBye", "140.1.12.99"), nil, 47 },
       nil
     },
 
@@ -502,7 +458,7 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
         }
       },
       "fetchPlayerId",
-      { Player:__construct("myNameIs", "130.24.67.68"), 58, 62 },
+      { Player(0, "myNameIs", "130.24.67.68"), 58, 62 },
       nil
     },
   }
@@ -512,3 +468,6 @@ function TestPlayerInformationLoader:testCanFetchPlayerId()
   end
 
 end
+
+
+return TestPlayerInformationLoader;

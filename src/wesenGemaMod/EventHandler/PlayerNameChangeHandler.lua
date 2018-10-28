@@ -5,60 +5,35 @@
 -- @license MIT
 --
 
+local BaseEventHandler = require("EventHandler/BaseEventHandler");
+
 ---
 -- Class that handles player name changes.
+-- PlayerNameChangeHandler inherits from BaseEventHandler
 --
 -- @type PlayerNameChangeHandler
 --
-local PlayerNameChangeHandler = {};
-
-
----
--- The parent gema mod to which this EventHandler belongs
---
--- @tfield GemaMod parentGemaMod
---
-PlayerNameChangeHandler.parentGemaMod = "";
+local PlayerNameChangeHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
 -- PlayerNameChangeHandler constructor.
 --
--- @tparam GemaMod _parentGemaMod The parent gema mod
+-- @tparam GemaMode _parentGemaMode The parent gema mode
 --
 -- @treturn PlayerNameChangeHandler The PlayerNameChangeHandler instance
 --
-function PlayerNameChangeHandler:__construct(_parentGemaMod)
+function PlayerNameChangeHandler:__construct(_parentGemaMode)
 
-  local instance = {};
+  local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerNameChangeHandler});
-
-  instance.parentGemaMod = _parentGemaMod;
 
   return instance;
 
 end
 
+getmetatable(PlayerNameChangeHandler).__call = PlayerNameChangeHandler.__construct;
 
--- Getters and setters
-
----
--- Returns the parent gema mod.
---
--- @treturn GemaMod The parent gema mod
---
-function PlayerNameChangeHandler:getParentGemaMod()
-  return self.parentGemaMod;
-end
-
----
--- Sets the parent gema mod.
---
--- @tparam GemaMod _parentGemaMod The parent gema mod
---
-function PlayerNameChangeHandler:setParentGemaMod(_parentGemaMod)
-  self.parentGemaMod = _parentGemaMod;
-end
 
 
 -- Class Methods
@@ -67,15 +42,21 @@ end
 -- Event handler which is called when a player changes his name.
 -- Updates the player object and adds a data base entry for the new player ip/name combination.
 --
--- @tparam int _cn The client number of the player who changed his name
+-- @tparam Player _player The player who changed his name
 -- @tparam string _newName The new name of the player
 --
-function PlayerNameChangeHandler:onPlayerNameChange (_cn, _newName)
+function PlayerNameChangeHandler:handleEvent(_player, _newName)
 
-  local dataBase = self.parentGemaMod:getDataBase();
+  -- Must check whether the player object is set because it is possible that the player used a script
+  -- to change his name multiple times in a row within a small time frame and got autokicked for spam
+  if (_player) then
 
-  self.parentGemaMod:getPlayers()[_cn]:setName(_newName);
-  self.parentGemaMod:getPlayers()[_cn]:savePlayer(dataBase);
+    local dataBase = self.parentGemaMode:getDataBase();
+
+    _player:setName(_newName);
+    _player:savePlayer(dataBase);
+
+  end
 
 end
 
