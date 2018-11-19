@@ -8,28 +8,30 @@
 ---
 -- Handles converting times in milliseconds to readable formats.
 --
-local TimePrinter = setmetatable({}, {});
+-- @type TimeFormatter
+--
+local TimeFormatter = setmetatable({}, {});
 
 ---
 -- The minutes part of the last converted milliseconds
 --
 -- @tfield int minutes
 --
-TimePrinter.minutes = nil;
+TimeFormatter.minutes = nil;
 
 ---
 -- The seconds part of the last converted milliseconds
 --
 -- @tfield int seconds
 --
-TimePrinter.seconds = nil;
+TimeFormatter.seconds = nil;
 
 ---
 -- The remaining milliseconds part of the last converted milliseconds
 --
 -- @tfield int milliseconds
 --
-TimePrinter.milliseconds = nil;
+TimeFormatter.milliseconds = nil;
 
 
 ---
@@ -37,9 +39,9 @@ TimePrinter.milliseconds = nil;
 --
 -- @treturn TimePrinter The TimePrinter instance
 --
-function TimePrinter:__construct()
+function TimeFormatter:__construct()
 
-  local instance = setmetatable({}, {__index = TimePrinter});
+  local instance = setmetatable({}, {__index = TimeFormatter});
   instance.minutes = 0;
   instance.seconds = 0;
   instance.milliseconds = 0;
@@ -48,7 +50,7 @@ function TimePrinter:__construct()
 
 end
 
-getmetatable(TimePrinter).__call = TimePrinter.__construct;
+getmetatable(TimeFormatter).__call = TimeFormatter.__construct;
 
 
 -- Public Methods
@@ -70,7 +72,7 @@ getmetatable(TimePrinter).__call = TimePrinter.__construct;
 --
 -- @treturn string The record in the format "Minutes:Seconds,Milliseconds"
 --
-function TimePrinter:generateTimeString(_milliseconds, _format)
+function TimeFormatter:generateTimeString(_milliseconds, _format)
 
   self:parseMilliseconds(_milliseconds);
 
@@ -92,7 +94,7 @@ end
 --
 -- @tparam int _totalMilliseconds The time in milliseconds
 --
-function TimePrinter:parseMilliseconds(_totalMilliseconds)
+function TimeFormatter:parseMilliseconds(_totalMilliseconds)
 
   local milliseconds = math.fmod(_totalMilliseconds, 1000);
 
@@ -115,7 +117,7 @@ end
 --
 -- @treturn string|nil The replacement string or nil if no the format specifier id is invalid
 --
-function TimePrinter:getFormatSpecifierReplace(_formatSpecifierPadding, _formatSpecifierId)
+function TimeFormatter:getFormatSpecifierReplace(_formatSpecifierPadding, _formatSpecifierId)
 
   local formatSpecifierValue = self:getFormatSpecifierValue(_formatSpecifierId);
   if (formatSpecifierValue) then
@@ -131,7 +133,7 @@ end
 --
 -- @treturn int|nil The format specifier value or nil if the format specifier id is invalid
 --
-function TimePrinter:getFormatSpecifierValue(_formatSpecifierId)
+function TimeFormatter:getFormatSpecifierValue(_formatSpecifierId)
 
   local formatSpecifierValue = nil;
 
@@ -148,4 +150,4 @@ function TimePrinter:getFormatSpecifierValue(_formatSpecifierId)
 end
 
 
-return TimePrinter;
+return TimeFormatter;

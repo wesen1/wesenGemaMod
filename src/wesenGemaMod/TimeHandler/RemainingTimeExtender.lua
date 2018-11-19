@@ -6,7 +6,7 @@
 --
 
 local Exception = require("Util/Exception");
-local TimePrinter = require("TimeHandler/TimePrinter");
+local TimeFormatter = require("TimeHandler/TimeFormatter");
 
 ---
 -- Extends the remaining time by <x> minutes.
@@ -17,11 +17,11 @@ local RemainingTimeExtender = setmetatable({}, {});
 
 
 ---
--- The time printer
+-- The time formatter
 --
--- @tparam TimePrinter timePrinter
+-- @tparam TimeFormatter timeFormatter
 --
-RemainingTimeExtender.timePrinter = nil;
+RemainingTimeExtender.timeFormatter = nil;
 
 ---
 -- The number of minutes by which the time can be extended per map
@@ -57,7 +57,7 @@ function RemainingTimeExtender:__construct(_numberOfExtendMinutesPerMap)
 
   local instance = setmetatable({}, {__index = RemainingTimeExtender});
 
-  instance.timePrinter = TimePrinter();
+  instance.timeFormatter = TimeFormatter();
   instance.numberOfExtendMinutesPerMap = _numberOfExtendMinutesPerMap;
   instance.lastEnvironment = nil;
 
@@ -168,7 +168,7 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
 
     if (_numberOfExtendMilliseconds > maximumNumberOfExtendMilliseconds) then
 
-      local timeString = self.timePrinter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i");
+      local timeString = self.timeFormatter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i");
 
       -- Get the error message
       local errorMessage;
@@ -184,7 +184,7 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
           -- milliseconds to a full minute. This is only done under the previous condition that the
           -- maximum number of extend milliseconds can become greater than one minute.
           local waitTime = 60000 - maximumNumberOfExtendMilliseconds;
-          local waitTimeString = self.timePrinter:generateTimeString(waitTime, "%02s,%03v");
+          local waitTimeString = self.timeFormatter:generateTimeString(waitTime, "%02s,%03v");
 
           errorMessage = "The time can only be extended by 1 more minute in " .. waitTimeString .. " seconds.";
         else
