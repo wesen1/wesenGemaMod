@@ -1,0 +1,18 @@
+{#
+ # Prints a row for a command list.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string groupName The group name of the command list
+ # @tparam string[] commandGroup The list of command names inside the command group
+ # @tparam CommandList commandList The command list
+ #}
+{* groupName *}
+---------------------------------------------------------------------------;
+:
+{% for _, commandName in ipairs(commandGroup) do %}
+  {(TextTemplate/CommandHandler/CommandWithRequiredArguments,
+    { colors = colors,
+      command = commandList:getCommand(commandName)
+    }
+  )}
+{% end %}

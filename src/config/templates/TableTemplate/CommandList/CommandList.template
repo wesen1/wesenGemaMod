@@ -1,0 +1,25 @@
+{#
+ # Prints a command list.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CommandList commandList The command list
+ # @tparam int maximumLevel The maximum command level for which commands will be shown
+ #}
+{% local sortedCommandLevels = commandList:getSortedCommandLevels() %}
+{% local groupedCommands = commandList:getGroupedCommands(); %}
+{% local sortedCommandGroupNames = commandList:getSortedCommandGroupNames() %}
+{% for level = 0, maximumLevel, 1 do %}
+
+{% for _, groupName in ipairs(commandList:getSortedCommandGroupNames()[level]) do %}
+
+ {(TableTemplate/CommandList/CommandListRow,
+   { colors = colors,
+     groupName = groupName,
+     commandGroup = groupedCommands[level][groupName],
+     commandList = commandList
+ })}
+ ______________________________________________________________________________;
+
+{% end %}
+
+{% end %}

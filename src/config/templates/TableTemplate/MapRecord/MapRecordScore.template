@@ -1,0 +1,20 @@
+{#
+ # Prints the "player scored" message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecord mapRecord The map record
+ #}
+{( TextTemplate/MapRecord/MapRecordScoreTime,
+  { colors = colors,
+    timeFormatter = timeFormatter,
+    mapRecord = mapRecord
+  }
+)}
+_______________________________________________;
+
+{( TextTemplate/MapRecord/MapRecordScoreRank,
+  { colors = colors,
+    mapRecord = mapRecord
+  }
+)}

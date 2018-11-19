@@ -1,0 +1,27 @@
+{#
+ # Prints the server information.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CommandList commandList The command list
+ #}
+{% local CmdsCommand = commandList:getCommand("!cmds"); %}
+{% local RulesCommand = commandList:getCommand("!rules"); %}
+
+{* colors.info *}Say
+ {(TextTemplate/CommandHandler/Command,
+   { colors = colors,
+     command = CmdsCommand,
+     arguments = {}
+   }
+ )}
+ {* colors.info *}to see a list of avaiable commands
+_________________________________________________________________;
+
+{* colors.infoWarning *}Make sure to read the
+  {(TextTemplate/CommandHandler/Command,
+   { colors = colors,
+     command = RulesCommand,
+     arguments = {}
+   }
+ )}
+ {* colors.infoWarning *}before spawning"

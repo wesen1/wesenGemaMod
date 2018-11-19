@@ -1,0 +1,30 @@
+{#
+ # Prints a list of arguments and their descriptions.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CommandArgument[] arguments The list of arguments
+ #}
+{% for i, argument in ipairs(arguments) do %}
+
+{% if (i == 1) then %}
+{# The first argument is in the same line like the title "Arguments", so it must contain a colon #}
+:
+{% else %}
+{# @todo: Add tag that will be converted to empty space #}
+{% -- Empty space (same like in the row with colon %}
+
+{% end %}
+
+ {(TextTemplate/CommandHandler/ArgumentFull,
+   { colors = colors,
+     argument = argument
+   }
+ )}
+-----------------------------------------------------------;
+
+  {* colors.helpDescription *}{* argument:getDescription() *}
+  {% if (argument:getIsOptional()) then %} (Optional)
+  {% end %}
+_____________________________________________________________________;
+
+{% end %}
