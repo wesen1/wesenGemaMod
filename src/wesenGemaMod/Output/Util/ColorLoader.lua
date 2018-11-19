@@ -41,17 +41,19 @@ end
 getmetatable(ColorLoader).__call = ColorLoader.__construct;
 
 
--- Class Methods
+-- Public Methods
 
----
--- Loads a color from the color config file.
---
--- @tparam string _colorId Name of the color
---
--- @treturn string The color with leading "\f"
---
-function ColorLoader:loadColor(_colorId)
-  return "\f" .. cfg.getvalue(self.colorConfigFileName, _colorId);
+function ColorLoader:getColors()
+
+  local colorConfiguration = cfg.totable(self.colorConfigFileName);
+
+  local colors = {};
+  for colorName, colorId in pairs(colorConfiguration) do
+    colors[colorName] = "\f" .. colorId;
+  end
+
+  return colors;
+
 end
 
 
