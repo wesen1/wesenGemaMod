@@ -1,0 +1,7 @@
+{#
+ # Prints a info message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string infoMessage The info message
+ #}
+{* colors.info *}[INFO] {* infoMessage *}

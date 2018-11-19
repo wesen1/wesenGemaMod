@@ -1,0 +1,8 @@
+{#
+ # Prints the name for a player level.
+ #
+ # @tparam int playerLevel The player level
+ #}
+{% if (playerLevel == 0) then %}unarmed
+{% elseif (playerLevel == 1) then %}admin
+{% end %}

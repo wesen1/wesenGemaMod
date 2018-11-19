@@ -1,0 +1,9 @@
+{#
+ # Prints the argument with its full name.
+ # The result is "<<fullArgumentName>>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CommandArgument argument The command argument
+ #}
+{(TextTemplate/CommandHandler/ArgumentColor)}
+<{* argument:getName() *}>

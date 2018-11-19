@@ -1,0 +1,23 @@
+{#
+ # Prints the map top title for start ranks other than 1.
+ # The result is "Rank x (to y) is/are:"
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam int startRank The start rank
+ # @tparam int numberOfDisplayRecords The number of displayed records
+ #}
+{* colors.mapTopInfo *}Rank
+{* colors.mapTopRank *} {* startRank *}
+
+{# The record of only one player is shown #}
+{% if (numberOfDisplayRecords == 1) then %}
+{* colors.mapTopInfo *} is
+
+{# The records of multiple players are shown #}
+{% else %}
+{* colors.mapTopInfo *} to
+{* colors.mapTopRank *} {* startRank + (numberOfDisplayRecords - 1) *}
+{* colors.mapTopInfo *} are
+
+{% end %}
+:

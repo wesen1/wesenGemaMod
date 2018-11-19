@@ -1,0 +1,9 @@
+{#
+ # Prints the color for a team id.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam int teamId The team id
+ #}
+{% if (teamId == TEAM_RVSF) then %}{* colors.teamRVSF *}
+{% elseif (teamId == TEAM_CLA) then %}{* colors.teamCLA *}
+{% end %}

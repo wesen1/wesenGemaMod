@@ -1,0 +1,6 @@
+{#
+ # Prints the "map top is empty" message.
+ #
+ # @tparam string[] colors The list of colors
+ #}
+{* colors.emptyTop *}No records found for this map

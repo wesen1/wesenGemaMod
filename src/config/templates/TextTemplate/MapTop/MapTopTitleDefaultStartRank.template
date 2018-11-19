@@ -1,0 +1,17 @@
+{#
+ # Prints the map top title for when the start rank is 1.
+ # The result is "The x best player(s) of this map is/are:".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam int numberOfDisplayRecords The number of displayed records
+ #}
+{* colors.mapTopInfo *}The
+{* colors.mapTopNumberOfRecords *} {* numberOfDisplayRecords *}
+{* colors.mapTopInfo *} best player
+{% if (numberOfDisplayRecords ~= 1) then %}s{% end %}
+ of this map
+
+{% if (numberOfDisplayRecords == 1) then %} is
+{% else %} are
+{% end %}
+:

@@ -1,0 +1,20 @@
+{#
+ # Prints the "best record" message.
+ # The result is "The best record of this map is <time> by <player> with <weapon>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam MapRecord mapRecord The map record
+ #}
+{* colors.mapRecordInfo *}The best record of this map is
+{* colors.mapRecordTime *} {( TextTemplate/MapRecord/MapRecordTimeString,
+                              { mapRecord = mapRecord *}
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
+{* colors.mapRecordInfo *} with
+{( TextTemplate/Player/PlayerTeamColor,
+  { colors = colors,
+    teamId = mapRecord:getTeam()
+  }
+)} {( TextTemplate/WeaponName,
+      { weaponId = mapRecord:getWeapon() }
+)}

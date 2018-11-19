@@ -1,0 +1,12 @@
+{#
+ # Prints a command including all of its required arguments.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam BaseCommand command The command
+ #}
+{(TextTemplate/CommandHandler/Command,
+  { colors = colors,
+    command = command,
+    arguments = command:getRequiredArguments()
+  }
+)}

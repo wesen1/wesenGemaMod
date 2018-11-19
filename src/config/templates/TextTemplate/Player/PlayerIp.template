@@ -1,0 +1,8 @@
+{#
+ # Prints a player ip.
+ # The result is for example "127.0.0.x".
+ #
+ # @tparam string ip The ip string
+ #}
+{% local octets = {ip:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)$")}; %}
+{* octets[1] *}.{* octets[2] *}.{* octets[3] *}.x
