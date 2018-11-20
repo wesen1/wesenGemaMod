@@ -52,6 +52,26 @@ getmetatable(TableTemplateRenderer).__call = TableTemplateRenderer.__construct;
 
 ---
 -- Renders a table template and returns the generated table.
+-- The generated table follows this structure:
+--
+-- {
+--  -- Row
+--  [1] =
+--  {
+--    -- Row Field
+--    [1] = {
+--
+--      -- Sub Row
+--      [1] = {
+--
+--        -- Sub Row Field
+--        [1] = "text"
+--
+--        -- And so on
+--      }
+--    }
+--  }
+-- }
 --
 -- @tparam TextTemplateRenderer The text template renderer
 -- @tparam TableTemplate The table template
