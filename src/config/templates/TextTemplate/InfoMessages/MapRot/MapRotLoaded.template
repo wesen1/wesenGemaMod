@@ -1,0 +1,17 @@
+{#
+ # Generates a info message that informs the players that a specific map rot was loaded.
+ #
+ # @param string[] colors The list of colors
+ # @param string mapRotType The name of the loaded map rot type
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "TextTemplate/ServerMessageInfo" %}
+
+{-infoMessage-}
+
+{# Print the map rot type with the first letter in upper case #}
+{* (mapRotType:gsub("^%l", string.upper)) *}
+ map rot loaded.
+
+{-infoMessage-}

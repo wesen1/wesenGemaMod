@@ -1,0 +1,13 @@
+{#
+ # Generates a info message that informs all players that a player could not connect because of too many connections with the same IP.
+ #
+ # @param string[] colors The list of colors
+ # @param Player player The player who will be autokicked for too many connections with the same IP
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "TextTemplate/ServerMessageInfo" %}
+
+{-infoMessage-}
+{* player:getName() *} could not connect [too many connections with same IP]
+{-infoMessage-}

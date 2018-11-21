@@ -5,7 +5,6 @@
 -- @license MIT
 --
 
-local lfs = require("lfs");
 local luaRestyTemplateEngine = require("resty.template");
 
 ---
@@ -33,12 +32,21 @@ TemplateEngine.originalLoadFunction = TemplateEngine.load;
 -- Loads a template from a specific path.
 -- Also adds the path to the templates base folder as a prefix and ".template" as a file ending.
 --
--- @tparam string _path The path to the template file relative from the template base folder
+-- @tparam string _template The path to the template file relative from the template base folder or a raw template string
 --
 -- @treturn string The content of the template file
 --
-function TemplateEngine.load(_path)
-  return TemplateEngine.originalLoadFunction(TemplateEngine.templateBasePath .. _path  .. ".template");
+function TemplateEngine.load(_template)
+
+  local templateFilePath = TemplateEngine.templateBasePath .. _template  .. ".template";
+
+  local loadedTemplate = TemplateEngine.originalLoadFunction(templateFilePath);
+  if (loadedTemplate == templateFilePath) then
+    return _template;
+  else
+    return loadedTemplate;
+  end
+
 end
 
 

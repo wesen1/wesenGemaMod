@@ -1,0 +1,26 @@
+{#
+ # Generates a info message about a gema mode state change.
+ # The result is "The gema mode was automatically disabled/enabled."
+ #
+ # @param string[] colors The list of colors
+ # @param bool isGemaModeActive True if the gema mode is active, false otherwise
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "TextTemplate/ServerMessageInfo" %}
+
+{-infoMessage-}
+
+{# State change #}
+The gema mode was automatically
+{% if (isGemaModeActive) then %} enabled
+{% else %} disabled
+{% end %}
+.
+
+{# Extra information #}
+{% if (not isGemaModeActive) then %}
+Vote a gema map in ctf to reenable it.
+{% end %}
+
+{-infoMessage-}
