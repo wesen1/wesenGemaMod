@@ -1,6 +1,6 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2018 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
