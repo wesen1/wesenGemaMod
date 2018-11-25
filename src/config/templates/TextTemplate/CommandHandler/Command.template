@@ -5,15 +5,19 @@
  # @tparam BaseCommand command The command
  # @tparam CommandArgument[] arguments The list of arguments
  #}
+
 {# Command name #}
 {* colors["command" .. command:getRequiredLevel()] *}
 {* command:getName() *}
 
 {# Command arguments #}
-{% for _, argument in ipairs(arguments) do %}
- {(TextTemplate/CommandHandler/ArgumentShort,
-   { colors = colors,
-     argument = argument
-   }
- )}
+{% for index, argument in ipairs(arguments) do %}
+
+  <whitespace>
+  {(TextTemplate/CommandHandler/ArgumentShort,
+    { colors = colors,
+      argument = argument
+    }
+  )}
+
 {% end %}

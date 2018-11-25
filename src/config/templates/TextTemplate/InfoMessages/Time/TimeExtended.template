@@ -17,13 +17,11 @@
     playerLevel = player:getLevel()
   }
 )}
-player:getName()
+{* player:getName() *}
 {* colors.info *} extended the time by
 {* colors.extendMinutes *} {* numberOfMinutes *}
 {* colors.info *} minute
-{% if (numberOfMinutes > 1) then %}
-s
-{% end %}
+{% if (numberOfMinutes > 1) then %}s{% end %}
 .
 
 {-infoMessage-}

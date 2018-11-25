@@ -11,10 +11,11 @@
     mapRecord = mapRecord
   }
 )}
-_______________________________________________;
 
 {( TextTemplate/MapRecord/MapRecordScoreRank,
   { colors = colors,
+    timeFormatter = timeFormatter,
     mapRecord = mapRecord
   }
 )}
+_______________________________________________;

@@ -8,13 +8,14 @@
  #}
 {* colors.mapRecordName *}{* mapRecord:getPlayer():getName() *}
 {* colors.mapRecordInfo *} scored after
-{* colors.mapRecordTime *} {(TextTemplates/MapRecord/MapRecordTimeString,
-                             { mapRecord = mapRecord,
-                               timeFormatter = timeFormatter
-                             }
-                           )}
+ {(TextTemplate/MapRecord/MapRecordTimeString,
+   { colors = colors,
+     timeFormatter = timeFormatter,
+     mapRecord = mapRecord
+   }
+ )}
 {* colors.mapRecordInfo *} minutes with
-{(TextTemplate/TeamColor,
+{(TextTemplate/Player/PlayerTeamColor,
   { colors = colors,
     teamId = mapRecord:getTeam()
   }

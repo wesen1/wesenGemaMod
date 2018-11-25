@@ -3,16 +3,23 @@
  #
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecordList mapRecordList The map record list
  # @tparam int startRank The start rank
  # @tparam int numberOfDisplayRecords The number of display records
  #}
 
-{% if (mapRecordList:getNumberOfRecords() == 0) then
+{% if (mapRecordList:getNumberOfRecords() == 0) then %}
   {(TextTemplate/MapTop/MapTopEmpty,
     { colors = colors }
   )}
 
 {% else %}
+
+  {# Adjust number of display records #}
+  {% local numberOfDisplayRecords = numberOfDisplayRecords; %}
+  {% if (mapRecordList:getNumberOfRecords() < numberOfDisplayRecords) then %}
+    {% numberOfDisplayRecords = mapRecordList:getNumberOfRecords(); %}
+  {% end %}
 
   {(TextTemplate/MapTop/MapTopTitle,
     { colors = colors,
@@ -22,6 +29,7 @@
   )}
   ___________________________________________________;
 
+  ----------[FIELD]----------;
   {% local endRank = startRank + (numberOfDisplayRecords - 1); %}
   {% local maxRankLength = string.len(endRank); %}
 
@@ -36,5 +44,6 @@
     )}
     _________________________________________________;
   {% end %}
+  ----------[ENDFIELD]----------;
 
 {% end %}

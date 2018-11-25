@@ -15,4 +15,4 @@
 {% end %}
 
 {# Print the cached time string #}
-{* mapRecord:getTimeString() *}
+{* colors.mapRecordTime *}{* mapRecord:getTimeString() *}

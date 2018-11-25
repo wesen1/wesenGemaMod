@@ -9,7 +9,7 @@
 {% local currentRecord = mapRecordList:getRecordByPlayer(mapRecord:getPlayer()); %}
 
 {# New personal best time #}
-{% if (not currentRecord or currentRecord:getMilliseconds() < mapRecord:getMilliseconds()) then %}
+{% if (not currentRecord or currentRecord:getMilliseconds() > mapRecord:getMilliseconds()) then %}
 
   {# Calculate total number of records #}
   {% local numberOfRecords = mapRecordList:getNumberOfRecords(); %}
@@ -26,8 +26,7 @@
       mapRecord = mapRecord,
       numberOfRecords = numberOfRecords
     }
-  })
-
+  )}
 
 {# Current personal record tied #}
 {% elseif (currentRecord:getMilliseconds() == mapRecord:getMilliseconds()) then %}

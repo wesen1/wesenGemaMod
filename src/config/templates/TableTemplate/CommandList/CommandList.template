@@ -5,21 +5,21 @@
  # @tparam CommandList commandList The command list
  # @tparam int maximumLevel The maximum command level for which commands will be shown
  #}
-{% local sortedCommandLevels = commandList:getSortedCommandLevels() %}
-{% local groupedCommands = commandList:getGroupedCommands(); %}
-{% local sortedCommandGroupNames = commandList:getSortedCommandGroupNames() %}
+
 {% for level = 0, maximumLevel, 1 do %}
 
-{% for _, groupName in ipairs(commandList:getSortedCommandGroupNames()[level]) do %}
+  {% for _, groupName in ipairs(commandList:getSortedCommandGroupNames()[level]) do %}
 
- {(TableTemplate/CommandList/CommandListRow,
-   { colors = colors,
-     groupName = groupName,
-     commandGroup = groupedCommands[level][groupName],
-     commandList = commandList
- })}
- ______________________________________________________________________________;
+    <whitespace:1>
+    {(TableTemplate/CommandList/CommandGroup,
+      { colors = colors,
+        commandList = commandList,
+        groupName = groupName,
+        groupedCommands = commandList:getGroupedCommands()[level][groupName]
+      }
+    )}
+    ______________________________________________________________________________;
 
-{% end %}
+  {% end %}
 
 {% end %}

@@ -10,19 +10,18 @@
 {# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
 {* colors.mapRecordRank *}
 {* string.rep("0", maxRankLength - string.len(mapRecord:getRank())) *}{* mapRecord:getRank() *})
- {* colors.mapRecordTime *}
-{(TextTemplate/MapRecord/MapRecordTimeString,
-  { timeFormatter = timeFormatter,
+ {(TextTemplate/MapRecord/MapRecordTimeString,
+  { colors = colors,
+    timeFormatter = timeFormatter,
     mapRecord = mapRecord
   }
 )}
- {* colors.mapRecordInfo *}by
- {* colors.mapRecordName *}mapRecord:getPlayer():getName()
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {*mapRecord:getPlayer():getName() *}
 ----------------------------------------------------------------------------------------------------------;
 
 {% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
 {* colors.mapRecordInfo *}(
-{* colors.ip *}
 {(TextTemplate/Player/PlayerIp,
   { ip = mapRecord:getPlayer():getIp() }
 )}
@@ -33,7 +32,7 @@
 
 {(TextTemplate/Player/PlayerTeamColor,
   { colors = colors,
-    teamId = mapRecord:getPlayer():getTeam()
+    teamId = mapRecord:getTeam()
   }
 )}
 {(TextTemplate/WeaponName,
@@ -42,4 +41,4 @@
 ----------------------------------------------------------------------------------------------------------;
 
 {* colors.mapRecordTimeStamp *}
-{* os.date("%Y-%m-%d", _mapRecord:getCreatedAt()) *}
+{* os.date("%Y-%m-%d", mapRecord:getCreatedAt()) *}

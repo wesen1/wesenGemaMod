@@ -1,0 +1,12 @@
+{#
+ # Generates an exception message for the "invalid argument type" case.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CommandArgument argument The argument
+ #}
+
+Invalid argument type "{* argument:getType() *}" for argument
+
+ {(TextTemplates/CommandHandler/ArgumentShort,
+   { colors = colors, argument = argument }
+ )}

@@ -1,0 +1,30 @@
+{#
+ # Generates an exception message for the "not enough arguments passed to command" case.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam int numberOfPassedArguments The number of arguments that were passed to the CommandParser
+ # @tparam BaseCommand command The command for which arguments are missing
+ #}
+
+Not enough arguments
+
+{# Missing arguments list #}
+ (Missing arguments:
+
+{% local requiredCommandArguments = command:getRequiredArguments(); %}
+{% local isFirstArgument = true; %}
+{% for i = numberOfPassedArguments + 1, #command:getRequiredArguments(), 1 do %}
+
+{(TextTemplate/CommandHandler/ArgumentShort,
+  { colors = colors, argument = requiredCommandArguments[i] }
+)}
+
+{% if (isFirstArgument) then %}
+  {% isFirstArgument = false %}
+{% else %}
+  {* colors.error *},
+{% end %}
+
+{% end %}
+
+{* colors.error *})

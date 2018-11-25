@@ -4,13 +4,16 @@
  # @tparam string[] colors The list of colors
  # @tparam BaseCommand command The command
  #}
+
 {* colors.helpTitle *}Usage
 ------------------------------------------------------------;
-: {(TextTemplate/CommandHandler/CommandWithAllArguments,
-    { colors = colors,
-      command = command
-    }
-  )}
+:
+<whitespace>
+{(TextTemplate/CommandHandler/CommandWithAllArguments,
+  { colors = colors,
+    command = command
+  }
+)}
 ______________________________________________________________________;
 
 {* colors.helpTitle *}Description
@@ -28,13 +31,14 @@ ______________________________________________________________________;
 
 {% if (command:getNumberOfArguments() > 0) then %}
 
-{* colors.helpTitle *}Arguments
+  {* colors.helpTitle *}Arguments
 
---------------------------[FIELD]---------------------------;
-{(TableTemplate/CommandHelpText/ArgumentOutputList,
-  { colors = colors,
-    arguments = command:getArguments()
-  }
-)}
-------------------------[ENDFIELD]--------------------------;
+  --------------------------[FIELD]---------------------------;
+  {(TableTemplate/CommandHelpText/Arguments,
+    { colors = colors,
+      arguments = command:getArguments()
+    }
+  )}
+  ------------------------[ENDFIELD]--------------------------;
+
 {% end %}

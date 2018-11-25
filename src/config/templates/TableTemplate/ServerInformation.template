@@ -2,15 +2,14 @@
  # Prints the server information.
  #
  # @tparam string[] colors The list of colors
- # @tparam CommandList commandList The command list
+ # @tparam CmdsCommand cmdsCommand The cmds command
+ # @tparam RulesCommand rulesCommand The rules command
  #}
-{% local CmdsCommand = commandList:getCommand("!cmds"); %}
-{% local RulesCommand = commandList:getCommand("!rules"); %}
 
 {* colors.info *}Say
  {(TextTemplate/CommandHandler/Command,
    { colors = colors,
-     command = CmdsCommand,
+     command = cmdsCommand,
      arguments = {}
    }
  )}
@@ -18,10 +17,10 @@
 _________________________________________________________________;
 
 {* colors.infoWarning *}Make sure to read the
-  {(TextTemplate/CommandHandler/Command,
+ {(TextTemplate/CommandHandler/Command,
    { colors = colors,
-     command = RulesCommand,
+     command = rulesCommand,
      arguments = {}
    }
  )}
- {* colors.infoWarning *}before spawning"
+{* colors.infoWarning *} before spawning

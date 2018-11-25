@@ -1,0 +1,40 @@
+{#
+ # Generates a message that tells a player that the extend time is invalid because of the maximum
+ # possible game time.
+ #
+ # @param int maximumNumberOfExtendMilliseconds The maximum number of extend milliseconds
+ #}
+
+{% local maximumNumberOfExtendMinutes = timeFormatter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i") %}
+
+{% if (maximumNumberOfExtendMinutes == "0") then %}
+  {# Time can be extended by 0 more minutes #}
+
+  {#
+   # This condition checks whether the maximum number of extend milliseconds + the possible
+   # extension time because of the distance of getgamemillis() to a full minute is more than
+   # one minute.
+   #}
+  {% if (maximumNumberOfExtendMilliseconds + (60000 - getgamemillis()) > 60000) then %}
+
+    {#
+     # The wait time is calculated as the distance of the maximum number of extend
+     # milliseconds to a full minute. This is only done under the previous condition that the
+     # maximum number of extend milliseconds can become greater than one minute.
+     #}
+    {% local waitTime = 60000 - maximumNumberOfExtendMilliseconds; %}
+
+    The time can only be extended by 1 more minute in
+    <whitespace>
+    {* timeFormatter:generateTimeString(waitTime, "%02s,%03v") *}
+    <whitespace>
+    seconds
+
+  {% else %}
+    The time can not be extended any further
+  {% end %}
+
+{% else %}
+  {# Time can be extended by more than 0 minutes #}
+  The time can only be extended by {* maximumNumberOfExtendMinutes *} more minutes
+{% end %}
