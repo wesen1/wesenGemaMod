@@ -1,7 +1,7 @@
 Templates
 =========
 
-TextTemplates are used to generate single row strings. Leading whitespace, trailing whitespace per line and line endings are removed. <br />
+TextTemplates are used to generate single row strings. Leading and trailing whitespace per line, empty lines and line endings are removed. <br />
 TableTemplates are the same like TextTemplates but use special tags to split the generated string into tables.
 
 Both template types must have the file extension ".template".
@@ -14,9 +14,20 @@ The template engine that is used to render the templates is lua-resty-template. 
 Refer to the [lua-resty-template](https://github.com/bungle/lua-resty-template) documentation for templating instructions.
 
 
+### TextTemplate tags ###
+
+#### Whitespace ####
+
+If you want to add explicit whitespace at the start or the end of a line you can use the whitespace tag.
+
+Use `<whitespace>` to create a single whitespace. <br/>
+Use `<whitespace:x>` to create a specific number of whitespaces in a row
+
+
 ### TableTemplate Tags ###
 
-TableTemplates are split into rows and columns by using these tags:
+TableTemplates can use the same tags like TextTemplates. <br/>
+Additionally they can be split into rows and columns by using these tags:
 
 
 #### Row separator ####

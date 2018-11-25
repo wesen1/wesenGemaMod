@@ -12,7 +12,7 @@ local TimeFormatter = require("TimeHandler/TimeFormatter");
 ---
 -- Renders text templates.
 -- Text templates generate single row strings.
--- Trailing whitespace per line and line endings as well as leading whitespace of the total string are discarded.
+-- Leading and trailing whitespace per line, empty lines and line endings are removed.
 --
 -- @type TextTemplateRenderer
 --
@@ -61,11 +61,31 @@ function TextTemplateRenderer:renderTemplate(_textTemplate)
   -- Render the template
   local renderedTemplate = compiledTemplate(templateValues);
 
-  -- Remove trailing whitespace and the line break of each output line
-  renderedTemplate = renderedTemplate:gsub(" *\n", "");
+  -- Remove empty lines, leading and trailing whitespace per line and line breaks
+  renderedTemplate = renderedTemplate:gsub(" *\n+ *", "");
 
   -- Remove leading whitespace from the total string
   renderedTemplate = renderedTemplate:gsub("^ *", "");
+
+  -- Find and replace <whitespace> tags
+  renderedTemplate = renderedTemplate:gsub(
+    "< *whitespace[^>]*>",
+    function(_whitespaceTagString)
+      local numberOfWhitespaceCharacters = 1;
+
+      -- Check defined number of white space characters (the number behind "whitespace:")
+      local definedNumberOfWhitespaceCharactersString = _whitespaceTagString:match(":(%d)");
+      if (definedNumberOfWhitespaceCharactersString) then
+        local definedNumberOfWhitespaceCharacters = tonumber(definedNumberOfWhitespaceCharactersString);
+        if (definedNumberOfWhitespaceCharacters > numberOfWhitespaceCharacters) then
+          numberOfWhitespaceCharacters = definedNumberOfWhitespaceCharacters;
+        end
+      end
+
+      return string.rep(" ", numberOfWhitespaceCharacters);
+
+    end
+  );
 
   return renderedTemplate;
 
