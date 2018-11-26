@@ -7,7 +7,9 @@
 
 local CachedMapRot = require("MapRot/CachedMapRot");
 local Environment = require("EnvironmentHandler/Environment");
+local MapRotGenerator = require("MapRot/MapRotGenerator");
 local SavedMapRot = require("MapRot/SavedMapRot");
+local StaticString = require("Output/StaticString");
 
 ---
 -- Represents the loaded maprot and the maprot config file.
@@ -31,25 +33,54 @@ MapRot.cachedMapRot = nil;
 --
 MapRot.savedMapRot = nil;
 
+---
+-- The map rot generator
+--
+-- @tfield MapRotGenerator mapRotGenerator
+--
+MapRot.mapRotGenerator = nil;
+
+---
+-- The type of the map rot
+-- This is either "gema" or "regular"
+--
+-- @tfield string type
+--
+MapRot.type = nil;
+
 
 ---
 -- MapRot constructor.
 --
 -- @treturn MapRot The MapRot instance
 --
-function MapRot:__construct(_mapRotFilePath)
+function MapRot:__construct()
 
   local instance = setmetatable({}, { __index = MapRot });
 
   instance.cachedMapRot = CachedMapRot();
-  instance.savedMapRot = SavedMapRot(_mapRotFilePath);
-  instance.cachedMapRot:load(instance.savedMapRot);
+  instance.savedMapRot = SavedMapRot();
+
+  instance.mapRotGenerator = MapRotGenerator();
+  instance.type = nil;
 
   return instance;
 
 end
 
 getmetatable(MapRot).__call = MapRot.__construct;
+
+
+-- Getters and Setters
+
+---
+-- Returns the current type of the map rot.
+--
+-- @treturn string The current type of the map rot
+--
+function MapRot:getType()
+  return self.type
+end
 
 
 -- Public Methods
@@ -97,6 +128,7 @@ end
 --
 function MapRot:switchToGemaMapRot()
   self.savedMapRot:setFilePath("config/maprot_gema.cfg");
+  self.type = StaticString("mapRotTypeGema"):getString();
 end
 
 --
@@ -104,6 +136,7 @@ end
 --
 function MapRot:switchToRegularMapRot()
   self.savedMapRot:setFilePath("config/maprot.cfg");
+  self.type = StaticString("mapRotTypeRegular"):getString();
 end
 
 ---
@@ -111,6 +144,7 @@ end
 --
 function MapRot:loadGemaMapRot()
   self:switchToGemaMapRot();
+  self.mapRotGenerator:generateGemaMapRot(self, "packages/maps/servermaps/incoming");
   self.cachedMapRot:load(self.savedMapRot);
 end
 

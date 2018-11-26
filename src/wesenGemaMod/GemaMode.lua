@@ -80,13 +80,6 @@ GemaMode.mapTopHandler = nil;
 GemaMode.mapRot = nil;
 
 ---
--- The map rot generator
---
--- @tfield MapRotGenerator mapRotGenerator
---
-GemaMode.mapRotGenerator = nil;
-
----
 -- The output
 --
 -- @tfield Output output
@@ -129,8 +122,7 @@ function GemaMode:__construct(_configuration)
   );
   instance.environmentHandler = EnvironmentHandler();
   instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
-  instance.mapRot = MapRot("config/maprot_gema.cfg");
-  instance.mapRotGenerator = MapRotGenerator();
+  instance.mapRot = MapRot();
   instance.output = Output();
   instance.playerList = PlayerList();
 
@@ -213,15 +205,6 @@ function GemaMode:getMapRot()
 end
 
 ---
--- Returns the map rot generator.
---
--- @treturn MapRotGenerator The map rot generator
---
-function GemaMode:getMapRotGenerator()
-  return self.mapRotGenerator;
-end
-
----
 -- Returns the map top handler.
 --
 -- @treturn MapTop The map top handler
@@ -274,16 +257,16 @@ end
 --
 function GemaMode:initialize()
 
-  logline(ACLOG_DEBUG, "Loading commands ...");
+  -- Load all commands
   self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
 
-  logline(ACLOG_DEBUG, "Generating gema maprot ...");
-  self.mapRot:switchToGemaMapRot();
-  self.mapRotGenerator:generateGemaMapRot(self.mapRot, "packages/maps/servermaps/incoming");
+  -- Initialize the gema map rot
+  self.mapRot:loadGemaMapRot();
 
+  -- Initialize the environment handler
   self.environmentHandler:initialize(self.mapRot);
 
-  logline(ACLOG_DEBUG, "Initializing maptops ...");
+  -- Intialize map tops
   self.mapTopHandler:initialize();
 
 end

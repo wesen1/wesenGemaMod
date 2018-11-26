@@ -24,15 +24,11 @@ SavedMapRot.filePath = nil;
 ---
 -- SavedMapRot constructor.
 --
--- @tparam string _filePath The path to the maprot file
---
 -- @treturn SavedMapRot The SavedMapRot instance
 --
-function SavedMapRot:__construct(_filePath)
+function SavedMapRot:__construct()
 
   local instance = setmetatable({}, { __index = SavedMapRot });
-
-  instance.filePath = _filePath;
 
   return instance;
 
