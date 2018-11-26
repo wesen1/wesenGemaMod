@@ -182,7 +182,6 @@ function BaseTag:generateTable()
 
   local innerTextIndex = 1;
   local innerTagIndex = 1;
-  local currentRowIndex = 1;
 
   local tableRows = {};
   for _, innerContent in ipairs(self.innerContents) do

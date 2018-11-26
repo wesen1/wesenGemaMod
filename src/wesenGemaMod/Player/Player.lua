@@ -8,7 +8,6 @@
 local PlayerInformationLoader = require("Player/PlayerInformationLoader");
 local PlayerInformationSaver = require("Player/PlayerInformationSaver");
 local PlayerScoreAttempt = require("Player/PlayerScoreAttempt");
-local StringUtils = require("Util/StringUtils");
 
 ---
 -- Stores information about a single player.

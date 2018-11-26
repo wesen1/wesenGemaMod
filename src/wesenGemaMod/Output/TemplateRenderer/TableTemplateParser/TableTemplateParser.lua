@@ -58,7 +58,9 @@ function TableTemplateParser:parseRenderedTemplate(_renderedTemplateString)
     local nextTag = self.tagFinder:getClosestTagInstance();
     local nextTagPosition = self.tagFinder:getClosestTagPosition();
 
-    currentTag = self:addInnerTextToCurrentTag(currentTag, currentStringPosition, nextTagPosition, _renderedTemplateString);
+    currentTag = self:addInnerTextToCurrentTag(
+      currentTag, currentStringPosition, nextTagPosition, _renderedTemplateString
+    );
     currentStringPosition = self:getNewStringPosition(nextTagPosition, totalStringLength);
 
     if (nextTag) then

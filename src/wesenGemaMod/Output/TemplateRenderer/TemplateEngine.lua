@@ -6,6 +6,7 @@
 --
 
 local luaRestyTemplateEngine = require("resty.template");
+local lfs = require("lfs");
 
 ---
 -- Provides the template engine to render text templates.
@@ -29,10 +30,11 @@ TemplateEngine.templateBasePath = lfs.currentdir() .. "/lua/config/templates/";
 TemplateEngine.originalLoadFunction = TemplateEngine.load;
 
 ---
--- Loads a template from a specific path.
--- Also adds the path to the templates base folder as a prefix and ".template" as a file ending.
+-- Loads a template from a specific path or from a raw template string.
+-- The path must be relative from the template base folder, because this method adds the path to the
+-- templates base folder as a prefix and ".template" as a file ending.
 --
--- @tparam string _template The path to the template file relative from the template base folder or a raw template string
+-- @tparam string _template The path to the template file or a raw template string
 --
 -- @treturn string The content of the template file
 --

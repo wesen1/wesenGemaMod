@@ -11,7 +11,6 @@ local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
 local MapRot = require("MapRot/MapRot");
-local MapRotGenerator = require("MapRot/MapRotGenerator");
 local MapTopHandler = require("Tops/MapTopHandler");
 local Output = require("Output/Output");
 local PlayerList = require("Player/PlayerList");

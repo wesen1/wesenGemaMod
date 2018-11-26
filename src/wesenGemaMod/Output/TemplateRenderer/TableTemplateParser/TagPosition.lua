@@ -78,7 +78,7 @@ end
 --
 -- @tparam TagPosition _tagPosition The other tag position
 --
--- @treturn bool True if this tag positions start position is smaller than the other tag positions start position, false otherwise
+-- @treturn bool True if this tag position is smaller than the other tag position, false otherwise
 --
 function TagPosition:isSmallerThan(_tagPosition)
 

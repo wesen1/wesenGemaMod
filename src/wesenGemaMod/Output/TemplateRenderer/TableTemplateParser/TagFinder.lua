@@ -176,12 +176,13 @@ end
 
 ---
 -- Returns the cached tag position for a specific tag and clears the cache if necessary.
+-- Will return false if there is no next occurrence of the specific tag type.
 --
 -- @tparam string _text The text that was searched for tags
 -- @tparam int _textPosition The start position inside the text
 -- @tparam string _tagType The tag type that the text was searched for
 --
--- @treturn TagPosition|false|nil The tag position, false if there is no next tag position or nil if the next tag position is unknown
+-- @treturn TagPosition|bool|nil The cached tag position or nil if there is no cached next tag position
 --
 function TagFinder:getCachedTagPosition(_text, _textPosition, _tagType)
 
