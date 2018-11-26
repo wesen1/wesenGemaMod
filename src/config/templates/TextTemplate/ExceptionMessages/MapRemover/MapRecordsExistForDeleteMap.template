@@ -1,0 +1,7 @@
+{#
+ # Generates a message that informs the players that a map could not be deleted.
+ #
+ # @tparam string mapName The name of the map
+ #}
+
+Could not delete map "{* mapName *}": There are map records for this map

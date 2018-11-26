@@ -1,0 +1,22 @@
+{#
+ # Prints the time string for a map record.
+ # The result is "<player> scored after <time> minutes with <weapon>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecord mapRecord The map record
+ #}
+
+{* colors.mapRecordName *}{* mapRecord:getPlayer():getName() *}
+{* colors.mapRecordInfo *} scored after
+
+<whitespace>
+{(TextTemplate/MapRecord/MapRecordTime,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+
+{* colors.mapRecordInfo *} minutes with
+
+<whitespace>
+{(TextTemplate/Player/PlayerTeamColor, { colors = colors, teamId = mapRecord:getTeam() })}
+{(TextTemplate/WeaponName, { weaponId = mapRecord:getWeapon() })}

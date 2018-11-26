@@ -8,6 +8,8 @@
 local BaseCommand = require("CommandHandler/BaseCommand");
 local CommandArgument = require("CommandHandler/CommandArgument");
 local RemainigTimeExtender = require("TimeHandler/RemainingTimeExtender");
+local StaticString = require("Output/StaticString");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Command !extend.
@@ -30,28 +32,26 @@ ExtendTimeCommand.remainingTimeExtender = nil;
 ---
 -- ExtendTimeCommand constructor.
 --
--- @tparam CommandList _parentCommandList The parent command list
---
 -- @treturn ExtendTimeCommand The ExtendTimeCommand instance
 --
-function ExtendTimeCommand:__construct(_parentCommandList)
+function ExtendTimeCommand:__construct()
 
   local numberOfMinutesArgument = CommandArgument(
-    "numberOfMinutes",
+    StaticString("extendTimeMinutesArgumentName"):getString(),
     false,
     "integer",
-    "min",
-    "The number of minutes to add to the remaining time"
+    StaticString("extendTimeMinutesArgumentShortName"):getString(),
+    StaticString("extendTimeMinutesArgumentDescription"):getString()
   );
 
   local instance = BaseCommand(
-    _parentCommandList,
-    "!extend",
+    StaticString("extendTimeCommandName"):getString(),
     0,
-    "Time",
+    StaticString("extendTimeCommandGroupName"):getString(),
     { numberOfMinutesArgument },
-    "Extends the remaining time by a specific amount of time. The time can be extended by 20 minutes per map, but admins may extend the time further than that.",
-    { "!ext", "!extendTime" }
+    StaticString("extendTimeCommandDescription"):getString(),
+    { StaticString("extendTimeCommandAlias1"):getString(),
+      StaticString("extendTimeCommandAlias2"):getString() }
   );
   setmetatable(instance, {__index = ExtendTimeCommand});
 
@@ -81,11 +81,11 @@ function ExtendTimeCommand:execute(_player, _arguments)
 
   self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
 
-  self.output:printInfo(
-    self.output:getPlayerNameColor(_player:getLevel()) .. _player:getName()
- .. self.output:getColor("info") .. " extended the time by "
- .. self.output:getColor("extendMinutes") .. _arguments.numberOfMinutes
- .. self.output:getColor("info") .. " minutes."
+  self.output:printTextTemplate(
+    TextTemplate(
+      "InfoMessages/Time/TimeExtended",
+      { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
+    )
   );
 
 end

@@ -1,0 +1,12 @@
+{#
+ # Generates a text that informs the player that the extend time is invalid because of the remaining extend
+ # minutes per map.
+ #
+ # @tparam int remainingExtendMinutes The remaining extend minutes
+ #}
+
+{% if (remainingExtendMinutes == 0) then %}
+  The time may not be further extended. Ask an admin to extend the time
+{% else %}
+  The time may be extended by only {* remainingExtendMinutes *} more minutes
+{% end %}

@@ -6,6 +6,8 @@
 --
 
 local BaseCommand = require("CommandHandler/BaseCommand");
+local StaticString = require("Output/StaticString");
+local TableTemplate = require("Output/Template/TableTemplate");
 
 ---
 -- Command !rules.
@@ -20,19 +22,16 @@ local RulesCommand = setmetatable({}, {__index = BaseCommand});
 ---
 -- RulesCommand constructor.
 --
--- @tparam CommandList _parentCommandList The parent command list
---
 -- @treturn RulesCommand The RulesCommand instance
 --
-function RulesCommand:__construct(_parentCommandList)
+function RulesCommand:__construct()
 
   local instance = BaseCommand(
-    _parentCommandList,
-    "!rules",
+    StaticString("rulesCommandName"):getString(),
     0,
     nil,
     {},
-    "Shows the gema rules"
+    StaticString("rulesCommandDescription"):getString()
   );
   setmetatable(instance, {__index = RulesCommand});
 
@@ -52,15 +51,7 @@ getmetatable(RulesCommand).__call = RulesCommand.__construct;
 -- @tparam string[] _arguments The list of arguments which were passed by the player
 --
 function RulesCommand:execute(_player, _arguments)
-
-  -- Gema rules
-  self.output:print(self.output:getColor("rulesGemaTitle") .. "Gema rules:", _player);
-  self.output:print(self.output:getColor("rulesGemaText") .. "1. The goal is to reach the flags and score as fast as possible.", _player);
-  self.output:print(self.output:getColor("rulesGemaText") .. "2. Killing other players on purpose is not allowed.", _player);
-  self.output:print(self.output:getColor("infoWarning") .. "You may only play on this server when you agree to follow the rules above.", _player);
-  self.output:print(self.output:getColor("infoWarning") .. "Breaking the rules may result in kicks or bans.", _player);
-  self.output:print(self.output:getColor("info") .. "Read the extended server information for additional server specific rules.", _player);
-
+  self.output:printTableTemplate(TableTemplate("Commands/RulesCommandRules"), _player);
 end
 
 

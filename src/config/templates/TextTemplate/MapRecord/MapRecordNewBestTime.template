@@ -1,0 +1,8 @@
+{#
+ # Prints the "new best time" message.
+ # The result is "***** NEW BEST TIME *****".
+ #
+ # @tparam string[] colors The list of colors
+ #}
+
+{* colors.newBestTimeString *}***** NEW BEST TIME *****

@@ -6,6 +6,8 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local TableTemplate = require("Output/Template/TableTemplate");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Class that handles map changes.
@@ -57,7 +59,9 @@ function MapChangeHandler:handleEvent(_mapName, _gameMode)
     mapTop:loadRecords(self.parentGemaMode:getDataBase(), _mapName);
 
     -- Print the map statistics for the map to all players
-    mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop);
+    self.output:printTableTemplate(
+      TableTemplate("MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() })
+    );
 
   end
 
@@ -74,10 +78,13 @@ function MapChangeHandler:updateGemaModeState()
   local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
   local newGemaModeState = gemaModeStateUpdater:switchToNextEnvironment();
 
-  if (newGemaModeState == true) then
-    self.output:printInfo("The gema mode was automatically enabled.");
-  elseif (newGemaModeState == false) then
-    self.output:printInfo("The gema mode was automatically disabled. Vote a gema map in ctf to reenable it.");
+  if (newGemaModeState ~= nil) then
+    self.output:printTextTemplate(
+      TextTemplate(
+        "InfoMessages/GemaModeState/GemaModeStateChange",
+        { ["isGemaModeActive"] = newGemaModeState }
+      )
+    );
   end
 
 end

@@ -1,0 +1,37 @@
+{#
+ # Prints a map record row for the map top.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecord mapRecord The map record
+ # @tparam int maxRankLength The maximum rank length
+ #
+
+{# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
+{* colors.mapRecordRank *}
+{* string.rep("0", maxRankLength - string.len(mapRecord:getRank())) *}{* mapRecord:getRank() *})
+
+<whitespace>
+{(TextTemplate/MapRecord/MapRecordTime,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
+----------------------------------------------------------------------------------------------------------;
+
+{% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
+  {* colors.mapRecordInfo *}(
+  {(TextTemplate/Player/PlayerIp, { colors = colors, ip = mapRecord:getPlayer():getIp() })}
+  {* colors.mapRecordInfo *})
+{% end %}
+
+----------------------------------------------------------------------------------------------------------;
+
+{(TextTemplate/Player/PlayerTeamColor, { colors = colors, teamId = mapRecord:getTeam() })}
+{(TextTemplate/WeaponName, { weaponId = mapRecord:getWeapon() })}
+
+----------------------------------------------------------------------------------------------------------;
+
+{* colors.mapRecordTimeStamp *}
+{* os.date("%Y-%m-%d", mapRecord:getCreatedAt()) *}

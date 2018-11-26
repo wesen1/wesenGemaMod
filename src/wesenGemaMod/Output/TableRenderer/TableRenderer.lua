@@ -46,25 +46,18 @@ getmetatable(TableRenderer).__call = TableRenderer.__construct;
 -- The tables must be in the format { [y] = { rowFields } }, while a row field may contain a sub table.
 --
 -- @tparam table _outputTable The output table
--- @tparam bool _isOneDimensionalTable If true the steps to merge sub tables are skipped
 --
 -- @treturn string[] The row output strings
 --
-function TableRenderer:getRowOutputStrings(_outputTable, _isOneDimensionalTable)
+function TableRenderer:getRowOutputStrings(_outputTable)
 
-  local outputTable;
+  local outputTable = _outputTable;
 
-  if (_isOneDimensionalTable) then
-    outputTable = _outputTable;
-  else
+  -- Replace the sub tables with the result of getRowOuputStrings()
+  outputTable = self:convertFieldTablesToRows(outputTable);
 
-    -- Replace the sub tables with the result of getRowOuputStrings()
-    outputTable = self:convertFieldTablesToRows(_outputTable);
-
-    -- Merge the sub rows into the main table
-    outputTable = self:mergeSubRows(outputTable);
-
-  end
+  -- Merge the sub rows into the main table
+  outputTable = self:mergeSubRows(outputTable);
 
   -- Add the tabs to the fields
   outputTable = self:addTabsToFields(outputTable);
@@ -98,7 +91,7 @@ function TableRenderer:convertFieldTablesToRows(_outputTable)
     outputTable[y] = {};
     for x, tableField in ipairs(tableRow) do
       if (type(tableField) == "table") then
-        outputTable[y][x] = self:getRowOutputStrings(tableField, true);
+        outputTable[y][x] = self:getRowOutputStrings(tableField);
       else
         outputTable[y][x] = tableField;
       end
@@ -120,43 +113,48 @@ end
 function TableRenderer:mergeSubRows(_outputTable)
 
   local outputTable = {};
-  local totalNumberOfInsertedRows = 0;
+  local mainTableInsertIndex = 1;
 
   for y, tableRow in ipairs(_outputTable) do
 
-    local numberOfInsertedRows = 0;
-    outputTable[y + totalNumberOfInsertedRows] = {};
+    outputTable[mainTableInsertIndex] = {};
 
+    local maximumMainTableInsertIndexForTable = mainTableInsertIndex;
     for x, tableField in ipairs(tableRow) do
+
       if (type(tableField) == "table") then
         -- The field contains sub rows
-
-        -- Calculate the number of inserted rows (1 row will stay in the original row)
-        local numberOfSubRows = #tableField;
-        if (numberOfSubRows - 1 > numberOfInsertedRows) then
-          numberOfInsertedRows = numberOfSubRows - 1;
-        end
+        local mainTableInsertIndexForTable = mainTableInsertIndex;
+        local isFirstSubRow = true;
 
         for subY, subRow in ipairs(tableField) do
 
-          local totalTableRowIndex = y + totalNumberOfInsertedRows + subY - 1;
-
-          -- Create the additional row if it doesn't exist
-          if (not outputTable[totalTableRowIndex]) then
-            outputTable[totalTableRowIndex] = {};
+          if (isFirstSubRow) then
+            isFirstSubRow = false;
+          else
+            mainTableInsertIndexForTable = mainTableInsertIndexForTable + 1;
           end
 
-          outputTable[totalTableRowIndex][x] = subRow;
+          -- Create the additional row if it doesn't exist
+          if (not outputTable[mainTableInsertIndexForTable]) then
+            outputTable[mainTableInsertIndexForTable] = {};
+          end
+
+          outputTable[mainTableInsertIndexForTable][x] = subRow;
+
+          if (mainTableInsertIndexForTable > maximumMainTableInsertIndexForTable) then
+            maximumMainTableInsertIndexForTable = mainTableInsertIndexForTable;
+          end
 
         end
 
       else
-        outputTable[y + totalNumberOfInsertedRows][x] = tableField;
+        outputTable[mainTableInsertIndex][x] = tableField;
       end
 
     end
 
-    totalNumberOfInsertedRows = totalNumberOfInsertedRows + numberOfInsertedRows;
+    mainTableInsertIndex = maximumMainTableInsertIndexForTable + 1;
 
   end
 

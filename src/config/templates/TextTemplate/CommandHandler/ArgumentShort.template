@@ -1,0 +1,13 @@
+{#
+ # Prints the argument with its short name.
+ # The result is "<<shortArgumentName>>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CommandArgument argument The command argument
+ #}
+
+{# Fetch the argument color #}
+{(TextTemplate/CommandHandler/ArgumentColor, { colors = colors, argument = argument })}
+
+{# Print the argument #}
+<{* argument:getShortName() *}>

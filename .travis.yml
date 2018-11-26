@@ -22,6 +22,7 @@ install:
   - luarocks install luafilesystem
   - luarocks install mach
   - luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
+  - luarocks install lua-resty-template
 
 script:
   - cd tests

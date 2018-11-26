@@ -55,25 +55,5 @@ function TableUtils:slice(_table, _startIndex, _endIndex)
 
 end
 
----
--- Returns the length of a table.
--- This function should only be used for associative tables because the length of tables with
--- numeric indexes starting from 1 and without any gaps can be fetched by using "#table".
---
--- @tparam table _associativeTable The table with associative indexes
---
--- @treturn int The length of the table
---
-function TableUtils:getTableLength(_associativeTable)
-
-  local numberOfElements = 0;
-  for _, _ in pairs(_associativeTable) do
-    numberOfElements = numberOfElements + 1;
-  end
-
-  return numberOfElements;
-
-end
-
 
 return TableUtils;

@@ -6,6 +6,9 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local StaticString = require("Output/StaticString");
+local TableTemplate = require("Output/Template/TableTemplate");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Class that handles player connects.
@@ -73,7 +76,10 @@ function PlayerConnectHandler:handleEvent(_cn)
     self:printServerInformation(player);
 
   else
-    self.output:printInfo("The gema mode is not enabled. Vote a gema map in ctf to enable it.", player);
+    self.output:printTextTemplate(
+      TextTemplate("InfoMessages/GemaModeState/GemaModeNotEnabled"),
+      player
+    );
   end
 
 end
@@ -87,16 +93,18 @@ end
 --
 -- @tparam Player player The player who connected
 --
-function PlayerConnectHandler:checkNumberOfConnections(player)
+function PlayerConnectHandler:checkNumberOfConnections(_player)
 
   local playerList = self.parentGemaMode:getPlayerList();
 
-  local numberOfPlayerConnections = playerList:getNumberOfPlayersWithIp(player:getIp());
+  local numberOfPlayerConnections = playerList:getNumberOfPlayersWithIp(_player:getIp());
   if (numberOfPlayerConnections > self.maximumNumberOfConnectionsWithSameIp) then
 
-    self.output:printInfo(player:getName() .. " could not connect [too many connections with same IP]");
-    playerList:removePlayer(player:getCn());
-    disconnect(player:getCn(), DISC_NONE);
+    self.output:printTextTemplate(
+      TextTemplate("InfoMessages/Player/PlayerDisconnectTooManyConnections", { ["player"] = _player })
+    );
+    playerList:removePlayer(_player:getCn());
+    disconnect(_player:getCn(), DISC_NONE);
 
   end
 
@@ -111,16 +119,20 @@ function PlayerConnectHandler:printServerInformation(_player)
 
   local mapTopHandler = self.parentGemaMode:getMapTopHandler();
   local mapTop = mapTopHandler:getMapTop("main");
-  mapTopHandler:getMapTopPrinter():printMapStatistics(mapTop, _player);
 
-  self.output:print(self.output:getColor("info") .. "Say "
-                 .. self.output:getColor("command0") .. "!cmds "
-                 .. self.output:getColor("info") .. "to see a list of avaiable commands",
-                 _player);
-  self.output:print(self.output:getColor("infoWarning") .. "Make sure to read the "
-                 .. self.output:getColor("command0") .. "!rules "
-                 .. self.output:getColor("infoWarning") .. "before spawning",
-                 _player);
+  self.output:printTableTemplate(
+    TableTemplate("MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() }),
+    _player
+  );
+
+  local commandList = self.parentGemaMode:getCommandList();
+  local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString());
+  local rulesCommand = commandList:getCommand(StaticString("rulesCommandName"):getString());
+
+  self.output:printTableTemplate(
+    TableTemplate("ServerInformation", { ["cmdsCommand"] = cmdsCommand, ["rulesCommand"] = rulesCommand }),
+    _player
+  );
 
 end
 

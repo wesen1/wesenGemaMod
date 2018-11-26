@@ -24,15 +24,11 @@ SavedMapRot.filePath = nil;
 ---
 -- SavedMapRot constructor.
 --
--- @tparam string _filePath The path to the maprot file
---
 -- @treturn SavedMapRot The SavedMapRot instance
 --
-function SavedMapRot:__construct(_filePath)
+function SavedMapRot:__construct()
 
   local instance = setmetatable({}, { __index = SavedMapRot });
-
-  instance.filePath = _filePath;
 
   return instance;
 
@@ -97,11 +93,11 @@ end
 function SavedMapRot:removeMap(_mapName)
 
   -- Open tmp file in mode "write"
-  local tmpFile = io.open(self.mapRotFilePath .. ".tmp", "w");
+  local tmpFile = io.open(self.filePath .. ".tmp", "w");
 
   io.output(tmpFile);
 
-  for line in io.lines(self.mapRotFilePath) do
+  for line in io.lines(self.filePath) do
 
     if (not line:match(_mapName)) then
       io.write(line .. "\n");
@@ -112,7 +108,7 @@ function SavedMapRot:removeMap(_mapName)
   io.close(tmpFile);
 
   -- Replace the map rot file by the temporary file
-  os.rename(self.mapRotFilePath .. ".tmp", self.mapRotFilePath);
+  os.rename(self.filePath .. ".tmp", self.filePath);
 
 end
 

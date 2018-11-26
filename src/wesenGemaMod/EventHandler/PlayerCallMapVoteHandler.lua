@@ -10,6 +10,7 @@ local Environment = require("EnvironmentHandler/Environment");
 local Exception = require("Util/Exception");
 local MapRemover = require("Map/MapRemover");
 local ObjectUtils = require("Util/ObjectUtils");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Handles map votes.
@@ -89,7 +90,16 @@ function PlayerCallMapVoteHandler:onInvalidMapVote(_player, _mapName, _gameMode,
 
   if (mapexists(_mapName)) then
     -- The map exists but the vote is invalid, this means that the map can not be loaded because it is unplayable
-    self:removeUnplayableMap(_mapName);
+
+    local status, exception = pcall(self.removeUnplayableMap, self, _mapName);
+    if (not status) then
+      if (ObjectUtils:isInstanceOf(exception, Exception)) then
+       self.output:printException(exception, _player);
+      else
+        error(exception);
+      end
+    end
+
     return PLUGIN_BLOCK;
   end
 
@@ -103,21 +113,13 @@ end
 --
 function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
 
-  local status, exception = pcall(self.mapRemover:removeMap(
-    self.parentGemaMode:getDataBase(),
-    _mapName,
-    self.parentGemaMode:getMapRot()
-  ));
+  self.mapRemover:removeMap(self.parentGemaMode:getDataBase(), _mapName, self.parentGemaMode:getMapRot());
 
-  if (not status) then
-    if (ObjectUtils:isInstanceOf(exception, Exception)) then
-      self.output:printError(exception:getMessage(), _player);
-    else
-      error(exception);
-    end
-  else
-    self.output:printInfo("The map \"" .. _mapName .. "\" was automatically deleted because it wasn't playable.", _player);
-  end
+  self.output:printTextTemplate(
+    TextTemplate(
+      "InfoMessages/Maps/AutomaticMapDeletion", { ["mapName"] = _mapName }
+    ), _player
+  );
 
 end
 
@@ -135,10 +137,14 @@ function PlayerCallMapVoteHandler:onValidMapVote(_player, _mapName, _gameMode, _
   gemaModeStateUpdater:setNextEnvironment(Environment(_mapName, _gameMode));
 
   local nextGemaModeStateUpdate = gemaModeStateUpdater:getNextGemaModeStateUpdate();
-  if (nextGemaModeStateUpdate == true) then
-    self.output:printInfo("The gema mode will be automatically enabled if this vote passes.");
-  elseif (nextGemaModeStateUpdate == false) then
-    self.output:printInfo("The gema mode will be automatically disabled if this vote passes.");
+
+  if (nextGemaModeStateUpdate ~= nil) then
+    self.output:printTextTemplate(
+      TextTemplate(
+        "InfoMessages/GemaModeState/GemaModeStateChangeOnVotePass",
+        { ["voteWillEnableGemaMode"] = nextGemaModeStateUpdate }
+      )
+    );
   end
 
 end

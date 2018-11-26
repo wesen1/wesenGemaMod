@@ -1,0 +1,18 @@
+{#
+ # Prints the map top summary and the best map record to a player.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecordList mapRecordList The map record list
+ #}
+
+{% if (mapRecordList:getNumberOfRecords() == 0) then %}
+  {(TextTemplate/MapTop/MapTopEmpty, { colors = colors })}
+{% else %}
+  {(TextTemplate/MapTop/MapTopSummary, { colors = colors, mapRecordList = mapRecordList })}
+  _________________________________________________________________________________________;
+
+  {(TextTemplate/MapRecord/MapRecordMapBest,
+    { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecordList:getRecordByRank(1) }
+  )}
+{% end %}

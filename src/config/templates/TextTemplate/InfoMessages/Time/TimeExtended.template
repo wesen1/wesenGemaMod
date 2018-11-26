@@ -1,0 +1,25 @@
+{#
+ # Prints the "player extended time" message.
+ # The result is "<player> extended the time by x minute(s).".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam Player player The player who extended the time
+ # @tparam int numberOfMinutes The number of minutes by which the time was extended
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "TextTemplate/ServerMessageInfo" %}
+
+{-infoMessage-}
+
+  {(TextTemplate/Player/PlayerLevelColor, { colors = colors, playerLevel = player:getLevel() })}
+  {* player:getName() *}
+
+  {* colors.info *} extended the time by
+  {* colors.extendMinutes *} {* numberOfMinutes *}
+  {* colors.info *} minute
+  {% if (numberOfMinutes > 1) then %}
+    s
+  {% end %}
+
+{-infoMessage-}

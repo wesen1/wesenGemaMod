@@ -70,6 +70,7 @@ getmetatable(PlayerSayTextHandler).__call = PlayerSayTextHandler.__construct;
 --
 function PlayerSayTextHandler:handleEvent(_player, _text)
 
+  -- @todo: Export this log message to text template (need to find way to render templates for logs)
   local logText = string.format("[%s] %s says: '%s'", _player:getIp(), _player:getName(), _text);
   logline(ACLOG_INFO, logText);
 
@@ -80,7 +81,7 @@ function PlayerSayTextHandler:handleEvent(_player, _text)
       local status, exception = pcall(self.handleCommand, self, _player, _text);
       if (not status) then
         if (ObjectUtils:isInstanceOf(exception, Exception)) then
-          self.output:printError(exception:getMessage(), _player);
+          self.output:printException(exception, _player);
         else
           error(exception);
         end

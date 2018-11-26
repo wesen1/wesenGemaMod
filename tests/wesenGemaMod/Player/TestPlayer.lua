@@ -110,28 +110,6 @@ function TestPlayer:testCanCheckWhetherPlayersAreEqual()
 end
 
 ---
--- Checks whether the getIpString() method works as expected.
---
-function TestPlayer:testCanGetIpString()
-
-  local testPlayer = Player(0, "hello", "1.1.1.1");
-  local testValueSets = {
-    { ["ip"] = "1.1.1.1", ["expectedIpString"] = "1.1.1.x" },
-    { ["ip"] = "127.0.0.1", ["expectedIpString"] = "127.0.0.x" },
-    { ["ip"] = "10.4.2.27", ["expectedIpString"] = "10.4.2.x" },
-    { ["ip"] = "192.168.49.32", ["expectedIpString"] = "192.168.49.x" },
-    { ["ip"] = "172.20.145.190", ["expectedIpString"] = "172.20.145.x" },
-    { ["ip"] = "127.127.34.243", ["expectedIpString"] = "127.127.34.x" }
-  }
-
-  for index, testValueSet in ipairs(testValueSets) do
-    testPlayer.ip = testValueSet["ip"];
-    self.assertEquals(testPlayer:getIpString(), testValueSet["expectedIpString"]);
-  end
-
-end
-
----
 -- Checks whether the savePlayer() method works as expected.
 --
 function TestPlayer:testCanSavePlayer()

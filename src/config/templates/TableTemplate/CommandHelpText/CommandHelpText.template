@@ -1,0 +1,36 @@
+{#
+ # Prints a command with all arguments, its description and its arguments descriptions.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam BaseCommand command The command
+ #}
+
+{* colors.helpTitle *}Usage
+------------------------------------------------------------;
+:
+<whitespace>
+{(TextTemplate/CommandHandler/CommandWithAllArguments, { colors = colors, command = command })}
+______________________________________________________________________;
+
+{* colors.helpTitle *}Description
+------------------------------------------------------------;
+: {* colors.helpDescription *}{* command:getDescription() *}
+______________________________________________________________________;
+
+{* colors.helpTitle *}Required Level
+------------------------------------------------------------;
+: {* colors.helpLevel *}
+{(TextTemplate/Player/PlayerLevelName,
+  { playerLevel = command:getRequiredLevel() }
+)}
+______________________________________________________________________;
+
+{% if (command:getNumberOfArguments() > 0) then %}
+
+  {* colors.helpTitle *}Arguments
+
+  --------------------------[FIELD]---------------------------;
+  {(TableTemplate/CommandHelpText/Arguments, { colors = colors, arguments = command:getArguments() })}
+  ------------------------[ENDFIELD]--------------------------;
+
+{% end %}

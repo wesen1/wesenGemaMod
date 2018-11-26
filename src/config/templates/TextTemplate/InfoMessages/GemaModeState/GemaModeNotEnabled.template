@@ -1,0 +1,12 @@
+{#
+ # Generates a info message that tells new connected players how to activate the gema mode (if it is not enabled).
+ #
+ # @tparam string[] colors The list of colors
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "TextTemplate/ServerMessageInfo" %}
+
+{-infoMessage-}
+  The gema mode is not enabled. Vote a gema map in ctf to enable it.
+{-infoMessage-}

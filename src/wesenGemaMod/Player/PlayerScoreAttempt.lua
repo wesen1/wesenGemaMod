@@ -8,6 +8,7 @@
 local Exception = require("Util/Exception");
 local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
 local ObjectUtils = require("Util/ObjectUtils");
+local StaticString = require("Output/StaticString");
 
 ---
 -- Saves information about a players score attempt and provides methods to update the score attempt.
@@ -195,7 +196,7 @@ end
 function PlayerScoreAttempt:getMapRecord(_parentMapRecordList)
 
   if (not self:isFinished()) then
-    error(Exception("The player score attempt is not finished"));
+    error(Exception(StaticString("exceptionPlayerScoreAttemptNotFinished"):getString()));
   end
 
   return MapRecord(

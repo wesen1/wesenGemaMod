@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+local StaticString = require("Output/StaticString");
+
 ---
 -- Stores the configuration for a single command.
 --
@@ -53,7 +55,7 @@ BaseCommand.arguments = {};
 --
 -- @tfield string description
 --
-BaseCommand.description = "No description";
+BaseCommand.description = nil;
 
 ---
 -- Group to which the command belongs (Default: "General")
@@ -61,7 +63,7 @@ BaseCommand.description = "No description";
 --
 -- @tfield string group
 --
-BaseCommand.group = "General";
+BaseCommand.group = nil;
 
 ---
 -- The parent command list
@@ -81,22 +83,19 @@ BaseCommand.output = nil;
 ---
 -- BaseCommand constructor.
 --
--- @tparam CommandList _parentCommandList The parent command list
 -- @tparam string _name The name of the command
 -- @tparam int _requiredLevel The minimum required level that is necessary to execute the command
--- @tparam string _group The group of the command
--- @tparam CommandArgument[] _arguments The commands arguments
--- @tparam string _description The description of the command
--- @tparam string[] _aliases The list of aliases for the command
+-- @tparam string _group The group of the command (optional)
+-- @tparam CommandArgument[] _arguments The commands arguments (optional)
+-- @tparam string _description The description of the command (optional)
+-- @tparam string[] _aliases The list of aliases for the command (optional)
 --
 -- @treturn BaseCommand The BaseCommand instance
 --
-function BaseCommand:__construct(_parentCommandList, _name, _requiredLevel, _group, _arguments, _description, _aliases)
+function BaseCommand:__construct(_name, _requiredLevel, _group, _arguments, _description, _aliases)
 
   local instance = setmetatable({}, {__index = BaseCommand});
 
-  instance.parentCommandList = _parentCommandList;
-  instance.output = _parentCommandList:getParentGemaMode():getOutput();
   instance.name = _name;
 
   if (_requiredLevel) then
@@ -105,10 +104,14 @@ function BaseCommand:__construct(_parentCommandList, _name, _requiredLevel, _gro
 
   if (_group) then
     instance.group = _group;
+  else
+    instance.group = StaticString("defaultCommandGroup"):getString();
   end
 
   if (_description) then
     instance.description = _description;
+  else
+    instance.description = StaticString("defaultCommandDescription"):getString();
   end
 
   if (_arguments) then
@@ -197,6 +200,16 @@ end
 
 
 -- Public Methods
+
+---
+-- Initializes the command and attaches it to a specific command list.
+--
+-- @tparam CommandList _commandList The command list to initialize this command with
+--
+function BaseCommand:initialize(_commandList)
+  self.parentCommandList = _commandList;
+  self.output = _commandList:getParentGemaMode():getOutput();
+end
 
 ---
 -- Returns the list of required arguments of this command.

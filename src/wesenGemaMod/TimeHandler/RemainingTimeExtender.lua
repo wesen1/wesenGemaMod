@@ -6,7 +6,8 @@
 --
 
 local Exception = require("Util/Exception");
-local TimePrinter = require("TimeHandler/TimePrinter");
+local StaticString = require("Output/StaticString");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Extends the remaining time by <x> minutes.
@@ -15,13 +16,6 @@ local TimePrinter = require("TimeHandler/TimePrinter");
 --
 local RemainingTimeExtender = setmetatable({}, {});
 
-
----
--- The time printer
---
--- @tparam TimePrinter timePrinter
---
-RemainingTimeExtender.timePrinter = nil;
 
 ---
 -- The number of minutes by which the time can be extended per map
@@ -57,7 +51,6 @@ function RemainingTimeExtender:__construct(_numberOfExtendMinutesPerMap)
 
   local instance = setmetatable({}, {__index = RemainingTimeExtender});
 
-  instance.timePrinter = TimePrinter();
   instance.numberOfExtendMinutesPerMap = _numberOfExtendMinutesPerMap;
   instance.lastEnvironment = nil;
 
@@ -113,10 +106,13 @@ function RemainingTimeExtender:checkAllowedExtendMinutesOfPlayer(_player, _numbe
 
   if (_player:getLevel() == 0) then
 
-    if (self.remainingExtendMinutes == 0) then
-      error(Exception("The time may not be further extended. Ask an admin to extend the time."));
-    elseif (self.remainingExtendMinutes < _numberOfExtendMinutes) then
-      error(Exception("The time may be extended by only " .. self.remainingExtendMinutes .. " more minutes."));
+    if (self.remainingExtendMinutes == 0 or self.remainingExtendMinutes < _numberOfExtendMinutes) then
+      error(Exception(
+          TextTemplate(
+            "ExceptionMessages/TimeHandler/InvalidUnarmedExtendTime",
+            { ["remainingExtendMinutes"] = self.remainingExtendMinutes }
+          )
+      ));
     end
 
   end
@@ -135,7 +131,7 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
 
   -- The extend time command allows only time extension in minutes, so the minimum value is 1 * 60 * 1000
   if (_numberOfExtendMilliseconds < 60000) then
-    error(Exception("The number of added minutes may not be smaller than 1."));
+    error(Exception(StaticString("exceptionExtendTimeSmallerThanOneMinute"):getString()));
   else
 
     -- Calculate the maximum allowed milliseconds
@@ -167,35 +163,12 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
     local maximumNumberOfExtendMilliseconds = maximumIntegerValue - gettimeleftmillis() - additionalMilliseconds;
 
     if (_numberOfExtendMilliseconds > maximumNumberOfExtendMilliseconds) then
-
-      local timeString = self.timePrinter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i");
-
-      -- Get the error message
-      local errorMessage;
-
-      if (timeString == "0") then
-
-        -- This condition checks whether the maximum number of extend milliseconds + the possible
-        -- extension time because of the distance of getgamemillis() to a full minute is more than
-        -- one minute.
-        if (maximumNumberOfExtendMilliseconds + (60000 - getgamemillis()) > 60000) then
-
-          -- The wait time is calculated as the distance of the maximum number of extend
-          -- milliseconds to a full minute. This is only done under the previous condition that the
-          -- maximum number of extend milliseconds can become greater than one minute.
-          local waitTime = 60000 - maximumNumberOfExtendMilliseconds;
-          local waitTimeString = self.timePrinter:generateTimeString(waitTime, "%02s,%03v");
-
-          errorMessage = "The time can only be extended by 1 more minute in " .. waitTimeString .. " seconds.";
-        else
-          errorMessage = "The time can not be extended any further.";
-        end
-
-      else
-        errorMessage = "The time can only be extended by " .. timeString .. " more minutes.";
-      end
-
-      error(Exception(errorMessage));
+      error(Exception(
+          TextTemplate(
+            "ExceptionMessages/TimeHandler/InvalidExtendTime",
+            { ["maximumNumberOfExtendMilliseconds"] = maximumNumberOfExtendMilliseconds }
+          )
+      ));
     end
   end
 

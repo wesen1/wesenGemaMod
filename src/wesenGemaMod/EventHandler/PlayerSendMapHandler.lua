@@ -72,7 +72,7 @@ function PlayerSendMapHandler:handleEvent(_mapName, _player, _revision, _mapsize
     if (self.mapNameChecker:isGemaMapName(_mapName)) then
 
       local dataBase = self.parentGemaMode:getDataBase();
-      MapHandler:saveMap(dataBase, _mapName, _player);
+      MapHandler:saveMapName(dataBase, _mapName, _player);
 
       self.parentGemaMode:getMapRot():addMap(_mapName);
     end

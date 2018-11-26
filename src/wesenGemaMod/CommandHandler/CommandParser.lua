@@ -5,10 +5,11 @@
 -- @license MIT
 --
 
-local ArgumentPrinter = require("CommandHandler/CommandPrinter/ArgumentPrinter");
 local Exception = require("Util/Exception");
+local StaticString = require("Output/StaticString");
 local StringUtils = require("Util/StringUtils");
 local TableUtils = require("Util/TableUtils");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Parses command input strings.
@@ -17,13 +18,6 @@ local TableUtils = require("Util/TableUtils");
 --
 local CommandParser = setmetatable({}, {});
 
-
----
--- The argument printer
---
--- @tfield ArgumentPrinter argumentPrinter
---
-CommandParser.argumentPrinter = nil;
 
 ---
 -- The last parsed command
@@ -50,8 +44,6 @@ CommandParser.arguments = nil;
 function CommandParser:__construct(_output)
 
   local instance = setmetatable({}, {__index = CommandParser});
-
-  instance.argumentPrinter = ArgumentPrinter(_output);
 
   return instance;
 
@@ -123,7 +115,9 @@ function CommandParser:parseCommand(_inputText, _commandList)
   local command = _commandList:getCommand(commandName);
 
   if (not command) then
-    error(Exception("Unknown command '" .. commandName .. "', check your spelling and try again"));
+    error(Exception(
+        TextTemplate("ExceptionMessages/CommandHandler/UnknownCommand", { ["commandName"] = commandName })
+    ));
   end
 
   self.command = command;
@@ -151,12 +145,15 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
 
   -- Check whether the number of arguments is valid
   if (numberOfArgumentTextParts < _command:getNumberOfRequiredArguments()) then
-
-    local missingArgumentsString = self:getMissingArgumentsString(_command, numberOfArgumentTextParts);
-    error(Exception("Not enough arguments. (Missing arguments: " .. missingArgumentsString .. ")"));
+    error(Exception(
+        TextTemplate(
+          "ExceptionMessages/CommandHandler/NotEnoughCommandArguments",
+          { numberOfPassedArguments = numberOfArgumentTextParts, command = _command }
+        )
+    ));
 
   elseif (numberOfArgumentTextParts > _command:getNumberOfArguments()) then
-    error(Exception("Too many arguments"));
+    error(Exception(StaticString("exceptionTooManyCommandArguments"):getString()));
   end
 
   -- Create an associative array from the input text parts
@@ -178,37 +175,6 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
 end
 
 ---
--- Returns the missing arguments string for a command.
---
--- @tparam BaseCommand _command The command
--- @tparam int _numberOfPassedArguments The number of passed arguments
---
--- @treturn string The missing arguments string
---
-function CommandParser:getMissingArgumentsString(_command, _numberOfPassedArguments)
-
-  local requiredArguments = _command:getRequiredArguments();
-
-  local missingArgumentsString = "";
-  local isFirstArgument = true;
-  for i = _numberOfPassedArguments + 1, #requiredArguments, 1 do
-
-    if (isFirstArgument) then
-      isFirstArgument = false;
-    else
-      missingArgumentsString = missingArgumentsString .. ", ";
-    end
-
-    local argumentString = self.argumentPrinter:getShortArgumentString(requiredArguments[i]);
-    missingArgumentsString = missingArgumentsString .. argumentString .. "\f3";
-
-  end
-
-  return missingArgumentsString;
-
-end
-
----
 -- Casts an argument input string to the arguments type.
 --
 -- @tparam CommandArgument _argument The argument
@@ -219,23 +185,17 @@ end
 --
 function CommandParser:castArgumentToType(_argument, _argumentValue)
 
-  local exceptionMessage;
-
   if (_argument:getType() == "string") then
     return _argumentValue;
 
   elseif (_argument:getType() == "integer") then
     if (_argumentValue:match("^%d+$") ~= nil) then
       return tonumber(_argumentValue);
-    else
-      exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a integer.";
     end
 
   elseif (_argument:getType() == "float") then
-    if (_argumentValue:match("^%d+%.%d+$") ~= nil) then
+    if (_argumentValue:match("^%d+%.?%d?$") ~= nil) then
       return tonumber(_argumentValue);
-    else
-      exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a floating point number.";
     end
 
   elseif (_argument:getType() == "bool") then
@@ -243,22 +203,19 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
       return true;
     elseif (_argumentValue == "false") then
       return false;
-    else
-      exceptionMessage = "Value for '" .. _argument:getShortName() .. "' must be a boolean ('true' or 'false').";
     end
 
   else
-    local exceptionMessageFormat = "Invalid argument type '%s' in argument %s.";
-    exceptionMessage = string.format(
-      exceptionMessageFormat,
-      _argument:getType(),
-      _argument:getShortName()
-    );
+    -- Argument type is invalid
+    error(Exception(
+        TextTemplate("ExceptionMessages/CommandHandler/InvalidArgumentType", { argument = _argument })
+    ));
   end
 
-  if (exceptionMessage) then
-    error(Exception(exceptionMessage));
-  end
+  -- Argument type is valid but value type did not match argument type
+  error(Exception(
+      TextTemplate("ExceptionMessages/CommandHandler/InvalidValueType", { argument = _argument })
+  ));
 
 end
 

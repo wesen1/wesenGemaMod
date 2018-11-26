@@ -49,8 +49,9 @@ function CommandLoader:loadCommands(_parentGemaMode, _commandClassesDirectoryPat
   local commandList = CommandList(_parentGemaMode);
 
   for _, commandClassName in ipairs(self:getCommandClassNames(_commandClassesDirectoryPath)) do
-    local command = require("Commands/" .. commandClassName);
-    commandList:addCommand(command);
+    local commandClass = require("Commands/" .. commandClassName);
+    local commandInstance = commandClass();
+    commandList:addCommand(commandInstance);
   end
 
   return commandList;
@@ -75,7 +76,7 @@ function CommandLoader:getCommandClassNames(_commandClassesDirectoryPath)
   for luaFile in lfs.dir(_commandClassesDirectoryPath) do
 
     -- If the file name ends with "Command.lua"
-    if (luaFile:match("^.+%Command.lua$")) then
+    if (luaFile:match("^.+Command.lua$")) then
       local commandClassName = luaFile:gsub(".lua", "");
       table.insert(commandClassNames, commandClassName);
     end

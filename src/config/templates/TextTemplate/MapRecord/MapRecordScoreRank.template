@@ -1,0 +1,33 @@
+{#
+ # Prints the score record rank if the record is a new personal best time or a "record tied" or "record
+ # slower message" in the other cases.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam MapRecord mapRecord The map record
+ #}
+
+{% local mapRecordList = mapRecord:getParentMapRecordList(); %}
+{% local currentRecord = mapRecordList:getRecordByPlayer(mapRecord:getPlayer()); %}
+
+{% if (not currentRecord or currentRecord:getMilliseconds() > mapRecord:getMilliseconds()) then %}
+  {# New personal best time #}
+
+  {# Calculate total number of records #}
+  {% local numberOfRecords = mapRecordList:getNumberOfRecords(); %}
+  {% if (currentRecord == nil) then %}
+    {#
+     # This template is rendered before the record is added to the map record list,
+     # so the number of records must be increased by one if the player had no record before this one
+     #}
+    {% numberOfRecords = numberOfRecords + 1; %}
+  {% end %}
+
+  {(TextTemplate/MapRecord/MapRecordScoreRankPersonalBest,
+    { colors = colors, mapRecord = mapRecord, numberOfRecords = numberOfRecords }
+  )}
+
+{% elseif (currentRecord:getMilliseconds() == mapRecord:getMilliseconds()) then %}
+  {(TextTemplate/MapRecord/MapRecordScoreRankRecordTied, { colors = colors })}
+{% else %}
+  {(TextTemplate/MapRecord/MapRecordScoreRankRecordSlower, { colors = colors })}
+{% end %}

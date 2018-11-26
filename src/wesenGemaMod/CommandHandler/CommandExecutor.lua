@@ -6,7 +6,7 @@
 --
 
 local Exception = require("Util/Exception");
-local TableUtils = require("Util/TableUtils");
+local StaticString = require("Output/StaticString");
 
 ---
 -- Handles command execution.
@@ -52,14 +52,7 @@ function CommandExecutor:executeCommand(_command, _arguments, _player)
 
   if (_player:getLevel() >= _command:getRequiredLevel()) then
 
-    local numberOfArguments = TableUtils:getTableLength(_arguments);
-
-    -- Check whether the number of arguments is valid
-    if (numberOfArguments < _command:getNumberOfRequiredArguments()) then
-      error(Exception("Not enough arguments."));
-    elseif (numberOfArguments > _command:getNumberOfArguments()) then
-      error(Exception("Too many arguments"));
-    end
+    -- The CommandExecutor relies on the CommandParser to check that all arguments are valid
 
     -- Validate the input arguments
     _command:validateInputArguments(_arguments);
@@ -71,7 +64,7 @@ function CommandExecutor:executeCommand(_command, _arguments, _player)
     return _command:execute(_player, arguments);
 
   else
-    error(Exception("No permission to use this command!"));
+    error(Exception(StaticString("exceptionNoPermissionToUseCommand"):getString()));
   end
 
 end
