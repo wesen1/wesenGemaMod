@@ -16,7 +16,6 @@ local TableTemplate = require("Output/Template/TableTemplate");
 --
 -- @type MapTopCommand
 --
---@todo: Rename file to MapTopCommand
 local MapTopCommand = setmetatable({}, {__index = BaseCommand});
 
 
