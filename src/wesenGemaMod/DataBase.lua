@@ -19,21 +19,21 @@ local DataBase = setmetatable({}, {});
 --
 -- @tfield string user
 --
-DataBase.user = "";
+DataBase.user = nil;
 
 ---
 -- The database users password
 --
 -- @tfield string password
 --
-DataBase.password = "";
+DataBase.password = nil;
 
 ---
 -- The database name
 --
 -- @tfield string dataBaseName
 --
-DataBase.dataBaseName = "";
+DataBase.dataBaseName = nil;
 
 
 ---

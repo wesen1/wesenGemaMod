@@ -61,13 +61,8 @@ function MapRotGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
       local mapName = luaFile:gsub(".cgz", "");
 
       if (not self.mapNameChecker:isValidMapName(mapName)) then
-
-        logline(ACLOG_DEBUG, "Deleting " .. mapName);
         os.remove(_mapsDirectory .. "/" .. luaFile);
-
       elseif (self.mapNameChecker:isGemaMapName(mapName)) then
-
-        logline(ACLOG_DEBUG, "Adding " .. mapName);
         _mapRot:addMap(mapName);
       end
 

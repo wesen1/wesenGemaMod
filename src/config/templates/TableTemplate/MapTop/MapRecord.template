@@ -10,34 +10,28 @@
 {# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
 {* colors.mapRecordRank *}
 {* string.rep("0", maxRankLength - string.len(mapRecord:getRank())) *}{* mapRecord:getRank() *})
- {(TextTemplate/MapRecord/MapRecordTimeString,
-  { colors = colors,
-    timeFormatter = timeFormatter,
-    mapRecord = mapRecord
-  }
+
+<whitespace>
+{(TextTemplate/MapRecord/MapRecordTime,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
+
 {* colors.mapRecordInfo *} by
-{* colors.mapRecordName *} {*mapRecord:getPlayer():getName() *}
+{* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
 ----------------------------------------------------------------------------------------------------------;
 
+{# @todo: This field must be fixed, empty columns cannot be removed by table parser because this #}
 {% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
-{* colors.mapRecordInfo *}(
-{(TextTemplate/Player/PlayerIp,
-  { ip = mapRecord:getPlayer():getIp() }
-)}
-{* colors.mapRecordInfo *})
-
+  {* colors.mapRecordInfo *}(
+  {(TextTemplate/Player/PlayerIp, { ip = mapRecord:getPlayer():getIp() })}
+  {* colors.mapRecordInfo *})
 {% end %}
+
 ----------------------------------------------------------------------------------------------------------;
 
-{(TextTemplate/Player/PlayerTeamColor,
-  { colors = colors,
-    teamId = mapRecord:getTeam()
-  }
-)}
-{(TextTemplate/WeaponName,
-  { weaponId = mapRecord:getWeapon() }
-)}
+{(TextTemplate/Player/PlayerTeamColor, { colors = colors, teamId = mapRecord:getTeam() })}
+{(TextTemplate/WeaponName, { weaponId = mapRecord:getWeapon() })}
+
 ----------------------------------------------------------------------------------------------------------;
 
 {* colors.mapRecordTimeStamp *}

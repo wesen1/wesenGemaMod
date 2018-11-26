@@ -9,9 +9,7 @@
  #}
 
 {% if (mapRecordList:getNumberOfRecords() == 0) then %}
-  {(TextTemplate/MapTop/MapTopEmpty,
-    { colors = colors }
-  )}
+  {(TextTemplate/MapTop/MapTopEmpty, { colors = colors })}
 
 {% else %}
 
@@ -22,28 +20,25 @@
   {% end %}
 
   {(TextTemplate/MapTop/MapTopTitle,
-    { colors = colors,
-      startRank = startRank,
-      numberOfDisplayRecords = numberOfDisplayRecords
-    }
+    { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
   )}
   ___________________________________________________;
 
-  ----------[FIELD]----------;
-  {% local endRank = startRank + (numberOfDisplayRecords - 1); %}
-  {% local maxRankLength = string.len(endRank); %}
+    ----------[FIELD]----------;
+    {% local endRank = startRank + (numberOfDisplayRecords - 1); %}
+    {% local maxRankLength = string.len(endRank); %}
 
-  {% for i = startRank, endRank, 1 do %}
+    {% for i = startRank, endRank, 1 do %}
 
-    {(TableTemplate/MapTop/MapRecordRow,
-      { colors = colors,
-        timeFormatter = timeFormatter,
-        mapRecord = mapRecordList:getRecordByRank(i),
-        maxRankLength = maxRankLength
-      }
-    )}
-    _________________________________________________;
-  {% end %}
-  ----------[ENDFIELD]----------;
+      {(TableTemplate/MapTop/MapRecord,
+        { colors = colors,
+          timeFormatter = timeFormatter,
+          mapRecord = mapRecordList:getRecordByRank(i),
+          maxRankLength = maxRankLength
+        }
+      )}
+      _________________________________________________;
+    {% end %}
+    ----------[ENDFIELD]----------;
 
 {% end %}

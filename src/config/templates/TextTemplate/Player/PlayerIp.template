@@ -4,6 +4,7 @@
  #
  # @tparam string ip The ip string
  #}
+
 {% local octets = {ip:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)$")}; %}
 
 {* colors.ip *}

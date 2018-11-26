@@ -9,5 +9,5 @@
 {% layout = "TextTemplate/ServerMessageInfo" %}
 
 {-infoMessage-}
-The map "{* mapName *}" was automatically deleted because it wasn't playable.
+  The map "{* mapName *}" was automatically deleted because it wasn't playable.
 {-infoMessage-}

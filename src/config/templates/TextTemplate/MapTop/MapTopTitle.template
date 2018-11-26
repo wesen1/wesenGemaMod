@@ -5,19 +5,13 @@
  # @tparam int startRank The start rank
  # @tparam int numberOfDisplayRecords The number of displayed records
  #}
+
 {% if (startRank == 1) then %}
-{(TextTemplate/MapTop/MapTopTitleDefaultStartRank,
-  { colors = colors,
-    numberOfDisplayRecords = numberOfDisplayRecords
-  }
-)}
-
+  {(TextTemplate/MapTop/MapTopTitleDefaultStartRank,
+    { colors = colors, numberOfDisplayRecords = numberOfDisplayRecords }
+  )}
 {% else %}
-{(TextTemplate/MapTop/MapTopTitleCustomStartRank,
-  { colors = colors,
-    startRank = startRank,
-    numberOfDisplayRecords = numberOfDisplayRecords
-  }
-)}
-
+  {(TextTemplate/MapTop/MapTopTitleCustomStartRank,
+    { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
+  )}
 {% end %}

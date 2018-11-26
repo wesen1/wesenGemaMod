@@ -3,12 +3,21 @@
  #
  # @tparam int weaponId The weapon id
  #}
-{% if (weaponId == GUN_ASSAULT) then %}Assault Rifle
-{% elseif (weaponId == GUN_SUBGUN) then %}Submachine Gun
-{% elseif (weaponId == GUN_CARBINE) then %}Carbine
-{% elseif (weaponId == GUN_SNIPER) then %}Sniper Rifle
-{% elseif (weaponId == GUN_SHOTGUN) then %}Shotgun
-{% elseif (weaponId == GUN_KNIFE) then %}Knife Only
-{% elseif (weaponId == GUN_PISTOL) then %}Pistol Only
-{% else %}Unknown Weapon ID ({* weaponId *})
+
+{% if (weaponId == GUN_ASSAULT) then %}
+  Assault Rifle
+{% elseif (weaponId == GUN_SUBGUN) then %}
+  Submachine Gun
+{% elseif (weaponId == GUN_CARBINE) then %}
+  Carbine
+{% elseif (weaponId == GUN_SNIPER) then %}
+  Sniper Rifle
+{% elseif (weaponId == GUN_SHOTGUN) then %}
+  Shotgun
+{% elseif (weaponId == GUN_KNIFE) then %}
+  Knife Only
+{% elseif (weaponId == GUN_PISTOL) then %}
+  Pistol Only
+{% else %}
+  Unknown Weapon ID ({* weaponId *})
 {% end %}

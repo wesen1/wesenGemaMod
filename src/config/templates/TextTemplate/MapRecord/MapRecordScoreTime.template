@@ -6,19 +6,17 @@
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapRecord mapRecord The map record
  #}
+
 {* colors.mapRecordName *}{* mapRecord:getPlayer():getName() *}
 {* colors.mapRecordInfo *} scored after
- {(TextTemplate/MapRecord/MapRecordTimeString,
-   { colors = colors,
-     timeFormatter = timeFormatter,
-     mapRecord = mapRecord
-   }
- )}
-{* colors.mapRecordInfo *} minutes with
-{(TextTemplate/Player/PlayerTeamColor,
-  { colors = colors,
-    teamId = mapRecord:getTeam()
-  }
-)} {(TextTemplate/WeaponName,
-  { weaponId = mapRecord:getWeapon() }
+
+<whitespace>
+{(TextTemplate/MapRecord/MapRecordTime,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
+
+{* colors.mapRecordInfo *} minutes with
+
+<whitespace>
+{(TextTemplate/Player/PlayerTeamColor, { colors = colors, teamId = mapRecord:getTeam() })}
+{(TextTemplate/WeaponName, { weaponId = mapRecord:getWeapon() })}

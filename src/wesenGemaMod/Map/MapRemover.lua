@@ -7,6 +7,7 @@
 
 local Exception = require("Util/Exception");
 local MapHandler = require("Map/MapHandler");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Handles removing of maps.
@@ -45,10 +46,15 @@ getmetatable(MapRemover).__call = MapRemover.__construct;
 --
 function MapRemover:removeMap(_dataBase, _mapName, _mapRot)
 
+  --@todo: Fix case: map doesn't exist in database
   local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
 
   if (self:mapHasRecords(_dataBase, mapId)) then
-    error(Exception("Could not delete map \"" .. _mapName .. "\": There are map records for this map!"));
+    error(Exception(TextTemplate(
+          "ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
+          { ["mapName"] = _mapName }
+        )
+    ));
   else
 
     -- Remove the map from the database

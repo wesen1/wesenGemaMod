@@ -9,5 +9,5 @@
 {% layout = "TextTemplate/ServerMessageInfo" %}
 
 {-infoMessage-}
-{* playerName *} could not connect [banned]
+  {* playerName *} could not connect [banned]
 {-infoMessage-}

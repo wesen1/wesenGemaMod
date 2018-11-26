@@ -1,6 +1,8 @@
 {#
  # Prints the "new best time" message.
  # The result is "***** NEW BEST TIME *****".
+ #
+ # @tparam string[] colors The list of colors
  #}
-{# @todo: Find better design for this template #}
-\f9*\f2*\fP*\f9*\f2* \fPN\f9E\f2W \fPB\f9E\f2S\fPT \f9T\f2I\fPM\f9E \f2*\fP*\f9*\f2*\fP*
+
+{* colors.newBestTimeString *}***** NEW BEST TIME *****

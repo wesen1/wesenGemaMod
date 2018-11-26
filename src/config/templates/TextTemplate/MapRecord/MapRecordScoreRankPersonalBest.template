@@ -6,5 +6,6 @@
  # @tparam MapRecord mapRecord The map record
  # @tparam int numberOfRecords The total number of records
  #}
+
 {* colors.mapRecordRank *}
 (Rank {* mapRecord:getRank() *} of {* numberOfRecords *})

@@ -8,5 +8,5 @@
 {% layout = "TextTemplate/ServerMessageInfo" %}
 
 {-infoMessage-}
-The gema mode is not enabled. Vote a gema map in ctf to enable it.
+  The gema mode is not enabled. Vote a gema map in ctf to enable it.
 {-infoMessage-}

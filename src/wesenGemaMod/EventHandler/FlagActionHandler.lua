@@ -6,7 +6,7 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local MapRecordPrinter = require("Tops/MapTop/MapRecordList/MapRecordPrinter");
+local TableTemplate = require("Output/Template/TableTemplate");
 
 ---
 -- Class that handles flag actions.
@@ -36,8 +36,6 @@ function FlagActionHandler:__construct(_parentGemaMode)
 
   local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = FlagActionHandler});
-
-  instance.mapRecordPrinter = MapRecordPrinter(instance.output);
 
   return instance;
 
@@ -90,7 +88,7 @@ function FlagActionHandler:registerRecord(scoreAttempt)
   local mapTop = self.parentGemaMode:getMapTopHandler():getMapTop("main");
   local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList());
 
-  self.mapRecordPrinter:printScoreRecord(record);
+  self.output:printTableTemplate(TableTemplate("MapRecord/MapRecordScore", { mapRecord = record }));
   mapTop:addRecord(dataBase, record);
 
 end

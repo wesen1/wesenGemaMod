@@ -11,12 +11,16 @@
 
 {-infoMessage-}
 
-The gema mode will be automatically
+  The gema mode will be automatically
 
-{% if (voteWillEnableGemaMode) then %} enabled
-{% else %} disabled
-{% end %}
+  <whitespace>
+  {% if (voteWillEnableGemaMode) then %}
+    enabled
+  {% else %}
+    disabled
+  {% end %}
 
- if this vote passes.
+  <whitespace>
+  if this vote passes.
 
 {-infoMessage-}

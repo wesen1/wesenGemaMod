@@ -11,7 +11,9 @@
 {-infoMessage-}
 
 {# Print the map rot type with the first letter in upper case #}
-{* (mapRotType:gsub("^%l", string.upper)) *}
- map rot loaded.
+  {* (mapRotType:gsub("^%l", string.upper)) *}
+
+  <whitespace>
+  map rot loaded.
 
 {-infoMessage-}

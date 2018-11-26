@@ -16,7 +16,7 @@ local Exception = setmetatable({}, {});
 ---
 -- The exception message
 --
--- @tfield string message
+-- @tfield string|TextTemplate message
 --
 Exception.message = nil;
 
@@ -24,7 +24,7 @@ Exception.message = nil;
 ---
 -- Exception constructor.
 --
--- @tparam string _message
+-- @tparam string|TextTemplate _message The exception message
 --
 function Exception:__construct(_message)
 
@@ -44,7 +44,7 @@ getmetatable(Exception).__call = Exception.__construct;
 ---
 -- Returns the message.
 --
--- @treturn string The message
+-- @treturn string|TextTemplate The message
 --
 function Exception:getMessage()
   return self.message;

@@ -9,5 +9,5 @@
 {% layout = "TextTemplate/ServerMessageInfo" %}
 
 {-infoMessage-}
-{* player:getName() *} could not connect [too many connections with same IP]
+  {* player:getName() *} could not connect [too many connections with same IP]
 {-infoMessage-}

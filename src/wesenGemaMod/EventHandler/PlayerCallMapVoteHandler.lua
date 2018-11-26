@@ -10,6 +10,7 @@ local Environment = require("EnvironmentHandler/Environment");
 local Exception = require("Util/Exception");
 local MapRemover = require("Map/MapRemover");
 local ObjectUtils = require("Util/ObjectUtils");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Handles map votes.
@@ -116,7 +117,11 @@ function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
       error(exception);
     end
   else
-    self.output:printInfo("The map \"" .. _mapName .. "\" was automatically deleted because it wasn't playable.", _player);
+    self.output:printTextTemplate(
+      TextTemplate(
+        "InfoMessages/Maps/AutomaticMapDeletion", { ["mapName"] = _mapName }
+      ), _player
+    );
   end
 
 end
@@ -135,10 +140,14 @@ function PlayerCallMapVoteHandler:onValidMapVote(_player, _mapName, _gameMode, _
   gemaModeStateUpdater:setNextEnvironment(Environment(_mapName, _gameMode));
 
   local nextGemaModeStateUpdate = gemaModeStateUpdater:getNextGemaModeStateUpdate();
-  if (nextGemaModeStateUpdate == true) then
-    self.output:printInfo("The gema mode will be automatically enabled if this vote passes.");
-  elseif (nextGemaModeStateUpdate == false) then
-    self.output:printInfo("The gema mode will be automatically disabled if this vote passes.");
+
+  if (nextGemaModeStateUpdate ~= nil) then
+    self.output:printTextTemplate(
+      TextTemplate(
+        "InfoMessages/GemaModeState/GemaModeStateChangeOnVotePass",
+        { ["voteWillEnableGemaMode"] = nextGemaModeStateUpdate }
+      )
+    );
   end
 
 end

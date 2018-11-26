@@ -5,17 +5,17 @@
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapRecord mapRecord The map record
  #}
-{( TextTemplate/MapRecord/MapRecordScoreTime,
-  { colors = colors,
-    timeFormatter = timeFormatter,
-    mapRecord = mapRecord
-  }
+
+{(TextTemplate/MapRecord/MapRecordScoreTime,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 
-{( TextTemplate/MapRecord/MapRecordScoreRank,
-  { colors = colors,
-    timeFormatter = timeFormatter,
-    mapRecord = mapRecord
-  }
+<whitespace>
+{(TextTemplate/MapRecord/MapRecordScoreRank,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 _______________________________________________;
+
+{% if (mapRecord:getRank() == 1) then %}
+  {(TextTemplate/MapRecord/MapRecordNewBestTime, { colors = colors })}
+{% end %}

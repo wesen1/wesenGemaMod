@@ -6,6 +6,7 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Class that handles vote ends.
@@ -76,10 +77,14 @@ function VoteEndHandler:onMapVoteEnd(_result, _player, _mapName, _gameMode, _min
     local nextGemaModeStateUpdate = gemaModeStateUpdater:getNextGemaModeStateUpdate();
     if (nextGemaModeStateUpdate == true) then
       mapRot:loadGemaMapRot();
-      self.output:printInfo("Gema map rot loaded.");
     elseif (nextGemaModeStateUpdate == false) then
       mapRot:loadRegularMapRot();
-      self.output:printInfo("Regular maprot loaded.");
+    end
+
+    if (nextGemaModeStateUpdate ~= nil) then
+      self.output:printTextTemplate(
+        TextTemplate("InfoMessages/MapRot/MapRotLoaded", { ["mapRotType"] = mapRot:getType() })
+      );
     end
 
   else

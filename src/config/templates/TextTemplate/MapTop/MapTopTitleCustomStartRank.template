@@ -6,18 +6,15 @@
  # @tparam int startRank The start rank
  # @tparam int numberOfDisplayRecords The number of displayed records
  #}
+
 {* colors.mapTopInfo *}Rank
 {* colors.mapTopRank *} {* startRank *}
 
-{# The record of only one player is shown #}
 {% if (numberOfDisplayRecords == 1) then %}
-{* colors.mapTopInfo *} is
-
-{# The records of multiple players are shown #}
+  {* colors.mapTopInfo *} is
 {% else %}
-{* colors.mapTopInfo *} to
-{* colors.mapTopRank *} {* startRank + (numberOfDisplayRecords - 1) *}
-{* colors.mapTopInfo *} are
-
+  {* colors.mapTopInfo *} to
+  {* colors.mapTopRank *} {* startRank + (numberOfDisplayRecords - 1) *}
+  {* colors.mapTopInfo *} are
 {% end %}
 :

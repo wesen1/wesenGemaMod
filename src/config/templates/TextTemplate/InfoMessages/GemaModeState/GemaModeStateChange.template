@@ -11,16 +11,19 @@
 
 {-infoMessage-}
 
-{# State change #}
-The gema mode was automatically
-{% if (isGemaModeActive) then %} enabled
-{% else %} disabled
-{% end %}
-.
+  {# State change #}
+  The gema mode was automatically
 
-{# Extra information #}
-{% if (not isGemaModeActive) then %}
-Vote a gema map in ctf to reenable it.
-{% end %}
+  <whitespace>
+  {% if (isGemaModeActive) then %}
+    enabled
+  {% else %}
+    disabled
+  {% end %}
+
+  {# Extra information #}
+  {% if (not isGemaModeActive) then %}
+    . Vote a gema map in ctf to reenable it.
+  {% end %}
 
 {-infoMessage-}

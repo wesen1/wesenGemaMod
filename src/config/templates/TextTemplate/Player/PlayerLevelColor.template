@@ -4,6 +4,9 @@
  # @tparam string[] colors The list of colors
  # @tparam int playerLevel The player level
  #}
-{% if (playerLevel == 0) then %}{* colors.nameUnarmed *}
-{% elseif (playerLevel == 1) then %}{* colors.nameAdmin *}
+
+{% if (playerLevel == 0) then %}
+  {* colors.nameUnarmed *}
+{% elseif (playerLevel == 1) then %}
+  {* colors.nameAdmin *}
 {% end %}

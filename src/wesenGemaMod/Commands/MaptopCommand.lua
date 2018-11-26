@@ -6,6 +6,8 @@
 --
 
 local BaseCommand = require("CommandHandler/BaseCommand");
+local StaticString = require("Output/StaticString");
+local TableTemplate = require("Output/Template/TableTemplate");
 
 ---
 -- Command !maptop.
@@ -14,26 +16,24 @@ local BaseCommand = require("CommandHandler/BaseCommand");
 --
 -- @type MapTopCommand
 --
+--@todo: Rename file to MapTopCommand
 local MapTopCommand = setmetatable({}, {__index = BaseCommand});
 
 
 ---
 -- MapTopCommand constructor.
 --
--- @tparam CommandList _parentCommandList The parent command list
---
 -- @treturn MapTopCommand The MapTopCommand instance
 --
-function MapTopCommand:__construct(_parentCommandList)
+function MapTopCommand:__construct()
 
   local instance = BaseCommand(
-    _parentCommandList,
-    "!maptop",
+    StaticString("mapTopCommandName"):getString(),
     0,
-    "Map records",
+    StaticString("mapTopCommandGroupName"):getString(),
     {},
-    "Shows the 5 best players of a map",
-    { "!mtop" }
+    StaticString("mapTopCommandDescription"):getString(),
+    { StaticString("mapTopCommandAlias1"):getString() }
   );
   setmetatable(instance, {__index = MapTopCommand});
 
@@ -53,8 +53,21 @@ getmetatable(MapTopCommand).__call = MapTopCommand.__construct;
 -- @tparam string[] _arguments The list of arguments which were passed by the player
 --
 function MapTopCommand:execute(_player, _arguments)
+
   local mapTopHandler = self.parentCommandList:getParentGemaMode():getMapTopHandler();
-  mapTopHandler:printMapTop("main", _player);
+
+  local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList();
+  local numberOfDisplayRecords = 5;
+  local startRank = 1;
+
+  self.output:printTableTemplate(
+    TableTemplate(
+      "MapTop/MapTop",
+      { ["mapRecordList"] = mapRecordList,
+        ["numberOfDisplayRecords"] = numberOfDisplayRecords,
+        ["startRank"] = startRank
+      }
+    ), _player);
 end
 
 

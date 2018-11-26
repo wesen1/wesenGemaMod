@@ -5,13 +5,20 @@
  # @tparam string[] colors The list of colors
  # @tparam int numberOfDisplayRecords The number of displayed records
  #}
+
 {* colors.mapTopInfo *}The
 {* colors.mapTopNumberOfRecords *} {* numberOfDisplayRecords *}
 {* colors.mapTopInfo *} best player
-{% if (numberOfDisplayRecords ~= 1) then %}s{% end %}
- of this map
+{% if (numberOfDisplayRecords ~= 1) then %}
+  s
+{% end %}
+<whitespace>
+of this map
+<whitespace>
 
-{% if (numberOfDisplayRecords == 1) then %} is
-{% else %} are
+{% if (numberOfDisplayRecords == 1) then %}
+  is
+{% else %}
+  are
 {% end %}
 :

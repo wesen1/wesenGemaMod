@@ -5,40 +5,29 @@
  # @tparam string[] colors The list of colors
  # @tparam MapRecord mapRecord The map record
  #}
+
 {% local mapRecordList = mapRecord:getParentMapRecordList(); %}
 {% local currentRecord = mapRecordList:getRecordByPlayer(mapRecord:getPlayer()); %}
 
-{# New personal best time #}
 {% if (not currentRecord or currentRecord:getMilliseconds() > mapRecord:getMilliseconds()) then %}
+  {# New personal best time #}
 
   {# Calculate total number of records #}
   {% local numberOfRecords = mapRecordList:getNumberOfRecords(); %}
   {% if (currentRecord == nil) then %}
-     {#
-      # This template is rendered before the record is added to the map record list,
-      # so the number of records must be increased by one if the player had no record before this one
-      #}
-      {% numberOfRecords = numberOfRecords + 1; %}
+    {#
+     # This template is rendered before the record is added to the map record list,
+     # so the number of records must be increased by one if the player had no record before this one
+     #}
+    {% numberOfRecords = numberOfRecords + 1; %}
   {% end %}
 
   {(TextTemplate/MapRecord/MapRecordScoreRankPersonalBest,
-    { colors = colors,
-      mapRecord = mapRecord,
-      numberOfRecords = numberOfRecords
-    }
+    { colors = colors, mapRecord = mapRecord, numberOfRecords = numberOfRecords }
   )}
 
-{# Current personal record tied #}
 {% elseif (currentRecord:getMilliseconds() == mapRecord:getMilliseconds()) then %}
-
-{(TextTemplate/MapRecord/MapRecordScoreRankRecordTied,
-  { colors = colors }
-)}
-
+  {(TextTemplate/MapRecord/MapRecordScoreRankRecordTied, { colors = colors })}
 {% else %}
-
-{(TextTemplate/MapRecord/MapRecordScoreRankRecordSlower,
-  { colors = colors }
-)}
-
+  {(TextTemplate/MapRecord/MapRecordScoreRankRecordSlower, { colors = colors })}
 {% end %}

@@ -37,14 +37,14 @@ Player.cn = -1;
 --
 -- @tfield string name
 --
-Player.name = "";
+Player.name = nil;
 
 ---
 -- The player ip
 --
 -- @tfield string ip
 --
-Player.ip = "";
+Player.ip = nil;
 
 ---
 -- The player level (0 = unarmed, 1 = admin)
@@ -198,18 +198,6 @@ end
 
 
 -- Class Methods
-
----
--- Returns the ip with the last octet replaced by "x".
---
--- @treturn string The ip with the last octet replaced by "x"
---
-function Player:getIpString()
-
-  local ipOctets = StringUtils:split(self.ip, "%.");
-  return ipOctets[1] .. "." .. ipOctets[2] .. "." .. ipOctets[3] .. ".x";
-
-end
 
 ---
 -- Saves the player (combination of ip and name) in the database.
