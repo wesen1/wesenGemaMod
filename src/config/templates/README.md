@@ -48,6 +48,8 @@ Additionally they can be split into rows and columns by using these tags:
 * This will force the contents between the opening and closing field tag into a single row field in the current row
 * Example: `------[FIELD]------;`, `------[ENDFIELD]------;`
 
+Note: Each row inside a field tag must have the same number of columns
+
 
 ### Template Including ###
 

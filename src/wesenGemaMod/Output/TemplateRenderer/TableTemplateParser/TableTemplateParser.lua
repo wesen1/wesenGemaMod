@@ -98,11 +98,7 @@ function TableTemplateParser:addInnerTextToCurrentTag(_currentTag, _currentStrin
     innerTextEndPosition = nil;
   end
 
-  if (innerTextEndPosition == nil or innerTextEndPosition > _currentStringPosition) then
-    return _currentTag:addInnerText(_text:sub(_currentStringPosition, innerTextEndPosition));
-  else
-    return _currentTag;
-  end
+  return _currentTag:addInnerText(_text:sub(_currentStringPosition, innerTextEndPosition));
 
 end
 

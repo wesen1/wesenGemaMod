@@ -20,10 +20,9 @@
 {* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
 ----------------------------------------------------------------------------------------------------------;
 
-{# @todo: This field must be fixed, empty columns cannot be removed by table parser because this #}
 {% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
   {* colors.mapRecordInfo *}(
-  {(TextTemplate/Player/PlayerIp, { ip = mapRecord:getPlayer():getIp() })}
+  {(TextTemplate/Player/PlayerIp, { colors = colors, ip = mapRecord:getPlayer():getIp() })}
   {* colors.mapRecordInfo *})
 {% end %}
 

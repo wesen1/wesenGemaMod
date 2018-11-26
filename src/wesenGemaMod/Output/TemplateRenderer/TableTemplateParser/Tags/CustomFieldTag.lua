@@ -43,4 +43,47 @@ end
 getmetatable(CustomFieldTag).__call = CustomFieldTag.__construct;
 
 
+---
+-- Generates and returns a table from the inner text and tags.
+-- Also removes empty columns.
+--
+-- @treturn table The generated table
+--
+function CustomFieldTag:generateTable()
+
+  local generatedTable = RootTag.generateTable(self);
+
+  -- Find empty columns
+  local columnStates = {};
+  for _, tableRow in ipairs(generatedTable) do
+    for x, rowField in ipairs(tableRow) do
+
+      local isRowFieldEmpty = (rowField == "");
+
+      -- If no previous state is set or if the state changes from "empty" to "not empty"
+      if (columnStates[x] == nil or (not isRowFieldEmpty and columnStates[x] == true)) then
+        columnStates[x] = isRowFieldEmpty;
+      end
+
+    end
+  end
+
+  -- Rebuild the table with only the non empty columns
+  local generatedTableWithoutEmptyColumns = {};
+  for y, tableRow in ipairs(generatedTable) do
+
+    generatedTableWithoutEmptyColumns[y] = {};
+    for x, isColumnEmpty in ipairs(columnStates) do
+      if (not isColumnEmpty) then
+        table.insert(generatedTableWithoutEmptyColumns[y], tableRow[x]);
+      end
+    end
+
+  end
+
+  return generatedTableWithoutEmptyColumns;
+
+end
+
+
 return CustomFieldTag;

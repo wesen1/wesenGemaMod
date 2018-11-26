@@ -48,7 +48,7 @@ getmetatable(RowFieldTag).__call = RowFieldTag.__construct;
 --
 function RowFieldTag:generateTable()
 
-  if (self.innerTexts and self.innerTexts[1] ~= "") then
+  if (self.innerTexts) then
     return self.innerTexts[1];
   else
     return nil;
