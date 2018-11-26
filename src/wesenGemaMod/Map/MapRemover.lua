@@ -46,31 +46,31 @@ getmetatable(MapRemover).__call = MapRemover.__construct;
 --
 function MapRemover:removeMap(_dataBase, _mapName, _mapRot)
 
-  --@todo: Fix case: map doesn't exist in database
   local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
+  if (mapId) then
 
-  if (self:mapHasRecords(_dataBase, mapId)) then
-    error(Exception(TextTemplate(
-          "ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
-          { ["mapName"] = _mapName }
-        )
-    ));
-  else
+    if (self:mapHasRecords(_dataBase, mapId)) then
+      error(Exception(
+          TextTemplate(
+            "ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
+            { ["mapName"] = _mapName }
+          )
+      ));
+    else
 
-    -- Remove the map from the database
-    local sql = "DELETE FROM maps "
-             .. "WHERE id=" .. mapId .. ";";
-    _dataBase:query(sql, false);
-
-    -- Remove the map from the map rot
-    _mapRot:removeMap(_mapName);
-
-    -- Remove the map cgz and cfg files
-    removemap(_mapName);
-
-    return true;
+      -- Remove the map from the database
+      local sql = "DELETE FROM maps "
+               .. "WHERE id=" .. mapId .. ";";
+      _dataBase:query(sql, false);
+    end
 
   end
+
+  -- Remove the map from the map rot
+  _mapRot:removeMap(_mapName);
+
+  -- Remove the map cgz and cfg files
+  removemap(_mapName);
 
 end
 
@@ -86,7 +86,7 @@ function MapRemover:mapHasRecords(_dataBase, _mapId)
 
   local sql = "SELECT id FROM records "
            .. "WHERE map=" .. _mapId
-           .. "LIMIT 1;";
+           .. " LIMIT 1;";
   local result = _dataBase:query(sql, true);
 
   if (#result == 0) then

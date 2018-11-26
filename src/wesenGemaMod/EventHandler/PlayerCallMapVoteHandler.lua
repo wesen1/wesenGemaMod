@@ -90,7 +90,16 @@ function PlayerCallMapVoteHandler:onInvalidMapVote(_player, _mapName, _gameMode,
 
   if (mapexists(_mapName)) then
     -- The map exists but the vote is invalid, this means that the map can not be loaded because it is unplayable
-    self:removeUnplayableMap(_mapName);
+
+    local status, exception = pcall(self.removeUnplayableMap, self, _mapName);
+    if (not status) then
+      if (ObjectUtils:isInstanceOf(exception, Exception)) then
+       self.output:printException(exception, _player);
+      else
+        error(exception);
+      end
+    end
+
     return PLUGIN_BLOCK;
   end
 
@@ -104,25 +113,13 @@ end
 --
 function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
 
-  local status, exception = pcall(self.mapRemover:removeMap(
-    self.parentGemaMode:getDataBase(),
-    _mapName,
-    self.parentGemaMode:getMapRot()
-  ));
+  self.mapRemover:removeMap(self.parentGemaMode:getDataBase(), _mapName, self.parentGemaMode:getMapRot());
 
-  if (not status) then
-    if (ObjectUtils:isInstanceOf(exception, Exception)) then
-      self.output:printError(exception:getMessage(), _player);
-    else
-      error(exception);
-    end
-  else
-    self.output:printTextTemplate(
-      TextTemplate(
-        "InfoMessages/Maps/AutomaticMapDeletion", { ["mapName"] = _mapName }
-      ), _player
-    );
-  end
+  self.output:printTextTemplate(
+    TextTemplate(
+      "InfoMessages/Maps/AutomaticMapDeletion", { ["mapName"] = _mapName }
+    ), _player
+  );
 
 end
 
