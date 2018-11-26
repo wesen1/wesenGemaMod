@@ -7,8 +7,10 @@
 
 local BaseCommand = require("CommandHandler/BaseCommand");
 local CommandArgument = require("CommandHandler/CommandArgument");
-local CommandHelpTextPrinter = require("CommandHandler/CommandPrinter/CommandHelpTextPrinter");
 local Exception = require("Util/Exception");
+local StaticString = require("Output/StaticString");
+local TableTemplate = require("Output/Template/TableTemplate");
+local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Command !help.
@@ -31,32 +33,27 @@ HelpCommand.commandHelpTextPrinter = nil;
 ---
 -- HelpCommand constructor.
 --
--- @tparam CommandList _parentCommandList The parent command list
---
 -- @treturn HelpCommand The HelpCommand instance
 --
-function HelpCommand:__construct(_parentCommandList)
+function HelpCommand:__construct()
 
   local commandNameArgument = CommandArgument(
-    "commandName",
+    StaticString("helpCommandCommandNameArgumentName"):getString(),
     false,
     "string",
-    "cmd",
-    "The command name"
+    StaticString("helpCommandCommandNameArgumentShortName"):getString(),
+    StaticString("helpCommandCommandNameArgumentDescription"):getString()
   );
 
   local instance = BaseCommand(
-    _parentCommandList,
-    "!help",
+    StaticString("helpCommandName"):getString(),
     0,
     nil,
     { commandNameArgument },
-    "Shows a commands description and it's arguments",
-    { "!man" }
+    StaticString("helpCommandDescription"):getString(),
+    { StaticString("helpCommandAlias1"):getString() }
   );
   setmetatable(instance, {__index = HelpCommand});
-
-  instance.commandHelpTextPrinter = CommandHelpTextPrinter(instance.output);
 
   return instance;
 
@@ -79,9 +76,17 @@ function HelpCommand:execute(_player, _arguments)
 
   local command = self.parentCommandList:getCommand(_arguments.commandName);
   if (command) then
-    self.commandHelpTextPrinter:printHelpText(command, _player);
+    self.output:printTableTemplate(
+      TableTemplate("CommandHelpText/CommandHelpText", { ["command"] = command }),
+      _player
+    );
   else
-    error(Exception("Unknown command '" .. _arguments.commandName .. "'"));
+    error(Exception(
+        TextTemplate(
+          "ExceptionMessages/CommandHandler/UnknownCommand",
+          { ["commandName"] = _arguments.commandName }
+        )
+    ));
   end
 
 end

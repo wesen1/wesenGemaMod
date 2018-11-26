@@ -4,9 +4,7 @@
  # @tparam string[] colors The list of colors
  # @tparam BaseCommand command The command
  #}
+
 {(TextTemplate/CommandHandler/Command,
-  { colors = colors,
-    command = command,
-    arguments = command:getArguments()
-  }
+  { colors = colors, command = command, arguments = command:getArguments() }
 )}

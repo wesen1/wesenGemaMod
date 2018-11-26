@@ -5,5 +5,9 @@
  # @tparam string[] colors The list of colors
  # @tparam CommandArgument argument The command argument
  #}
-{(TextTemplate/CommandHandler/ArgumentColor)}
+
+{# Fetch the argument color #}
+{(TextTemplate/CommandHandler/ArgumentColor, { colors = colors, argument = argument })}
+
+{# Print the argument #}
 <{* argument:getShortName() *}>

@@ -2,8 +2,8 @@
  # Generates a info message about a gema mode state change.
  # The result is "The gema mode was automatically disabled/enabled."
  #
- # @param string[] colors The list of colors
- # @param bool isGemaModeActive True if the gema mode is active, false otherwise
+ # @tparam string[] colors The list of colors
+ # @tparam bool isGemaModeActive True if the gema mode is active, false otherwise
  #}
 
 {# Extends ServerMessageInfo.template #}

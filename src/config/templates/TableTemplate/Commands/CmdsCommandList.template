@@ -6,14 +6,14 @@
  # @tparam int maximumLevel The maximum command level for which commands will be shown
  #}
 
-  {* colors.cmdsTitle *}Available commands:
+{* colors.cmdsTitle *}Available commands:
 _________________________________________;
 
   ------------[FIELD]------------;
-    {(TableTemplate/CommandList/CommandList,
-      { colors = colors,
-        commandList = commandList,
-        maximumLevel = maximumLevel
-      }
-    )}
+  {(TableTemplate/CommandList/CommandList,
+    { colors = colors,
+      commandList = commandList,
+      maximumLevel = maximumLevel
+    }
+  )}
   ----------[ENDFIELD]-----------;

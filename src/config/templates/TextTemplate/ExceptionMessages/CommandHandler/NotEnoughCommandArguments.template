@@ -6,24 +6,19 @@
  # @tparam BaseCommand command The command for which arguments are missing
  #}
 
-Not enough arguments
-
-{# Missing arguments list #}
- (Missing arguments:
+Not enough arguments (Missing arguments:
 
 {% local requiredCommandArguments = command:getRequiredArguments(); %}
-{% local isFirstArgument = true; %}
-{% for i = numberOfPassedArguments + 1, #command:getRequiredArguments(), 1 do %}
+{% for index = numberOfPassedArguments + 1, #requiredCommandArguments, 1 do %}
 
-{(TextTemplate/CommandHandler/ArgumentShort,
-  { colors = colors, argument = requiredCommandArguments[i] }
-)}
+  {% if (index > 1) then %}
+    {* colors.error *},
+  {% end %}
+  <whitespace>
 
-{% if (isFirstArgument) then %}
-  {% isFirstArgument = false %}
-{% else %}
-  {* colors.error *},
-{% end %}
+  {(TextTemplate/CommandHandler/ArgumentShort,
+    { colors = colors, argument = requiredCommandArguments[index] }
+  )}
 
 {% end %}
 

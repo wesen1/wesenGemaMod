@@ -2,8 +2,8 @@
  # Generates a info message about a gema mode state change that will occur when the current vote passes.
  # The result is "The gema mode will be automatically disabled/enabled if this vote passes."
  #
- # @param string[] colors The list of colors
- # @param bool voteWillEnableGemaMode True if the gema mode will be enabled by the vote, false otherwise
+ # @tparam string[] colors The list of colors
+ # @tparam bool voteWillEnableGemaMode True if the gema mode will be enabled by the vote, false otherwise
  #}
 
 {# Extends ServerMessageInfo.template #}

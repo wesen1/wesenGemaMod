@@ -4,6 +4,9 @@
  # @tparam string[] colors The list of colors
  # @tparam CommandArgument argument The command argument
  #}
-{% if (argument:getIsOptional()) then %}{* colors.optionalArgument *}
-{% else %}{* colors.requiredArgument *}
+
+{% if (argument:getIsOptional()) then %}
+  {* colors.optionalArgument *}
+{% else %}
+  {* colors.requiredArgument *}
 {% end %}

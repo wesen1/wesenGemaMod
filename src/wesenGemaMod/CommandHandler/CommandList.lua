@@ -26,7 +26,7 @@ CommandList.commands = nil;
 --
 -- This table is generated once when loading the commands since the command list does not change after being loaded.
 --
--- This tables purpose is to provide pre sorted command names for the CommandListPrinter (used by !cmds).
+-- This tables purpose is to provide pre sorted command names for the CommandListTemplate (used by !cmds).
 --
 -- @tfield table groupedCommands
 --
@@ -40,7 +40,7 @@ CommandList.groupedCommands = nil;
 --
 -- This table is generated once when loading the commands since the command list does not change after being loaded.
 --
--- This tables purpose is to provide pre sorted command levels for the CommandListPrinter (used by !cmds).
+-- This tables purpose is to provide pre sorted command levels for the CommandListTemplate (used by !cmds).
 --
 -- @tfield int[] sortedCommandLevels
 --
@@ -54,7 +54,7 @@ CommandList.sortedCommandLevels = nil;
 --
 -- This table is generated once when loading the commands since the command list does not change after being loaded.
 --
--- This tables purpose is to provide pre sorted command group names for the CommandListPrinter (used by !cmds).
+-- This tables purpose is to provide pre sorted command group names for the CommandListTemplate (used by !cmds).
 --
 -- @tfield table sortedCommandGroupNames
 --
@@ -185,12 +185,10 @@ end
 --
 function CommandList:addCommand(_command)
 
-  local command = _command(self);
+  _command:initialize(self);
 
-  self:addCommandToUnsortedCommandList(command);
-  self:addCommandToGroupedCommandList(command);
-
-  logline(ACLOG_DEBUG, "Loaded command " .. command:getName());
+  self:addCommandToUnsortedCommandList(_command);
+  self:addCommandToGroupedCommandList(_command);
 
 end
 

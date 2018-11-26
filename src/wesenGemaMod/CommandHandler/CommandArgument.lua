@@ -5,6 +5,8 @@
 -- @license MIT
 --
 
+local StaticString = require("Output/StaticString");
+
 ---
 -- Stores the configuration for a single command argument.
 --
@@ -40,7 +42,7 @@ CommandArgument.isOptional = false;
 --
 -- @tfield string description
 --
-CommandArgument.description = "No description";
+CommandArgument.description = nil;
 
 ---
 -- The type to which this arguments value shall be converted
@@ -84,6 +86,8 @@ function CommandArgument:__construct(_name, _isOptional, _type, _shortName, _des
 
   if (_description) then
     instance.description = _description;
+  else
+    instance.description = StaticString("defaultArgumentDescription"):getString();
   end
 
   return instance;

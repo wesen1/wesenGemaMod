@@ -1,8 +1,8 @@
 {#
  # Generates a info message that informs the players that a specific map rot was loaded.
  #
- # @param string[] colors The list of colors
- # @param string mapRotType The name of the loaded map rot type
+ # @tparam string[] colors The list of colors
+ # @tparam string mapRotType The name of the loaded map rot type
  #}
 
 {# Extends ServerMessageInfo.template #}

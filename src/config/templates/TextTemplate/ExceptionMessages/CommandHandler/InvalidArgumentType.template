@@ -7,6 +7,5 @@
 
 Invalid argument type "{* argument:getType() *}" for argument
 
- {(TextTemplates/CommandHandler/ArgumentShort,
-   { colors = colors, argument = argument }
- )}
+<whitespace>
+{(TextTemplate/CommandHandler/ArgumentShort, { colors = colors, argument = argument })}

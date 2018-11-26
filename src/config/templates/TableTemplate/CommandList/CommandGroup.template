@@ -7,23 +7,21 @@
  # @tparam BaseCommand[] groupedCommands The list of grouped commands for the group and a specific level
  #}
 
-  {* groupName *}
+{* groupName *}
 ---------------------------------------------------------------------------;
-  :
-  <whitespace>
+:
+<whitespace>
 
-  {% for index, commandName in ipairs(groupedCommands) do %}
+{% for index, commandName in ipairs(groupedCommands) do %}
 
-    {# Add leading whitespace (if necessary) #}
-    {% if (index > 1) then %}
-      <whitespace:3>
-    {% end %}
-
-    {# Print the command with required arguments #}
-    {(TextTemplate/CommandHandler/CommandWithRequiredArguments,
-      { colors = colors,
-        command = commandList:getCommand(commandName)
-      }
-    )}
-
+  {# Add leading whitespace (if necessary) #}
+  {% if (index > 1) then %}
+    <whitespace:3>
   {% end %}
+
+  {# Print the command with required arguments #}
+  {(TextTemplate/CommandHandler/CommandWithRequiredArguments,
+    { colors = colors, command = commandList:getCommand(commandName) }
+  )}
+
+{% end %}

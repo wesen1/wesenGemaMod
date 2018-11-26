@@ -4,4 +4,7 @@
  # @tparam string[] colors The list of colors
  # @tparam string infoMessage The info message
  #}
-{* colors.info *}[INFO] {* blocks.infoMessage *}
+{* colors.info *}
+[INFO]
+<whitespace>
+{* blocks.infoMessage *}

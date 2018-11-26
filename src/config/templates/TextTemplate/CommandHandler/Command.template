@@ -11,13 +11,7 @@
 {* command:getName() *}
 
 {# Command arguments #}
-{% for index, argument in ipairs(arguments) do %}
-
+{% for _, argument in ipairs(arguments) do %}
   <whitespace>
-  {(TextTemplate/CommandHandler/ArgumentShort,
-    { colors = colors,
-      argument = argument
-    }
-  )}
-
+  {(TextTemplate/CommandHandler/ArgumentShort, { colors = colors, argument = argument })}
 {% end %}

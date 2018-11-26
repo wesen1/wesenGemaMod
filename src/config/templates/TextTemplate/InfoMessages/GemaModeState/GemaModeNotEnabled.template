@@ -1,7 +1,7 @@
 {#
  # Generates a info message that tells new connected players how to activate the gema mode (if it is not enabled).
  #
- # @param string[] colors The list of colors
+ # @tparam string[] colors The list of colors
  #}
 
 {# Extends ServerMessageInfo.template #}

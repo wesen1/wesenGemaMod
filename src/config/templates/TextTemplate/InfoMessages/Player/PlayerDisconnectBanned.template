@@ -1,8 +1,8 @@
 {#
  # Generates a info message that informs all players that a player could not connect because he is banned.
  #
- # @param string[] colors The list of colors
- # @param string playerName The name of the banned player
+ # @tparam string[] colors The list of colors
+ # @tparam string playerName The name of the banned player
  #}
 
 {# Extends ServerMessageInfo.template #}

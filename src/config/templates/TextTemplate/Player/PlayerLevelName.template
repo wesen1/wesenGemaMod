@@ -3,6 +3,9 @@
  #
  # @tparam int playerLevel The player level
  #}
-{% if (playerLevel == 0) then %}unarmed
-{% elseif (playerLevel == 1) then %}admin
+
+{% if (playerLevel == 0) then %}
+  unarmed
+{% elseif (playerLevel == 1) then %}
+  admin
 {% end %}

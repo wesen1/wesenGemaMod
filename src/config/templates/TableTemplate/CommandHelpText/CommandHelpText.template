@@ -9,11 +9,7 @@
 ------------------------------------------------------------;
 :
 <whitespace>
-{(TextTemplate/CommandHandler/CommandWithAllArguments,
-  { colors = colors,
-    command = command
-  }
-)}
+{(TextTemplate/CommandHandler/CommandWithAllArguments, { colors = colors, command = command })}
 ______________________________________________________________________;
 
 {* colors.helpTitle *}Description
@@ -34,11 +30,7 @@ ______________________________________________________________________;
   {* colors.helpTitle *}Arguments
 
   --------------------------[FIELD]---------------------------;
-  {(TableTemplate/CommandHelpText/Arguments,
-    { colors = colors,
-      arguments = command:getArguments()
-    }
-  )}
+  {(TableTemplate/CommandHelpText/Arguments, { colors = colors, arguments = command:getArguments() })}
   ------------------------[ENDFIELD]--------------------------;
 
 {% end %}

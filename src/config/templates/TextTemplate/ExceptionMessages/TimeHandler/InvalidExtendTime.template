@@ -2,7 +2,7 @@
  # Generates a message that tells a player that the extend time is invalid because of the maximum
  # possible game time.
  #
- # @param int maximumNumberOfExtendMilliseconds The maximum number of extend milliseconds
+ # @tparam int maximumNumberOfExtendMilliseconds The maximum number of extend milliseconds
  #}
 
 {% local maximumNumberOfExtendMinutes = timeFormatter:generateTimeString(maximumNumberOfExtendMilliseconds, "%i") %}

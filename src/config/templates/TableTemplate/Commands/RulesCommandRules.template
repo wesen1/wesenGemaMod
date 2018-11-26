@@ -4,19 +4,19 @@
  # @tparam string[] colors The list of colors
  #}
 
-  {* colors.rulesGemaTitle *}Gema rules:
+{* colors.rulesGemaTitle *}Gema rules:
 __________________________________________________________________________________________________;
 
-  {* colors.rulesGemaText *}1. The goal is to reach the flags and score as fast as possible.
+{* colors.rulesGemaText *}1. The goal is to reach the flags and to score as fast as possible.
 __________________________________________________________________________________________________;
 
-  {* colors.rulesGemaText *}2. Killing other players on purpose is not allowed.
+{* colors.rulesGemaText *}2. Killing other players on purpose is not allowed.
 __________________________________________________________________________________________________;
 
-  {* colors.infoWarning *}You may only play on this server when you agree to follow the rules above.
+{* colors.infoWarning *}You may only play on this server when you agree to follow the rules above.
 __________________________________________________________________________________________________;
 
-  {* colors.infoWarning *}Breaking the rules may result in kicks or bans.
+{* colors.infoWarning *}Breaking the rules may result in kicks or bans.
 __________________________________________________________________________________________________;
 
-  {* colors.info *}Read the extended server information for additional server specific rules.
+{* colors.info *}Read the extended server information for additional server specific rules.
