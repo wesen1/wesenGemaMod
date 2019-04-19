@@ -9,7 +9,7 @@
 {* colors.mapRecordInfo *}The best record for this map is
 
 <whitespace>
-{(TextTemplate/MapRecord/MapRecordTime,
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordTime.template,
   { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 
@@ -18,5 +18,7 @@
 {* colors.mapRecordInfo *} with
 
 <whitespace>
-{( TextTemplate/Player/PlayerTeamColor, { colors = colors, teamId = mapRecord:getTeam() })}
-{( TextTemplate/WeaponName, { weaponId = mapRecord:getWeapon() })}
+{( lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
+   { colors = colors, teamId = mapRecord:getTeam() }
+)}
+{( lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}

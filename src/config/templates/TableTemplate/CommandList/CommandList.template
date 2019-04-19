@@ -8,14 +8,14 @@
 
 {% for _, level in ipairs(commandList:getSortedCommandLevels()) do %}
 
-  {% if (level > maximumLevel) then %}
-    {% break; %}
-  {% end %}
+ {% if (level > maximumLevel) then
+      break
+    end %}
 
   {% for _, groupName in ipairs(commandList:getSortedCommandGroupNames()[level]) do %}
 
     <whitespace>
-    {(TableTemplate/CommandList/CommandGroup,
+    {(lua/config/templates/TableTemplate/CommandList/CommandGroup.template,
       { colors = colors,
         commandList = commandList,
         groupName = groupName,

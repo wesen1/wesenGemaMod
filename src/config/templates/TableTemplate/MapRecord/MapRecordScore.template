@@ -6,16 +6,16 @@
  # @tparam MapRecord mapRecord The map record
  #}
 
-{(TextTemplate/MapRecord/MapRecordScoreTime,
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreTime.template,
   { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 
 <whitespace>
-{(TextTemplate/MapRecord/MapRecordScoreRank,
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRank.template,
   { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 _______________________________________________;
 
 {% if (mapRecord:getRank() == 1) then %}
-  {(TextTemplate/MapRecord/MapRecordNewBestTime, { colors = colors })}
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordNewBestTime.template, { colors = colors })}
 {% end %}

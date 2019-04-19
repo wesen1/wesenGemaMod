@@ -5,7 +5,7 @@
  #}
 
 {# Extends ServerMessageInfo.template #}
-{% layout = "TextTemplate/ServerMessageInfo" %}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
 
 {-infoMessage-}
   The gema mode is not enabled. Vote a gema map in ctf to enable it.

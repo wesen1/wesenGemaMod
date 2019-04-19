@@ -9,7 +9,7 @@
  #}
 
 {% if (mapRecordList:getNumberOfRecords() == 0) then %}
-  {(TextTemplate/MapTop/MapTopEmpty, { colors = colors })}
+  {(lua/config/templates/TextTemplate/MapTop/MapTopEmpty.template, { colors = colors })}
 
 {% else %}
 
@@ -19,7 +19,7 @@
     {% numberOfDisplayRecords = mapRecordList:getNumberOfRecords(); %}
   {% end %}
 
-  {(TextTemplate/MapTop/MapTopTitle,
+  {(lua/config/templates/TextTemplate/MapTop/MapTopTitle.template,
     { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
   )}
   ___________________________________________________;
@@ -30,7 +30,7 @@
 
     {% for i = startRank, endRank, 1 do %}
 
-      {(TableTemplate/MapTop/MapRecord,
+      {(lua/config/templates/TableTemplate/MapTop/MapRecord.template,
         { colors = colors,
           timeFormatter = timeFormatter,
           mapRecord = mapRecordList:getRecordByRank(i),

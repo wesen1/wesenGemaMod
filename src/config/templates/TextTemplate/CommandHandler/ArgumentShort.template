@@ -7,7 +7,9 @@
  #}
 
 {# Fetch the argument color #}
-{(TextTemplate/CommandHandler/ArgumentColor, { colors = colors, argument = argument })}
+{(lua/config/templates/TextTemplate/CommandHandler/ArgumentColor.template,
+  { colors = colors, argument = argument }
+)}
 
 {# Print the argument #}
 <{* argument:getShortName() *}>

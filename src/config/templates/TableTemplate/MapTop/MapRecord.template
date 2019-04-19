@@ -12,7 +12,7 @@
 {* string.rep("0", maxRankLength - string.len(mapRecord:getRank())) *}{* mapRecord:getRank() *})
 
 <whitespace>
-{(TextTemplate/MapRecord/MapRecordTime,
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordTime.template,
   { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 
@@ -22,14 +22,18 @@
 
 {% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
   {* colors.mapRecordInfo *}(
-  {(TextTemplate/Player/PlayerIp, { colors = colors, ip = mapRecord:getPlayer():getIp() })}
+  {(lua/config/templates/TextTemplate/Player/PlayerIp.template,
+    { colors = colors, ip = mapRecord:getPlayer():getIp() }
+  )}
   {* colors.mapRecordInfo *})
 {% end %}
 
 ----------------------------------------------------------------------------------------------------------;
 
-{(TextTemplate/Player/PlayerTeamColor, { colors = colors, teamId = mapRecord:getTeam() })}
-{(TextTemplate/WeaponName, { weaponId = mapRecord:getWeapon() })}
+{(lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
+  { colors = colors, teamId = mapRecord:getTeam() }
+)}
+{(lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}
 
 ----------------------------------------------------------------------------------------------------------;
 
