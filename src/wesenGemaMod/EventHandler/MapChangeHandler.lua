@@ -56,7 +56,7 @@ function MapChangeHandler:handleEvent(_mapName, _gameMode)
     local mapTop = mapTopHandler:getMapTop("main");
 
     -- Load the map records for the map
-    mapTop:loadRecords(self.parentGemaMode:getDataBase(), _mapName);
+    mapTop:loadRecords(_mapName);
 
     -- Print the map statistics for the map to all players
     self.output:printTableTemplate(

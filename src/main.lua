@@ -15,11 +15,24 @@ PLUGIN_VERSION = "0.1"
 --
 package.path = package.path .. ";lua/scripts/wesenGemaMod/?.lua"
 
-local GemaMode = require("GemaMode");
 
-local gemaMode = GemaMode(cfg.totable("gemamod"));
-gemaMode:initialize();
+local LuaORM_API = require("LuaORM/API")
+local config = cfg.totable("luaorm")
+
+LuaORM_API.ORM:initialize({
+    connection = "LuaSQL/MySQL",
+    database = {
+      databaseName = config.databaseName,
+      host = "127.0.0.1",
+      portNumber = 3306,
+      userName = config.databaseUser,
+      password = config.databasePassword
+    },
+    logger = { isEnabled = true, isDebugEnabled = false }
+})
 
 
+local GemaMode = require("GemaMode")
 
-
+local gemaMode = GemaMode()
+gemaMode:initialize()

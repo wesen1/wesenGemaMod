@@ -5,7 +5,8 @@
 -- @license MIT
 --
 
-local MapHandler = require("Map/MapHandler");
+local Map = require("ORM/Models/Map")
+local MapRecord = require("ORM/Models/MapRecord")
 
 ---
 -- Handles saving records to the database.
@@ -36,62 +37,50 @@ getmetatable(MapTopSaver).__call = MapTopSaver.__construct;
 ---
 -- Saves a single record to the database.
 --
--- @tparam DataBase _dataBase The database
 -- @tparam MapRecord _record The record
 -- @tparam string _mapName The map name
 --
-function MapTopSaver:addRecord(_dataBase, _record, _mapName)
+function MapTopSaver:addRecord(_record, _mapName)
 
   local player = _record:getPlayer();
-  if (not player:getId()) then
+  if (player:getId() == -1) then
     player:savePlayer();
   end
 
-  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
-  if (not mapId) then
-    MapHandler:saveMapName(_dataBase, _mapName);
-    mapId = MapHandler:fetchMapId(_dataBase, _mapName);
+  local map = Map:get()
+                 :filterByName(_mapName)
+                 :findOne()
+
+  if (map == null) then
+    -- The map was added to the maps folder manually instead of using the ingame upload
+    map = Map:new({ name = _mapName }):save()
   end
 
-  -- Check if the player has a record
-  local selectExistingRecordsql = "SELECT records.id "
-                               .. "FROM records "
-                               .. "INNER JOIN players ON records.player = players.id "
-                               .. "INNER JOIN maps ON records.map = maps.id "
-                               .. "WHERE records.player = " .. player:getId() .. " "
-                               .. "AND maps.id = " .. mapId .. ";";
+  local existingRecord = MapRecord:get()
+                                  :where():column("player_id"):equals(player:getId())
+                                  :AND():column("map_id"):equals(map.id)
+                                  :findOne()
 
-  local result = _dataBase:query(selectExistingRecordsql, true);
-  if (#result == 0) then
+  if (existingRecord == nil) then
 
-    -- insert new record
-    local insertRecordsql = "INSERT INTO records "
-                         .. "(milliseconds, player, map, weapon_id, team_id, created_at) "
-                         .. "VALUES ("
-                         .. _record:getMilliseconds() .. ","
-                         .. player:getId() .. ","
-                         .. mapId .. ","
-                         .. _record:getWeapon() .. ","
-                         .. _record:getTeam() .. ","
-                         .. "FROM_UNIXTIME(" .. _record:getCreatedAt() .. ")"
-                         .. ");";
-
-    _dataBase:query(insertRecordsql, false);
+    -- Create a new map record
+    MapRecord:new({
+        milliseconds = _record:getMilliseconds(),
+        weapon_id = _record:getWeapon(),
+        team_id = _record:getTeam(),
+        created_at = _record:getCreatedAt(),
+        player_id = player:getId(),
+        map_id = map.id
+    }):save()
 
   else
 
-    local recordId = result[1].id;
-
-    -- update existing record
-    local updateRecordsql = "UPDATE records "
-                         .. "SET "
-                         .. "milliseconds = " .. _record:getMilliseconds() .. ","
-                         .. "weapon_id = " .. _record:getWeapon() .. ","
-                         .. "team_id = " .. _record:getTeam() .. ","
-                         .. "created_at = FROM_UNIXTIME(" .. _record:getCreatedAt() .. ") "
-                         .. "WHERE id = " .. recordId .. ";";
-
-    _dataBase:query(updateRecordsql, false);
+    existingRecord:update({
+        milliseconds = _record:getMilliseconds(),
+        weapon_id = _record:getWeapon(),
+        team_id = _record:getTeam(),
+        created_at = _record:getCreatedAt()
+    })
 
   end
 

@@ -85,11 +85,11 @@ end
 --
 -- @tparam MapRecord _newMapRecord The maprecord which will be checked
 --
-function MapTop:addRecord(_dataBase, _newMapRecord)
+function MapTop:addRecord(_newMapRecord)
 
   if (self.mapRecordList:isPersonalBestTime(_newMapRecord)) then
     self.mapRecordList:addRecord(_newMapRecord);
-    self.mapTopSaver:addRecord(_dataBase, _newMapRecord, self.lastMapName);
+    self.mapTopSaver:addRecord(_newMapRecord, self.lastMapName);
   end
 
 end
@@ -99,11 +99,11 @@ end
 --
 -- @tparam string _mapName The map name
 --
-function MapTop:loadRecords(_dataBase, _mapName)
+function MapTop:loadRecords(_mapName)
 
   if (self.lastMapName ~= _mapName) then
     self.lastMapName = _mapName;
-    self.mapTopLoader:fetchRecords(_dataBase, _mapName, self.mapRecordList);
+    self.mapTopLoader:fetchRecords(_mapName, self.mapRecordList);
   end
 
 end

@@ -6,7 +6,6 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local MapHandler = require("Map/MapHandler");
 local MapNameChecker = require("Map/MapNameChecker");
 
 ---
@@ -73,8 +72,11 @@ function PlayerSendMapHandler:handleEvent(_mapName, _cn, _revision, _mapsize, _c
 
     if (self.mapNameChecker:isGemaMapName(_mapName)) then
 
-      local dataBase = self.parentGemaMode:getDataBase();
-      MapHandler:saveMapName(dataBase, _mapName, _player);
+      local map = Map:new({
+          name = _mapName,
+          uploaded_by = player:getId(),
+          uploaded_at = os.time()
+      }):save()
 
       self.parentGemaMode:getMapRot():addMap(_mapName);
     end

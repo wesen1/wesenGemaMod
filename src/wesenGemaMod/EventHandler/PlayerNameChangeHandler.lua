@@ -51,13 +51,9 @@ function PlayerNameChangeHandler:handleEvent(_cn, _newName)
 
   -- Must check whether the player object is set because it is possible that the player used a script
   -- to change his name multiple times in a row within a small time frame and got autokicked for spam
-
-    local dataBase = self.parentGemaMode:getDataBase();
-
-    _player:setName(_newName);
-    _player:savePlayer(dataBase);
-
   if (player) then
+    player:setName(_newName)
+    player:savePlayer()
   end
 
 end

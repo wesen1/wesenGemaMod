@@ -5,8 +5,8 @@
 -- @license MIT
 --
 
-local MapHandler = require("Map/MapHandler");
 local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
+local MapScore = require("ORM/Models/MapRecord")
 local Player = require("Player/Player");
 
 ---
@@ -38,43 +38,29 @@ getmetatable(MapTopLoader).__call = MapTopLoader.__construct;
 ---
 -- Loads all records for a map from the database.
 --
--- @tparam DataBase _dataBase The database
 -- @tparam string _mapName The name of the map for which the records will be fetched
 -- @tparam MapRecordList _mapRecordList The map record list into which the records will be saved
 --
-function MapTopLoader:fetchRecords(_dataBase, _mapName, _mapRecordList)
+function MapTopLoader:fetchRecords(_mapName, _mapRecordList)
 
   _mapRecordList:clear();
 
-  local mapId = MapHandler:fetchMapId(_dataBase, _mapName);
-  if (not mapId) then
-    return;
-  end
+  local mapScores = MapScore:get()
+                            :innerJoinMaps()
+                            :innerJoinPlayers()
+                            :innerJoinIps()
+                            :innerJoinNames()
+                            :where():column("maps.name"):equals(_mapName)
+                            :orderByMilliseconds():asc()
+                            :find()
 
-  -- The records are grouped by name in order to avoid the same name appearing multiple times in the maptop
-  local sql = "SELECT milliseconds, weapon_id, team_id,"
-           .. " UNIX_TIMESTAMP(created_at) as created_at_timestamp, players.id, names.name, ips.ip "
-           .. "FROM records " ..
-              "INNER JOIN maps ON records.map = maps.id " ..
-              "INNER JOIN players ON records.player = players.id " ..
-              "INNER JOIN names ON players.name = names.id " ..
-              "INNER JOIN ips ON players.ip = ips.id " ..
-              "WHERE maps.id = " .. mapId .. " " ..
-              "ORDER BY milliseconds ASC;";
+  for i = 1, mapScores:count(), 1 do
 
-  local result = _dataBase:query(sql, true);
+    local mapScore = mapScores[i]
 
-  for index, row in ipairs(result) do
-
-    local player = Player(-1, row.name, row.ip);
-    player:setId(tonumber(row.id));
-
-    local milliseconds = tonumber(row["milliseconds"]);
-    local weapon_id = tonumber(row["weapon_id"]);
-    local team_id = tonumber(row["team_id"]);
-    local created_at = tonumber(row["created_at_timestamp"]);
-    local record = MapRecord(player, milliseconds, weapon_id, team_id, _mapRecordList, index);
-    record:setCreatedAt(created_at);
+    local player = Player(-1, mapScore.players[1].names[1].name, mapScore.players[1].ips[1].ip)
+    local record = MapRecord(player, mapScore.milliseconds, mapScore.weapon_id, mapScore.team_id, _mapRecordList, i)
+    record:setCreatedAt(mapScore.created_at)
 
     _mapRecordList:addRecord(record);
 

@@ -86,12 +86,11 @@ end
 --
 function FlagActionHandler:registerRecord(scoreAttempt)
 
-  local dataBase = self.parentGemaMode:getDataBase();
   local mapTop = self.parentGemaMode:getMapTopHandler():getMapTop("main");
   local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList());
 
   self.output:printTableTemplate(TableTemplate("MapRecord/MapRecordScore", { mapRecord = record }));
-  mapTop:addRecord(dataBase, record);
+  mapTop:addRecord(record);
 
 end
 

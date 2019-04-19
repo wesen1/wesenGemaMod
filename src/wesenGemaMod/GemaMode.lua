@@ -6,7 +6,6 @@
 --
 
 local CommandLoader = require("CommandHandler/CommandLoader");
-local DataBase = require("DataBase");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
@@ -35,13 +34,6 @@ GemaMode.commandList = nil;
 -- @tfield CommandLoader commandLoader
 --
 GemaMode.commandLoader = nil;
-
----
--- The database
---
--- @tfield DataBase dataBase
---
-GemaMode.dataBase = nil;
 
 ---
 -- The environment handler
@@ -103,22 +95,13 @@ GemaMode.isActive = nil;
 ---
 -- GemaMode constructor.
 --
--- @tparam string _dataBaseUser The database user
--- @tparam string _dataBasePassword The database users password
--- @tparam string _dataBaseName The name of the database for the gema mod
---
 -- @treturn GemaMode The GemaMode instance
 --
-function GemaMode:__construct(_configuration)
+function GemaMode:__construct()
 
   local instance = setmetatable({}, {__index = GemaMode});
 
   instance.commandLoader = CommandLoader();
-  instance.dataBase = DataBase(
-    _configuration.dataBaseUser,
-    _configuration.dataBasePassword,
-    _configuration.dataBaseName
-  );
   instance.environmentHandler = EnvironmentHandler();
   instance.eventHandler = EventHandler();
   instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
@@ -156,15 +139,6 @@ end
 --
 function GemaMode:getCommandLoader()
   return self.commandLoader;
-end
-
----
--- Returns the database.
---
--- @treturn Database The database
---
-function GemaMode:getDataBase()
-  return self.dataBase;
 end
 
 ---

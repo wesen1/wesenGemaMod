@@ -116,7 +116,7 @@ end
 --
 function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
 
-  self.mapRemover:removeMap(self.parentGemaMode:getDataBase(), _mapName, self.parentGemaMode:getMapRot());
+  self.mapRemover:removeMap(_mapName, self.parentGemaMode:getMapRot());
 
   self.output:printTextTemplate(
     TextTemplate(

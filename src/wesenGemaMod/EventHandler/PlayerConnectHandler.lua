@@ -57,11 +57,10 @@ getmetatable(PlayerConnectHandler).__call = PlayerConnectHandler.__construct;
 --
 function PlayerConnectHandler:handleEvent(_cn)
 
-  local dataBase = self.parentGemaMode:getDataBase();
   local playerList = self.parentGemaMode:getPlayerList();
 
   -- Add the player to the player list
-  playerList:addPlayer(dataBase, _cn);
+  playerList:addPlayer(_cn);
 
   -- Get the Player object for the new connected player
   local player = playerList:getPlayer(_cn);
