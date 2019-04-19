@@ -34,7 +34,7 @@ FlagActionHandler.mapRecordPrinter = nil;
 --
 function FlagActionHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onFlagAction");
   setmetatable(instance, {__index = FlagActionHandler});
 
   return instance;
@@ -49,17 +49,19 @@ getmetatable(FlagActionHandler).__call = FlagActionHandler.__construct;
 ---
 -- Event handler that is called when the state of the flag is changed.
 --
--- @tparam Player _player The player who changed the state
+-- @tparam int _cn The client number of the player who changed the state
 -- @tparam int _action The id of the flag action
 -- @tparam int _flag The id of the flag whose state was changed
 --
-function FlagActionHandler:handleEvent(_player, _action, _flag)
+function FlagActionHandler:handleEvent(_cn, _action, _flag)
 
   if (self.parentGemaMode:getIsActive()) then
 
+    local player = self:getPlayerByCn(_cn)
+
     if (_action == FA_SCORE) then
 
-      local scoreAttempt = _player:getScoreAttempt();
+      local scoreAttempt = player:getScoreAttempt();
       if (not scoreAttempt:isFinished()) then
         scoreAttempt:finish();
         self:registerRecord(scoreAttempt);
@@ -67,7 +69,7 @@ function FlagActionHandler:handleEvent(_player, _action, _flag)
 
     elseif (_action == FA_DROP or _action == FA_LOST) then
       -- instant flag reset (gameplay affecting)
-      self:resetFlag(_player, _flag);
+      self:resetFlag(player, _flag);
     end
 
   end

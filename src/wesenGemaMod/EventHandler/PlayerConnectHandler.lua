@@ -36,7 +36,7 @@ PlayerConnectHandler.maximumNumberOfConnectionsWithSameIp = nil;
 --
 function PlayerConnectHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerConnect");
   setmetatable(instance, {__index = PlayerConnectHandler});
 
   instance.maximumNumberOfConnectionsWithSameIp = 2;

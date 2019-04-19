@@ -34,7 +34,7 @@ PlayerShootHandler.scoreWeaponUpdater = nil;
 --
 function PlayerShootHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerShoot");
   setmetatable(instance, {__index = PlayerShootHandler});
 
   instance.scoreWeaponUpdater = ScoreWeaponUpdater();
@@ -51,13 +51,14 @@ getmetatable(PlayerShootHandler).__call = PlayerShootHandler.__construct;
 ---
 -- Event handler that is called when a player shoots.
 --
--- @tparam int _player The player who shot
+-- @tparam int _cn The client number of the player who shot
 -- @tparam int _weapon The weapon with which the player shot
 --
-function PlayerShootHandler:handleEvent(_player, _weapon)
+function PlayerShootHandler:handleEvent(_cn, _weapon)
 
   if (self.parentGemaMode:getIsActive()) then
-    self.scoreWeaponUpdater:updateScoreWeapon(_player:getScoreAttempt(), _weapon);
+    local player = self:getPlayerByCn(_cn)
+    self.scoreWeaponUpdater:updateScoreWeapon(player:getScoreAttempt(), _weapon);
   end
 
 end

@@ -26,7 +26,7 @@ local PlayerCallVoteHandler = setmetatable({}, {__index = BaseEventHandler});
 --
 function PlayerCallVoteHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerCallVote");
   setmetatable(instance, {__index = PlayerCallVoteHandler});
 
   instance.playerCallMapVoteHandler = PlayerCallMapVoteHandler(_parentGemaMode);
@@ -43,7 +43,7 @@ getmetatable(PlayerCallVoteHandler).__call = PlayerCallVoteHandler.__construct;
 ---
 -- Event handler which is called when a player calls a vote.
 --
--- @tparam Player _player The player that called the vote
+-- @tparam int _cn The client number of the player that called the vote
 -- @tparam int _type The vote type
 -- @tparam string _text The map name, kick reason, etc.
 -- @tparam int _number1 The game mode, target cn, etc.
@@ -52,11 +52,11 @@ getmetatable(PlayerCallVoteHandler).__call = PlayerCallVoteHandler.__construct;
 --
 -- @treturn int|nil PLUGIN_BLOCK if a voted map is auto removed or nil
 --
-function PlayerCallVoteHandler:handleEvent(_player, _type, _text, _number1, _number2, _voteError)
+function PlayerCallVoteHandler:handleEvent(_cn, _type, _text, _number1, _number2, _voteError)
 
   -- If vote is a map vote
   if (_type == SA_MAP) then
-    return self.playerCallMapVoteHandler:handleEvent(_player, _text, _number1, _number2, _voteError);
+    return self.playerCallMapVoteHandler:handleEvent(_cn, _text, _number1, _number2, _voteError)
   end
 
 end

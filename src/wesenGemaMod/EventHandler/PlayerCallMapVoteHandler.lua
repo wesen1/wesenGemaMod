@@ -38,6 +38,7 @@ PlayerCallMapVoteHandler.mapRemover = nil;
 --
 function PlayerCallMapVoteHandler:__construct(_parentGemaMode)
 
+  -- This is no lua server event, therefore no target event name is added to this event handler
   local instance = BaseEventHandler(_parentGemaMode);
   setmetatable(instance, {__index = PlayerCallMapVoteHandler});
 
@@ -55,7 +56,7 @@ getmetatable(PlayerCallMapVoteHandler).__call = PlayerCallMapVoteHandler.__const
 ---
 -- Handles map votes.
 --
--- @tparam Player _player The player that called the vote
+-- @tparam int _cn The client number of the player that called the vote
 -- @tparam string _mapName The map name
 -- @tparam int _gameMode The game mode
 -- @tparam int _minutes The number of minutes to load the map for
@@ -63,12 +64,14 @@ getmetatable(PlayerCallMapVoteHandler).__call = PlayerCallMapVoteHandler.__const
 --
 -- @treturn int|nil PLUGIN_BLOCK or nil
 --
-function PlayerCallMapVoteHandler:handleEvent(_player, _mapName, _gameMode, _minutes, _voteError)
+function PlayerCallMapVoteHandler:handleEvent(_cn, _mapName, _gameMode, _minutes, _voteError)
+
+  local player = self:getPlayerByCn(_cn)
 
   if (_voteError == VOTEE_INVALID) then
-    return self:onInvalidMapVote(_player, _mapName, _gameMode, _minutes);
+    return self:onInvalidMapVote(player, _mapName, _gameMode, _minutes)
   elseif (_voteError == VOTEE_NOERROR) then
-    return self:onValidMapVote(_player, _mapName, _gameMode, _minutes);
+    return self:onValidMapVote(player, _mapName, _gameMode, _minutes)
   end
 
 end
