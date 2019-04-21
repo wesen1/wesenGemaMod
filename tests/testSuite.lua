@@ -21,6 +21,24 @@ unpack = unpack or table.unpack;
 require("globals");
 
 
+function initializeORM()
+
+  local LuaORM_API = require("LuaORM/API")
+
+  LuaORM_API.ORM:initialize({
+    connection = "LuaSQL/MySQL",
+    database = {
+      databaseName = "assaultcube_gema_tests",
+      host = "127.0.0.1",
+      portNumber = 3306,
+      userName = "assaultcube",
+      password = "password"
+    },
+    logger = { isEnabled = true, isDebugEnabled = false }
+  })
+
+end
+
 ---
 -- Requires all lua files in a specific test directory.
 --
@@ -49,6 +67,8 @@ local function requireTests(_testDirectoryPath)
 
 end
 
+
+initializeORM()
 
 -- Require all lua files in the wesenGemaMod sub directory
 requireTests("wesenGemaMod");
