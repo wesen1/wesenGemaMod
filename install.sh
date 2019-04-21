@@ -342,9 +342,7 @@ if askYesNoQuestion "$question"; then
 
   # Import database
   echo "Initializing database for wesen's gema mod ..."
-  sql="CREATE DATABASE assaultcube_gema;
-       USE assaultcube_gema;
-       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  sql="CREATE DATABASE assaultcube_gema;"
   mysql -u root -Bse "$sql"
 
   # Create new user for lua mod
