@@ -25,7 +25,7 @@ local PlayerDisconnectAfterHandler = setmetatable({}, {__index = BaseEventHandle
 --
 function PlayerDisconnectAfterHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerDisconnectAfter");
   setmetatable(instance, {__index = PlayerDisconnectAfterHandler});
 
   return instance;

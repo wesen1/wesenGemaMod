@@ -15,7 +15,9 @@
   {% end %}
 
   <whitespace>
-  {(TextTemplate/CommandHandler/ArgumentFull, { colors = colors, argument = argument })}
+  {(lua/config/templates/TextTemplate/CommandHandler/ArgumentFull.template,
+    { colors = colors, argument = argument }
+  )}
   -----------------------------------------------------------;
 
   {* colors.helpDescription *}{* argument:getDescription() *}

@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local lfs = require("lfs");
+local ClassLoader = require("Util/ClassLoader");
 local CommandList = require("CommandHandler/CommandList");
 
 ---
@@ -48,44 +48,14 @@ function CommandLoader:loadCommands(_parentGemaMode, _commandClassesDirectoryPat
 
   local commandList = CommandList(_parentGemaMode);
 
-  for _, commandClassName in ipairs(self:getCommandClassNames(_commandClassesDirectoryPath)) do
-    local commandClass = require("Commands/" .. commandClassName);
+  -- Load all files whose names end with "Command.lua"
+  local commandClasses = ClassLoader.loadClasses(_commandClassesDirectoryPath, "^.+Command.lua$")
+  for _, commandClass in ipairs(commandClasses) do
     local commandInstance = commandClass();
     commandList:addCommand(commandInstance);
   end
 
   return commandList;
-
-end
-
-
--- Private Methods
-
----
--- Returns the list of command class names from the Commands folder sorted by name.
---
--- @tparam string _commandClassesDirectoryPath The path to the command classes directory
---
--- @treturn string[] The list of command class names
---
-function CommandLoader:getCommandClassNames(_commandClassesDirectoryPath)
-
-  local commandClassNames = {};
-
-  -- Iterate over each file in the Commands directory
-  for luaFile in lfs.dir(_commandClassesDirectoryPath) do
-
-    -- If the file name ends with "Command.lua"
-    if (luaFile:match("^.+Command.lua$")) then
-      local commandClassName = luaFile:gsub(".lua", "");
-      table.insert(commandClassNames, commandClassName);
-    end
-
-  end
-
-  table.sort(commandClassNames);
-
-  return commandClassNames;
 
 end
 

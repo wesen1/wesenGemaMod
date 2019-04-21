@@ -39,6 +39,14 @@ mysql -u root -Bse "$sql"
 # Allow remote connection to database by commenting out the line "bind-address = 127.0.0.1"
 sed -i "/bind-address/s/^/#/" /etc/mysql/mariadb.conf.d/50-server.cnf
 
+
+# Create the test database
+sql="CREATE DATABASE assaultcube_gema_tests;
+     GRANT ALL PRIVILEGES ON assaultcube_gema_tests.* TO 'assaultcube'@'localhost';
+     FLUSH PRIVILEGES;"
+mysql -u root -Bse "$sql"
+
+
 # Restart the database server
 service mysql restart
 

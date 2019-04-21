@@ -229,7 +229,7 @@ cp "$installerDirectory/tmp/AC-Lua-master/linux_release/linux_64_server" "$outpu
 echo "Installing dependencies for wesen's gema mod ..."
 apt-get install -y luarocks lua-filesystem lua-sql-mysql
 
-luarocks install lua-resty-template
+luarocks install luaorm
 
 createDirectoriesRecursive "$outputDirectory/lua/scripts" "$userName"
 createDirectoriesRecursive "$outputDirectory/lua/config" "$userName"
@@ -342,9 +342,7 @@ if askYesNoQuestion "$question"; then
 
   # Import database
   echo "Initializing database for wesen's gema mod ..."
-  sql="CREATE DATABASE assaultcube_gema;
-       USE assaultcube_gema;
-       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  sql="CREATE DATABASE assaultcube_gema;"
   mysql -u root -Bse "$sql"
 
   # Create new user for lua mod

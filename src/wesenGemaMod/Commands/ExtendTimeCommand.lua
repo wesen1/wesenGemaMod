@@ -76,19 +76,19 @@ getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
 --
 function ExtendTimeCommand:execute(_player, _arguments)
 
-  local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler();
-  local environment = environmentHandler:getCurrentEnvironment();
+  local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler()
+  local environment = environmentHandler:getCurrentEnvironment()
 
-  self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes);
+  self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes)
 
   self.output:printTextTemplate(
     TextTemplate(
       "InfoMessages/Time/TimeExtended",
       { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
     )
-  );
+  )
 
 end
 
 
-return ExtendTimeCommand;
+return ExtendTimeCommand

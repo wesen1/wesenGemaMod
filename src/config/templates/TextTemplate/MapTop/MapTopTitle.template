@@ -7,11 +7,11 @@
  #}
 
 {% if (startRank == 1) then %}
-  {(TextTemplate/MapTop/MapTopTitleDefaultStartRank,
+  {( lua/config/templates/TextTemplate/MapTop/MapTopTitleDefaultStartRank.template,
     { colors = colors, numberOfDisplayRecords = numberOfDisplayRecords }
   )}
 {% else %}
-  {(TextTemplate/MapTop/MapTopTitleCustomStartRank,
+  {( lua/config/templates/TextTemplate/MapTop/MapTopTitleCustomStartRank.template,
     { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
   )}
 {% end %}

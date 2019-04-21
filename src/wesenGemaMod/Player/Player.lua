@@ -5,9 +5,10 @@
 -- @license MIT
 --
 
-local PlayerInformationLoader = require("Player/PlayerInformationLoader");
-local PlayerInformationSaver = require("Player/PlayerInformationSaver");
 local PlayerScoreAttempt = require("Player/PlayerScoreAttempt");
+local Ip = require("ORM/Models/Ip")
+local Name = require("ORM/Models/Name")
+local PlayerModel = require("ORM/Models/Player")
 
 ---
 -- Stores information about a single player.
@@ -115,15 +116,6 @@ function Player:getId()
 end
 
 ---
--- Sets the player id.
---
--- @tparam int _id The player id
---
-function Player:setId(_id)
-  self.id = _id;
-end
-
----
 -- Returns the client number of the player.
 --
 -- @treturn int The client number of the player
@@ -202,12 +194,39 @@ end
 -- Saves the player (combination of ip and name) in the database.
 -- Also sets the player id attribute
 --
--- @tparam DataBase _dataBase The data base object
---
-function Player:savePlayer(_dataBase)
+function Player:savePlayer()
 
-  PlayerInformationSaver:savePlayer(_dataBase, self);
-  self.id = PlayerInformationLoader:fetchPlayerId(_dataBase, self);
+  -- Find the existing data row for this player
+  local player = PlayerModel:get()
+                       :innerJoinIps()
+                       :innerJoinNames()
+                       :where()
+                         :column("ips.ip"):equals(self.ip):AND()
+                         :column("names.name"):equals(self.name)
+                       :findOne()
+
+  if (player == nil) then
+
+    -- Save the ip if necessary
+    local ip = Ip:get():filterByIp(self.ip):findOne()
+    if (ip == nil) then
+      ip = Ip:new({ ip = self.ip })
+      ip:save()
+    end
+
+    -- Save the name if necessary
+    local name = Name:get():filterByName(self.name):findOne()
+    if (name == nil) then
+      name = Name:new({ name = self.name })
+      name:save()
+    end
+
+    player = PlayerModel:new({ ip_id = ip.id, name_id = name.id })
+    player:save()
+
+  end
+
+  self.id = player.id
 
 end
 

@@ -6,7 +6,7 @@
  #}
 
 {# Extends ServerMessageInfo.template #}
-{% layout = "TextTemplate/ServerMessageInfo" %}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
 
 {-infoMessage-}
   {* player:getName() *} could not connect [too many connections with same IP]

@@ -25,7 +25,7 @@ local PlayerSpawnHandler = setmetatable({}, {__index = BaseEventHandler});
 --
 function PlayerSpawnHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerSpawn");
   setmetatable(instance, {__index = PlayerSpawnHandler});
 
   return instance;
@@ -40,13 +40,16 @@ getmetatable(PlayerSpawnHandler).__call = PlayerSpawnHandler.__construct;
 ---
 -- Event handler which is called when a player spawns.
 --
--- @tparam Player _player The player who spawned
+-- @tparam int _cn The client number of the player who spawned
 --
-function PlayerSpawnHandler:handleEvent(_player)
+function PlayerSpawnHandler:handleEvent(_cn)
 
   if (self.parentGemaMode:getIsActive()) then
-    _player:getScoreAttempt():start();
-    _player:getScoreAttempt():setTeamId(getteam(_player:getCn()));
+
+    local player = self:getPlayerByCn(_cn)
+
+    player:getScoreAttempt():start();
+    player:getScoreAttempt():setTeamId(getteam(_cn));
   end
 
 end

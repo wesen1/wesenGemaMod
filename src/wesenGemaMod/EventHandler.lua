@@ -1,23 +1,11 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local FlagActionHandler = require("EventHandler/FlagActionHandler");
-local MapChangeHandler = require("EventHandler/MapChangeHandler");
-local PlayerCallVoteHandler = require("EventHandler/PlayerCallVoteHandler");
-local PlayerConnectHandler = require("EventHandler/PlayerConnectHandler");
-local PlayerDisconnectHandler = require("EventHandler/PlayerDisconnectHandler");
-local PlayerDisconnectAfterHandler = require("EventHandler/PlayerDisconnectAfterHandler");
-local PlayerNameChangeHandler = require("EventHandler/PlayerNameChangeHandler");
-local PlayerRoleChangeHandler = require("EventHandler/PlayerRoleChangeHandler");
-local PlayerSayTextHandler = require("EventHandler/PlayerSayTextHandler");
-local PlayerSendMapHandler = require("EventHandler/PlayerSendMapHandler");
-local PlayerShootHandler = require("EventHandler/PlayerShootHandler");
-local PlayerSpawnHandler = require("EventHandler/PlayerSpawnHandler");
-local VoteEndHandler = require("EventHandler/VoteEndHandler");
+local ClassLoader = require("Util/ClassLoader");
 
 ---
 -- Wrapper class for the event handlers.
@@ -28,246 +16,97 @@ local EventHandler = setmetatable({}, {});
 
 
 ---
--- The flag action event handler
+-- The list of event handlers
 --
--- @tfield FlagActionHandler flagActionHandler
+-- @tfield BaseEventHandler[] eventHandlers
 --
-EventHandler.flagActionHandler = nil;
+EventHandler.eventHandlers = nil
 
----
--- The map change event handler
---
--- @tfield MapChangeHandler mapChangeHandler
---
-EventHandler.mapChangeHandler = nil;
 
----
--- The player call vote event handler
---
--- @tfield PlayerCallVoteHandler playerCallVoteHandler
---
-EventHandler.playerCallVoteHandler = nil;
-
----
--- The player connect event handler
---
--- @tfield PlayerConnectHandler playerConnectHandler
---
-EventHandler.playerConnectHandler = nil;
-
----
--- The player disconnect event handler
---
--- @tfield PlayerDisconnectHandler playerDisconnectHandler
---
-EventHandler.playerDisconnectHandler = nil;
-
----
--- The player disconnect event after handler
---
--- @tfield PlayerDisconnectAfterHandler playerDisconnectAfterHandler
---
-EventHandler.playerDisconnectAfterHandler = nil;
-
----
--- The player name change event handler
---
--- @tfield PlayerNameChangeHandler playerNameChangeHandler
---
-EventHandler.playerNameChangeHandler = nil;
-
----
--- The player role change event handler
---
--- @tfield PlayerRoleChangeHandler playerRoleChangeHandler
---
-EventHandler.playerRoleChangeHandler = nil;
-
----
--- The player say text event handler
---
--- @tfield PlayerSayTextHandler playerSayTextHandler
---
-EventHandler.playerSayTextHandler = nil;
-
----
--- The player send map event handler
---
--- @tfield PlayerSendMapHandler playerSendMapHandler
---
-EventHandler.playerSendMapHandler = nil;
-
----
--- The player shoot handler
---
--- @tfield PlayerShootHandler playerShootHandler
---
-EventHandler.playerShootHandler = nil;
-
----
--- The player spawn event handler
---
--- @tfield PlayerSpawnHandler playerSpawnHandler
---
-EventHandler.playerSpawnHandler = nil;
-
----
--- The vote end handler
---
--- @tfield VoteEndHandler voteEndHandler
---
-EventHandler.voteEndHandler = nil;
-
+-- Metamethods
 
 ---
 -- EventHandler constructor.
 --
--- @tparam GemaMode _parentGemaMode The parent gema mode
---
 -- @treturn EventHandler The EventHandler instance
 --
-function EventHandler:__construct(_parentGemaMode)
+function EventHandler:__construct()
 
   local instance = setmetatable({}, {__index = EventHandler});
+  instance.eventHandlers = {}
 
-  instance.flagActionHandler = FlagActionHandler(_parentGemaMode);
-  instance.mapChangeHandler = MapChangeHandler(_parentGemaMode);
-  instance.playerCallVoteHandler = PlayerCallVoteHandler(_parentGemaMode);
-  instance.playerConnectHandler = PlayerConnectHandler(_parentGemaMode);
-  instance.playerDisconnectHandler = PlayerDisconnectHandler(_parentGemaMode);
-  instance.playerDisconnectAfterHandler = PlayerDisconnectAfterHandler(_parentGemaMode);
-  instance.playerNameChangeHandler = PlayerNameChangeHandler(_parentGemaMode);
-  instance.playerRoleChangeHandler = PlayerRoleChangeHandler(_parentGemaMode);
-  instance.playerSayTextHandler = PlayerSayTextHandler(_parentGemaMode);
-  instance.playerSendMapHandler = PlayerSendMapHandler(_parentGemaMode);
-  instance.playerShootHandler = PlayerShootHandler(_parentGemaMode);
-  instance.playerSpawnHandler = PlayerSpawnHandler(_parentGemaMode);
-  instance.voteEndHandler = VoteEndHandler(_parentGemaMode);
-
-  return instance;
+  return instance
 
 end
 
-getmetatable(EventHandler).__call = EventHandler.__construct;
+getmetatable(EventHandler).__call = EventHandler.__construct
 
 
--- Getters and Setters
+-- Public Methods
 
 ---
--- Returns the flag action handler.
+-- Loads all event handler classes from a specific directory into this EventHandler.
 --
--- @treturn FlagActionHandler The flag action handler
+-- @tparam GemaMode _parentGemaMode The parent gema mode
+-- @tparam string _eventHandlerDirectoryPath The directory path
 --
-function EventHandler:getFlagActionHandler()
-  return self.flagActionHandler;
+function EventHandler:loadEventHandlers(_parentGemaMode, _eventHandlerDirectoryPath)
+
+  -- Load all files whose names end with "Handler.lua"
+  local eventHandlerClasses = ClassLoader.loadClasses(
+    _eventHandlerDirectoryPath,
+    "^.+Handler.lua$",
+    { "BaseEventHandler", "PlayerCallMapVoteHandler" }
+  )
+  for _, eventHandlerClass in ipairs(eventHandlerClasses) do
+    table.insert(self.eventHandlers, eventHandlerClass(_parentGemaMode))
+  end
+
 end
 
 ---
--- Returns the map change handler.
+-- Initializes the event listeners for all event handlers.
 --
--- @treturn MapChangeHandler The map change handler
---
-function EventHandler:getMapChangeHandler()
-  return self.mapChangeHandler;
+function EventHandler:initializeEventListeners()
+
+  for eventName, eventHandler in pairs(self:getSupportedEvents()) do
+
+    --
+    -- The lua server calls global functions that are named like the corresponding event
+    -- when the event occurs.
+    --
+    -- This loop adds a global function for each event name.
+    -- That function calls the event handler and passes all received arguments to its handleEvent method
+    --
+    _G[eventName] = function(...)
+      return eventHandler:handleEvent(...)
+    end
+
+  end
+
 end
 
----
--- Returns the player call vote handler.
---
--- @treturn PlayerCallVoteHandler The player call vote handler
---
-function EventHandler:getPlayerCallVoteHandler()
-  return self.playerCallVoteHandler;
-end
+
+-- Private Methods
 
 ---
--- Returns the player connect handler.
+-- Returns all events that this EventHandler supports.
+-- The list is in the format: { [eventName] = eventHandler }
 --
--- @treturn PlayerConnectHandler The player connect handler
+-- @treturn table The list of supported events
 --
-function EventHandler:getPlayerConnectHandler()
-  return self.playerConnectHandler;
-end
+function EventHandler:getSupportedEvents()
 
----
--- Returns the player disconnect handler.
---
--- @treturn PlayerDisconnectHandler The player disconnect handler
---
-function EventHandler:getPlayerDisconnectHandler()
-  return self.playerDisconnectHandler;
-end
+  local supportedEvents = {}
+  for _, eventHandler in ipairs(self.eventHandlers) do
 
----
--- Returns the player disconnect after handler.
---
--- @treturn PlayerDisconnectAfterHandler The player disconnect after handler
---
-function EventHandler:getPlayerDisconnectAfterHandler()
-  return self.playerDisconnectAfterHandler;
-end
+    local targetEventName = eventHandler:getTargetEventName()
+    supportedEvents[targetEventName] = eventHandler
 
----
--- Returns the player name change handler.
---
--- @treturn PlayerNameChangeHandler The player name change handler
---
-function EventHandler:getPlayerNameChangeHandler()
-  return self.playerNameChangeHandler;
-end
+  end
 
----
--- Returns the player role change handler.
---
--- @treturn PlayerRoleChangeHandler The player role change handler
---
-function EventHandler:getPlayerRoleChangeHandler()
-  return self.playerRoleChangeHandler;
-end
+  return supportedEvents
 
----
--- Returns the player say text handler.
---
--- @treturn PlayerSayTextHandler The player say text handler
---
-function EventHandler:getPlayerSayTextHandler()
-  return self.playerSayTextHandler;
-end
-
----
--- Returns the player send map handler.
---
--- @treturn PlayerSendMapHandler The player send map handler
---
-function EventHandler:getPlayerSendMapHandler()
-  return self.playerSendMapHandler;
-end
-
----
--- Returns the player shoot handler.
---
--- @treturn PlayerShootHandler The player shoot handler
---
-function EventHandler:getPlayerShootHandler()
-  return self.playerShootHandler;
-end
-
----
--- Returns the player spawn handler.
---
--- @treturn PlayerSpawnHandler The player spawn handler
---
-function EventHandler:getPlayerSpawnHandler()
-  return self.playerSpawnHandler;
-end
-
----
--- Returns the vote end handler.
---
--- @treturn VoteEndHandler The vote end handler
---
-function EventHandler:getVoteEndHandler()
-  return self.voteEndHandler;
 end
 
 

@@ -5,6 +5,6 @@
  # @tparam BaseCommand command The command
  #}
 
-{(TextTemplate/CommandHandler/Command,
+{(lua/config/templates/TextTemplate/CommandHandler/Command.template,
   { colors = colors, command = command, arguments = command:getArguments() }
 )}

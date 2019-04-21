@@ -6,7 +6,7 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local MapHandler = require("Map/MapHandler");
+local Map = require("ORM/Models/Map")
 local MapNameChecker = require("Map/MapNameChecker");
 
 ---
@@ -35,7 +35,7 @@ PlayerSendMapHandler.mapNameChecker = nil;
 --
 function PlayerSendMapHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerSendMap");
   setmetatable(instance, {__index = PlayerSendMapHandler});
 
   instance.mapNameChecker = MapNameChecker();
@@ -55,7 +55,7 @@ getmetatable(PlayerSendMapHandler).__call = PlayerSendMapHandler.__construct;
 -- Saves the map name in the database if it accepts the upload
 --
 -- @tparam string _mapName The map name
--- @tparam Player _player The player
+-- @tparam int _cn The client number of the player
 -- @tparam int _revision The map revision
 -- @tparam int _mapsize The map size
 -- @tparam int _cfgsize The cfg size
@@ -64,15 +64,20 @@ getmetatable(PlayerSendMapHandler).__call = PlayerSendMapHandler.__construct;
 --
 -- @treturn int|nil Upload error if map is not a gema or nil
 --
-function PlayerSendMapHandler:handleEvent(_mapName, _player, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
+function PlayerSendMapHandler:handleEvent(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
   -- if upload is not rejected
   if (_uploadError == UE_NOERROR) then
 
+    local player = self:getPlayerByCn(_cn)
+
     if (self.mapNameChecker:isGemaMapName(_mapName)) then
 
-      local dataBase = self.parentGemaMode:getDataBase();
-      MapHandler:saveMapName(dataBase, _mapName, _player);
+      Map:new({
+          name = _mapName,
+          uploaded_by = player:getId(),
+          uploaded_at = os.time()
+      }):save()
 
       self.parentGemaMode:getMapRot():addMap(_mapName);
     end

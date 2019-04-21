@@ -20,7 +20,7 @@
   {% end %}
 
   {# Print the command with required arguments #}
-  {(TextTemplate/CommandHandler/CommandWithRequiredArguments,
+  {(lua/config/templates/TextTemplate/CommandHandler/CommandWithRequiredArguments.template,
     { colors = colors, command = commandList:getCommand(commandName) }
   )}
 

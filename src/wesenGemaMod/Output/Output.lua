@@ -1,11 +1,12 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2017-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
 local ObjectUtils = require("Util/ObjectUtils");
+local ClientOutputStringFactory = require("Output/ClientOutputString/ClientOutputStringFactory")
 local TableTemplateRenderer = require("Output/TemplateRenderer/TableTemplateRenderer");
 local TextTemplate = require("Output/Template/TextTemplate");
 local TextTemplateRenderer = require("Output/TemplateRenderer/TextTemplateRenderer");
@@ -32,6 +33,22 @@ Output.tableTemplateRenderer = nil;
 --
 Output.textTemplateRenderer = nil;
 
+---
+-- The maximum length of a output line in 3x pixels
+--
+-- @tfield int maximumOutputLineLength
+--
+Output.maximumOutputLineWidth = 3900
+
+---
+-- Defines at which positions auto line breaks will be done
+-- If set to true line breaks will be done at the last whitespace position if possible
+-- If set to false line breaks will be done at the last character that fits into the maximum line width
+--
+-- @tfield bool splitStringsAtWhitespace
+--
+Output.splitStringsAtWhitespace = true
+
 
 ---
 -- Output constructor.
@@ -50,6 +67,27 @@ function Output:__construct()
 end
 
 getmetatable(Output).__call = Output.__construct;
+
+
+-- Getters and Setters
+
+---
+-- Sets the maximum output line width in 3x pixels.
+--
+-- @tparam int _maximumOutputLineWidth The maximum output line width in 3x pixels
+--
+function Output:setMaximumOutputLineWidth(_maximumOutputLineWidth)
+  self.maximumOutputLineWidth = _maximumOutputLineWidth
+end
+
+---
+-- Sets whether auto line breaks will be done at whitespace positions if possible.
+--
+-- @tparam bool _splitStringsAtWhitespace True to do auto line break at whitespace positions, false otherwise
+--
+function Output:setSplitStringsAtWhitespace(_splitStringsAtWhitespace)
+  self.splitStringsAtWhitespace = _splitStringsAtWhitespace
+end
 
 
 -- Public Methods
@@ -73,8 +111,17 @@ end
 -- @tparam Player _player The player to print the template to
 --
 function Output:printTextTemplate(_textTemplate, _player)
-  local renderedTemplate = self.textTemplateRenderer:renderTemplate(_textTemplate);
-  self:print(renderedTemplate, _player);
+
+  local renderedTemplate = self.textTemplateRenderer:renderTemplate(_textTemplate)
+  local clientOutputString = ClientOutputStringFactory.getClientOutputString(renderedTemplate)
+
+  local rows = clientOutputString:splitIntoIntoPixelGroups(
+    self.maximumOutputLineWidth, self.splitStringsAtWhitespace
+  )
+  for _, row in ipairs(rows) do
+    self:print(row, _player)
+  end
+
 end
 
 ---

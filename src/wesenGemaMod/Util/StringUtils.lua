@@ -1,6 +1,6 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
@@ -30,14 +30,7 @@ local StringUtils = {};
 function StringUtils:split(_text, _delimiter, _keepEmptyTextParts)
 
   if (_delimiter == "") then
-    -- Split the string into characters
-    local characters = {};
-
-    for character in _text:gmatch(".") do
-      table.insert(characters, character);
-    end
-
-    return characters;
+    return StringUtils.splitIntoCharacters(_text)
 
   else
     -- Split the string into words with the delimiter
@@ -75,5 +68,59 @@ function StringUtils:split(_text, _delimiter, _keepEmptyTextParts)
 
 end
 
+---
+-- Splits a string into a list of characters.
+--
+-- @tparam string _string The string
+--
+-- @treturn string[] The list of characters
+--
+function StringUtils.splitIntoCharacters(_string)
 
-return StringUtils;
+  local characters = {}
+  for character in _string:gmatch(".") do
+    table.insert(characters, character)
+  end
+
+  return characters
+
+end
+
+---
+-- Returns the positions of all occurrences of a substring inside a string.
+-- The return value is in the format { { ["start"] = int, ["end"] = int }, ... }
+--
+-- @tparam string _string The target string
+-- @tparam string _substring The search string
+--
+-- @treturn table[] The positions of all occurrences of the search string
+--
+function StringUtils.findAllSubStringOccurrences(_string, _substring)
+
+  local occurrences = {}
+  local stringPosition = 1
+
+  while (true) do
+
+    local subStringStartPosition, subStringEndPosition = _string:find(_substring, stringPosition)
+
+    if (subStringStartPosition ~= nil) then
+
+      table.insert(occurrences, {
+          ["start"] = subStringStartPosition,
+          ["end"] = subStringEndPosition
+      })
+      stringPosition = subStringEndPosition + 1
+
+    else
+      break
+    end
+
+  end
+
+  return occurrences
+
+end
+
+
+return StringUtils

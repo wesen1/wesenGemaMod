@@ -9,7 +9,9 @@
 ------------------------------------------------------------;
 :
 <whitespace>
-{(TextTemplate/CommandHandler/CommandWithAllArguments, { colors = colors, command = command })}
+{(lua/config/templates/TextTemplate/CommandHandler/CommandWithAllArguments.template,
+  { colors = colors, command = command }
+)}
 ______________________________________________________________________;
 
 {* colors.helpTitle *}Description
@@ -20,7 +22,7 @@ ______________________________________________________________________;
 {* colors.helpTitle *}Required Level
 ------------------------------------------------------------;
 : {* colors.helpLevel *}
-{(TextTemplate/Player/PlayerLevelName,
+{(lua/config/templates/TextTemplate/Player/PlayerLevelName.template,
   { playerLevel = command:getRequiredLevel() }
 )}
 ______________________________________________________________________;
@@ -30,7 +32,9 @@ ______________________________________________________________________;
   {* colors.helpTitle *}Arguments
 
   --------------------------[FIELD]---------------------------;
-  {(TableTemplate/CommandHelpText/Arguments, { colors = colors, arguments = command:getArguments() })}
+  {(lua/config/templates/TableTemplate/CommandHelpText/Arguments.template,
+    { colors = colors, arguments = command:getArguments() }
+  )}
   ------------------------[ENDFIELD]--------------------------;
 
 {% end %}

@@ -6,7 +6,7 @@
 --
 
 local ColorLoader = require("Output/Util/ColorLoader");
-local TemplateEngine = require("Output/TemplateRenderer/TemplateEngine");
+local LuaRestyTemplateEngine = require("resty/template")
 local TimeFormatter = require("TimeHandler/TimeFormatter");
 
 ---
@@ -56,7 +56,8 @@ function TextTemplateRenderer:renderTemplate(_textTemplate)
   templateValues["timeFormatter"] = self.timeFormatter;
 
   -- Prepare the template
-  local compiledTemplate = TemplateEngine.compile(_textTemplate:getTemplatePath());
+  local templatePath = "lua/config/templates/" .. _textTemplate:getTemplatePath() .. ".template"
+  local compiledTemplate = LuaRestyTemplateEngine.compile(templatePath)
 
   -- Render the template
   local renderedTemplate = compiledTemplate(templateValues);

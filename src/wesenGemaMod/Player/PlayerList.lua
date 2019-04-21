@@ -58,16 +58,15 @@ end
 ---
 -- Adds a player to the players list.
 --
--- @tparam DataBase _dataBase The database
 -- @tparam int _cn The client number of the player
 --
-function PlayerList:addPlayer(_dataBase, _cn)
+function PlayerList:addPlayer(_cn)
 
   local playerIp = getip(_cn);
   local playerName = getname(_cn);
 
   self.players[_cn] = Player(_cn, playerName, playerIp);
-  self.players[_cn]:savePlayer(_dataBase);
+  self.players[_cn]:savePlayer();
 
 end
 

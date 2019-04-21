@@ -9,7 +9,9 @@
 {* colors.info *}Say
 
 <whitespace>
-{(TextTemplate/CommandHandler/Command, { colors = colors, command = cmdsCommand, arguments = {} })}
+{(lua/config/templates/TextTemplate/CommandHandler/Command.template,
+  { colors = colors, command = cmdsCommand, arguments = {} }
+)}
 
 {* colors.info *} to see a list of avaiable commands
 _________________________________________________________________;
@@ -17,6 +19,8 @@ _________________________________________________________________;
 {* colors.infoWarning *}Make sure to read the
 
 <whitespace>
-{(TextTemplate/CommandHandler/Command, { colors = colors, command = rulesCommand, arguments = {} })}
+{(lua/config/templates/TextTemplate/CommandHandler/Command.template,
+  { colors = colors, command = rulesCommand, arguments = {} }
+)}
 
 {* colors.infoWarning *} before spawning

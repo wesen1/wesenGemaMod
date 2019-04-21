@@ -8,11 +8,13 @@
  #}
 
 {# Extends ServerMessageInfo.template #}
-{% layout = "TextTemplate/ServerMessageInfo" %}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
 
 {-infoMessage-}
 
-  {(TextTemplate/Player/PlayerLevelColor, { colors = colors, playerLevel = player:getLevel() })}
+  {(lua/config/templates/TextTemplate/Player/PlayerLevelColor.template,
+    { colors = colors, playerLevel = player:getLevel() }
+  )}
   {* player:getName() *}
 
   {* colors.info *} extended the time by

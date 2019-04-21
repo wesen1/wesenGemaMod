@@ -10,7 +10,7 @@
 _________________________________________;
 
   ------------[FIELD]------------;
-  {(TableTemplate/CommandList/CommandList,
+  {(lua/config/templates/TableTemplate/CommandList/CommandList.template,
     { colors = colors,
       commandList = commandList,
       maximumLevel = maximumLevel

@@ -16,7 +16,7 @@ Not enough arguments (Missing arguments:
   {% end %}
   <whitespace>
 
-  {(TextTemplate/CommandHandler/ArgumentShort,
+  {(lua/config/templates/TextTemplate/CommandHandler/ArgumentShort.template,
     { colors = colors, argument = requiredCommandArguments[index] }
   )}
 

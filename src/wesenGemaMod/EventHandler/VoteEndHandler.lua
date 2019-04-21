@@ -26,7 +26,7 @@ local VoteEndHandler = setmetatable({}, {__index = BaseEventHandler});
 --
 function VoteEndHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onVoteEnd");
   setmetatable(instance, {__index = VoteEndHandler});
 
   return instance;
@@ -42,16 +42,18 @@ getmetatable(VoteEndHandler).__call = VoteEndHandler.__construct;
 -- Event handler which is called when a vote ends.
 --
 -- @tparam int _result The result of the vote
--- @tparam Player _player The player who called the vote
+-- @tparam int _cn The client number of the player who called the vote
 -- @tparam int _type The vote type
 -- @tparam string _text The map name, kick reason, etc.
 -- @tparam int _number1 The game mode, target cn, etc.
 -- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
 --
-function VoteEndHandler:handleEvent(_result, _player, _type, _text, _number1, _number2)
+function VoteEndHandler:handleEvent(_result, _cn, _type, _text, _number1, _number2)
+
+  local player = self:getPlayerByCn(_cn)
 
   if (_type == SA_MAP) then
-    self:onMapVoteEnd(_result, _player, _text, _number1, _number2);
+    self:onMapVoteEnd(_result, player, _text, _number1, _number2);
   end
 
 end

@@ -22,12 +22,12 @@
     {% numberOfRecords = numberOfRecords + 1; %}
   {% end %}
 
-  {(TextTemplate/MapRecord/MapRecordScoreRankPersonalBest,
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankPersonalBest.template,
     { colors = colors, mapRecord = mapRecord, numberOfRecords = numberOfRecords }
   )}
 
 {% elseif (currentRecord:getMilliseconds() == mapRecord:getMilliseconds()) then %}
-  {(TextTemplate/MapRecord/MapRecordScoreRankRecordTied, { colors = colors })}
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankRecordTied.template, { colors = colors })}
 {% else %}
-  {(TextTemplate/MapRecord/MapRecordScoreRankRecordSlower, { colors = colors })}
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankRecordSlower.template, { colors = colors })}
 {% end %}

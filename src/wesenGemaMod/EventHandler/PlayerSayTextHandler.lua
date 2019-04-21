@@ -44,7 +44,7 @@ PlayerSayTextHandler.commandExecutor = nil;
 --
 function PlayerSayTextHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerSayText");
   setmetatable(instance, {__index = PlayerSayTextHandler});
 
   instance.commandParser = CommandParser(instance.output);
@@ -63,25 +63,27 @@ getmetatable(PlayerSayTextHandler).__call = PlayerSayTextHandler.__construct;
 -- Event handler which is called when a player says text.
 -- Logs the text that the player said and either executes a command or outputs the text to the other players
 --
--- @tparam int _player The player
+-- @tparam int _cn The client number of the player
 -- @tparam string _text The text that the player sent
 --
 -- @treturn int|nil PLUGIN_BLOCK if the gema mode is active or nil
 --
-function PlayerSayTextHandler:handleEvent(_player, _text)
+function PlayerSayTextHandler:handleEvent(_cn, _text)
 
   -- @todo: Export this log message to text template (need to find way to render templates for logs)
-  local logText = string.format("[%s] %s says: '%s'", _player:getIp(), _player:getName(), _text);
+  local player = self:getPlayerByCn(_cn)
+
+  local logText = string.format("[%s] %s says: '%s'", player:getIp(), player:getName(), _text);
   logline(ACLOG_INFO, logText);
 
   if (self.parentGemaMode:getIsActive()) then
 
     if (self.commandParser:isCommand(_text)) then
 
-      local status, exception = pcall(self.handleCommand, self, _player, _text);
+      local status, exception = pcall(self.handleCommand, self, player, _text);
       if (not status) then
         if (ObjectUtils:isInstanceOf(exception, Exception)) then
-          self.output:printException(exception, _player);
+          self.output:printException(exception, player);
         else
           error(exception);
         end
@@ -89,7 +91,7 @@ function PlayerSayTextHandler:handleEvent(_player, _text)
 
     else
       local players = self.parentGemaMode:getPlayerList():getPlayers();
-      self.output:playerSayText(_text, _player:getCn(), players);
+      self.output:playerSayText(_text, player:getCn(), players);
     end
 
     -- block the normal player text output of the server

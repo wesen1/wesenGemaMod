@@ -25,7 +25,7 @@ local PlayerNameChangeHandler = setmetatable({}, {__index = BaseEventHandler});
 --
 function PlayerNameChangeHandler:__construct(_parentGemaMode)
 
-  local instance = BaseEventHandler(_parentGemaMode);
+  local instance = BaseEventHandler(_parentGemaMode, "onPlayerNameChange");
   setmetatable(instance, {__index = PlayerNameChangeHandler});
 
   return instance;
@@ -42,20 +42,18 @@ getmetatable(PlayerNameChangeHandler).__call = PlayerNameChangeHandler.__constru
 -- Event handler which is called when a player changes his name.
 -- Updates the player object and adds a data base entry for the new player ip/name combination.
 --
--- @tparam Player _player The player who changed his name
+-- @tparam int _cn The client number of the player who changed his name
 -- @tparam string _newName The new name of the player
 --
-function PlayerNameChangeHandler:handleEvent(_player, _newName)
+function PlayerNameChangeHandler:handleEvent(_cn, _newName)
+
+  local player = self:getPlayerByCn(_cn)
 
   -- Must check whether the player object is set because it is possible that the player used a script
   -- to change his name multiple times in a row within a small time frame and got autokicked for spam
-  if (_player) then
-
-    local dataBase = self.parentGemaMode:getDataBase();
-
-    _player:setName(_newName);
-    _player:savePlayer(dataBase);
-
+  if (player) then
+    player:setName(_newName)
+    player:savePlayer()
   end
 
 end

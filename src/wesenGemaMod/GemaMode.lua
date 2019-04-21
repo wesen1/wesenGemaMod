@@ -5,8 +5,8 @@
 -- @license MIT
 --
 
+local ClientOutputStringFactory = require("Output/ClientOutputString/ClientOutputStringFactory")
 local CommandLoader = require("CommandHandler/CommandLoader");
-local DataBase = require("DataBase");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
@@ -35,13 +35,6 @@ GemaMode.commandList = nil;
 -- @tfield CommandLoader commandLoader
 --
 GemaMode.commandLoader = nil;
-
----
--- The database
---
--- @tfield DataBase dataBase
---
-GemaMode.dataBase = nil;
 
 ---
 -- The environment handler
@@ -103,30 +96,21 @@ GemaMode.isActive = nil;
 ---
 -- GemaMode constructor.
 --
--- @tparam string _dataBaseUser The database user
--- @tparam string _dataBasePassword The database users password
--- @tparam string _dataBaseName The name of the database for the gema mod
---
 -- @treturn GemaMode The GemaMode instance
 --
-function GemaMode:__construct(_configuration)
+function GemaMode:__construct()
 
   local instance = setmetatable({}, {__index = GemaMode});
 
   instance.commandLoader = CommandLoader();
-  instance.dataBase = DataBase(
-    _configuration.dataBaseUser,
-    _configuration.dataBasePassword,
-    _configuration.dataBaseName
-  );
   instance.environmentHandler = EnvironmentHandler();
+  instance.eventHandler = EventHandler();
   instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
   instance.mapRot = MapRot();
   instance.output = Output();
   instance.playerList = PlayerList();
 
   -- Must be created after the output was created
-  instance.eventHandler = EventHandler(instance);
   instance.mapTopHandler = MapTopHandler(instance.output);
 
   instance.isActive = true;
@@ -159,30 +143,12 @@ function GemaMode:getCommandLoader()
 end
 
 ---
--- Returns the database.
---
--- @treturn Database The database
---
-function GemaMode:getDataBase()
-  return self.dataBase;
-end
-
----
 -- Returns the environment handler.
 --
 -- @treturn EnvironmentHandler The environment handler
 --
 function GemaMode:getEnvironmentHandler()
   return self.environmentHandler;
-end
-
----
--- Returns the event handler.
---
--- @treturn EventHandler The event handler
---
-function GemaMode:getEventHandler()
-  return self.eventHandler;
 end
 
 ---
@@ -256,189 +222,32 @@ end
 --
 function GemaMode:initialize()
 
+  self:parseConfig()
+
   -- Load all commands
   self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
 
-  -- Initialize the gema map rot
   self.mapRot:loadGemaMapRot();
-
-  -- Initialize the environment handler
   self.environmentHandler:initialize(self.mapRot);
-
-  -- Intialize map tops
   self.mapTopHandler:initialize();
 
-end
-
-
--- Event handlers
-
----
--- Event handler that is called when the state of the flag is changed.
---
--- @tparam int _cn The client number of the player who changed the state
--- @tparam int _action The id of the flag action
--- @tparam int _flag The id of the flag whose state was changed
---
-function GemaMode:onFlagAction(_cn, _action, _flag)
-  self.eventHandler:getFlagActionHandler():handleEvent(self.playerList:getPlayer(_cn), _action, _flag);
-end
-
----
--- Event handler which is called when the map is changed.
---
--- @tparam string _mapName The name of the new map
--- @tparam int _gameMode The game mode
---
-function GemaMode:onMapChange(_mapName, _gameMode)
-  self.eventHandler:getMapChangeHandler():handleEvent(_mapName, _gameMode);
-end
-
----
--- Event handler which is called when a player calls a vote.
---
--- @tparam int _cn The client number of the player that called the vote
--- @tparam int _type The vote type
--- @tparam string _text The map name, kick reason, etc.
--- @tparam int _number1 The game mode, target cn, etc.
--- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
--- @tparam int _voteError The vote error
---
--- @treturn int|nil PLUGIN_BLOCK if a voted map is auto removed or nil
---
-function GemaMode:onPlayerCallVote(_cn, _type, _text, _number1, _number2, _voteError)
-
-  return self.eventHandler:getPlayerCallVoteHandler():handleEvent(
-    self.playerList:getPlayer(_cn), _type, _text, _number1, _number2, _voteError
-  );
+  self.eventHandler:loadEventHandlers(self, "lua/scripts/wesenGemaMod/EventHandler")
+  self.eventHandler:initializeEventListeners()
 
 end
 
 ---
--- Event handler which is called when a player connects.
+-- Parses the gema mode config.
 --
--- @tparam int _cn The client number of the player who connected
---
-function GemaMode:onPlayerConnect(_cn)
-  self.eventHandler:getPlayerConnectHandler():handleEvent(_cn);
-end
+function GemaMode:parseConfig()
 
----
--- Event handler which is called when a player disconnects.
---
--- @tparam int _cn The client number of the player who disconnected
--- @tparam int _reason The disconnect reason
---
-function GemaMode:onPlayerDisconnect(_cn, _reason)
-  self.eventHandler:getPlayerDisconnectHandler():handleEvent(_cn, _reason);
-end
+  ClientOutputStringFactory.setFontConfigFileName("font_default")
 
----
--- Event handler which is called after a player disconnected.
---
--- @tparam int _cn The client number of the player who disconnected
--- @tparam int _reason The disconnect reason
---
-function GemaMode:onPlayerDisconnectAfter(_cn, _reason)
-  self.eventHandler:getPlayerDisconnectAfterHandler():handleEvent(_cn, _reason);
-end
-
----
--- Event handler which is called when a player changes his name.
--- Updates the player object and adds a data base entry for the new player ip/name combination.
---
--- @tparam int _cn The client number of the player who changed his name
--- @tparam string _newName The new name of the player
---
-function GemaMode:onPlayerNameChange(_cn, _newName)
-  self.eventHandler:getPlayerNameChangeHandler():handleEvent(self.playerList:getPlayer(_cn), _newName);
-end
-
----
--- Event handler which is called when a player role changes (admin login/logout).
--- Sets the player level according to the role change
---
--- @tparam int _cn The client number of the player whose role changed
--- @tparam int _newRole The new role
---
-function GemaMode:onPlayerRoleChange (_cn, _newRole)
-  self.eventHandler:getPlayerRoleChangeHandler():handleEvent(self.playerList:getPlayer(_cn), _newRole);
-end
-
----
--- Event handler which is called when a player says text.
--- Logs the text that the player said and either executes a command or outputs the text to the other players
---
--- @tparam int _cn The client number of the player
--- @tparam string _text The text that the player sent
---
--- @treturn int|nil PLUGIN_BLOCK if the player says normal text or nil
---
-function GemaMode:onPlayerSayText(_cn, _text)
-
-  return self.eventHandler:getPlayerSayTextHandler():handleEvent(
-    self.playerList:getPlayer(_cn), _text
-  );
+  local config = cfg.totable("gemamod")
+  self.output:setMaximumOutputLineWidth(tonumber(config["maxOutputLineWidth"]))
+  self.output:setSplitStringsAtWhitespace((config["splitStringsAtWhitespace"] == "true"))
 
 end
 
----
--- Event handler which is called when a player tries to send a map to the server.
--- Checks whether the map is a gema and rejects or accepts the upload
--- Saves the map name in the database if it accepts the upload
---
--- @tparam string _mapName The map name
--- @tparam int _cn The client number of the player
--- @tparam int _revision The map revision
--- @tparam int _mapsize The map size
--- @tparam int _cfgsize The cfg size
--- @tparam int _cfgsizegz The cgz size
--- @tparam int _uploadError The upload error
---
--- @treturn int|nil Upload error if map is not a gema or nil
---
-function GemaMode:onPlayerSendMap(_mapName, _cn, _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError)
 
-  return self.eventHandler:getPlayerSendMapHandler():handleEvent(
-    _mapName, self.playerList:getPlayer(_cn), _revision, _mapsize, _cfgsize, _cfgsizegz, _uploadError
-  );
-
-end
-
----
--- Event handler that is called when a player shoots.
---
--- @tparam int _cn The client number of the player who shot
--- @tparam int _weapon The weapon with which the player shot
---
-function GemaMode:onPlayerShoot(_cn, _weapon)
-  self.eventHandler:getPlayerShootHandler():handleEvent(self.playerList:getPlayer(_cn), _weapon);
-end
-
----
--- Event handler which is called when a player spawns.
---
--- @tparam int _cn The client number of the player who spawned
---
-function GemaMode:onPlayerSpawn(_cn)
-  self.eventHandler:getPlayerSpawnHandler():handleEvent(self.playerList:getPlayer(_cn));
-end
-
----
--- Event handler which is called when a vote ends.
---
--- @tparam int _result The result of the vote
--- @tparam int _cn The client number of the player who called the vote
--- @tparam int _type The vote type
--- @tparam string _text The map name, kick reason, etc.
--- @tparam int _number1 The game mode, target cn, etc.
--- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
---
-function GemaMode:onVoteEnd(_result, _cn, _type, _text, _number1, _number2)
-  self.eventHandler:getVoteEndHandler():handleEvent(
-    _result, self.playerList:getPlayer(_cn), _type, _text, _number1, _number2
-  );
-end
-
-
-return GemaMode;
+return GemaMode

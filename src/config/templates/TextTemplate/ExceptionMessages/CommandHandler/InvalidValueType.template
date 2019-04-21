@@ -7,7 +7,9 @@
 
 Value for
 <whitespace>
-{(TextTemplate/CommandHandler/ArgumentShort, { colors = colors, argument = argument })}
+{(lua/config/templates/TextTemplate/CommandHandler/ArgumentShort.template,
+  { colors = colors, argument = argument }
+)}
 <whitespace>
 {* colors.error *}must be a
 
