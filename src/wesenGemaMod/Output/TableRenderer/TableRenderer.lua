@@ -1,11 +1,11 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local TableColumnTabCalculator = require("Output/TableRenderer/TableColumnTabCalculator");
+local ClientOutputStringFactory = require("Output/ClientOutputString/ClientOutputStringFactory")
 
 ---
 -- Returns the output rows for a table.
@@ -16,14 +16,6 @@ local TableRenderer = setmetatable({}, {});
 
 
 ---
--- The table column tab calculator
---
--- @tfield TableColumnTabCalculator tableColumnTabCalculator
---
-TableRenderer.tableColumnTabCalculator = nil;
-
-
----
 -- TableRenderer constructor.
 --
 -- @treturn TableRenderer The TableRenderer instance
@@ -31,9 +23,6 @@ TableRenderer.tableColumnTabCalculator = nil;
 function TableRenderer:__construct()
 
   local instance = setmetatable({}, {__index = TableRenderer});
-
-  instance.tableColumnTabCalculator = TableColumnTabCalculator();
-
   return instance;
 
 end
@@ -180,16 +169,10 @@ function TableRenderer:addTabsToFields(_outputTable)
 
     for x = 1, numberOfColumns - 1, 1 do
 
-      local columnTabs = self.tableColumnTabCalculator:calculateTabsForTableColumn(outputTable, x);
+      local tabbedFields = self:addTabsToColumn(outputTable, x);
 
       for y, tableRow in ipairs(outputTable) do
-
-        local field = "";
-        if (outputTable[y][x]) then
-          field = outputTable[y][x];
-        end
-
-        outputTable[y][x] = field .. columnTabs[y];
+        outputTable[y][x] = tabbedFields[y]:toString()
       end
 
     end
@@ -200,5 +183,42 @@ function TableRenderer:addTabsToFields(_outputTable)
 
 end
 
+---
+-- Calculates and returns the tabbed fields for a table column.
+--
+-- @tparam string[] _outputTable The table
+-- @tparam int _columnId The column id
+--
+-- @treturn OutputString[] The tabbed fields
+--
+function TableRenderer:addTabsToColumn(_outputTable, _columnId)
 
-return TableRenderer;
+  local fieldStrings = {}
+  for y, tableRow in ipairs(_outputTable) do
+
+    local fieldString = tableRow[_columnId]
+    if (fieldString == nil) then
+      fieldString = ""
+    end
+    fieldStrings[y] = ClientOutputStringFactory.getClientOutputString(fieldString)
+
+  end
+
+  -- Find the highest field width
+  local highestFieldWidth = 0;
+  for _, fieldString in ipairs(fieldStrings) do
+    if (fieldString:getWidth() > highestFieldWidth) then
+      highestFieldWidth = fieldString:getWidth()
+    end
+  end
+
+  for _, fieldString in ipairs(fieldStrings) do
+    fieldString:padUntilTabStopBeforePixel(highestFieldWidth)
+  end
+
+  return fieldStrings
+
+end
+
+
+return TableRenderer

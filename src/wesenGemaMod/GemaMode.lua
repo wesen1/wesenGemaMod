@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local ClientOutputStringFactory = require("Output/ClientOutputString/ClientOutputStringFactory")
 local CommandLoader = require("CommandHandler/CommandLoader");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
@@ -221,6 +222,8 @@ end
 --
 function GemaMode:initialize()
 
+  self:parseConfig()
+
   -- Load all commands
   self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
 
@@ -230,6 +233,19 @@ function GemaMode:initialize()
 
   self.eventHandler:loadEventHandlers(self, "lua/scripts/wesenGemaMod/EventHandler")
   self.eventHandler:initializeEventListeners()
+
+end
+
+---
+-- Parses the gema mode config.
+--
+function GemaMode:parseConfig()
+
+  ClientOutputStringFactory.setFontConfigFileName("font_default")
+
+  local config = cfg.totable("gemamod")
+  self.output:setMaximumOutputLineWidth(tonumber(config["maxOutputLineWidth"]))
+  self.output:setSplitStringsAtWhitespace((config["splitStringsAtWhitespace"] == "true"))
 
 end
 
