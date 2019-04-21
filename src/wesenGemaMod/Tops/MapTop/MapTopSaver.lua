@@ -51,7 +51,7 @@ function MapTopSaver:addRecord(_record, _mapName)
                  :filterByName(_mapName)
                  :findOne()
 
-  if (map == null) then
+  if (map == nil) then
     -- The map was added to the maps folder manually instead of using the ingame upload
     map = Map:new({ name = _mapName }):save()
   end

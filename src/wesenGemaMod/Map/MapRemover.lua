@@ -84,7 +84,7 @@ function MapRemover:mapHasRecords(_map)
   local mapRecord = MapRecord:get()
                              :filterByMapId(_map.id)
                              :findOne()
-  return (mapRecords == nil)
+  return (mapRecord == nil)
 
 end
 

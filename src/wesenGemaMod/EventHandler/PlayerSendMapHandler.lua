@@ -6,6 +6,7 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
+local Map = require("ORM/Models/Map")
 local MapNameChecker = require("Map/MapNameChecker");
 
 ---
@@ -72,7 +73,7 @@ function PlayerSendMapHandler:handleEvent(_mapName, _cn, _revision, _mapsize, _c
 
     if (self.mapNameChecker:isGemaMapName(_mapName)) then
 
-      local map = Map:new({
+      Map:new({
           name = _mapName,
           uploaded_by = player:getId(),
           uploaded_at = os.time()
