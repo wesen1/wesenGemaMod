@@ -64,6 +64,17 @@ function TabStopCalculator:getLastPassedTabStopPosition(_textPixelPosition)
 end
 
 ---
+-- Returns the number of passed tab stops at a specific text pixel position.
+--
+-- @tparam int _textPixelPosition The pixel position inside the output text
+--
+-- @treturn int The number of passed tab stops
+--
+function TabStopCalculator:getNumberOfPassedTabStops(_textPixelPosition)
+  return self:getLastPassedTabStopPosition(_textPixelPosition) / self.tabWidth
+end
+
+---
 -- Returns the next tab stop position for a specific text pixel position.
 --
 -- @tparam int _textPixelPosition The pixel position inside the output text
@@ -81,6 +92,17 @@ function TabStopCalculator:getNextTabStopPosition(_textPixelPosition)
 
   return nextTabStopPosition;
 
+end
+
+---
+-- Returns the number of the tab stop that follows a specific text pixel position.
+--
+-- @tparam int _textPixelPosition The pixel position inside the output text
+--
+-- @treturn int The next tab stop number
+--
+function TabStopCalculator:getNextTabStopNumber(_textPixelPosition)
+  return self:getNextTabStopPosition(_textPixelPosition) / self.tabWidth
 end
 
 ---
@@ -107,6 +129,17 @@ function TabStopCalculator:getNumberOfTabsToTabStop(_textPixelPosition, _targetT
 
   return numberOfTabsToTabStop;
 
+end
+
+---
+-- Converts a tab number to a pixel position.
+--
+-- @tparam int _tabNumber The tab number
+--
+-- @treturn int The corresponding pixel position
+--
+function TabStopCalculator:convertTabNumberToPosition(_tabNumber)
+  return _tabNumber * self.tabWidth
 end
 
 

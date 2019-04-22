@@ -6,7 +6,7 @@
 --
 
 local ObjectUtils = require("Util/ObjectUtils");
-local ClientOutputStringFactory = require("Output/ClientOutputString/ClientOutputStringFactory")
+local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
 local TableTemplateRenderer = require("Output/TemplateRenderer/TableTemplateRenderer");
 local TextTemplate = require("Output/Template/TextTemplate");
 local TextTemplateRenderer = require("Output/TemplateRenderer/TextTemplateRenderer");
@@ -113,7 +113,7 @@ end
 function Output:printTextTemplate(_textTemplate, _player)
 
   local renderedTemplate = self.textTemplateRenderer:renderTemplate(_textTemplate)
-  local clientOutputString = ClientOutputStringFactory.getClientOutputString(renderedTemplate)
+  local clientOutputString = ClientOutputFactory.getClientOutputString(renderedTemplate)
 
   local rows = clientOutputString:splitIntoIntoPixelGroups(
     self.maximumOutputLineWidth, self.splitStringsAtWhitespace
@@ -132,8 +132,11 @@ end
 --
 function Output:printTableTemplate(_tableTemplate, _player)
 
-  local renderedTable = self.tableTemplateRenderer:renderTemplate(self.textTemplateRenderer, _tableTemplate);
-  for _, rowOutputString in ipairs(renderedTable) do
+  local clientOutputTable = self.tableTemplateRenderer:getClientOutputTable(self.textTemplateRenderer, _tableTemplate)
+
+  local rows = clientOutputTable:getRowStringsByLineWidth(self.maximumOutputLineWidth, self.splitStringsAtWhitespace)
+
+  for _, rowOutputString in ipairs(rows) do
     self:print(rowOutputString, _player);
   end
 

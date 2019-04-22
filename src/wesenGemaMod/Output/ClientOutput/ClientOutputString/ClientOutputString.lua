@@ -5,9 +5,9 @@
 -- @license MIT
 --
 
-local ClientOutputStringSplitter = require("Output/ClientOutputString/ClientOutputStringSplitter")
+local ClientOutputStringSplitter = require("Output/ClientOutput/ClientOutputString/ClientOutputStringSplitter")
 local StringUtils = require("Util/StringUtils")
-local TabStopCalculator = require("Output/ClientOutputString/TabStopCalculator")
+local TabStopCalculator = require("Output/ClientOutput/Util/TabStopCalculator")
 
 ---
 -- Represents a output string for the console in the players games.
@@ -28,6 +28,7 @@ ClientOutputString.string = nil
 
 ---
 -- The symbol width loader
+-- This is used to calculate the width of the raw string
 --
 -- @tfield SymbolWidthLoader symbolWidthLoader
 --
@@ -35,6 +36,7 @@ ClientOutputString.symbolWidthLoader = nil
 
 ---
 -- The tab stop calculator
+-- This is used to pad the string with tabs
 --
 -- @tfield TabStopCalculator tabStopCalculator
 --
@@ -100,13 +102,22 @@ function ClientOutputString:getWidth()
 end
 
 ---
--- Pads the raw string with tabs until the tab stop before a specific pixel.
+-- Returns the number of tabs stops that the strings width passes.
 --
--- @tparam int _pixelNumber The pixel number
+-- @treturn int The number of tabs
 --
-function ClientOutputString:padUntilTabStopBeforePixel(_pixelNumber)
+function ClientOutputString:getNumberOfPassedTabStops()
+  return self.tabStopCalculator:getNumberOfPassedTabStops(self:getWidth())
+end
 
-  local targetTabStopPosition = self.tabStopCalculator:getLastPassedTabStopPosition(_pixelNumber)
+---
+-- Pads the raw string with tabs until a specific tab stop.
+--
+-- @tparam int _tabStopNumber The target tab stop number
+--
+function ClientOutputString:padUntilTabStopNumber(_tabstopNumber)
+
+  local targetTabStopPosition = self.tabStopCalculator:convertTabNumberToPosition(_tabstopNumber)
   local numberOfTabs = self.tabStopCalculator:getNumberOfTabsToTabStop(self:getWidth(), targetTabStopPosition)
 
   self.string = self.string .. string.rep("\t", numberOfTabs)

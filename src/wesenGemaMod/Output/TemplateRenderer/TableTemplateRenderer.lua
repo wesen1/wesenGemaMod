@@ -1,11 +1,11 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local TableRenderer = require("Output/TableRenderer/TableRenderer");
+local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory");
 local TableTemplateParser = require("Output/TemplateRenderer/TableTemplateParser/TableTemplateParser");
 
 ---
@@ -15,13 +15,6 @@ local TableTemplateParser = require("Output/TemplateRenderer/TableTemplateParser
 --
 local TableTemplateRenderer = setmetatable({}, {});
 
-
----
--- The table renderer
---
--- @tfield TableRenderer tableRenderer
---
-TableTemplateRenderer.tableRenderer = nil;
 
 ---
 -- The table template parser
@@ -40,7 +33,6 @@ function TableTemplateRenderer:__construct()
 
   local instance = setmetatable({}, {__index = TableTemplateRenderer});
 
-  instance.tableRenderer = TableRenderer();
   instance.tableTemplateParser = TableTemplateParser();
 
   return instance;
@@ -78,14 +70,14 @@ getmetatable(TableTemplateRenderer).__call = TableTemplateRenderer.__construct;
 --
 -- @treturn string[] The generated row output strings
 --
-function TableTemplateRenderer:renderTemplate(_textTemplateRenderer, _tableTemplate)
+function TableTemplateRenderer:getClientOutputTable(_textTemplateRenderer, _tableTemplate)
 
   local renderedTemplate = _textTemplateRenderer:renderTemplate(_tableTemplate);
   local generatedTable = self.tableTemplateParser:parseRenderedTemplate(renderedTemplate);
 
-  return self.tableRenderer:getRowOutputStrings(generatedTable);
+  return ClientOutputFactory.getClientOutputTable(generatedTable)
 
 end
 
 
-return TableTemplateRenderer;
+return TableTemplateRenderer

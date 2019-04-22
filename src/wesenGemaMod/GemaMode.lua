@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local ClientOutputStringFactory = require("Output/ClientOutputString/ClientOutputStringFactory")
+local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
 local CommandLoader = require("CommandHandler/CommandLoader");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
@@ -241,9 +241,10 @@ end
 --
 function GemaMode:parseConfig()
 
-  ClientOutputStringFactory.setFontConfigFileName("font_default")
+  ClientOutputFactory.setFontConfigFileName("font_default")
 
   local config = cfg.totable("gemamod")
+
   self.output:setMaximumOutputLineWidth(tonumber(config["maxOutputLineWidth"]))
   self.output:setSplitStringsAtWhitespace((config["splitStringsAtWhitespace"] == "true"))
 
