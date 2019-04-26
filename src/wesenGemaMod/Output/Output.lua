@@ -58,6 +58,18 @@ function Output:playerSayText(_text, _player)
 end
 
 ---
+-- Prints a template to a player.
+--
+-- @tparam Template _template The template
+-- @tparam Player _player The player to the print the template to
+--
+function Output:printTemplate(_template, _player)
+  for _, row in ipairs(_template:getOutputRows()) do
+    self:print(row, _player)
+  end
+end
+
+---
 -- Prints a text template to a player.
 --
 -- @tparam string _templatePath The path to the template
@@ -65,14 +77,10 @@ end
 -- @tparam Player _player The player to print the template to
 --
 function Output:printTextTemplate(_templatePath, _templateValues, _player)
-
   local template = TemplateFactory.getInstance():getTemplate(_templatePath, _templateValues)
-  local renderedTemplate = template:renderAsText(true)
+  template:renderAsText(true)
 
-  for _, row in ipairs(renderedTemplate:getOutputRows()) do
-    self:print(row, _player)
-  end
-
+  self:printTemplate(template)
 end
 
 ---
@@ -83,14 +91,10 @@ end
 -- @tparam Player _player The player to print the template to
 --
 function Output:printTableTemplate(_templatePath, _templateValues, _player)
-
   local template = TemplateFactory.getInstance():getTemplate(_templatePath, _templateValues)
+  template:renderAsTable()
 
-  local renderedTemplate = template:renderAsTable()
-  for _, row in ipairs(renderedTemplate:getOutputRows()) do
-    self:print(row, _player)
-  end
-
+  self:printTemplate(template)
 end
 
 ---

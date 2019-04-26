@@ -27,7 +27,7 @@ local TemplateException = setmetatable({}, {__index = Exception})
 function TemplateException:__construct(_templatePath, _templateValues)
 
   local instance = Exception(
-    TemplateFactory.getInstance():getTemplate(_templatePath, _templateValues):renderAsText()
+    TemplateFactory.getInstance():getTemplate(_templatePath, _templateValues):renderAsText():getOutputRows()[1]
   )
   setmetatable(instance, {__index = TemplateException})
 

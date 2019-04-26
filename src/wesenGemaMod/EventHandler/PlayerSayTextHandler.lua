@@ -76,7 +76,7 @@ function PlayerSayTextHandler:handleEvent(_cn, _text)
   logline(ACLOG_INFO,
     TemplateFactory.getInstance():getTemplate(
       "TextTemplate/LogMessages/PlayerSayText", { player = player, text = _text}
-    ):renderAsText()
+    ):renderAsText():getOutputRows()[1]
   );
 
   if (self.parentGemaMode:getIsActive()) then
