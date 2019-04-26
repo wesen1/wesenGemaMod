@@ -4,32 +4,16 @@
 -- @release 0.1
 -- @license MIT
 
-local ClientOutputString = require("Output/ClientOutput/ClientOutputString/ClientOutputString")
+local BaseClientOutput = require("Output/ClientOutput/BaseClientOutput")
 local ClientOutputTableRenderer = require("Output/ClientOutput/ClientOutputTable/ClientOutputTableRenderer")
-local ObjectUtils = require("Util/ObjectUtils")
-local TabStopCalculator = require("Output/ClientOutput/Util/TabStopCalculator")
 
 ---
 -- Represents a output table for the console in the players games.
 --
 -- @type ClientOutputTable
 --
-local ClientOutputTable = setmetatable({}, {})
+local ClientOutputTable = setmetatable({}, {__index = BaseClientOutput})
 
-
----
--- The symbol width loader
---
--- @tfield SymbolWidthLoader symbolWidthLoader
---
-ClientOutputTable.symbolWidthLoader = nil
-
----
--- The tab stop calculator
---
--- @tfield TabStopCalculator tabStopCalculator
---
-ClientOutputTable.tabStopCalculator = nil
 
 ---
 -- The rows inside this table that were parsed from a lua table
@@ -38,40 +22,42 @@ ClientOutputTable.tabStopCalculator = nil
 --
 ClientOutputTable.rows = nil
 
+---
+-- The renderer for this ClientOutputTable
+--
+-- @tfield ClientOutputTableRenderer renderer
+--
+ClientOutputTable.renderer = nil
+
+---
+-- The output configuration for specific groups of the table (rows, columns and fields)
+--
+-- @tfield mixed[][] groupConfigurations
+--
+ClientOutputTable.groupConfigurations = nil
+
 
 ---
 -- ClientOutputTable constructor.
 --
 -- @tparam SymbolWidthLoader _symbolWidthLoader The symbol width loader
+-- @tparam TabStopCalculator _tabStopCalculator The tab stop calculator
+-- @tparam int _maximumLineWidth The maximum line width
 --
 -- @treturn ClientOutputTable The ClientOutputTable instance
 --
-function ClientOutputTable:__construct(_symbolWidthLoader)
-  local instance = setmetatable({}, {__index = ClientOutputTable})
+function ClientOutputTable:__construct(_symbolWidthLoader, _tabStopCalculator, _maximumLineWidth)
 
-  instance.symbolWidthLoader = _symbolWidthLoader
-  instance.tabStopCalculator = TabStopCalculator(instance.symbolWidthLoader:getCharacterWidth("\t"))
+  local instance = BaseClientOutput(_symbolWidthLoader, _tabStopCalculator, _maximumLineWidth)
+  setmetatable(instance, {__index = ClientOutputTable})
+
+  instance.renderer = ClientOutputTableRenderer(instance)
 
   return instance
+
 end
 
 getmetatable(ClientOutputTable).__call = ClientOutputTable.__construct
-
-
----
--- Static method that creates and returns a ClientOutputTable instance from a table.
---
--- @tparam SymbolWidthLoader _symbolWidthLoader The symbol width loader
--- @tparam table _table The table to parse
---
--- @treturn ClientOutputTable The ClientOutputTable instance
---
-function ClientOutputTable.createFromTable(_symbolWidthLoader, _table)
-  local instance = ClientOutputTable(_symbolWidthLoader)
-  instance:parse(_table)
-
-  return instance
-end
 
 
 -- Getters and Setters
@@ -85,6 +71,34 @@ function ClientOutputTable:getRows()
   return self.rows
 end
 
+
+-- Public Methods
+
+---
+-- Configures this ClientOutputTable.
+--
+-- @tparam table _configuration The configuration
+--
+function ClientOutputTable:configure(_configuration)
+
+  BaseClientOutput.configure(self, _configuration)
+
+  -- Parse the column, row and field configs
+  self.groupConfigurations = {}
+  if (_configuration["rows"]) then
+    self.groupConfigurations["rows"] = _configuration["rows"]
+  end
+
+  if (_configuration["columns"]) then
+    self.groupConfigurations["columns"] = _configuration["columns"]
+  end
+
+  if (_configuration["fields"]) then
+    self.groupConfigurations["fields"] = _configuration["fields"]
+  end
+
+end
+
 ---
 -- Parses a table.
 -- The table must be in the format { [y] = { rowFields } }, while a row field may contain a sub table.
@@ -94,23 +108,27 @@ end
 --
 function ClientOutputTable:parse(_table)
 
-  self.rows = {}
+  local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
 
+  self.rows = {}
   for y, row in ipairs(_table) do
 
     self.rows[y] = {}
 
     if (type(row) ~= "table") then
-      self.rows[y][1] = ClientOutputString(self.symbolWidthLoader, row)
+      self.rows[y][1] = ClientOutputFactory.getInstance():getClientOutputString(row)
+      self.rows[y][1]:configure(self:getConfigurationForField(y, 1))
     else
 
       for x, field in ipairs(row) do
 
         if (type(field) == "table") then
-          self.rows[y][x] = ClientOutputTable.createFromTable(self.symbolWidthLoader, field)
+          self.rows[y][x] = ClientOutputFactory.getInstance():getClientOutputTable(field)
         else
-          self.rows[y][x] = ClientOutputString(self.symbolWidthLoader, field)
+          self.rows[y][x] = ClientOutputFactory.getInstance():getClientOutputString(field)
         end
+
+        self.rows[y][x]:configure(self:getConfigurationForField(y, x))
 
       end
 
@@ -120,96 +138,107 @@ function ClientOutputTable:parse(_table)
 end
 
 ---
--- Returns the row strings for this ClientOutputTable by using a specific line width.
+-- Returns the number of tabs that this client output's content requires.
 --
--- @tparam int _maximumOutputLineWidth The maximum output line width in 3x pixels
--- @tparam bool _splitStringsAtWhitespace Whether to split strings at whitespace
+-- @treturn int The number of required tabs
 --
--- @treturn string[] The row strings
---
-function ClientOutputTable:getRowStringsByLineWidth(_maximumOutputLineWidth, _splitStringsAtWhitespace)
+function ClientOutputTable:getNumberOfRequiredTabs()
 
-  local numberOfAvailableTabs = self.tabStopCalculator:getNumberOfPassedTabStops(_maximumOutputLineWidth)
-  return self:getRowStringsByTabNumber(numberOfAvailableTabs, _splitStringsAtWhitespace)
+  local numberOfRequiredTabs = 0
+  for x = 1, self:getNumberOfColumns(), 1 do
+    numberOfRequiredTabs = numberOfRequiredTabs + self:getNumberOfRequiredTabsForColumn(x)
+  end
+
+  return numberOfRequiredTabs
 
 end
 
 ---
--- Returns the row strings for this ClientOutputTable by using a specific maximum tab number.
+-- Returns the minimum number of tabs that this client output's content requires.
 --
--- @tparam int _tabNumber The maximum tab number
--- @tparam bool _splitStringsAtWhitespace Whether to split strings at whitespace
+-- @treturn int The minimum number of required tabs
 --
--- @treturn string[] The row strings
---
-function ClientOutputTable:getRowStringsByTabNumber(_tabNumber, _splitStringsAtWhitespace)
+function ClientOutputTable:getMinimumNumberOfRequiredTabs()
 
-  local renderer = ClientOutputTableRenderer(self.symbolWidthLoader, self.tabStopCalculator)
-  return renderer:getRowStrings(self, _tabNumber, _splitStringsAtWhitespace)
+  local minimumNumberOfRequiredTabs = 0
+  for x = 1, self:getNumberOfColumns(), 1 do
+    minimumNumberOfRequiredTabs = minimumNumberOfRequiredTabs + self:getMinimumNumberOfRequiredTabsForColumn(x)
+  end
+
+  return minimumNumberOfRequiredTabs
 
 end
+
+---
+-- Returns the output rows to display this client output's contents.
+--
+-- @treturn string[] The output rows
+--
+function ClientOutputTable:getOutputRows()
+  return self.renderer:getOutputRows()
+end
+
+---
+-- Returns the output rows to display this client output's contents wrapped in ClientOutputString's.
+--
+-- @treturn ClientOutputString[] The output rows
+--
+function ClientOutputTable:getOutputRowsAsClientOutputStrings()
+  return self.renderer:getOutputRows(true)
+end
+
 
 ---
 -- Returns the required number of tabs for a specific column.
 --
 -- @tparam int _columnNumber The column number
--- @tparam bool _getMinimumNumber Whether to return the minimum number or the number needed to fit the content
 --
 -- @treturn int The required number of tabs for the column
 --
-function ClientOutputTable:getNumberOfRequiredTabsForColumn(_columnNumber, _getMinimumNumber)
+function ClientOutputTable:getNumberOfRequiredTabsForColumn(_columnNumber)
 
   if (_columnNumber > self:getNumberOfColumns()) then
     return 0
   end
 
-  local maximumNumberOfRequiredTabs = 0
+  local numberOfRequiredTabs = 0
   for y, row in ipairs(self.rows) do
 
-    local field = row[_columnNumber]
-
-    local numberOfRequiredTabsForField
-    if (ObjectUtils:isInstanceOf(field, ClientOutputTable)) then
-      numberOfRequiredTabsForField = field:getTotalNumberOfRequiredTabs(_getMinimumNumber)
-    else
-
-      if (_getMinimumNumber) then
-        numberOfRequiredTabsForField = 1
-      else
-        numberOfRequiredTabsForField = field:getNumberOfPassedTabStops() + 1
-      end
-    end
-
-    if (numberOfRequiredTabsForField > maximumNumberOfRequiredTabs) then
-      maximumNumberOfRequiredTabs = numberOfRequiredTabsForField
+    local numberOfRequiredTabsForField = row[_columnNumber]:getNumberOfRequiredTabs()
+    if (numberOfRequiredTabsForField > numberOfRequiredTabs) then
+      numberOfRequiredTabs = numberOfRequiredTabsForField
     end
 
   end
 
-  return maximumNumberOfRequiredTabs
+  return numberOfRequiredTabs
 
 end
 
 ---
--- Returns the required number of tabs for the entire table.
+-- Returns the minimun required number tabs for a specific column.
 --
--- @tparam bool _getMinimumNumber Whether to return the minimum number or the number needed to fit the content
+-- @tparam int _columnNumber The column number
 --
--- @treturn int The required number of tabs for the entire table
+-- @treturn int The minimum required number of tabs for the column
 --
-function ClientOutputTable:getTotalNumberOfRequiredTabs(_getMinimumNumber)
+function ClientOutputTable:getMinimumNumberOfRequiredTabsForColumn(_columnNumber)
 
-  local numberOfColumns = self:getNumberOfColumns()
-  if (numberOfColumns == 0) then
+  if (_columnNumber > self:getNumberOfColumns()) then
     return 0
   end
 
-  local totalNumberOfRequiredTabs = 0
-  for x = 1, numberOfColumns, 1 do
-    totalNumberOfRequiredTabs = totalNumberOfRequiredTabs + self:getNumberOfRequiredTabsForColumn(x, _getMinimumNumber)
+  local minimumNumberOfRequiredTabs = 0
+  for y, row in ipairs(self.rows) do
+
+    local minimumNumberOfRequiredTabsForField = row[_columnNumber]:getMinimumNumberOfRequiredTabs()
+    if (minimumNumberOfRequiredTabsForField > minimumNumberOfRequiredTabs) then
+      minimumNumberOfRequiredTabs = minimumNumberOfRequiredTabsForField
+    end
+
   end
 
-  return totalNumberOfRequiredTabs
+  return minimumNumberOfRequiredTabs
 
 end
 
@@ -224,6 +253,69 @@ function ClientOutputTable:getNumberOfColumns()
     return 0
   else
     return #self.rows[1]
+  end
+
+end
+
+
+-- Private Methods
+
+---
+-- Returns the client output configuration for a specific table field.
+--
+-- @tparam int _y The y coordinate of the field
+-- @tparam int _x The x coordinate of the field
+--
+-- @treturn table The client output configuration for the field
+--
+function ClientOutputTable:getConfigurationForField(_y, _x)
+
+  -- Create a configuration with this ClientOutputTable's own configuration
+  local configuration = {
+    newLineIndent = self.newLineIndent,
+    lineSplitCharacters = self.lineSplitCharacters
+  }
+
+  -- Check group configurations
+  local allowedGroupValueNames = { "newLineIndent", "lineSplitCharacters" }
+
+  if (self.groupConfigurations["rows"] and self.groupConfigurations["rows"][_y]) then
+    self:addGroupConfiguration(
+      configuration, self.groupConfigurations["rows"][_y], allowedGroupValueNames
+    )
+  end
+
+  if (self.groupConfigurations["columns"] and self.groupConfigurations["columns"][_x]) then
+    self:addGroupConfiguration(
+      configuration, self.groupConfigurations["columns"][_x], allowedGroupValueNames
+    )
+  end
+
+  if (self.groupConfigurations["fields"] and
+      self.groupConfigurations["fields"][_y] and self.groupConfigurations["fields"][_y][_x]
+  ) then
+    self:addGroupConfiguration(
+      configuration, self.groupConfigurations["fields"][_y][_x], allowedGroupValueNames
+    )
+  end
+
+  return configuration
+
+end
+
+---
+-- Adds the values of a group configuration to a configuration object.
+--
+-- @tparam table _configuration The configuration object
+-- @tparam table _groupConfiguration The group configuration
+-- @tparam string[] _valueNames The names of the values to copy into the configuration object
+--
+function ClientOutputTable:addGroupConfiguration(_configuration, _groupConfiguration, _valueNames)
+
+  for _, valueName in ipairs(_valueNames) do
+    if (_groupConfiguration[valueName] ~= nil) then
+      _configuration[valueName] = _groupConfiguration[valueName]
+    end
   end
 
 end

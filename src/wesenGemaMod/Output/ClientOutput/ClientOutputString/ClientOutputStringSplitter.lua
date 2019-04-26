@@ -17,18 +17,11 @@ local ClientOutputStringSplitter = setmetatable({}, {})
 
 
 ---
--- The symbol width loader
+-- The parent ClientOutputString that will be split by this ClientOutputStringSplitter
 --
--- @tfield SymbolWidthLoader symbolWidthLoader
+-- @tfield ClientOutputString parentClientOutputString
 --
-ClientOutputStringSplitter.symbolWidthLoader = nil
-
----
--- The tabstop calculator
---
--- @tfield TabStopCalculator tabStopCalculator
---
-ClientOutputStringSplitter.tabStopCalculator = nil
+ClientOutputStringSplitter.parentClientOutputString = nil
 
 
 -- Attributes for the string split loop
@@ -49,14 +42,14 @@ ClientOutputStringSplitter.remainingTabGroups = nil
 ClientOutputStringSplitter.currentColorString = nil
 
 ---
--- The whitespace positions
--- This is needed to split the string at the last possible whitespace position
+-- The line split character positions
+-- This is needed to split the string at the last possible line split character position
 --
 -- The table is in the format { { [tabGroupNumber] = int, [characterNumber] = int }, ... }
 --
 -- @tfield table[] whitespacePositions
 --
-ClientOutputStringSplitter.whitespacePositions = nil
+ClientOutputStringSplitter.lineSplitCharacterPositions = nil
 
 ---
 -- The current tab group number
@@ -66,7 +59,7 @@ ClientOutputStringSplitter.whitespacePositions = nil
 ClientOutputStringSplitter.currentTabGroupNumber = nil
 
 ---
--- The current character position in the current tab group
+-- The current character position inside the current tab group
 --
 -- @tfield int currentCharacterNumber
 --
@@ -76,17 +69,14 @@ ClientOutputStringSplitter.currentCharacterNumber = nil
 ---
 -- ClientOutputStringSplitter constructor.
 --
--- @tparam SymbolWidthLoader _symbolWidthLoader The symbol width loader
--- @tparam TabStopCalculator _tabStopCalculator The tabstop calculator
+-- @tparam ClientOutputString _parentClientOutputString The parent ClientOutputString
 --
 -- @treturn ClientOutputStringSplitter The ClientOutputStringSplitter instance
 --
-function ClientOutputStringSplitter:__construct(_symbolWidthLoader, _tabStopCalculator)
+function ClientOutputStringSplitter:__construct(_parentClientOutputString)
 
   local instance = setmetatable({}, {__index = ClientOutputStringSplitter})
-
-  instance.symbolWidthLoader = _symbolWidthLoader
-  instance.tabStopCalculator = _tabStopCalculator
+  instance.parentClientOutputString = _parentClientOutputString
 
   return instance
 
@@ -98,35 +88,47 @@ getmetatable(ClientOutputStringSplitter).__call = ClientOutputStringSplitter.__c
 -- Public Methods
 
 ---
--- Splits a ClientOutputString into pixel groups.
+-- Splits the parent ClientOutputString into rows based on the ClientOutputString's configuration.
 --
--- @tparam ClientOutputString _clientOutputString The ClientOutputString
--- @tparam int _numberOfPixelsPerGroup The number of pixels per pixel group
--- @tparam bool _splitAtWhitespace Whether to split the string at whitespaces or any character
+-- @tparam bool _returnAsClientOutputStrings Whether to return the rows as ClientOutputString instances
 --
--- @treturn string[] The pixel groups
+-- @treturn string[]|ClientOutputString[] The rows
 --
-function ClientOutputStringSplitter:splitStringIntoPixelGroups(_clientOutputString, _numberOfPixelsPerGroup, _splitAtWhitespace)
+function ClientOutputStringSplitter:splitStringIntoRows(_returnAsClientOutputStrings)
 
-  self.remainingTabGroups = _clientOutputString:splitIntoTabGroups()
+  local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
+
+  self.remainingTabGroups = self.parentClientOutputString:splitIntoTabGroups()
   self.currentColorString = ""
 
+  local newLineIndent = self.parentClientOutputString:getNewLineIndent()
+
   local rowStrings = {}
+  local isFirstRow = true
   while (#self.remainingTabGroups > 0) do
 
     local rowString = self.currentColorString
 
-    -- Calculate the maximum end position of the next pixel group
-    if (_splitAtWhitespace) then
-      self.whitespacePositions = {}
+    if (isFirstRow) then
+      isFirstRow = false
+    else
+      rowString = newLineIndent .. rowString
     end
-    self:calculateNextPixelGroupEndPosition(_numberOfPixelsPerGroup, _splitAtWhitespace)
 
-    -- Fetch the next pixel group string
-    table.insert(rowStrings, rowString .. self:getNextPixelGroupString(_splitAtWhitespace))
+    self.lineSplitCharacterPositions = {}
+    self:calculateNextRowEndPosition()
 
-    -- Remove the pixel group string from the remaining tab groups
-    self:removeCurrentPixelGroupFromRemainingTabGroups()
+    -- Fetch the next row string
+    rowString = rowString .. self:getNextRowString()
+    if (_returnAsClientOutputStrings) then
+      rowString = ClientOutputFactory.getInstance():getClientOutputString(rowString)
+      rowString:setCachedWidth(self.currentRowWidth)
+    end
+
+    table.insert(rowStrings, rowString)
+
+    -- Remove the row string from the remaining tab groups
+    self:removeCurrentRowFromRemainingTabGroups()
 
   end
 
@@ -138,16 +140,17 @@ end
 -- Private Methods
 
 ---
--- Calculates the maximum end position of the next pixel group and saves the result in
--- the attributes currentTabGroupNumber and currentCharacterNumber.
+-- Calculates the maximum end position of the next row and saves the result in the attributes
+-- currentTabGroupNumber and currentCharacterNumber.
 --
--- @tparam int _maximumNumberOfPixels The maximum number of pixels per pixel group
--- @tparam bool _splitAtWhitespace Whether to split the string at whitespaces or any character
---
-function ClientOutputStringSplitter:calculateNextPixelGroupEndPosition(_maximumNumberOfPixels, _splitAtWhitespace)
+function ClientOutputStringSplitter:calculateNextRowEndPosition()
 
-  local currentRowWidth = 0
+  local maximumLineWidth = self.parentClientOutputString:getMaximumLineWidth()
+  local lineSplitCharacters = self.parentClientOutputString:getLineSplitCharacters()
+  local symbolWidthLoader = self.parentClientOutputString:getSymbolWidthLoader()
+  local tabStopCalculator = self.parentClientOutputString:getTabStopCalculator()
 
+  self.currentRowWidth = 0
   for tabGroupNumber, tabGroup in ipairs(self.remainingTabGroups) do
 
     self.currentTabGroupNumber = tabGroupNumber
@@ -186,23 +189,27 @@ function ClientOutputStringSplitter:calculateNextPixelGroupEndPosition(_maximumN
 
         else
 
-          if (_splitAtWhitespace and character == " ") then
-            table.insert(
-              self.whitespacePositions, {
-                ["tabGroupNumber"] = self.currentTabGroupNumber,
-                ["characterNumber"] = self.currentCharacterNumber
-            })
-          end
-
           -- Get the width of the current character
-          local currentCharacterWidth = self.symbolWidthLoader:getCharacterWidth(character)
+          local currentCharacterWidth = symbolWidthLoader:getCharacterWidth(character)
 
           -- Check if the new total width exceeds the maximum allowed width
-          if (currentRowWidth + currentCharacterWidth > _maximumNumberOfPixels) then
+          if (self.currentRowWidth + currentCharacterWidth > maximumLineWidth) then
             return
           else
+
+            if (character:match(lineSplitCharacters)) then
+              table.insert(
+                self.lineSplitCharacterPositions, {
+                  tabGroupNumber = self.currentTabGroupNumber,
+                  characterNumber = self.currentCharacterNumber,
+                  lineWidthAtPosition = self.currentRowWidth,
+                  isWhiteSpace = (character == " ")
+              })
+            end
+
             self.currentCharacterNumber = self.currentCharacterNumber + 1
-            currentRowWidth = currentRowWidth + currentCharacterWidth
+            self.currentRowWidth = self.currentRowWidth + currentCharacterWidth
+
           end
 
         end
@@ -212,38 +219,35 @@ function ClientOutputStringSplitter:calculateNextPixelGroupEndPosition(_maximumN
     end
 
     -- Jump to the next tab stop
-    currentRowWidth = self.tabStopCalculator:getNextTabStopPosition(currentRowWidth)
+    self.currentRowWidth = tabStopCalculator:getNextTabStopPosition(self.currentRowWidth)
 
   end
 
 end
 
 ---
--- Returns the next pixel group string.
+-- Returns the next row string.
 -- Uses the currentTabGroupNumber and currentCharacterNumber attributes to extract the string.
---
--- @tparam bool _splitAtWhitespace Whether to split the string at whitespaces or any character
 --
 -- @treturn string The next pixel group string
 --
-function ClientOutputStringSplitter:getNextPixelGroupString(_splitAtWhitespace)
+function ClientOutputStringSplitter:getNextRowString()
 
   -- Adjust the currentTabGroupNumber and currentCharacterNumber if necessary
-  if (self.currentTabGroupNumber == 1 and self.currentCharacterNumber == 0) then
-    -- Ignore the maximum width, the output must be at least one character per row
+  if (self.currentTabGroupNumber == 1 and self.currentCharacterNumber == 0 or
+      #self.lineSplitCharacterPositions == 0) then
+    -- Ignore the maximum width and line split characters, the output must be at least one character per row
     self.currentCharacterPosition = 1
-
-  elseif (_splitAtWhitespace) then
-
-    local numberOfTabGroups = #self.remainingTabGroups
-    local lastTabGroup = self.remainingTabGroups[numberOfTabGroups]
-    if (self.currentTabGroupNumber < numberOfTabGroups or self.currentCharacterNumber < #lastTabGroup) then
-      self:splitCurrentRowAtLastWhiteSpace()
-    end
-
   end
 
-  -- Extract the pixel group string
+  -- Find the last availabe line split character
+  local numberOfTabGroups = #self.remainingTabGroups
+  local lastTabGroup = self.remainingTabGroups[numberOfTabGroups]
+  if (self.currentTabGroupNumber < numberOfTabGroups or self.currentCharacterNumber < #lastTabGroup) then
+    self:splitCurrentRowAtLastLineSplitCharacter()
+  end
+
+  -- Extract the row string
   local rowString = ""
   for i = 1, self.currentTabGroupNumber - 1, 1 do
     rowString = rowString .. self.remainingTabGroups[i] .. "\t"
@@ -261,20 +265,22 @@ function ClientOutputStringSplitter:getNextPixelGroupString(_splitAtWhitespace)
 end
 
 ---
--- Sets the currentTabGroupNumber and currentCharacterNumber attributes to the last usable whitespace position if possible.
+-- Sets the currentTabGroupNumber and currentCharacterNumber attributes to the last usable line
+-- split character position if possible.
 --
-function ClientOutputStringSplitter:splitCurrentRowAtLastWhiteSpace()
+function ClientOutputStringSplitter:splitCurrentRowAtLastLineSplitCharacter()
 
   local stringEndPosition = {
     ["tabGroupNumber"] = self.currentTabGroupNumber,
     ["characterNumber"] = self.currentCharacterNumber
   }
 
-  local whitespacePosition
-  for i = #self.whitespacePositions, 1, -1 do
+  local lineSplitCharacterPosition
+  for i = #self.lineSplitCharacterPositions, 1, -1 do
 
-    if (self.whitespacePositions[i]["tabGroupNumber"] == stringEndPosition["tabGroupNumber"] and
-        self.whitespacePositions[i]["characterNumber"] == stringEndPosition["characterNumber"]
+    if (self.lineSplitCharacterPositions[i]["isWhiteSpace"] and
+        self.lineSplitCharacterPositions[i]["tabGroupNumber"] == stringEndPosition["tabGroupNumber"] and
+        self.lineSplitCharacterPositions[i]["characterNumber"] == stringEndPosition["characterNumber"]
     ) then
 
       if (stringEndPosition["characterNumber"] > 1) then
@@ -285,17 +291,21 @@ function ClientOutputStringSplitter:splitCurrentRowAtLastWhiteSpace()
       end
 
     else
-      whitespacePosition = self.whitespacePositions[i]
+      lineSplitCharacterPosition = self.lineSplitCharacterPositions[i]
       break
     end
 
   end
 
-  if (whitespacePosition ~= nil) then
+  if (lineSplitCharacterPosition ~= nil) then
 
-    if (whitespacePosition["tabGroupNumber"] > 1 or whitespacePosition["characterNumber"] > 0) then
-      self.currentTabGroupNumber = whitespacePosition["tabGroupNumber"]
-      self.currentCharacterNumber = whitespacePosition["characterNumber"]
+    -- Check that the line split character is not the first character of the string
+    if (lineSplitCharacterPosition["tabGroupNumber"] > 1 or
+        lineSplitCharacterPosition["characterNumber"] > 0
+    ) then
+      self.currentTabGroupNumber = lineSplitCharacterPosition["tabGroupNumber"]
+      self.currentCharacterNumber = lineSplitCharacterPosition["characterNumber"]
+      self.currentRowWidth = lineSplitCharacterPosition["lineWidthAtPosition"]
     end
 
   end
@@ -303,10 +313,10 @@ function ClientOutputStringSplitter:splitCurrentRowAtLastWhiteSpace()
 end
 
 ---
--- Removes the current pixel group from the list of remaining tab groups.
+-- Removes the current row from the list of remaining tab groups.
 -- The result is saved in the remainingTabGroups attribute.
 --
-function ClientOutputStringSplitter:removeCurrentPixelGroupFromRemainingTabGroups()
+function ClientOutputStringSplitter:removeCurrentRowFromRemainingTabGroups()
 
   -- Adjust the last string part
   if (self.currentCharacterNumber > 0) then

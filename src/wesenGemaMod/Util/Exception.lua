@@ -29,7 +29,6 @@ Exception.message = nil;
 function Exception:__construct(_message)
 
   local instance = setmetatable({}, {__index = Exception});
-
   instance.message = _message;
 
   return instance;

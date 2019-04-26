@@ -10,7 +10,7 @@
 --
 -- @type SymbolWidthLoader
 --
-local SymbolWidthLoader = setmetatable({}, {});
+local SymbolWidthLoader = setmetatable({}, {})
 
 
 ---
@@ -18,7 +18,7 @@ local SymbolWidthLoader = setmetatable({}, {});
 --
 -- @tfield string fontConfigFileName
 --
-SymbolWidthLoader.fontConfigFileName = nil;
+SymbolWidthLoader.fontConfigFileName = nil
 
 ---
 -- The font pixel widths in the format {[character] = width}
@@ -26,7 +26,7 @@ SymbolWidthLoader.fontConfigFileName = nil;
 --
 -- @tfield int[] cachedFontConfig
 --
-SymbolWidthLoader.cachedFontConfig = nil;
+SymbolWidthLoader.cachedFontConfig = nil
 
 
 ---
@@ -39,25 +39,25 @@ SymbolWidthLoader.cachedFontConfig = nil;
 --
 function SymbolWidthLoader:__construct(_fontConfigFileName, _hasFontConfigCache)
 
-  local instance = setmetatable({}, {__index = SymbolWidthLoader});
+  local instance = setmetatable({}, {__index = SymbolWidthLoader})
 
-  instance.fontConfigFileName = _fontConfigFileName;
+  instance.fontConfigFileName = _fontConfigFileName
 
   if (_hasFontConfigCache) then
 
     -- Load the font config into the cachedFontConfig attribute
-    instance.cachedFontConfig = {};
+    instance.cachedFontConfig = {}
     for index, width in pairs(cfg.totable(_fontConfigFileName)) do
-      instance.cachedFontConfig[index] = tonumber(width);
+      instance.cachedFontConfig[index] = tonumber(width)
     end
 
   end
 
-  return instance;
+  return instance
 
 end
 
-getmetatable(SymbolWidthLoader).__call = SymbolWidthLoader.__construct;
+getmetatable(SymbolWidthLoader).__call = SymbolWidthLoader.__construct
 
 
 -- Public Methods
@@ -72,17 +72,17 @@ getmetatable(SymbolWidthLoader).__call = SymbolWidthLoader.__construct;
 function SymbolWidthLoader:getCharacterWidth(_character)
 
   -- Get the character identifier
-  local character = _character;
+  local character = _character
   if (character == " ") then
-    character = "whitespace";
+    character = "whitespace"
   elseif (character == "\t") then
-    character = "tab";
+    character = "tab"
   end
 
   if (self.cachedFontConfig) then
-    return self:getCharacterWidthFromCachedFontConfig(character);
+    return self:getCharacterWidthFromCachedFontConfig(character)
   else
-    return self:getCharacterWidthFromConfigFile(character);
+    return self:getCharacterWidthFromConfigFile(character)
   end
 
 end
@@ -99,12 +99,12 @@ end
 --
 function SymbolWidthLoader:getCharacterWidthFromCachedFontConfig(_character)
 
-  local width = self.cachedFontConfig[_character];
+  local width = self.cachedFontConfig[_character]
   if (not width) then
     width = self.cachedFontConfig["default"]
   end
 
-  return width;
+  return width
 
 end
 
@@ -117,14 +117,14 @@ end
 --
 function SymbolWidthLoader:getCharacterWidthFromConfigFile(_character)
 
-  local width = cfg.getvalue(self.fontConfigFileName, _character);
+  local width = cfg.getvalue(self.fontConfigFileName, _character)
   if (not width) then
-    width = cfg.getvalue(self.fontConfigFileName, "default");
+    width = cfg.getvalue(self.fontConfigFileName, "default")
   end
 
-  return tonumber(width);
+  return tonumber(width)
 
 end
 
 
-return SymbolWidthLoader;
+return SymbolWidthLoader

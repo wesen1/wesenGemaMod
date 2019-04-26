@@ -7,7 +7,6 @@
 
 local BaseCommand = require("CommandHandler/BaseCommand");
 local StaticString = require("Output/StaticString");
-local TableTemplate = require("Output/Template/TableTemplate");
 
 ---
 -- Command !rules.
@@ -51,7 +50,7 @@ getmetatable(RulesCommand).__call = RulesCommand.__construct;
 -- @tparam string[] _arguments The list of arguments which were passed by the player
 --
 function RulesCommand:execute(_player, _arguments)
-  self.output:printTableTemplate(TableTemplate("Commands/RulesCommandRules"), _player);
+  self.output:printTableTemplate("TableTemplate/Commands/RulesCommandRules", _player);
 end
 
 

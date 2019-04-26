@@ -7,7 +7,6 @@
 
 local BaseCommand = require("CommandHandler/BaseCommand");
 local StaticString = require("Output/StaticString");
-local TableTemplate = require("Output/Template/TableTemplate");
 
 ---
 -- Command !maptop.
@@ -60,13 +59,14 @@ function MapTopCommand:execute(_player, _arguments)
   local startRank = 1;
 
   self.output:printTableTemplate(
-    TableTemplate(
-      "MapTop/MapTop",
-      { ["mapRecordList"] = mapRecordList,
-        ["numberOfDisplayRecords"] = numberOfDisplayRecords,
-        ["startRank"] = startRank
-      }
-    ), _player);
+    "TableTemplate/MapTop/MapTop",
+    { ["mapRecordList"] = mapRecordList,
+      ["numberOfDisplayRecords"] = numberOfDisplayRecords,
+      ["startRank"] = startRank
+    }
+    , _player
+  )
+
 end
 
 

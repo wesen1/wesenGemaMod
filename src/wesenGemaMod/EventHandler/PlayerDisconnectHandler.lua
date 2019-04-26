@@ -6,7 +6,6 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Class that handles player disconnects.
@@ -51,8 +50,8 @@ function PlayerDisconnectHandler:handleEvent(_cn, _reason)
     -- This message is printed on player disconnect because on player disconnect after
     -- the getname() method will return nil for the _cn
     self.output:printTextTemplate(
-      TextTemplate("InfoMessages/Player/PlayerDisconnectBanned", { ["playerName"] = getname(_cn) })
-    );
+      "TextTemplate/InfoMessages/Player/PlayerDisconnectBanned", { ["playerName"] = getname(_cn) }
+    )
   end
 
 end

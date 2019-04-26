@@ -7,10 +7,8 @@
 
 local BaseCommand = require("CommandHandler/BaseCommand");
 local CommandArgument = require("CommandHandler/CommandArgument");
-local Exception = require("Util/Exception");
 local StaticString = require("Output/StaticString");
-local TableTemplate = require("Output/Template/TableTemplate");
-local TextTemplate = require("Output/Template/TextTemplate");
+local TemplateException = require("Util/TemplateException");
 
 ---
 -- Command !help.
@@ -77,15 +75,15 @@ function HelpCommand:execute(_player, _arguments)
   local command = self.parentCommandList:getCommand(_arguments.commandName);
   if (command) then
     self.output:printTableTemplate(
-      TableTemplate("CommandHelpText/CommandHelpText", { ["command"] = command }),
+      "TableTemplate/CommandHelpText/CommandHelpText",
+      { ["command"] = command },
       _player
-    );
+    )
+
   else
-    error(Exception(
-        TextTemplate(
-          "ExceptionMessages/CommandHandler/UnknownCommand",
-          { ["commandName"] = _arguments.commandName }
-        )
+    error(TemplateException(
+      "TextTemplate/ExceptionMessages/CommandHandler/UnknownCommand",
+      { ["commandName"] = _arguments.commandName }
     ));
   end
 

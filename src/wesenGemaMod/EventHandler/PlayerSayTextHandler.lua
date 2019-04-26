@@ -10,6 +10,7 @@ local CommandParser = require("CommandHandler/CommandParser");
 local CommandExecutor = require("CommandHandler/CommandExecutor");
 local Exception = require("Util/Exception");
 local ObjectUtils = require("Util/ObjectUtils");
+local TemplateFactory = require("Output/Template/TemplateFactory")
 
 ---
 -- Class that handles players saying texts.
@@ -70,11 +71,13 @@ getmetatable(PlayerSayTextHandler).__call = PlayerSayTextHandler.__construct;
 --
 function PlayerSayTextHandler:handleEvent(_cn, _text)
 
-  -- @todo: Export this log message to text template (need to find way to render templates for logs)
   local player = self:getPlayerByCn(_cn)
 
-  local logText = string.format("[%s] %s says: '%s'", player:getIp(), player:getName(), _text);
-  logline(ACLOG_INFO, logText);
+  logline(ACLOG_INFO,
+    TemplateFactory.getInstance():getTemplate(
+      "TextTemplate/LogMessages/PlayerSayText", { player = player, text = _text}
+    ):renderAsText()
+  );
 
   if (self.parentGemaMode:getIsActive()) then
 

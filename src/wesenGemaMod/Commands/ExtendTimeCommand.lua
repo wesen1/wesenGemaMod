@@ -9,7 +9,6 @@ local BaseCommand = require("CommandHandler/BaseCommand");
 local CommandArgument = require("CommandHandler/CommandArgument");
 local RemainigTimeExtender = require("TimeHandler/RemainingTimeExtender");
 local StaticString = require("Output/StaticString");
-local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Command !extend.
@@ -82,10 +81,8 @@ function ExtendTimeCommand:execute(_player, _arguments)
   self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes)
 
   self.output:printTextTemplate(
-    TextTemplate(
-      "InfoMessages/Time/TimeExtended",
-      { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
-    )
+    "TextTemplate/InfoMessages/Time/TimeExtended",
+    { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
   )
 
 end

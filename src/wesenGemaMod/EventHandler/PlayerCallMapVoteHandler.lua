@@ -10,7 +10,6 @@ local Environment = require("EnvironmentHandler/Environment");
 local Exception = require("Util/Exception");
 local MapRemover = require("Map/MapRemover");
 local ObjectUtils = require("Util/ObjectUtils");
-local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Handles map votes.
@@ -117,12 +116,9 @@ end
 function PlayerCallMapVoteHandler:removeUnplayableMap(_mapName, _player)
 
   self.mapRemover:removeMap(_mapName, self.parentGemaMode:getMapRot());
-
   self.output:printTextTemplate(
-    TextTemplate(
-      "InfoMessages/Maps/AutomaticMapDeletion", { ["mapName"] = _mapName }
-    ), _player
-  );
+    "TextTemplate/InfoMessages/Maps/AutomaticMapDeletion", { ["mapName"] = _mapName }, _player
+  )
 
 end
 
@@ -143,11 +139,9 @@ function PlayerCallMapVoteHandler:onValidMapVote(_player, _mapName, _gameMode, _
 
   if (nextGemaModeStateUpdate ~= nil) then
     self.output:printTextTemplate(
-      TextTemplate(
-        "InfoMessages/GemaModeState/GemaModeStateChangeOnVotePass",
-        { ["voteWillEnableGemaMode"] = nextGemaModeStateUpdate }
-      )
-    );
+      "TextTemplate/InfoMessages/GemaModeState/GemaModeStateChangeOnVotePass",
+      { ["voteWillEnableGemaMode"] = nextGemaModeStateUpdate }
+    )
   end
 
 end

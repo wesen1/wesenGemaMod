@@ -109,4 +109,4 @@
 -T                  // Add timestamps to logs
 -k -100             // Allowed team kills before auto kick
 -y -100             // Allowed team kills before auto ban
--m localhost
+-m localhost        // Disable attempts to register at a masterserver

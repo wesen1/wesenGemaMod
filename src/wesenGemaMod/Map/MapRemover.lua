@@ -1,14 +1,13 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2017-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local Exception = require("Util/Exception");
 local Map = require("ORM/Models/Map")
 local MapRecord = require("ORM/Models/MapRecord")
-local TextTemplate = require("Output/Template/TextTemplate");
+local TemplateException = require("Util/TemplateException");
 
 ---
 -- Handles removing of maps.
@@ -52,11 +51,9 @@ function MapRemover:removeMap(_mapName, _mapRot)
   if (map) then
 
     if (self:mapHasRecords(map)) then
-      error(Exception(
-          TextTemplate(
-            "ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
-            { ["mapName"] = _mapName }
-          )
+      error(TemplateException(
+        "TextTemplate/ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
+        { ["mapName"] = _mapName }
       ));
     else
       map:delete()
@@ -84,7 +81,8 @@ function MapRemover:mapHasRecords(_map)
   local mapRecord = MapRecord:get()
                              :filterByMapId(_map.id)
                              :findOne()
-  return (mapRecord == nil)
+
+  return (mapRecord ~= nil)
 
 end
 

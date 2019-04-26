@@ -9,7 +9,7 @@ local Exception = require("Util/Exception");
 local StaticString = require("Output/StaticString");
 local StringUtils = require("Util/StringUtils");
 local TableUtils = require("Util/TableUtils");
-local TextTemplate = require("Output/Template/TextTemplate");
+local TemplateException = require("Util/TemplateException");
 
 ---
 -- Parses command input strings.
@@ -115,9 +115,10 @@ function CommandParser:parseCommand(_inputText, _commandList)
   local command = _commandList:getCommand(commandName);
 
   if (not command) then
-    error(Exception(
-        TextTemplate("ExceptionMessages/CommandHandler/UnknownCommand", { ["commandName"] = commandName })
-    ));
+    error(TemplateException(
+      "TextTemplate/ExceptionMessages/CommandHandler/UnknownCommand",
+      { ["commandName"] = commandName }
+    ))
   end
 
   self.command = command;
@@ -145,11 +146,9 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
 
   -- Check whether the number of arguments is valid
   if (numberOfArgumentTextParts < _command:getNumberOfRequiredArguments()) then
-    error(Exception(
-        TextTemplate(
-          "ExceptionMessages/CommandHandler/NotEnoughCommandArguments",
-          { numberOfPassedArguments = numberOfArgumentTextParts, command = _command }
-        )
+    error(TemplateException(
+      "TextTemplate/ExceptionMessages/CommandHandler/NotEnoughCommandArguments",
+      { numberOfPassedArguments = numberOfArgumentTextParts, command = _command }
     ));
 
   elseif (numberOfArgumentTextParts > _command:getNumberOfArguments()) then
@@ -207,17 +206,17 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
 
   else
     -- Argument type is invalid
-    error(Exception(
-        TextTemplate("ExceptionMessages/CommandHandler/InvalidArgumentType", { argument = _argument })
-    ));
+    error(TemplateException(
+      "TextTemplate/ExceptionMessages/CommandHandler/InvalidArgumentType", { argument = _argument }
+    ))
   end
 
   -- Argument type is valid but value type did not match argument type
-  error(Exception(
-      TextTemplate("ExceptionMessages/CommandHandler/InvalidValueType", { argument = _argument })
-  ));
+  error(TemplateException(
+    "TextTemplate/ExceptionMessages/CommandHandler/InvalidValueType", { argument = _argument }
+  ))
 
 end
 
 
-return CommandParser;
+return CommandParser

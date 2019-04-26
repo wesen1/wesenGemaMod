@@ -7,8 +7,6 @@
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
 local StaticString = require("Output/StaticString");
-local TableTemplate = require("Output/Template/TableTemplate");
-local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Class that handles player connects.
@@ -75,10 +73,7 @@ function PlayerConnectHandler:handleEvent(_cn)
     self:printServerInformation(player);
 
   else
-    self.output:printTextTemplate(
-      TextTemplate("InfoMessages/GemaModeState/GemaModeNotEnabled"),
-      player
-    );
+    self.output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {}, player)
   end
 
 end
@@ -100,8 +95,8 @@ function PlayerConnectHandler:checkNumberOfConnections(_player)
   if (numberOfPlayerConnections > self.maximumNumberOfConnectionsWithSameIp) then
 
     self.output:printTextTemplate(
-      TextTemplate("InfoMessages/Player/PlayerDisconnectTooManyConnections", { ["player"] = _player })
-    );
+      "TextTemplate/InfoMessages/Player/PlayerDisconnectTooManyConnections", { ["player"] = _player }
+    )
     playerList:removePlayer(_player:getCn());
     disconnect(_player:getCn(), DISC_NONE);
 
@@ -120,18 +115,20 @@ function PlayerConnectHandler:printServerInformation(_player)
   local mapTop = mapTopHandler:getMapTop("main");
 
   self.output:printTableTemplate(
-    TableTemplate("MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() }),
+    "TableTemplate/MapTop/MapStatistics",
+    { ["mapRecordList"] = mapTop:getMapRecordList() },
     _player
-  );
+  )
 
   local commandList = self.parentGemaMode:getCommandList();
   local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString());
   local rulesCommand = commandList:getCommand(StaticString("rulesCommandName"):getString());
 
   self.output:printTableTemplate(
-    TableTemplate("ServerInformation", { ["cmdsCommand"] = cmdsCommand, ["rulesCommand"] = rulesCommand }),
+    "TableTemplate/ServerInformation",
+    { ["cmdsCommand"] = cmdsCommand, ["rulesCommand"] = rulesCommand },
     _player
-  );
+  )
 
 end
 

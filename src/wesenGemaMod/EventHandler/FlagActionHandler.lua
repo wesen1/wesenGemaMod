@@ -5,8 +5,7 @@
 -- @license MIT
 --
 
-local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local TableTemplate = require("Output/Template/TableTemplate");
+local BaseEventHandler = require("EventHandler/BaseEventHandler")
 
 ---
 -- Class that handles flag actions.
@@ -14,7 +13,7 @@ local TableTemplate = require("Output/Template/TableTemplate");
 --
 -- @type FlagActionHandler
 --
-local FlagActionHandler = setmetatable({}, {__index = BaseEventHandler});
+local FlagActionHandler = setmetatable({}, {__index = BaseEventHandler})
 
 
 ---
@@ -22,7 +21,7 @@ local FlagActionHandler = setmetatable({}, {__index = BaseEventHandler});
 --
 -- @tfield MapRecordPrinter mapRecord Printer
 --
-FlagActionHandler.mapRecordPrinter = nil;
+FlagActionHandler.mapRecordPrinter = nil
 
 
 ---
@@ -89,7 +88,7 @@ function FlagActionHandler:registerRecord(scoreAttempt)
   local mapTop = self.parentGemaMode:getMapTopHandler():getMapTop("main");
   local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList());
 
-  self.output:printTableTemplate(TableTemplate("MapRecord/MapRecordScore", { mapRecord = record }));
+  self.output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record });
   mapTop:addRecord(record);
 
 end

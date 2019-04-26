@@ -6,8 +6,6 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local TableTemplate = require("Output/Template/TableTemplate");
-local TextTemplate = require("Output/Template/TextTemplate");
 
 ---
 -- Class that handles map changes.
@@ -60,8 +58,8 @@ function MapChangeHandler:handleEvent(_mapName, _gameMode)
 
     -- Print the map statistics for the map to all players
     self.output:printTableTemplate(
-      TableTemplate("MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() })
-    );
+      "TableTemplate/MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() }
+    )
 
   end
 
@@ -80,11 +78,9 @@ function MapChangeHandler:updateGemaModeState()
 
   if (newGemaModeState ~= nil) then
     self.output:printTextTemplate(
-      TextTemplate(
-        "InfoMessages/GemaModeState/GemaModeStateChange",
-        { ["isGemaModeActive"] = newGemaModeState }
-      )
-    );
+      "TextTemplate/InfoMessages/GemaModeState/GemaModeStateChange",
+      { ["isGemaModeActive"] = newGemaModeState }
+    )
   end
 
 end

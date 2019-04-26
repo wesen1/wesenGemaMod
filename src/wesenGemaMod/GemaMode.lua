@@ -6,6 +6,7 @@
 --
 
 local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
+local ColorLoader = require("Output/Util/ColorLoader")
 local CommandLoader = require("CommandHandler/CommandLoader");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
@@ -14,6 +15,8 @@ local MapRot = require("MapRot/MapRot");
 local MapTopHandler = require("Tops/MapTopHandler");
 local Output = require("Output/Output");
 local PlayerList = require("Player/PlayerList");
+local TemplateFactory = require("Output/Template/TemplateFactory")
+local TimeFormatter = require("TimeHandler/TimeFormatter")
 
 ---
 -- Wrapper class for the gema mode.
@@ -241,12 +244,24 @@ end
 --
 function GemaMode:parseConfig()
 
-  ClientOutputFactory.setFontConfigFileName("font_default")
-
   local config = cfg.totable("gemamod")
 
-  self.output:setMaximumOutputLineWidth(tonumber(config["maxOutputLineWidth"]))
-  self.output:setSplitStringsAtWhitespace((config["splitStringsAtWhitespace"] == "true"))
+  local colorConfigurationFileName = "colors"
+  ClientOutputFactory.getInstance():configure({
+      fontConfigFileName = "font_default",
+      defaultConfiguration = config
+  })
+
+  TemplateFactory.getInstance():configure({
+    templateRenderer = {
+      defaultTemplateValues = {
+        colors = ColorLoader(colorConfigurationFileName):getColors(),
+        timeFormatter = TimeFormatter()
+      },
+      basePath = "lua/config/templates",
+      suffix = ".template"
+    }
+  })
 
 end
 

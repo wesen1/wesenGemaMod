@@ -7,7 +7,6 @@
 
 local BaseCommand = require("CommandHandler/BaseCommand");
 local StaticString = require("Output/StaticString");
-local TableTemplate = require("Output/Template/TableTemplate");
 
 ---
 -- Command !cmds.
@@ -54,13 +53,12 @@ getmetatable(CmdsCommand).__call = CmdsCommand.__construct;
 function CmdsCommand:execute(_player, _arguments)
 
   self.output:printTableTemplate(
-    TableTemplate(
-      "Commands/CmdsCommandList",
-      { commandList = self.parentCommandList, maximumLevel = _player:getLevel() }
-    ), _player
-  );
+    "TableTemplate/Commands/CmdsCommandList",
+    { commandList = self.parentCommandList, maximumLevel = _player:getLevel() }
+    , _player
+  )
 
 end
 
 
-return CmdsCommand;
+return CmdsCommand

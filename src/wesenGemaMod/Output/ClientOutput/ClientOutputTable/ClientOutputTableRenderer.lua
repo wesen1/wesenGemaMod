@@ -5,9 +5,6 @@
 -- @license MIT
 --
 
-local ClientOutputString = require("Output/ClientOutput/ClientOutputString/ClientOutputString")
-local ObjectUtils = require("Util/ObjectUtils")
-
 ---
 -- Returns the output rows for a ClientOutputTable.
 --
@@ -17,34 +14,24 @@ local ClientOutputTableRenderer = setmetatable({}, {})
 
 
 ---
--- The symbol width loader
+-- The parent ClientOutputTable
 --
--- @tfield SymbolWidthLoader symbolWidthLoader
+-- @tfield ClientOutputTable clientOutputTable
 --
-ClientOutputTableRenderer.symbolWidthLoader = nil
-
----
--- The tab stop calculator
---
--- @tfield TabStopCalculator tabStopCalculator
---
-ClientOutputTableRenderer.tabStopCalculator = nil
+ClientOutputTableRenderer.parentClientOutputTable = nil
 
 
 ---
 -- ClientOutputTableRenderer constructor.
 --
--- @tparam SymbolWidthLoader _symbolWidthLoader The symbol width loader for generated ClientOutputString's
--- @tparam TabStopCalculator _tabStopCalculator The tab stop calculator
+-- @tparam ClientOutputTable _parentClientOutputTable The parent ClientOutputTable
 --
 -- @treturn ClientOutputTableRenderer The ClientOutputTableRenderer instance
 --
-function ClientOutputTableRenderer:__construct(_symbolWidthLoader, _tabStopCalculator)
+function ClientOutputTableRenderer:__construct(_parentClientOutputTable)
 
   local instance = setmetatable({}, {__index = ClientOutputTableRenderer})
-
-  instance.symbolWidthLoader = _symbolWidthLoader
-  instance.tabStopCalculator = _tabStopCalculator
+  instance.parentClientOutputTable = _parentClientOutputTable
 
   return instance
 
@@ -53,37 +40,29 @@ end
 getmetatable(ClientOutputTableRenderer).__call = ClientOutputTableRenderer.__construct
 
 
+-- Public Methods
+
 ---
--- Returns the row output strings for a ClientOutputTable.
+-- Returns the row output strings for the parent ClientOutputTable.
 --
--- @tparam ClientOutputTable _clientOutputTable The ClientOutputTable
--- @tparam int _numberOfAvailableTabs The number of available tabs for the output
--- @tparam bool _splitStringsAtWhitespace Whether to split strings at whitespaces
+-- @tparam bool _returnAsClientOutputStrings Whether to return the rows as ClientOutputString instances
 --
--- @treturn string[] The row output strings
+-- @treturn string[]|ClientOutputString[] The row output strings
 --
-function ClientOutputTableRenderer:getRowStrings(_clientOutputTable, _numberOfAvailableTabs, _splitStringsAtWhitespace)
+function ClientOutputTableRenderer:getOutputRows(_returnAsClientOutputStrings)
 
-  self.clientOutputTable = _clientOutputTable
-
-  self:calculateNumbersOfTabsPerColumn(_numberOfAvailableTabs)
+  self:calculateNumbersOfTabsPerColumn()
 
   -- Replace the sub tables with the result of getRowStrings()
-  local outputTable = self:convertSubTablesToRows(_splitStringsAtWhitespace);
+  local outputTable = self:convertSubTablesToRows()
 
   -- Merge the sub rows into the main table
-  outputTable = self:mergeSubRows(outputTable);
+  outputTable = self:mergeSubRows(outputTable)
 
   -- Add the tabs to the fields
-  outputTable = self:addTabsToFields(outputTable);
+  outputTable = self:addTabsToFields(outputTable, _returnAsClientOutputStrings)
 
-  -- Build the row output strings by joining the fields together with "\t"s
-  local rowOutputStrings = {};
-  for y, tableRow in ipairs(outputTable) do
-    rowOutputStrings[y] = table.concat(tableRow, "\t");
-  end
-
-  return rowOutputStrings;
+  return self:generateRowStrings(outputTable, _returnAsClientOutputStrings)
 
 end
 
@@ -94,27 +73,29 @@ end
 -- Calculates the numbers of tabs to use per column.
 -- The result is saved in the numbersOfTabsPerColumn attribute.
 --
--- @tparam int _numberOfAvailableTabs The number of available tabs for the output
---
-function ClientOutputTableRenderer:calculateNumbersOfTabsPerColumn(_numberOfAvailableTabs)
+function ClientOutputTableRenderer:calculateNumbersOfTabsPerColumn()
 
-  local numberOfColumns = self.clientOutputTable:getNumberOfColumns()
+  local numberOfColumns = self.parentClientOutputTable:getNumberOfColumns()
+  local remainingNumberOfTabs = self.parentClientOutputTable:getMaximumNumberOfTabs()
 
   self.numbersOfTabsPerColumn = {}
   for x = 1, numberOfColumns, 1 do
-    self.numbersOfTabsPerColumn[x] = self.clientOutputTable:getNumberOfRequiredTabsForColumn(x)
+
+    local numberOfRequiredTabsForColumn = self.parentClientOutputTable:getNumberOfRequiredTabsForColumn(x)
+
+    self.numbersOfTabsPerColumn[x] = numberOfRequiredTabsForColumn
+    remainingNumberOfTabs = remainingNumberOfTabs - numberOfRequiredTabsForColumn
+
   end
 
-  local remainingNumberOfAvailableTabs = _numberOfAvailableTabs - self.clientOutputTable:getTotalNumberOfRequiredTabs()
-
-  if (remainingNumberOfAvailableTabs < 0) then
+  if (remainingNumberOfTabs < 0) then
 
     local minimumNumbersOfTabsPerColumn = {}
     for x = 1, numberOfColumns, 1 do
-      minimumNumbersOfTabsPerColumn[x] = self.clientOutputTable:getNumberOfRequiredTabsForColumn(x, true)
+      minimumNumbersOfTabsPerColumn[x] = self.parentClientOutputTable:getMinimumNumberOfRequiredTabsForColumn(x)
     end
 
-    while (remainingNumberOfAvailableTabs < 0) do
+    while (remainingNumberOfTabs < 0) do
 
       -- Find the column with the biggest distance to the minimum number of required tabs
       local shrinkColumnNumber
@@ -133,7 +114,7 @@ function ClientOutputTableRenderer:calculateNumbersOfTabsPerColumn(_numberOfAvai
         break
       else
         self.numbersOfTabsPerColumn[shrinkColumnNumber] = self.numbersOfTabsPerColumn[shrinkColumnNumber] - 1
-        remainingNumberOfAvailableTabs = remainingNumberOfAvailableTabs + 1
+        remainingNumberOfTabs = remainingNumberOfTabs + 1
       end
 
     end
@@ -151,21 +132,14 @@ end
 --
 function ClientOutputTableRenderer:convertSubTablesToRows(_splitStringsAtWhitespace)
 
-  local outputTable = {};
+  local outputTable = {}
 
-  for y, tableRow in ipairs(self.clientOutputTable:getRows()) do
+  for y, tableRow in ipairs(self.parentClientOutputTable:getRows()) do
 
-    outputTable[y] = {};
+    outputTable[y] = {}
     for x, tableField in ipairs(tableRow) do
-
-      local numberOfAvailableTabs = self.numbersOfTabsPerColumn[x]
-
-      if (ObjectUtils:isInstanceOf(tableField, ClientOutputString)) then
-        local tabPixelPosition = self.tabStopCalculator:convertTabNumberToPosition(numberOfAvailableTabs)
-        outputTable[y][x] = tableField:splitIntoIntoPixelGroups(tabPixelPosition, _splitStringsAtWhitespace)
-      else
-        outputTable[y][x] = tableField:getRowStringsByTabNumber(numberOfAvailableTabs, _splitStringsAtWhitespace)
-      end
+      tableField:changeMaximumNumberOfTabs(self.numbersOfTabsPerColumn[x])
+      outputTable[y][x] = tableField:getOutputRowsAsClientOutputStrings()
     end
 
   end
@@ -183,53 +157,53 @@ end
 --
 function ClientOutputTableRenderer:mergeSubRows(_outputTable)
 
-  local outputTable = {};
-  local mainTableInsertIndex = 1;
+  local outputTable = {}
+  local mainTableInsertIndex = 1
 
   for y, tableRow in ipairs(_outputTable) do
 
-    outputTable[mainTableInsertIndex] = {};
+    outputTable[mainTableInsertIndex] = {}
 
-    local maximumMainTableInsertIndexForTable = mainTableInsertIndex;
+    local maximumMainTableInsertIndexForTable = mainTableInsertIndex
     for x, tableField in ipairs(tableRow) do
 
       if (type(tableField) == "table") then
         -- The field contains sub rows
-        local mainTableInsertIndexForTable = mainTableInsertIndex;
-        local isFirstSubRow = true;
+        local mainTableInsertIndexForTable = mainTableInsertIndex
+        local isFirstSubRow = true
 
         for subY, subRow in ipairs(tableField) do
 
           if (isFirstSubRow) then
-            isFirstSubRow = false;
+            isFirstSubRow = false
           else
-            mainTableInsertIndexForTable = mainTableInsertIndexForTable + 1;
+            mainTableInsertIndexForTable = mainTableInsertIndexForTable + 1
           end
 
           -- Create the additional row if it doesn't exist
           if (not outputTable[mainTableInsertIndexForTable]) then
-            outputTable[mainTableInsertIndexForTable] = {};
+            outputTable[mainTableInsertIndexForTable] = {}
           end
 
-          outputTable[mainTableInsertIndexForTable][x] = subRow;
+          outputTable[mainTableInsertIndexForTable][x] = subRow
 
           if (mainTableInsertIndexForTable > maximumMainTableInsertIndexForTable) then
-            maximumMainTableInsertIndexForTable = mainTableInsertIndexForTable;
+            maximumMainTableInsertIndexForTable = mainTableInsertIndexForTable
           end
 
         end
 
       else
-        outputTable[mainTableInsertIndex][x] = tableField;
+        outputTable[mainTableInsertIndex][x] = tableField
       end
 
     end
 
-    mainTableInsertIndex = maximumMainTableInsertIndexForTable + 1;
+    mainTableInsertIndex = maximumMainTableInsertIndexForTable + 1
 
   end
 
-  return outputTable;
+  return outputTable
 
 end
 
@@ -237,30 +211,41 @@ end
 -- Adds the tabs to all fields of the table.
 --
 -- @tparam table _outputTable The output table
+-- @tparam bool _returnAsClientOutputStrings Whether to return the rows as ClientOutputString instances
 --
 -- @treturn table The output table with added tabs
 --
-function ClientOutputTableRenderer:addTabsToFields(_outputTable)
+function ClientOutputTableRenderer:addTabsToFields(_outputTable, _returnAsClientOutputStrings)
 
-  local outputTable = {};
+  local outputTable = {}
 
   if (_outputTable) then
 
-    outputTable = _outputTable;
+    outputTable = _outputTable
 
-    local numberOfColumns = #outputTable[1];
-    for x = 1, numberOfColumns - 1, 1 do
+    local numberOfColumns = #outputTable[1]
+    for x = 1, numberOfColumns, 1 do
+
+      local numberOfTabsForColumn = self.numbersOfTabsPerColumn[x]
       for y, tableRow in ipairs(outputTable) do
 
         local field = outputTable[y][x]
-        if (field == nil) then
-          field = ClientOutputString(self.symbolWidthLoader, "")
-        elseif (not ObjectUtils:isInstanceOf(field, ClientOutputString)) then
-          field = ClientOutputString(self.symbolWidthLoader, field)
-        end
 
-        field:padUntilTabStopNumber(self.numbersOfTabsPerColumn[x] - 1)
-        outputTable[y][x] = field:toString()
+        if (x < numberOfColumns or _returnAsClientOutputStrings) then
+
+          if (field == nil) then
+            field = string.rep("\t", numberOfTabsForColumn - 1)
+          else
+            field = field:padWithTabs(numberOfTabsForColumn - 1)
+          end
+
+          outputTable[y][x] = field
+
+        else
+          if (field ~= nil) then
+            outputTable[y][x] = field:toString()
+          end
+        end
 
       end
     end
@@ -268,6 +253,50 @@ function ClientOutputTableRenderer:addTabsToFields(_outputTable)
   end
 
   return outputTable
+
+end
+
+---
+-- Generates the row strings from a output table.
+-- The output table must be one dimensional and may not contain empty fields.
+--
+-- @tparam table[] _outputTable The output table
+-- @tparam bool _returnAsClientOutputStrings Whether to return the rows as ClientOutputString instances
+--
+-- @treturn string[]|ClientOutputString[] The output rows
+--
+function ClientOutputTableRenderer:generateRowStrings(_outputTable, _returnAsClientOutputStrings)
+
+  local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
+  local tabStopCalculator = self.parentClientOutputTable:getTabStopCalculator()
+
+  local numberOfUsedTabs, rowWidth
+
+  if (_returnAsClientOutputStrings) then
+    numberOfUsedTabs = 0
+    for x = 1, #self.numbersOfTabsPerColumn, 1 do
+      numberOfUsedTabs = numberOfUsedTabs + self.numbersOfTabsPerColumn[x]
+    end
+
+    rowWidth = tabStopCalculator:convertTabNumberToPosition(numberOfUsedTabs)
+  end
+
+  local rowOutputStrings = {}
+  for y, row in ipairs(_outputTable) do
+
+    -- Build the row output strings by joining the fields together with "\t"s
+    local rowString = table.concat(row, "\t")
+
+    if (_returnAsClientOutputStrings) then
+      rowString = ClientOutputFactory.getInstance():getClientOutputString(rowString)
+      rowString:setCachedWidth(rowWidth)
+    end
+
+    rowOutputStrings[y] = rowString
+
+  end
+
+  return rowOutputStrings
 
 end
 

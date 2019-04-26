@@ -5,4 +5,8 @@
  # @tparam string errorMessage The error message
  #}
 
+##########################[CONFIG]##########################;
+newLineIndent = "          ";
+#########################[ENDCONFIG]########################;
+
 {* colors.error *}[ERROR] {* errorMessage *}

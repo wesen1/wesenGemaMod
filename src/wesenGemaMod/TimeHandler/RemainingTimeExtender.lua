@@ -7,7 +7,7 @@
 
 local Exception = require("Util/Exception");
 local StaticString = require("Output/StaticString");
-local TextTemplate = require("Output/Template/TextTemplate");
+local TemplateException = require("Util/TemplateException");
 
 ---
 -- Extends the remaining time by <x> minutes.
@@ -107,11 +107,9 @@ function RemainingTimeExtender:checkAllowedExtendMinutesOfPlayer(_player, _numbe
   if (_player:getLevel() == 0) then
 
     if (self.remainingExtendMinutes == 0 or self.remainingExtendMinutes < _numberOfExtendMinutes) then
-      error(Exception(
-          TextTemplate(
-            "ExceptionMessages/TimeHandler/InvalidUnarmedExtendTime",
-            { ["remainingExtendMinutes"] = self.remainingExtendMinutes }
-          )
+      error(TemplateException(
+        "TextTemplate/ExceptionMessages/TimeHandler/InvalidUnarmedExtendTime",
+        { ["remainingExtendMinutes"] = self.remainingExtendMinutes }
       ));
     end
 
@@ -163,11 +161,9 @@ function RemainingTimeExtender:validateNumberOfExtendMilliseconds(_numberOfExten
     local maximumNumberOfExtendMilliseconds = maximumIntegerValue - gettimeleftmillis() - additionalMilliseconds;
 
     if (_numberOfExtendMilliseconds > maximumNumberOfExtendMilliseconds) then
-      error(Exception(
-          TextTemplate(
-            "ExceptionMessages/TimeHandler/InvalidExtendTime",
-            { ["maximumNumberOfExtendMilliseconds"] = maximumNumberOfExtendMilliseconds }
-          )
+      error(TemplateException(
+        "TextTemplate/ExceptionMessages/TimeHandler/InvalidExtendTime",
+        { ["maximumNumberOfExtendMilliseconds"] = maximumNumberOfExtendMilliseconds }
       ));
     end
   end
