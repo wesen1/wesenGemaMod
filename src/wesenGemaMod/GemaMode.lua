@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
+local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
 local ColorLoader = require("Output/Util/ColorLoader")
 local CommandLoader = require("CommandHandler/CommandLoader");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
@@ -248,7 +248,7 @@ function GemaMode:parseConfig()
 
   local colorConfigurationFileName = "colors"
   ClientOutputFactory.getInstance():configure({
-      fontConfigFileName = "font_default",
+      fontConfigFileName = "FontDefault",
       defaultConfiguration = config
   })
 

@@ -229,7 +229,9 @@ cp "$installerDirectory/tmp/AC-Lua-master/linux_release/linux_64_server" "$outpu
 echo "Installing dependencies for wesen's gema mod ..."
 apt-get install -y luarocks lua-filesystem lua-sql-mysql
 
+luarocks install lua-resty-template
 luarocks install luaorm
+luarocks install ac-clientoutput
 
 createDirectoriesRecursive "$outputDirectory/lua/scripts" "$userName"
 createDirectoriesRecursive "$outputDirectory/lua/config" "$userName"

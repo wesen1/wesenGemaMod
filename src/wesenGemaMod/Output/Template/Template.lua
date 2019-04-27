@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local ClientOutputFactory = require("Output/ClientOutput/ClientOutputFactory")
+local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
 local TemplateNodeTree = require("Output/Template/TemplateNodeTree/TemplateNodeTree")
 
 ---
