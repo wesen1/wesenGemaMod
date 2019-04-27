@@ -5,7 +5,6 @@
 -- @license MIT
 --
 
-local ClassLoader = require("Util/ClassLoader")
 local RootNode = require("Output/Template/TemplateNodeTree/Nodes/RootNode")
 local TagFinder = require("Output/Template/TemplateNodeTree/TagFinder/TagFinder")
 
@@ -29,7 +28,14 @@ TemplateNodeTree.tagFinder = nil
 --
 -- @tfield BaseNode[] nodeTypes
 --
-TemplateNodeTree.nodeTypes = nil
+TemplateNodeTree.nodeTypes = {
+  require("Output/Template/TemplateNodeTree/Nodes/ConfigNode"),
+  require("Output/Template/TemplateNodeTree/Nodes/ContentNode"),
+  require("Output/Template/TemplateNodeTree/Nodes/CustomFieldNode"),
+  require("Output/Template/TemplateNodeTree/Nodes/RootNode"),
+  require("Output/Template/TemplateNodeTree/Nodes/RowFieldNode"),
+  require("Output/Template/TemplateNodeTree/Nodes/RowNode")
+}
 
 ---
 -- The root node
@@ -93,17 +99,6 @@ end
 
 
 -- Public Methods
-
----
--- Loads all node types and stores them inside the nodeTypes attribute.
---
-function TemplateNodeTree.loadNodeTypes()
-  TemplateNodeTree.nodeTypes = ClassLoader.loadClasses(
-    "lua/scripts/wesenGemaMod/Output/Template/TemplateNodeTree/Nodes",
-    "^.+Node.lua$",
-    { "BaseTemplateNode", "BaseContentNode" }
-  )
-end
 
 ---
 -- Parses a rendered text template into this tree.

@@ -53,5 +53,4 @@ Note: Each row inside a field tag must have the same number of columns
 
 ### Template Including ###
 
-You can include other templates by using the paths relative from the templates base folder to the templates.
-The file extension ".template" must be omitted.
+You can include other templates by using the paths relative from the AssaultCube base folder to the templates.

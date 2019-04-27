@@ -6,7 +6,6 @@
 --
 
 local Template = require("Output/Template/Template")
-local TemplateNodeTree = require("Output/Template/TemplateNodeTree/TemplateNodeTree")
 local TemplateRenderer = require("Output/Template/TemplateRenderer")
 
 ---
@@ -73,8 +72,6 @@ end
 -- @tparam table _configuration The configuration
 --
 function TemplateFactory:configure(_configuration)
-
-  TemplateNodeTree.loadNodeTypes()
 
   if (_configuration["templateRenderer"] ~= nil) then
     self:configureTemplateRenderer(_configuration["templateRenderer"])
