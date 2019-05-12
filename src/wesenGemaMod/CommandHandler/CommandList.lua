@@ -10,7 +10,7 @@
 --
 -- @type CommandList
 --
-local CommandList = setmetatable({}, {});
+local CommandList = setmetatable({}, {})
 
 
 ---
@@ -18,7 +18,7 @@ local CommandList = setmetatable({}, {});
 --
 -- @tfield BaseCommand[] commands
 --
-CommandList.commands = nil;
+CommandList.commands = nil
 
 ---
 -- The list of grouped commands by levels and group names
@@ -30,7 +30,7 @@ CommandList.commands = nil;
 --
 -- @tfield table groupedCommands
 --
-CommandList.groupedCommands = nil;
+CommandList.groupedCommands = nil
 
 ---
 -- The list of sorted command levels
@@ -44,7 +44,7 @@ CommandList.groupedCommands = nil;
 --
 -- @tfield int[] sortedCommandLevels
 --
-CommandList.sortedCommandLevels = nil;
+CommandList.sortedCommandLevels = nil
 
 ---
 -- The list of sorted command group names
@@ -58,14 +58,14 @@ CommandList.sortedCommandLevels = nil;
 --
 -- @tfield table sortedCommandGroupNames
 --
-CommandList.sortedCommandGroupNames = nil;
+CommandList.sortedCommandGroupNames = nil
 
 ---
 -- The parent gema mode
 --
 -- @tfield GemaMode parentGemaMode
 --
-CommandList.parentGemaMode = nil;
+CommandList.parentGemaMode = nil
 
 
 ---
@@ -77,19 +77,19 @@ CommandList.parentGemaMode = nil;
 --
 function CommandList:__construct(_parentGemaMode)
 
-  local instance = setmetatable({}, {__index = CommandList});
+  local instance = setmetatable({}, {__index = CommandList})
 
-  instance.commands = {};
-  instance.groupedCommands = {};
-  instance.sortedCommandLevels = {};
-  instance.sortedCommandGroupNames = {};
-  instance.parentGemaMode = _parentGemaMode;
+  instance.commands = {}
+  instance.groupedCommands = {}
+  instance.sortedCommandLevels = {}
+  instance.sortedCommandGroupNames = {}
+  instance.parentGemaMode = _parentGemaMode
 
-  return instance;
+  return instance
 
 end
 
-getmetatable(CommandList).__call = CommandList.__construct;
+getmetatable(CommandList).__call = CommandList.__construct
 
 
 -- Getters and setters
@@ -100,7 +100,7 @@ getmetatable(CommandList).__call = CommandList.__construct;
 -- @treturn BaseCommand[] The unsorted command list
 --
 function CommandList:getCommands()
-  return self.commands;
+  return self.commands
 end
 
 ---
@@ -109,7 +109,7 @@ end
 -- @tparam BaseCommand[] _commands The unsorted command list
 --
 function CommandList:setCommands(_commands)
-  self.commands = _commands;
+  self.commands = _commands
 end
 
 ---
@@ -118,7 +118,7 @@ end
 -- @treturn table The grouped command list
 --
 function CommandList:getGroupedCommands()
-  return self.groupedCommands;
+  return self.groupedCommands
 end
 
 ---
@@ -127,7 +127,7 @@ end
 -- @tparam table _groupedCommands The grouped command list
 --
 function CommandList:setGroupedCommands(_groupedCommands)
-  self.groupedCommands = _groupedCommands;
+  self.groupedCommands = _groupedCommands
 end
 
 ---
@@ -136,7 +136,7 @@ end
 -- @treturn int[] The list of sorted command levels
 --
 function CommandList:getSortedCommandLevels()
-  return self.sortedCommandLevels;
+  return self.sortedCommandLevels
 end
 
 ---
@@ -145,7 +145,7 @@ end
 -- @tparam int[] _sortedCommandLevels The list of sorted command levels
 --
 function CommandList:setSortedCommandLevels(_sortedCommandLevels)
-  self.sortedCommandLevels = _sortedCommandLevels;
+  self.sortedCommandLevels = _sortedCommandLevels
 end
 
 ---
@@ -154,7 +154,7 @@ end
 -- @treturn table The list of sorted command group names
 --
 function CommandList:getSortedCommandGroupNames()
-  return self.sortedCommandGroupNames;
+  return self.sortedCommandGroupNames
 end
 
 ---
@@ -163,7 +163,7 @@ end
 -- @tparam table _sortedCommandGroupNames The list of sorted command group names
 --
 function CommandList:setSortedCommandGroupNames(_sortedCommandGroupNames)
-  self.sortedCommandGroupNanmes = _sortedCommandGroupNames;
+  self.sortedCommandGroupNanmes = _sortedCommandGroupNames
 end
 
 ---
@@ -172,7 +172,7 @@ end
 -- @treturn GemaMode The parent gema mode
 --
 function CommandList:getParentGemaMode()
-  return self.parentGemaMode;
+  return self.parentGemaMode
 end
 
 
@@ -185,10 +185,10 @@ end
 --
 function CommandList:addCommand(_command)
 
-  _command:initialize(self);
+  _command:initialize(self)
 
-  self:addCommandToUnsortedCommandList(_command);
-  self:addCommandToGroupedCommandList(_command);
+  self:addCommandToUnsortedCommandList(_command)
+  self:addCommandToGroupedCommandList(_command)
 
 end
 
@@ -202,17 +202,17 @@ end
 function CommandList:getCommand(_commandName)
 
   if (self.commands[_commandName] ~= nil) then
-    return self.commands[_commandName];
+    return self.commands[_commandName]
   end
 
   -- Check aliases
   for _, command in pairs(self.commands) do
     if (command:hasAlias(_commandName)) then
-      return command;
+      return command
     end
   end
 
-  return false;
+  return false
 
 end
 
@@ -229,7 +229,7 @@ function CommandList:addCommandToUnsortedCommandList(_command)
   -- Saving the command in lowercase in order to be able to correctly parse commands
   -- that contain uppercase letters (user inputted commands are converted to lowercase
   -- while parsing to make the command parsing case insensitive)
-  self.commands[string.lower(_command:getName())] = _command;
+  self.commands[string.lower(_command:getName())] = _command
 
 end
 
@@ -240,20 +240,20 @@ end
 --
 function CommandList:addCommandToGroupedCommandList(_command)
 
-  local level = _command:getRequiredLevel();
-  local groupName = _command:getGroup();
+  local level = _command:getRequiredLevel()
+  local groupName = _command:getGroup()
 
   if (self.groupedCommands[level] == nil) then
-    self:addLevel(level);
+    self:addLevel(level)
   end
 
   if (self.groupedCommands[level][groupName] == nil) then
-    self:addLevelGroupName(level, groupName);
+    self:addLevelGroupName(level, groupName)
   end
 
   -- Saving the command in lowercase because it is saved in lowercase in the commands list too
-  table.insert(self.groupedCommands[level][groupName], string.lower(_command:getName()));
-  table.sort(self.groupedCommands[level][groupName]);
+  table.insert(self.groupedCommands[level][groupName], string.lower(_command:getName()))
+  table.sort(self.groupedCommands[level][groupName])
 
 end
 
@@ -265,11 +265,11 @@ end
 --
 function CommandList:addLevel(_level)
 
-  self.groupedCommands[_level] = {};
-  self.sortedCommandGroupNames[_level] = {};
+  self.groupedCommands[_level] = {}
+  self.sortedCommandGroupNames[_level] = {}
 
-  table.insert(self.sortedCommandLevels, _level);
-  table.sort(self.sortedCommandLevels);
+  table.insert(self.sortedCommandLevels, _level)
+  table.sort(self.sortedCommandLevels)
 
 end
 
@@ -281,12 +281,12 @@ end
 --
 function CommandList:addLevelGroupName(_level, _groupName)
 
-  self.groupedCommands[_level][_groupName] = {};
+  self.groupedCommands[_level][_groupName] = {}
 
-  table.insert(self.sortedCommandGroupNames[_level], _groupName);
-  table.sort(self.sortedCommandGroupNames[_level]);
+  table.insert(self.sortedCommandGroupNames[_level], _groupName)
+  table.sort(self.sortedCommandGroupNames[_level])
 
 end
 
 
-return CommandList;
+return CommandList

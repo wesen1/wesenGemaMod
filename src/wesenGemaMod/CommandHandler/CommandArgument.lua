@@ -5,14 +5,14 @@
 -- @license MIT
 --
 
-local StaticString = require("Output/StaticString");
+local StaticString = require("Output/StaticString")
 
 ---
 -- Stores the configuration for a single command argument.
 --
 -- @type CommandArgument
 --
-local CommandArgument = setmetatable({}, {});
+local CommandArgument = setmetatable({}, {})
 
 
 ---
@@ -20,7 +20,7 @@ local CommandArgument = setmetatable({}, {});
 --
 -- @tfield string name
 --
-CommandArgument.name = nil;
+CommandArgument.name = nil
 
 ---
 -- The short name of the argument
@@ -28,21 +28,21 @@ CommandArgument.name = nil;
 --
 -- @tfield string shortName
 --
-CommandArgument.shortName = nil;
+CommandArgument.shortName = nil
 
 ---
 -- Defines whether this argument is optional or required
 --
 -- @tfield bool isOptional
 --
-CommandArgument.isOptional = false;
+CommandArgument.isOptional = false
 
 ---
 -- The description of the argument that will be shown in the help text of command
 --
 -- @tfield string description
 --
-CommandArgument.description = nil;
+CommandArgument.description = nil
 
 ---
 -- The type to which this arguments value shall be converted
@@ -50,7 +50,7 @@ CommandArgument.description = nil;
 --
 -- @tfield string type
 --
-CommandArgument.type = "string";
+CommandArgument.type = "string"
 
 
 ---
@@ -68,33 +68,33 @@ function CommandArgument:__construct(_name, _isOptional, _type, _shortName, _des
 
   local instance = setmetatable({}, { __index = CommandArgument })
 
-  instance.name = _name;
+  instance.name = _name
 
   if (_isOptional ~= nil) then
-    instance.isOptional = _isOptional;
+    instance.isOptional = _isOptional
   end
 
   if (_type) then
-    instance.type = _type;
+    instance.type = _type
   end
 
   if (_shortName) then
-    instance.shortName = _shortName;
+    instance.shortName = _shortName
   else
-    instance.shortName = _name;
+    instance.shortName = _name
   end
 
   if (_description) then
-    instance.description = _description;
+    instance.description = _description
   else
-    instance.description = StaticString("defaultArgumentDescription"):getString();
+    instance.description = StaticString("defaultArgumentDescription"):getString()
   end
 
-  return instance;
+  return instance
 
 end
 
-getmetatable(CommandArgument).__call = CommandArgument.__construct;
+getmetatable(CommandArgument).__call = CommandArgument.__construct
 
 
 -- Getters and Setters
@@ -105,7 +105,7 @@ getmetatable(CommandArgument).__call = CommandArgument.__construct;
 -- @treturn string The arguments full name
 --
 function CommandArgument:getName()
-  return self.name;
+  return self.name
 end
 
 ---
@@ -114,7 +114,7 @@ end
 -- @treturn string The arguments short name
 --
 function CommandArgument:getShortName()
-  return self.shortName;
+  return self.shortName
 end
 
 ---
@@ -123,7 +123,7 @@ end
 -- @treturn string The arguments type
 --
 function CommandArgument:getType()
-  return self.type;
+  return self.type
 end
 
 ---
@@ -132,7 +132,7 @@ end
 -- @treturn bool True if the argument is optional, false if it is required
 --
 function CommandArgument:getIsOptional()
-  return self.isOptional;
+  return self.isOptional
 end
 
 ---
@@ -141,8 +141,8 @@ end
 -- @treturn string The arguments description
 --
 function CommandArgument:getDescription()
-  return self.description;
+  return self.description
 end
 
 
-return CommandArgument;
+return CommandArgument

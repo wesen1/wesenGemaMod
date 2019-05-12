@@ -5,15 +5,15 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception");
-local StaticString = require("Output/StaticString");
+local Exception = require("Util/Exception")
+local StaticString = require("Output/StaticString")
 
 ---
 -- Handles command execution.
 --
 -- @type CommandExecutor
 --
-local CommandExecutor = setmetatable({}, {});
+local CommandExecutor = setmetatable({}, {})
 
 
 ---
@@ -22,14 +22,11 @@ local CommandExecutor = setmetatable({}, {});
 -- @treturn CommandExecutor The CommandExecutor instance
 --
 function CommandExecutor:__construct()
-
-  local instance = setmetatable({}, {__index = CommandExecutor});
-
-  return instance;
-
+  local instance = setmetatable({}, {__index = CommandExecutor})
+  return instance
 end
 
-getmetatable(CommandExecutor).__call = CommandExecutor.__construct;
+getmetatable(CommandExecutor).__call = CommandExecutor.__construct
 
 
 -- Public Methods
@@ -55,19 +52,19 @@ function CommandExecutor:executeCommand(_command, _arguments, _player)
     -- The CommandExecutor relies on the CommandParser to check that all arguments are valid
 
     -- Validate the input arguments
-    _command:validateInputArguments(_arguments);
+    _command:validateInputArguments(_arguments)
 
     -- Adjust the input arguments (if needed)
-    local arguments = _command:adjustInputArguments(_arguments);
+    local arguments = _command:adjustInputArguments(_arguments)
 
     -- Execute the command
-    return _command:execute(_player, arguments);
+    return _command:execute(_player, arguments)
 
   else
-    error(Exception(StaticString("exceptionNoPermissionToUseCommand"):getString()));
+    error(Exception(StaticString("exceptionNoPermissionToUseCommand"):getString()))
   end
 
 end
 
 
-return CommandExecutor;
+return CommandExecutor

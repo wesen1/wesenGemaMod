@@ -5,14 +5,14 @@
 -- @license MIT
 --
 
-local StaticString = require("Output/StaticString");
+local StaticString = require("Output/StaticString")
 
 ---
 -- Stores the configuration for a single command.
 --
 -- @type BaseCommand
 --
-local BaseCommand = setmetatable({}, {});
+local BaseCommand = setmetatable({}, {})
 
 
 ---
@@ -21,14 +21,14 @@ local BaseCommand = setmetatable({}, {});
 --
 -- @tfield string name
 --
-BaseCommand.name = nil;
+BaseCommand.name = nil
 
 ---
 -- The alternative command names (must contain a leading "!" and must be lowercase)
 --
 -- @tfield string[] aliases
 --
-BaseCommand.aliases = {};
+BaseCommand.aliases = {}
 
 ---
 -- The minimum player level that is necessary to call the command
@@ -39,7 +39,7 @@ BaseCommand.aliases = {};
 --
 -- @tfield int requiredLevel
 --
-BaseCommand.requiredLevel = 0;
+BaseCommand.requiredLevel = 0
 
 ---
 -- List of arguments that can/must be passed when calling the command
@@ -47,7 +47,7 @@ BaseCommand.requiredLevel = 0;
 --
 -- @tfield CommandArgument[] arguments
 --
-BaseCommand.arguments = {};
+BaseCommand.arguments = {}
 
 ---
 -- Short description of what the command does
@@ -55,7 +55,7 @@ BaseCommand.arguments = {};
 --
 -- @tfield string description
 --
-BaseCommand.description = nil;
+BaseCommand.description = nil
 
 ---
 -- Group to which the command belongs (Default: "General")
@@ -63,21 +63,21 @@ BaseCommand.description = nil;
 --
 -- @tfield string group
 --
-BaseCommand.group = nil;
+BaseCommand.group = nil
 
 ---
 -- The parent command list
 --
 -- @tfield CommandList parentCommandList
 --
-BaseCommand.parentCommandList = nil;
+BaseCommand.parentCommandList = nil
 
 ---
 -- The output
 --
 -- @tfield Output output
 --
-BaseCommand.output = nil;
+BaseCommand.output = nil
 
 
 ---
@@ -94,43 +94,43 @@ BaseCommand.output = nil;
 --
 function BaseCommand:__construct(_name, _requiredLevel, _group, _arguments, _description, _aliases)
 
-  local instance = setmetatable({}, {__index = BaseCommand});
+  local instance = setmetatable({}, {__index = BaseCommand})
 
-  instance.name = _name;
+  instance.name = _name
 
   if (_requiredLevel) then
-    instance.requiredLevel = _requiredLevel;
+    instance.requiredLevel = _requiredLevel
   end
 
   if (_group) then
-    instance.group = _group;
+    instance.group = _group
   else
-    instance.group = StaticString("defaultCommandGroup"):getString();
+    instance.group = StaticString("defaultCommandGroup"):getString()
   end
 
   if (_description) then
-    instance.description = _description;
+    instance.description = _description
   else
-    instance.description = StaticString("defaultCommandDescription"):getString();
+    instance.description = StaticString("defaultCommandDescription"):getString()
   end
 
   if (_arguments) then
-    instance.arguments = _arguments;
+    instance.arguments = _arguments
   else
-    instance.aliases = {};
+    instance.aliases = {}
   end
 
   if (_aliases) then
-    instance.aliases = _aliases;
+    instance.aliases = _aliases
   else
-    instance.aliases = {};
+    instance.aliases = {}
   end
 
-  return instance;
+  return instance
 
 end
 
-getmetatable(BaseCommand).__call = BaseCommand.__construct;
+getmetatable(BaseCommand).__call = BaseCommand.__construct
 
 
 -- Getters and setters
@@ -141,7 +141,7 @@ getmetatable(BaseCommand).__call = BaseCommand.__construct;
 -- @treturn string The command name
 --
 function BaseCommand:getName()
-  return self.name;
+  return self.name
 end
 
 ---
@@ -150,7 +150,7 @@ end
 -- @treturn string[] The command aliases
 --
 function BaseCommand:getAliases()
-  return self.aliases;
+  return self.aliases
 end
 
 ---
@@ -159,7 +159,7 @@ end
 -- @treturn int The minimum required level that is necessary to execute this command
 --
 function BaseCommand:getRequiredLevel()
-  return self.requiredLevel;
+  return self.requiredLevel
 end
 
 ---
@@ -168,7 +168,7 @@ end
 -- @treturn table The command arguments
 --
 function BaseCommand:getArguments()
-  return self.arguments;
+  return self.arguments
 end
 
 ---
@@ -177,7 +177,7 @@ end
 -- @treturn string The command description
 --
 function BaseCommand:getDescription()
-  return self.description;
+  return self.description
 end
 
 ---
@@ -186,7 +186,7 @@ end
 -- @treturn string The command group
 --
 function BaseCommand:getGroup()
-  return self.group;
+  return self.group
 end
 
 ---
@@ -195,7 +195,7 @@ end
 -- @treturn CommandList The parent command list
 --
 function BaseCommand:getParentCommandList()
-  return self.parentCommandList;
+  return self.parentCommandList
 end
 
 
@@ -207,8 +207,8 @@ end
 -- @tparam CommandList _commandList The command list to initialize this command with
 --
 function BaseCommand:initialize(_commandList)
-  self.parentCommandList = _commandList;
-  self.output = _commandList:getParentGemaMode():getOutput();
+  self.parentCommandList = _commandList
+  self.output = _commandList:getParentGemaMode():getOutput()
 end
 
 ---
@@ -218,14 +218,14 @@ end
 --
 function BaseCommand:getRequiredArguments()
 
-  local requiredArguments = {};
+  local requiredArguments = {}
   for _, argument in ipairs(self.arguments) do
     if (not argument:getIsOptional()) then
-      table.insert(requiredArguments, argument);
+      table.insert(requiredArguments, argument)
     end
   end
 
-  return requiredArguments;
+  return requiredArguments
 
 end
 
@@ -235,7 +235,7 @@ end
 -- @treturn int The number of required arguments
 --
 function BaseCommand:getNumberOfRequiredArguments()
-  return #self:getRequiredArguments();
+  return #self:getRequiredArguments()
 end
 
 ---
@@ -244,7 +244,7 @@ end
 -- @treturn int The total number of arguments
 --
 function BaseCommand:getNumberOfArguments()
-  return #self.arguments;
+  return #self.arguments
 end
 
 ---
@@ -258,11 +258,11 @@ function BaseCommand:hasAlias(_alias)
 
   for _, alias in pairs(self.aliases) do
     if (alias:lower() == _alias:lower()) then
-      return true;
+      return true
     end
   end
 
-  return false;
+  return false
 
 end
 
@@ -296,8 +296,8 @@ end
 -- @treturn mixed[] The updated list of arguments
 --
 function BaseCommand:adjustInputArguments(_arguments)
-  return _arguments;
+  return _arguments
 end
 
 
-return BaseCommand;
+return BaseCommand

@@ -5,18 +5,18 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception");
-local StaticString = require("Output/StaticString");
-local StringUtils = require("Util/StringUtils");
-local TableUtils = require("Util/TableUtils");
-local TemplateException = require("Util/TemplateException");
+local Exception = require("Util/Exception")
+local StaticString = require("Output/StaticString")
+local StringUtils = require("Util/StringUtils")
+local TableUtils = require("Util/TableUtils")
+local TemplateException = require("Util/TemplateException")
 
 ---
 -- Parses command input strings.
 --
 -- @type CommandParser
 --
-local CommandParser = setmetatable({}, {});
+local CommandParser = setmetatable({}, {})
 
 
 ---
@@ -24,14 +24,14 @@ local CommandParser = setmetatable({}, {});
 --
 -- @tfield Output output
 --
-CommandParser.command = nil;
+CommandParser.command = nil
 
 ---
 -- The last parsed arguments
 --
 -- @tfield String[] arguments
 --
-CommandParser.arguments = nil;
+CommandParser.arguments = nil
 
 
 ---
@@ -42,14 +42,11 @@ CommandParser.arguments = nil;
 -- @treturn CommandParser The CommandParser instance
 --
 function CommandParser:__construct(_output)
-
-  local instance = setmetatable({}, {__index = CommandParser});
-
-  return instance;
-
+  local instance = setmetatable({}, {__index = CommandParser})
+  return instance
 end
 
-getmetatable(CommandParser).__call = CommandParser.__construct;
+getmetatable(CommandParser).__call = CommandParser.__construct
 
 
 -- Getters and Setters
@@ -60,7 +57,7 @@ getmetatable(CommandParser).__call = CommandParser.__construct;
 -- @treturn BaseCommand The last parsed command
 --
 function CommandParser:getCommand()
-  return self.command;
+  return self.command
 end
 
 ---
@@ -69,7 +66,7 @@ end
 -- @treturn String[] The last parsed arguments
 --
 function CommandParser:getArguments()
-  return self.arguments;
+  return self.arguments
 end
 
 
@@ -83,14 +80,8 @@ end
 -- @treturn Bool True if the string is a command, false otherwise
 --
 function CommandParser:isCommand(_text)
-
-  -- if first character is "!" and second is not "!"
-  if string.sub(_text,1,1) == "!" and string.sub(_text,2,2) ~= "!" then
-    return true;
-  else
-    return false;
-  end
-
+  -- If the first character is "!" and the second character is anything but "!" and whitespace
+  return (_text:match("^![^! ]+$"))
 end
 
 ---
@@ -105,14 +96,14 @@ end
 --
 function CommandParser:parseCommand(_inputText, _commandList)
 
-  self.command = nil;
-  self.arguments = nil;
+  self.command = nil
+  self.arguments = nil
 
-  local inputTextParts = StringUtils:split(_inputText, " ");
+  local inputTextParts = StringUtils:split(_inputText, " ")
 
   -- Find the command
-  local commandName = string.lower(inputTextParts[1]);
-  local command = _commandList:getCommand(commandName);
+  local commandName = string.lower(inputTextParts[1])
+  local command = _commandList:getCommand(commandName)
 
   if (not command) then
     error(TemplateException(
@@ -121,8 +112,8 @@ function CommandParser:parseCommand(_inputText, _commandList)
     ))
   end
 
-  self.command = command;
-  self.arguments = self:parseArguments(command, TableUtils:slice(inputTextParts, 2));
+  self.command = command
+  self.arguments = self:parseArguments(command, TableUtils:slice(inputTextParts, 2))
 
 end
 
@@ -142,34 +133,34 @@ end
 --
 function CommandParser:parseArguments(_command, _argumentTextParts)
 
-  local numberOfArgumentTextParts = #_argumentTextParts;
+  local numberOfArgumentTextParts = #_argumentTextParts
 
   -- Check whether the number of arguments is valid
   if (numberOfArgumentTextParts < _command:getNumberOfRequiredArguments()) then
     error(TemplateException(
       "TextTemplate/ExceptionMessages/CommandHandler/NotEnoughCommandArguments",
       { numberOfPassedArguments = numberOfArgumentTextParts, command = _command }
-    ));
+    ))
 
   elseif (numberOfArgumentTextParts > _command:getNumberOfArguments()) then
-    error(Exception(StaticString("exceptionTooManyCommandArguments"):getString()));
+    error(Exception(StaticString("exceptionTooManyCommandArguments"):getString()))
   end
 
   -- Create an associative array from the input text parts
-  local inputArguments = {};
+  local inputArguments = {}
   if (numberOfArgumentTextParts > 0) then
 
     -- Fetch the argument names
-    local arguments = _command:getArguments();
+    local arguments = _command:getArguments()
 
     for index, argument in ipairs(arguments) do
-      local argumentValue = _argumentTextParts[index];
-      inputArguments[argument:getName()] = self:castArgumentToType(argument, argumentValue);
+      local argumentValue = _argumentTextParts[index]
+      inputArguments[argument:getName()] = self:castArgumentToType(argument, argumentValue)
     end
 
   end
 
-  return inputArguments;
+  return inputArguments
 
 end
 
@@ -185,23 +176,23 @@ end
 function CommandParser:castArgumentToType(_argument, _argumentValue)
 
   if (_argument:getType() == "string") then
-    return _argumentValue;
+    return _argumentValue
 
   elseif (_argument:getType() == "integer") then
     if (_argumentValue:match("^%d+$") ~= nil) then
-      return tonumber(_argumentValue);
+      return tonumber(_argumentValue)
     end
 
   elseif (_argument:getType() == "float") then
     if (_argumentValue:match("^%d+%.?%d?$") ~= nil) then
-      return tonumber(_argumentValue);
+      return tonumber(_argumentValue)
     end
 
   elseif (_argument:getType() == "bool") then
     if (_argumentValue == "true") then
-      return true;
+      return true
     elseif (_argumentValue == "false") then
-      return false;
+      return false
     end
 
   else

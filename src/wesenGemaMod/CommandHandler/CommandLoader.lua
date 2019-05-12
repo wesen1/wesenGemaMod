@@ -5,15 +5,15 @@
 -- @license MIT
 --
 
-local ClassLoader = require("Util/ClassLoader");
-local CommandList = require("CommandHandler/CommandList");
+local ClassLoader = require("Util/ClassLoader")
+local CommandList = require("CommandHandler/CommandList")
 
 ---
 -- Loads all commands from a specified commands directory.
 --
 -- @type CommandLoader
 --
-local CommandLoader = setmetatable({}, {});
+local CommandLoader = setmetatable({}, {})
 
 
 ---
@@ -24,14 +24,11 @@ local CommandLoader = setmetatable({}, {});
 -- @treturn CommandLoader The CommandLoader instance
 --
 function CommandLoader:__construct()
-
-  local instance = setmetatable({}, {__index = CommandLoader});
-
-  return instance;
-
+  local instance = setmetatable({}, {__index = CommandLoader})
+  return instance
 end
 
-getmetatable(CommandLoader).__call = CommandLoader.__construct;
+getmetatable(CommandLoader).__call = CommandLoader.__construct
 
 
 -- Public Methods
@@ -46,18 +43,18 @@ getmetatable(CommandLoader).__call = CommandLoader.__construct;
 --
 function CommandLoader:loadCommands(_parentGemaMode, _commandClassesDirectoryPath)
 
-  local commandList = CommandList(_parentGemaMode);
+  local commandList = CommandList(_parentGemaMode)
 
   -- Load all files whose names end with "Command.lua"
   local commandClasses = ClassLoader.loadClasses(_commandClassesDirectoryPath, "^.+Command.lua$")
   for _, commandClass in ipairs(commandClasses) do
-    local commandInstance = commandClass();
-    commandList:addCommand(commandInstance);
+    local commandInstance = commandClass()
+    commandList:addCommand(commandInstance)
   end
 
-  return commandList;
+  return commandList
 
 end
 
 
-return CommandLoader;
+return CommandLoader
