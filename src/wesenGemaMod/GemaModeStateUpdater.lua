@@ -8,7 +8,7 @@
 ---
 -- Handles updating the gema modes state.
 --
-local GemaModeStateUpdater = setmetatable({}, {});
+local GemaModeStateUpdater = setmetatable({}, {})
 
 
 ---
@@ -16,7 +16,7 @@ local GemaModeStateUpdater = setmetatable({}, {});
 --
 -- @tfield GemaMode parentGemaMode
 --
-GemaModeStateUpdater.parentGemaMode = nil;
+GemaModeStateUpdater.parentGemaMode = nil
 
 
 ---
@@ -27,16 +27,13 @@ GemaModeStateUpdater.parentGemaMode = nil;
 -- @treturn GemaModeStateUpdater The GemaModeStateUpdater instance
 --
 function GemaModeStateUpdater:__construct(_parentGemaMode)
+  local instance = setmetatable({}, {__index = GemaModeStateUpdater})
+  instance.parentGemaMode = _parentGemaMode
 
-  local instance = setmetatable({}, {__index = GemaModeStateUpdater});
-
-  instance.parentGemaMode = _parentGemaMode;
-
-  return instance;
-
+  return instance
 end
 
-getmetatable(GemaModeStateUpdater).__call = GemaModeStateUpdater.__construct;
+getmetatable(GemaModeStateUpdater).__call = GemaModeStateUpdater.__construct
 
 
 -- Public Methods
@@ -45,16 +42,16 @@ getmetatable(GemaModeStateUpdater).__call = GemaModeStateUpdater.__construct;
 -- Sets the next environment.
 --
 function GemaModeStateUpdater:setNextEnvironment(_nextEnvironment)
-  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
-  environmentHandler:setNextEnvironment(_nextEnvironment);
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler()
+  environmentHandler:setNextEnvironment(_nextEnvironment)
 end
 
 ---
 -- Resets the next environment back to the maprots next environment.
 --
 function GemaModeStateUpdater:resetNextEnvironment()
-  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
-  environmentHandler:setNextEnvironment(self.mapRot:getNextEnvironment());
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler()
+  environmentHandler:setNextEnvironment(self.mapRot:getNextEnvironment())
 end
 
 ---
@@ -64,17 +61,17 @@ end
 --
 function GemaModeStateUpdater:switchToNextEnvironment()
 
-  local nextGemaModeStateUpdate = self:getNextGemaModeStateUpdate();
+  local nextGemaModeStateUpdate = self:getNextGemaModeStateUpdate()
 
   if (nextGemaModeStateUpdate ~= nil) then
-    self.parentGemaMode:setIsActive(nextGemaModeStateUpdate);
+    self.parentGemaMode:setIsActive(nextGemaModeStateUpdate)
   end
 
-  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
-  local mapRot = self.parentGemaMode:getMapRot();
-  environmentHandler:switchToNextEnvironment(mapRot);
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler()
+  local mapRot = self.parentGemaMode:getMapRot()
+  environmentHandler:switchToNextEnvironment(mapRot)
 
-  return nextGemaModeStateUpdate;
+  return nextGemaModeStateUpdate
 
 end
 
@@ -85,10 +82,10 @@ end
 --
 function GemaModeStateUpdater:getNextGemaModeStateUpdate()
 
-  local nextGemaModeState = self:getNextGemaModeState();
+  local nextGemaModeState = self:getNextGemaModeState()
 
   if (nextGemaModeState ~= self.parentGemaMode:getIsActive()) then
-    return nextGemaModeState;
+    return nextGemaModeState
   end
 
 end
@@ -103,20 +100,20 @@ end
 --
 function GemaModeStateUpdater:getNextGemaModeState()
 
-  local nextGemaModeState = self.parentGemaMode:getIsActive();
+  local nextGemaModeState = self.parentGemaMode:getIsActive()
 
-  local environmentHandler = self.parentGemaMode:getEnvironmentHandler();
-  local isNextEnvironmentGemaCompatible = environmentHandler:isNextEnvironmentGemaCompatible();
+  local environmentHandler = self.parentGemaMode:getEnvironmentHandler()
+  local isNextEnvironmentGemaCompatible = environmentHandler:isNextEnvironmentGemaCompatible()
 
   if (self.parentGemaMode:getIsActive() and not isNextEnvironmentGemaCompatible) then
-    nextGemaModeState = false;
+    nextGemaModeState = false
   elseif (not self.parentGemaMode:getIsActive() and isNextEnvironmentGemaCompatible) then
-    nextGemaModeState = true;
+    nextGemaModeState = true
   end
 
-  return nextGemaModeState;
+  return nextGemaModeState
 
 end
 
 
-return GemaModeStateUpdater;
+return GemaModeStateUpdater

@@ -10,7 +10,7 @@
 --
 -- @type ColorLoader
 --
-local ColorLoader = setmetatable({}, {});
+local ColorLoader = setmetatable({}, {})
 
 
 ---
@@ -18,7 +18,7 @@ local ColorLoader = setmetatable({}, {});
 --
 -- @tfield string colorConfigFileName
 --
-ColorLoader.colorConfigFileName = nil;
+ColorLoader.colorConfigFileName = nil
 
 
 ---
@@ -29,32 +29,34 @@ ColorLoader.colorConfigFileName = nil;
 -- @treturn ColorLoader The ColorLoader instance
 --
 function ColorLoader:__construct(_colorConfigFileName)
+  local instance = setmetatable({}, {__index = ColorLoader})
+  instance.colorConfigFileName = _colorConfigFileName
 
-  local instance = setmetatable({}, {__index = ColorLoader});
-
-  instance.colorConfigFileName = _colorConfigFileName;
-
-  return instance;
-
+  return instance
 end
 
-getmetatable(ColorLoader).__call = ColorLoader.__construct;
+getmetatable(ColorLoader).__call = ColorLoader.__construct
 
 
 -- Public Methods
 
+---
+-- Returns the colors from the configured color config file.
+--
+-- @treturn string[] The colors
+--
 function ColorLoader:getColors()
 
-  local colorConfiguration = cfg.totable(self.colorConfigFileName);
+  local colorConfiguration = cfg.totable(self.colorConfigFileName)
 
-  local colors = {};
+  local colors = {}
   for colorName, colorId in pairs(colorConfiguration) do
-    colors[colorName] = "\f" .. colorId;
+    colors[colorName] = "\f" .. colorId
   end
 
-  return colors;
+  return colors
 
 end
 
 
-return ColorLoader;
+return ColorLoader

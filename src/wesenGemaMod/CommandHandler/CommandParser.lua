@@ -81,7 +81,7 @@ end
 --
 function CommandParser:isCommand(_text)
   -- If the first character is "!" and the second character is anything but "!" and whitespace
-  return (_text:match("^![^! ]+$"))
+  return (_text:match("^![^! ].*$"))
 end
 
 ---

@@ -1,6 +1,6 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2017-2019 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
@@ -8,20 +8,12 @@
 local BaseEventHandler = require("EventHandler/BaseEventHandler")
 
 ---
--- Class that handles flag actions.
+-- Handles flag actions.
 -- FlagActionHandler inherits from BaseEventHandler
 --
 -- @type FlagActionHandler
 --
 local FlagActionHandler = setmetatable({}, {__index = BaseEventHandler})
-
-
----
--- The map record printer
---
--- @tfield MapRecordPrinter mapRecord Printer
---
-FlagActionHandler.mapRecordPrinter = nil
 
 
 ---
@@ -32,15 +24,13 @@ FlagActionHandler.mapRecordPrinter = nil
 -- @treturn FlagActionHandler The FlagActionHandler instance
 --
 function FlagActionHandler:__construct(_parentGemaMode)
+  local instance = BaseEventHandler(_parentGemaMode, "onFlagAction")
+  setmetatable(instance, {__index = FlagActionHandler})
 
-  local instance = BaseEventHandler(_parentGemaMode, "onFlagAction");
-  setmetatable(instance, {__index = FlagActionHandler});
-
-  return instance;
-
+  return instance
 end
 
-getmetatable(FlagActionHandler).__call = FlagActionHandler.__construct;
+getmetatable(FlagActionHandler).__call = FlagActionHandler.__construct
 
 
 -- Public Methods
@@ -85,11 +75,11 @@ end
 --
 function FlagActionHandler:registerRecord(scoreAttempt)
 
-  local mapTop = self.parentGemaMode:getMapTopHandler():getMapTop("main");
-  local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList());
+  local mapTop = self.parentGemaMode:getMapTopHandler():getMapTop("main")
+  local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList())
 
-  self.output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record });
-  mapTop:addRecord(record);
+  self.output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record })
+  mapTop:addRecord(record)
 
 end
 
@@ -100,8 +90,8 @@ end
 -- @tparam int _flag The flag id of the flag that was dropped
 --
 function FlagActionHandler:resetFlag(_player, _flag)
-  flagaction(_player:getCn(), FA_RESET, _flag);
+  flagaction(_player:getCn(), FA_RESET, _flag)
 end
 
 
-return FlagActionHandler;
+return FlagActionHandler

@@ -5,14 +5,14 @@
 -- @license MIT
 --
 
-local TemplateFactory = require("Output/Template/TemplateFactory");
+local TemplateFactory = require("Output/Template/TemplateFactory")
 
 ---
 -- Handles outputs of texts to clients.
 --
 -- @type Output
 --
-local Output = setmetatable({}, {});
+local Output = setmetatable({}, {})
 
 
 ---
@@ -20,14 +20,14 @@ local Output = setmetatable({}, {});
 --
 -- @tfield TableTemplateRenderer tableTemplateRenderer
 --
-Output.tableTemplateRenderer = nil;
+Output.tableTemplateRenderer = nil
 
 ---
 -- The text template renderer
 --
 -- @tfield TextTemplateRenderer textTemplateRenderer
 --
-Output.textTemplateRenderer = nil;
+Output.textTemplateRenderer = nil
 
 
 ---
@@ -54,7 +54,7 @@ getmetatable(Output).__call = Output.__construct
 function Output:playerSayText(_text, _player)
 
   -- sayas is used here so that the other players can still use local commands like ignore
-  sayas(_text, _player, false, false);
+  sayas(_text, _player, false, false)
 end
 
 ---
@@ -104,11 +104,9 @@ end
 -- @tparam int _player The player
 --
 function Output:printException(_exception, _player)
-
   self:printTextTemplate(
     "TextTemplate/ServerMessageError", { errorMessage = _exception:getMessage() }, _player
   )
-
 end
 
 
@@ -123,15 +121,15 @@ end
 function Output:print(_text, _player)
 
   -- -1 targets all connected players
-  local cn = -1;
+  local cn = -1
 
   if (_player ~= nil) then
-    cn = _player:getCn();
+    cn = _player:getCn()
   end
 
-  clientprint(cn, _text);
+  clientprint(cn, _text)
 
 end
 
 
-return Output;
+return Output

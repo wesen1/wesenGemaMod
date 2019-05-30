@@ -12,7 +12,7 @@
 --
 -- @type BaseEventHandler
 --
-local BaseEventHandler = setmetatable({}, {});
+local BaseEventHandler = setmetatable({}, {})
 
 
 ---
@@ -20,7 +20,7 @@ local BaseEventHandler = setmetatable({}, {});
 --
 -- @tfield GemaMode parentGemaMode
 --
-BaseEventHandler.parentGemaMode = nil;
+BaseEventHandler.parentGemaMode = nil
 
 ---
 -- The name of the event that this event handler handles
@@ -34,7 +34,7 @@ BaseEventHandler.targetEventName = nil
 --
 -- @tparam Output output
 --
-BaseEventHandler.output = nil;
+BaseEventHandler.output = nil
 
 
 ---
@@ -47,18 +47,18 @@ BaseEventHandler.output = nil;
 --
 function BaseEventHandler:__construct(_parentGemaMode, _targetEventName)
 
-  local instance = setmetatable({}, {__index = BaseEventHandler});
+  local instance = setmetatable({}, {__index = BaseEventHandler})
 
-  instance.parentGemaMode = _parentGemaMode;
+  instance.parentGemaMode = _parentGemaMode
   instance.targetEventName = _targetEventName
 
-  instance.output = _parentGemaMode:getOutput();
+  instance.output = _parentGemaMode:getOutput()
 
-  return instance;
+  return instance
 
 end
 
-getmetatable(BaseEventHandler).__call = BaseEventHandler.__construct;
+getmetatable(BaseEventHandler).__call = BaseEventHandler.__construct
 
 
 -- Public Methods

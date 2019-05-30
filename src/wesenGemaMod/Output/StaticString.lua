@@ -10,7 +10,7 @@
 --
 -- @type StaticString
 --
-local StaticString = setmetatable({}, {});
+local StaticString = setmetatable({}, {})
 
 
 ---
@@ -18,7 +18,7 @@ local StaticString = setmetatable({}, {});
 --
 -- @tfield string stringId
 --
-StaticString.stringId = nil;
+StaticString.stringId = nil
 
 
 ---
@@ -29,16 +29,13 @@ StaticString.stringId = nil;
 -- @treturn StaticString The StaticString instance
 --
 function StaticString:__construct(_stringId)
+  local instance = setmetatable({}, {__index = StaticString})
+  instance.stringId = _stringId
 
-  local instance = setmetatable({}, {__index = StaticString});
-
-  instance.stringId = _stringId;
-
-  return instance;
-
+  return instance
 end
 
-getmetatable(StaticString).__call = StaticString.__construct;
+getmetatable(StaticString).__call = StaticString.__construct
 
 
 ---
@@ -47,7 +44,7 @@ getmetatable(StaticString).__call = StaticString.__construct;
 -- @treturn string The static string
 --
 function StaticString:__tostring()
-  return self:getString();
+  return self:getString()
 end
 
 
@@ -60,11 +57,11 @@ end
 --
 function StaticString:getString()
 
-  local staticString = cfg.getvalue("templates/Strings", self.stringId);
+  local staticString = cfg.getvalue("templates/Strings", self.stringId)
 
   -- Discard the first and last symbol in the string (which are the '"' delimiters)
-  return staticString:sub(2, -2);
+  return staticString:sub(2, -2)
 end
 
 
-return StaticString;
+return StaticString
