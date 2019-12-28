@@ -68,7 +68,7 @@ local function requireTests(_testDirectoryPath)
 end
 
 
-initializeORM()
+--initializeORM()
 
 -- Require all lua files in the wesenGemaMod sub directory
 --requireTests("wesenGemaMod");
