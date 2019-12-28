@@ -1,0 +1,8 @@
+{#
+ # Generates the log message for when a player says text.
+ #
+ # @tparam Player player The player
+ # @tparam string text The text that the player said
+ #}
+
+[{* player:getIp() *}] {* player:getName() *} says: '{* text *}'

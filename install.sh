@@ -36,7 +36,7 @@ getAbsolutePath()
   else
     # If the path does not start with a slash it is a relative path
     # Therefore the current working directory (absolute path) is added in front of it
-    absoluteDirectory="$PWD/$pathString"
+    absoluteDirectory="$(pwd)/$pathString"
   fi
 
   echo $absoluteDirectory
@@ -58,7 +58,7 @@ askYesNoQuestion()
   #
   # Convert user input to lowercase
   # Source: https://stackoverflow.com/a/11392488
-  #  
+  #
   userDecision=$(echo "$userDecision" | tr '[:upper:]' '[:lower:]')
 
   if [ "$userDecision" == "yes" ] || [ "$userDecision" == "y" ]; then
@@ -177,20 +177,20 @@ fi
 
 ## Install AssaultCube Server
 
-cd "$outputDirectory"
-mkdir "tmp"
-
 apt-get update
 
 echo "Installing AssaultCube server dependencies ..."
 apt-get install -y libsdl1.2debian
 
-echo "Downloading AssaultCube ..."
-wget https://github.com/assaultcube/AC/releases/download/v1.2.0.2/AssaultCube_v1.2.0.2.tar.bz2 -P "tmp"
+mkdir "$installerDirectory/tmp"
+
+if [ ! -f "$installerDirectory/tmp/AssaultCube_v1.2.0.2.tar.bz2" ]; then
+  echo "Downloading AssaultCube ..."
+  wget https://github.com/assaultcube/AC/releases/download/v1.2.0.2/AssaultCube_v1.2.0.2.tar.bz2 -P "$installerDirectory/tmp"
+fi
 
 echo "Extracting AssaultCube ..."
-tar -xvf tmp/AssaultCube_v1.2.0.2.tar.bz2 -C ./
-mv AssaultCube_v1.2.0.2 lua_server
+tar -xvf "$installerDirectory/tmp/AssaultCube_v1.2.0.2.tar.bz2" -C "$outputDirectory" --strip-components=1
 
 
 ## Install Lua mod
@@ -198,38 +198,52 @@ mv AssaultCube_v1.2.0.2 lua_server
 echo "Installing packages that are necessary to build lua mod ..."
 apt-get install -y lib32z1-dev g++ lua5.1-dev unzip
 
-echo "Downloading lua mod ..."
-wget https://github.com/wesen1/AC-Lua/archive/master.zip -P "tmp"
+if [ ! -f "$installerDirectory/tmp/master.zip" ]; then
+  echo "Downloading lua mod ..."
+  wget https://github.com/wesen1/AC-Lua/archive/master.zip -P "$installerDirectory/tmp"
+fi
 
-cd tmp
+if [ ! -d "$installerDirectory/tmp/AC-Lua-master" ]; then
+  echo "Extracting lua mod ..."
+  unzip -d "$installerDirectory/tmp/" "$installerDirectory/tmp/master.zip"
+fi
 
-echo "Extracting lua mod ..."
-unzip master.zip
+if [ ! -f "$installerDirectory/tmp/AC-Lua-master/linux_release/linux_64_server" ]; then
 
-echo "Building lua mod ..."
+  echo "Building lua mod ..."
+  cd "$installerDirectory/tmp/AC-Lua-master"
 
-# "Fix" compile error in Lua mod by commenting out the line below and build the executable
-sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/" AC-Lua-master/src/tools.h
+  # "Fix" compile error in Lua mod by commenting out the line below and build the executable
+  sed -i "s/static inline float round(float x) { return floor(x + 0.5f); }/\/\/&/" src/tools.h
 
-cd AC-Lua-master
-sh build.sh
+  sh build.sh
+  cd
+fi
 
 echo "Moving the built executable to the AssaultCube folder ..."
-mv linux_release/linux_64_server ../../lua_server/bin_unix/linux_64_server
-
-cd ../..
+cp "$installerDirectory/tmp/AC-Lua-master/linux_release/linux_64_server" "$outputDirectory/bin_unix/linux_64_server"
 
 
 ## Install wesen's gema mod
 
 echo "Installing dependencies for wesen's gema mod ..."
-apt-get install -y lua-filesystem lua-sql-mysql
+apt-get install -y luarocks lua-filesystem lua-sql-mysql
+
+luarocks install lua-resty-template
+luarocks install luaorm
+luarocks install ac-clientoutput
+
+createDirectoriesRecursive "$outputDirectory/lua/scripts" "$userName"
+createDirectoriesRecursive "$outputDirectory/lua/config" "$userName"
 
 question="Copy the gema mod to lua/scripts folder?"
 if askYesNoQuestion "$question"; then
 
   echo "Copying gema mod ..."
-  cp -r "$installerDirectory/lua" "lua_server"
+  createDirectoriesRecursive "$outputDirectory/lua/scripts/wesenGemaMod"
+  cp -r "$installerDirectory/src/wesenGemaMod" "$outputDirectory/lua/scripts"
+  cp "$installerDirectory/src/main.lua" "$outputDirectory/lua/scripts/main.lua"
+  cp -r "$installerDirectory/src/config" "$outputDirectory/lua"
 
 fi
 
@@ -240,56 +254,56 @@ if askYesNoQuestion "$question"; then
 
   echo "Removing unnecessary files from AssaultCube folder ..."
 
-  rm -rf lua_server/assaultcube.sh
-  rm -rf lua_server/bin_unix/linux_64_client
-  rm -rf lua_server/bin_unix/linux_client 
-  rm -rf lua_server/bot
-  rm -rf lua_server/changelog.txt
-  rm -rf lua_server/docs
-  rm -rf lua_server/mods/
-  rm -rf lua_server/README.html
-  rm -rf lua_server/screenshots/
-  rm -rf lua_server/scripts/
-  rm -rf lua_server/server_wizard.sh
-  rm -rf lua_server/source/
+  rm -rf "$outputDirectory/assaultcube.sh"
+  rm -rf "$outputDirectory/bin_unix/linux_64_client"
+  rm -rf "$outputDirectory/bin_unix/linux_client "
+  rm -rf "$outputDirectory/bot"
+  rm -rf "$outputDirectory/changelog.txt"
+  rm -rf "$outputDirectory/docs"
+  rm -rf "$outputDirectory/mods/"
+  rm -rf "$outputDirectory/README.html"
+  rm -rf "$outputDirectory/screenshots/"
+  rm -rf "$outputDirectory/scripts/"
+  rm -rf "$outputDirectory/server_wizard.sh"
+  rm -rf "$outputDirectory/source/"
 
-  rm -f lua_server/config/admin.cfg
-  rm -f lua_server/config/autoexec.cfg
-  rm -f lua_server/config/autosave.cfg
-  rm -f lua_server/config/compatibility.cfg
-  rm -f lua_server/config/convert_mapconfig.sh
-  rm -f lua_server/config/default_map_settings.cfg
-  rm -f lua_server/config/defaults.cfg
-  rm -f lua_server/config/docs.cfg
-  rm -f lua_server/config/dyngamma.cfg
-  rm -f lua_server/config/faq.cfg
-  rm -f lua_server/config/favourites.cfg
-  rm -f lua_server/config/firstrun.cfg
-  rm -f lua_server/config/font.cfg
-  rm -f lua_server/config/font_default.cfg
-  rm -f lua_server/config/font_monospace.cfg
-  rm -f lua_server/config/font_serif.cfg
-  rm -f lua_server/config/keymap.cfg
-  rm -f lua_server/config/locale.cfg
-  rm -f lua_server/config/menus_bot.cfg
-  rm -f lua_server/config/menus.cfg
-  rm -f lua_server/config/menus_edit.cfg
-  rm -f lua_server/config/menus_multiplayer.cfg
-  rm -f lua_server/config/menus_settings.cfg
-  rm -f lua_server/config/menus_voicecom.cfg
-  rm -f lua_server/config/on_quit.cfg
-  rm -f lua_server/config/parsestring.cfg
-  rm -f lua_server/config/pcksources.cfg
-  rm -f lua_server/config/prefabs.cfg
-  rm -f lua_server/config/resetbinds.cfg
-  rm -f lua_server/config/scontext.cfg
-  rm -f lua_server/config/scripts.cfg
-  rm -f lua_server/config/securemaps.cfg
-  rm -f lua_server/config/sounds.cfg
-  rm -f lua_server/config/survival.cfg
+  rm -f "$outputDirectory/config/admin.cfg"
+  rm -f "$outputDirectory/config/autoexec.cfg"
+  rm -f "$outputDirectory/config/autosave.cfg"
+  rm -f "$outputDirectory/config/compatibility.cfg"
+  rm -f "$outputDirectory/config/convert_mapconfig.sh"
+  rm -f "$outputDirectory/config/default_map_settings.cfg"
+  rm -f "$outputDirectory/config/defaults.cfg"
+  rm -f "$outputDirectory/config/docs.cfg"
+  rm -f "$outputDirectory/config/dyngamma.cfg"
+  rm -f "$outputDirectory/config/faq.cfg"
+  rm -f "$outputDirectory/config/favourites.cfg"
+  rm -f "$outputDirectory/config/firstrun.cfg"
+  rm -f "$outputDirectory/config/font.cfg"
+  rm -f "$outputDirectory/config/font_default.cfg"
+  rm -f "$outputDirectory/config/font_monospace.cfg"
+  rm -f "$outputDirectory/config/font_serif.cfg"
+  rm -f "$outputDirectory/config/keymap.cfg"
+  rm -f "$outputDirectory/config/locale.cfg"
+  rm -f "$outputDirectory/config/menus_bot.cfg"
+  rm -f "$outputDirectory/config/menus.cfg"
+  rm -f "$outputDirectory/config/menus_edit.cfg"
+  rm -f "$outputDirectory/config/menus_multiplayer.cfg"
+  rm -f "$outputDirectory/config/menus_settings.cfg"
+  rm -f "$outputDirectory/config/menus_voicecom.cfg"
+  rm -f "$outputDirectory/config/on_quit.cfg"
+  rm -f "$outputDirectory/config/parsestring.cfg"
+  rm -f "$outputDirectory/config/pcksources.cfg"
+  rm -f "$outputDirectory/config/prefabs.cfg"
+  rm -f "$outputDirectory/config/resetbinds.cfg"
+  rm -f "$outputDirectory/config/scontext.cfg"
+  rm -f "$outputDirectory/config/scripts.cfg"
+  rm -f "$outputDirectory/config/securemaps.cfg"
+  rm -f "$outputDirectory/config/sounds.cfg"
+  rm -f "$outputDirectory/config/survival.cfg"
 
-  rm -rf lua_server/packages/crosshairs
-  rm -rf lua_server/packages/locale
+  rm -rf "$outputDirectory/packages/crosshairs"
+  rm -rf "$outputDirectory/packages/locale"
 
 fi
 
@@ -298,7 +312,7 @@ fi
 question="Delete the temporary files?"
 if askYesNoQuestion "$question"; then
   echo "Removing temporary files ..."
-  rm -rf "$outputDirectory/tmp"
+  rm -rf "$installerDirectory/tmp"
 fi
 
 
@@ -330,9 +344,7 @@ if askYesNoQuestion "$question"; then
 
   # Import database
   echo "Initializing database for wesen's gema mod ..."
-  sql="CREATE DATABASE assaultcube_gema;
-       USE assaultcube_gema;
-       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  sql="CREATE DATABASE assaultcube_gema;"
   mysql -u root -Bse "$sql"
 
   # Create new user for lua mod
@@ -346,7 +358,7 @@ if askYesNoQuestion "$question"; then
   mysql -u root -Bse "$sql"
 
   # Write the gemamod user password to the gemamod config file
-  gemamodConfigPath="$outputDirectory/lua_server/lua/config/gemamod.cfg"
+  gemamodConfigPath="$outputDirectory/lua/config/gemamod.cfg"
 
   if [ -f "$gemamodConfigPath" ]; then
     echo "Setting password in config file ..."

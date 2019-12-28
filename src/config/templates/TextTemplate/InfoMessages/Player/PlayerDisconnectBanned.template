@@ -1,0 +1,13 @@
+{#
+ # Generates a info message that informs all players that a player could not connect because he is banned.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string playerName The name of the banned player
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
+
+{-infoMessage-}
+  {* playerName *} could not connect [banned]
+{-infoMessage-}

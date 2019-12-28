@@ -1,5 +1,5 @@
-.buildpath
-.project
-.settings
 .vagrant
+docs
+luacov*
 test\ server
+tmp

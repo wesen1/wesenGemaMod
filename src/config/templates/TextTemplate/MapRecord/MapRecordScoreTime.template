@@ -1,0 +1,24 @@
+{#
+ # Prints the time string for a map record.
+ # The result is "<player> scored after <time> minutes with <weapon>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecord mapRecord The map record
+ #}
+
+{* colors.mapRecordName *}{* mapRecord:getPlayer():getName() *}
+{* colors.mapRecordInfo *} scored after
+
+<whitespace>
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordTime.template,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+
+{* colors.mapRecordInfo *} minutes with
+
+<whitespace>
+{(lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
+  { colors = colors, teamId = mapRecord:getTeam() }
+)}
+{(lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}

@@ -1,0 +1,26 @@
+{#
+ # Generates a info message about a gema mode state change that will occur when the current vote passes.
+ # The result is "The gema mode will be automatically disabled/enabled if this vote passes."
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam bool voteWillEnableGemaMode True if the gema mode will be enabled by the vote, false otherwise
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
+
+{-infoMessage-}
+
+  The gema mode will be automatically
+
+  <whitespace>
+  {% if (voteWillEnableGemaMode) then %}
+    enabled
+  {% else %}
+    disabled
+  {% end %}
+
+  <whitespace>
+  if this vote passes.
+
+{-infoMessage-}

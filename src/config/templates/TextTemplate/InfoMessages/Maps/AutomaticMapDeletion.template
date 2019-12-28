@@ -1,0 +1,13 @@
+{#
+ # Generates a info message that informs the players about an automatic map deletion.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string mapName The name of the deleted map
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
+
+{-infoMessage-}
+  The map "{* mapName *}" was automatically deleted because it wasn't playable.
+{-infoMessage-}

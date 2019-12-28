@@ -1,0 +1,26 @@
+{#
+ # Prints the server information.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam CmdsCommand cmdsCommand The cmds command
+ # @tparam RulesCommand rulesCommand The rules command
+ #}
+
+{* colors.info *}Say
+
+<whitespace>
+{(lua/config/templates/TextTemplate/CommandHandler/Command.template,
+  { colors = colors, command = cmdsCommand, arguments = {} }
+)}
+
+{* colors.info *} to see a list of avaiable commands
+_________________________________________________________________;
+
+{* colors.infoWarning *}Make sure to read the
+
+<whitespace>
+{(lua/config/templates/TextTemplate/CommandHandler/Command.template,
+  { colors = colors, command = rulesCommand, arguments = {} }
+)}
+
+{* colors.infoWarning *} before spawning

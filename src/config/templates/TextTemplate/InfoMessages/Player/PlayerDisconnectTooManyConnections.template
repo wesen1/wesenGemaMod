@@ -1,0 +1,13 @@
+{#
+ # Generates a info message that informs all players that a player could not connect because of too many connections with the same IP.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam Player player The player who will be autokicked for too many connections with the same IP
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
+
+{-infoMessage-}
+  {* player:getName() *} could not connect [too many connections with same IP]
+{-infoMessage-}

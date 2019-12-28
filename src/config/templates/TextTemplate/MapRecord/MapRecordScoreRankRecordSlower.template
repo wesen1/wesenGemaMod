@@ -1,0 +1,7 @@
+{#
+ # Prints the "record slower" message.
+ #
+ # @tparam string[] colors The list of colors
+ #}
+
+{* colors.scoreRecordSlower *}(But has a better record)

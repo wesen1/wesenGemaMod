@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Install the lua server with the install script
-/vagrant/install.sh /home/vagrant <<END
+/vagrant/install.sh /home/vagrant/lua_server <<END
+y
 y
 n
 y
@@ -13,14 +14,59 @@ password
 password
 END
 
-# Create a link to the lua folder of the project in the lua_server folder
-ln -fs /vagrant/lua /home/vagrant/lua_server
 
+# Install the gema server test framework dependencies
+sudo apt-get install -y luarocks
+
+luarocks install luacov
+luarocks install luaunit
+luarocks install mach
+
+
+# Install LDoc
+luarocks install penlight
+luarocks install ldoc
+
+# Install luacheck
+luarocks install luacheck
+
+
+# Configure remote database login with the "root" user
+sql="UPDATE mysql.user SET host='%' WHERE user='root';
+     UPDATE mysql.user SET plugin='' WHERE user='root';"
+mysql -u root -Bse "$sql"
+
+# Allow remote connection to database by commenting out the line "bind-address = 127.0.0.1"
+sed -i "/bind-address/s/^/#/" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+
+# Create the test database
+sql="CREATE DATABASE assaultcube_gema_tests;
+     GRANT ALL PRIVILEGES ON assaultcube_gema_tests.* TO 'assaultcube'@'localhost';
+     FLUSH PRIVILEGES;"
+mysql -u root -Bse "$sql"
+
+
+# Restart the database server
+service mysql restart
+
+
+# Create links for the lua files
+ln -fs /vagrant/src/wesenGemaMod /home/vagrant/lua_server/lua/scripts
+
+rm -rf /home/vagrant/lua_server/lua/config
+ln -fs /vagrant/src/config /home/vagrant/lua_server/lua
+
+ln -fs /vagrant/src/main.lua /home/vagrant/lua_server/lua/scripts
+
+
+# Create links for the test server configuration
 rm -rf /home/vagrant/lua_server/config
 ln -fs /vagrant/test\ server/config /home/vagrant/lua_server/config
 
 rm -rf /home/vagrant/lua_server/packages/maps/servermaps/incoming
 ln -fs /vagrant/test\ server/maps /home/vagrant/lua_server/packages/maps/servermaps/incoming
+
 
 # Redirect logs to logfile
 mkdir -p /vagrant/test\ server/log

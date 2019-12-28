@@ -1,0 +1,24 @@
+{#
+ # Prints the "best record" message.
+ # The result is "The best record of this map is <time> by <player> with <weapon>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam MapRecord mapRecord The map record
+ #}
+
+{* colors.mapRecordInfo *}The best record for this map is
+
+<whitespace>
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordTime.template,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
+{* colors.mapRecordInfo *} with
+
+<whitespace>
+{( lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
+   { colors = colors, teamId = mapRecord:getTeam() }
+)}
+{( lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}

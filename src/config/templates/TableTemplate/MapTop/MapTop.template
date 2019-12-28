@@ -1,0 +1,44 @@
+{#
+ # Prints the maptop.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecordList mapRecordList The map record list
+ # @tparam int startRank The start rank
+ # @tparam int numberOfDisplayRecords The number of display records
+ #}
+
+{% if (mapRecordList:getNumberOfRecords() == 0) then %}
+  {(lua/config/templates/TextTemplate/MapTop/MapTopEmpty.template, { colors = colors })}
+
+{% else %}
+
+  {# Adjust number of display records #}
+  {% local numberOfDisplayRecords = numberOfDisplayRecords; %}
+  {% if (mapRecordList:getNumberOfRecords() < numberOfDisplayRecords) then %}
+    {% numberOfDisplayRecords = mapRecordList:getNumberOfRecords(); %}
+  {% end %}
+
+  {(lua/config/templates/TextTemplate/MapTop/MapTopTitle.template,
+    { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
+  )}
+  ___________________________________________________;
+
+    ----------[FIELD]----------;
+    {% local endRank = startRank + (numberOfDisplayRecords - 1); %}
+    {% local maxRankLength = string.len(endRank); %}
+
+    {% for i = startRank, endRank, 1 do %}
+
+      {(lua/config/templates/TableTemplate/MapTop/MapRecord.template,
+        { colors = colors,
+          timeFormatter = timeFormatter,
+          mapRecord = mapRecordList:getRecordByRank(i),
+          maxRankLength = maxRankLength
+        }
+      )}
+      _________________________________________________;
+    {% end %}
+    ----------[ENDFIELD]----------;
+
+{% end %}

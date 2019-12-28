@@ -1,0 +1,12 @@
+{#
+ # Prints a error message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string errorMessage The error message
+ #}
+
+##########################[CONFIG]##########################;
+newLineIndent = "          ";
+#########################[ENDCONFIG]########################;
+
+{* colors.error *}[ERROR] {* errorMessage *}

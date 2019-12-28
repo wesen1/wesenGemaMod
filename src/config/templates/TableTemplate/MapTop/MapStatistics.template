@@ -1,0 +1,18 @@
+{#
+ # Prints the map top summary and the best map record to a player.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecordList mapRecordList The map record list
+ #}
+
+{% if (mapRecordList:getNumberOfRecords() == 0) then %}
+  {(lua/config/templates/TextTemplate/MapTop/MapTopEmpty.template, { colors = colors })}
+{% else %}
+  {(lua/config/templates/TextTemplate/MapTop/MapTopSummary.template, { colors = colors, mapRecordList = mapRecordList })}
+  _________________________________________________________________________________________;
+
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordMapBest.template,
+    { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecordList:getRecordByRank(1) }
+  )}
+{% end %}

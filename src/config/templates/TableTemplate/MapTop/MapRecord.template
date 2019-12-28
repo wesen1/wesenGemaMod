@@ -1,0 +1,41 @@
+{#
+ # Prints a map record row for the map top.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecord mapRecord The map record
+ # @tparam int maxRankLength The maximum rank length
+ #
+
+{# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
+{* colors.mapRecordRank *}
+{* string.rep("0", maxRankLength - string.len(mapRecord:getRank())) *}{* mapRecord:getRank() *})
+
+<whitespace>
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordTime.template,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
+----------------------------------------------------------------------------------------------------------;
+
+{% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
+  {* colors.mapRecordInfo *}(
+  {(lua/config/templates/TextTemplate/Player/PlayerIp.template,
+    { colors = colors, ip = mapRecord:getPlayer():getIp() }
+  )}
+  {* colors.mapRecordInfo *})
+{% end %}
+
+----------------------------------------------------------------------------------------------------------;
+
+{(lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
+  { colors = colors, teamId = mapRecord:getTeam() }
+)}
+{(lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}
+
+----------------------------------------------------------------------------------------------------------;
+
+{* colors.mapRecordTimeStamp *}
+{* os.date("%Y-%m-%d", mapRecord:getCreatedAt()) *}

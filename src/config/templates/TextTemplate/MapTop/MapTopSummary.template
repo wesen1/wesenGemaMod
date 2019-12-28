@@ -1,0 +1,13 @@
+{#
+ # Prints the map top summary.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam MapRecordList mapRecordList The map record list
+ #}
+
+{* colors.mapTopInfo *}This map was finished by
+{* colors.mapTopNumberOfRecords *} {* mapRecordList:getNumberOfRecords() *}
+{* colors.mapTopInfo *} player
+{% if (mapRecordList:getNumberOfRecords() ~= 1) then %}
+  s
+{% end %}

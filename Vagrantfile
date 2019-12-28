@@ -7,4 +7,7 @@ Vagrant.configure("2") do |config|
   config.vm.network :forwarded_port, guest: 28763, host: 28763, protocol: "udp"
   config.vm.network :forwarded_port, guest: 28764, host: 28764, protocol: "udp"
 
+  # MariaDB Port
+  config.vm.network :forwarded_port, guest:3306, host: 3306
+
 end

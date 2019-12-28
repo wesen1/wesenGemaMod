@@ -1,0 +1,21 @@
+{#
+ # Prints the "player scored" message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapRecord mapRecord The map record
+ #}
+
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreTime.template,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+
+<whitespace>
+{(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRank.template,
+  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
+)}
+_______________________________________________;
+
+{% if (mapRecord:getRank() == 1) then %}
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordNewBestTime.template, { colors = colors })}
+{% end %}
