@@ -24,15 +24,6 @@ MapNameChecker.implicitWords = nil;
 MapNameChecker.implicitWords = {"jigsaw", "deadmeat-10"};
 
 ---
--- The gema codes. If a map contains one of the symbols at each index in sequence it will
--- be detected as a valid gema map name
---
--- @tfield string[] codes
---
-MapNameChecker.codes = nil;
-MapNameChecker.codes = { {"g"}, {"3" , "e"}, {"m"}, {"a", "@" , "4"} };
-
----
 -- The maxmium map name length
 --
 -- @tfield int maximumMapNameLength
@@ -108,11 +99,7 @@ function MapNameChecker:isValidMapName(_mapName)
   --
   local pattern = "^[%a%d%-_%.]+$";
 
-  if (_mapName:match(pattern) ~= nil) then
-    return true;
-  else
-    return false;
-  end
+  return (_mapName:match(pattern) ~= nil)
 
 end
 
@@ -146,42 +133,7 @@ end
 -- @treturn bool True if the map name contains g3ema@4, false otherwise
 --
 function MapNameChecker:mapNameContainsCodes(_mapName)
-
-  local codePosition = 1;
-  local numberOfCodes = #self.codes;
-  local numberOfCodeMatches = 0;
-
-  -- Iterate over all map name letters
-  for mapNamePosition, mapNameLetter in ipairs(StringUtils:split(_mapName, "")) do
-
-    -- Check if the map name letter matches the code part at the current code position
-    for _, codePartLetter in ipairs(self.codes[codePosition]) do
-      if (mapNameLetter == codePartLetter) then
-        numberOfCodeMatches = numberOfCodeMatches + 1;
-        break;
-      end
-    end
-
-    if (numberOfCodeMatches == codePosition) then
-      -- The code part matched the current map name letter
-
-      if (codePosition == numberOfCodes) then
-        break;
-      else
-        codePosition = codePosition + 1;
-      end
-    else
-      codePosition = 1;
-      numberOfCodeMatches = 0;
-    end
-  end
-
-  if (numberOfCodeMatches == numberOfCodes) then
-    return true;
-  else
-    return false;
-  end
-
+  return (_mapName:match("g[e3]m[a4@]") ~= nil)
 end
 
 
