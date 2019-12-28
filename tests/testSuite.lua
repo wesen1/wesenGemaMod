@@ -8,6 +8,7 @@
 --
 package.path = package.path .. ";./../src/wesenGemaMod/?.lua";
 
+package.path = package.path .. ";/home/travis/build/wesen1/wesenGemaMod/install/luarocks/share/lua/5.1/LuaORM/LuaORM/?.lua"
 
 local lfs = require("lfs");
 

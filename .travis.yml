@@ -23,7 +23,7 @@ install:
   - luarocks install mach
   - luarocks install luasql-mysql MYSQL_INCDIR=/usr/include/mysql
   - luarocks install lua-resty-template
-  - sudo luarocks install luaorm
+  - luarocks install luaorm
   - luarocks install ac-clientoutput
 
 script:
