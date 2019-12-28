@@ -15,31 +15,6 @@ local Player = require("Player/Player");
 local PlayerList = setmetatable({}, {});
 
 
----
--- The list of players
---
--- @tfield Player[] players
---
-PlayerList.players = nil;
-
-
----
--- PlayerList constructor.
---
--- @treturn PlayerList The PlayerList instance
---
-function PlayerList:__construct()
-
-  local instance = setmetatable({}, { __index = PlayerList });
-
-  instance.players = {};
-
-  return instance;
-
-end
-
-getmetatable(PlayerList).__call = PlayerList.__construct;
-
 
 -- Getters and Setters
 
@@ -61,33 +36,7 @@ end
 -- @tparam int _cn The client number of the player
 --
 function PlayerList:addPlayer(_cn)
-
-  local playerIp = getip(_cn);
-  local playerName = getname(_cn);
-
-  self.players[_cn] = Player(_cn, playerName, playerIp);
   self.players[_cn]:savePlayer();
-
-end
-
----
--- Removes a player from the players list.
---
--- @tparam int _cn The client number of the player
---
-function PlayerList:removePlayer(_cn)
-  self.players[_cn] = nil;
-end
-
----
--- Returns a player with a specific client number.
---
--- @tparam int _cn The client number of the player
---
--- @treturn Player The player
---
-function PlayerList:getPlayer(_cn)
-  return self.players[_cn];
 end
 
 ---

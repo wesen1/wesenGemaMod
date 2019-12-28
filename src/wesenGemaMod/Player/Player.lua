@@ -26,27 +26,6 @@ local Player = setmetatable({}, {});
 Player.id = -1;
 
 ---
--- The client number of the player
---
--- @tfield int cn
---
-Player.cn = -1;
-
----
--- The player name
---
--- @tfield string name
---
-Player.name = nil;
-
----
--- The player ip
---
--- @tfield string ip
---
-Player.ip = nil;
-
----
 -- The player level (0 = unarmed, 1 = admin)
 --
 -- @tfield int level
@@ -64,20 +43,13 @@ Player.scoreAttempt = nil;
 ---
 -- Player Constructor.
 --
--- @tparam int _cn The client number of the player
--- @tparam string _name The player name
--- @tparam string _ip The player ip
---
 -- @treturn Player The Player instance
 --
-function Player:__construct(_cn, _name, _ip)
+function Player:__construct()
 
   local instance = setmetatable({}, {__index = Player});
 
   instance.id = -1;
-  instance.cn = _cn;
-  instance.name = _name;
-  instance.ip = _ip;
   instance.level = 0;
   instance.scoreAttempt = PlayerScoreAttempt(instance);
 
@@ -113,51 +85,6 @@ end
 --
 function Player:getId()
   return self.id;
-end
-
----
--- Returns the client number of the player.
---
--- @treturn int The client number of the player
---
-function Player:getCn()
-  return self.cn;
-end
-
----
--- Returns the player name.
---
--- @treturn string The player name
---
-function Player:getName()
-  return self.name;
-end
-
----
--- Sets the player name.
---
--- @tparam string _name The player name
---
-function Player:setName(_name)
-  self.name = _name;
-end
-
----
--- Returns the player ip.
---
--- @treturn string The player ip
---
-function Player:getIp()
-  return self.ip;
-end
-
----
--- Sets the player ip.
---
--- @tparam string _ip The player ip
---
-function Player:setIp(_ip)
-  self.ip = _ip;
 end
 
 ---
