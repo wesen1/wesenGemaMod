@@ -12,7 +12,7 @@ Saves the times that players needed to score on a gema map in a database and pro
 Installation
 ------------
 
-````./install.sh <output directory>````
+`./install.sh <output directory>`
 
 
 Setup development environment
