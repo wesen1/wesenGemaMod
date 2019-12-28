@@ -36,7 +36,7 @@ getAbsolutePath()
   else
     # If the path does not start with a slash it is a relative path
     # Therefore the current working directory (absolute path) is added in front of it
-    absoluteDirectory="$PWD/$pathString"
+    absoluteDirectory="$(pwd)/$pathString"
   fi
 
   echo $absoluteDirectory
@@ -177,9 +177,6 @@ fi
 
 ## Install AssaultCube Server
 
-cd "$outputDirectory"
-mkdir "tmp"
-
 apt-get update
 
 echo "Installing AssaultCube server dependencies ..."
@@ -225,8 +222,6 @@ fi
 
 echo "Moving the built executable to the AssaultCube folder ..."
 cp "$installerDirectory/tmp/AC-Lua-master/linux_release/linux_64_server" "$outputDirectory/bin_unix/linux_64_server"
-
-cd ../..
 
 
 ## Install wesen's gema mod
@@ -349,9 +344,7 @@ if askYesNoQuestion "$question"; then
 
   # Import database
   echo "Initializing database for wesen's gema mod ..."
-  sql="CREATE DATABASE assaultcube_gema;
-       USE assaultcube_gema;
-       SOURCE $installerDirectory/assaultcube_gema.sql;"
+  sql="CREATE DATABASE assaultcube_gema;"
   mysql -u root -Bse "$sql"
 
   # Create new user for lua mod
