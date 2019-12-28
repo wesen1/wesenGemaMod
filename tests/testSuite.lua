@@ -8,8 +8,6 @@
 --
 package.path = package.path .. ";./../src/wesenGemaMod/?.lua";
 
-package.path = package.path .. ";/home/travis/build/wesen1/wesenGemaMod/install/luarocks/share/lua/5.1/LuaORM/LuaORM/?.lua"
-
 local lfs = require("lfs");
 
 -- Require luacov to get coverage information about the tests
@@ -24,7 +22,7 @@ require("globals");
 
 function initializeORM()
 
-  local LuaORM_API = require("LuaORM/API")
+  local LuaORM_API = require "LuaORM.API"
 
   LuaORM_API.ORM:initialize({
     connection = "LuaSQL/MySQL",
@@ -37,6 +35,7 @@ function initializeORM()
     },
     logger = { isEnabled = true, isDebugEnabled = false }
   })
+
 
 end
 
@@ -72,7 +71,7 @@ end
 initializeORM()
 
 -- Require all lua files in the wesenGemaMod sub directory
-requireTests("wesenGemaMod");
+--requireTests("wesenGemaMod");
 
 -- Run the tests
 os.exit(luaunit.LuaUnit:run())

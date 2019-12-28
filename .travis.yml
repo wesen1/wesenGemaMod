@@ -28,5 +28,4 @@ install:
 
 script:
   - cd tests
-  - find /home/travis/build/wesen1/wesenGemaMod/install/luarocks/share/lua/5.1/LuaORM/ -type f
   - ./run-tests.sh
