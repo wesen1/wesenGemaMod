@@ -8,13 +8,9 @@
 local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
 local ColorLoader = require("Output/Util/ColorLoader")
 local CommandLoader = require("CommandHandler/CommandLoader");
-local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
-local EventHandler = require("EventHandler");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
-local MapRot = require("MapRot/MapRot");
 local MapTopHandler = require("Tops/MapTopHandler");
 local Output = require("Output/Output");
-local PlayerList = require("Player/PlayerList");
 local TemplateFactory = require("Output/Template/TemplateFactory")
 local TimeFormatter = require("TimeHandler/TimeFormatter")
 
@@ -38,20 +34,6 @@ GemaMode.commandList = nil;
 -- @tfield CommandLoader commandLoader
 --
 GemaMode.commandLoader = nil;
-
----
--- The environment handler
---
--- @tfield EnvironmentHandler environmentHandler
---
-GemaMode.environmentHandler = nil;
-
----
--- The event handler
---
--- @tfield EventHandler eventHandler
---
-GemaMode.eventHandler = nil;
 
 ---
 -- The gema mode state updater
@@ -93,11 +75,7 @@ function GemaMode:__construct()
 
   instance.commandLoader = CommandLoader();
   instance.environmentHandler = EnvironmentHandler();
-  instance.eventHandler = EventHandler();
-  instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
-  instance.mapRot = MapRot();
   instance.output = Output();
-  instance.playerList = PlayerList();
 
   -- Must be created after the output was created
   instance.mapTopHandler = MapTopHandler(instance.output);
@@ -132,30 +110,12 @@ function GemaMode:getCommandLoader()
 end
 
 ---
--- Returns the environment handler.
---
--- @treturn EnvironmentHandler The environment handler
---
-function GemaMode:getEnvironmentHandler()
-  return self.environmentHandler;
-end
-
----
 -- Returns the gema mode state updater.
 --
 -- @treturn GemaModeStateUpdater The gema mode state updater
 --
 function GemaMode:getGemaModeStateUpdater()
   return self.gemaModeStateUpdater;
-end
-
----
--- Returns the map rot.
---
--- @treturn MapRot The map rot
---
-function GemaMode:getMapRot()
-  return self.mapRot;
 end
 
 ---
@@ -174,15 +134,6 @@ end
 --
 function GemaMode:getOutput()
   return self.output;
-end
-
----
--- Returns the player list.
---
--- @treturn PlayerList The player list
---
-function GemaMode:getPlayerList()
-  return self.playerList;
 end
 
 ---
@@ -217,11 +168,7 @@ function GemaMode:initialize()
   self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
 
   self.mapRot:loadGemaMapRot();
-  self.environmentHandler:initialize(self.mapRot);
   self.mapTopHandler:initialize();
-
-  self.eventHandler:loadEventHandlers(self, "lua/scripts/wesenGemaMod/EventHandler")
-  self.eventHandler:initializeEventListeners()
 
 end
 
