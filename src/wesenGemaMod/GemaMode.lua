@@ -68,25 +68,11 @@ GemaMode.gemaModeStateUpdater = nil;
 GemaMode.mapTopHandler = nil;
 
 ---
--- The map rot
---
--- @tfield MapRot mapRot
---
-GemaMode.mapRot = nil;
-
----
 -- The output
 --
 -- @tfield Output output
 --
 GemaMode.output = nil;
-
----
--- The player list
---
--- @tfield PlayerList playerList
---
-GemaMode.playerList = nil;
 
 ---
 -- Indicates whether the gema mode is currently active
