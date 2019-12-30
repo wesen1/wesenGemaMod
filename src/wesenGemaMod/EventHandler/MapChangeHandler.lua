@@ -1,41 +1,3 @@
----
--- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
--- @release 0.1
--- @license MIT
---
-
-local BaseEventHandler = require("EventHandler/BaseEventHandler");
-
----
--- Class that handles map changes.
--- MapChangeHandler inherits from BaseEventHandler
---
--- @type MapChangeHandler
---
-local MapChangeHandler = setmetatable({}, {__index = BaseEventHandler});
-
-
----
--- MapChangeHandler constructor.
---
--- @tparam GemaMode _parentGemaMode The parent gema mode
---
--- @treturn MapChangeHandler The MapChangeHandler instance
---
-function MapChangeHandler:__construct(_parentGemaMode)
-
-  local instance = BaseEventHandler(_parentGemaMode, "onMapChange");
-  setmetatable(instance, {__index = MapChangeHandler});
-
-  return instance;
-
-end
-
-getmetatable(MapChangeHandler).__call = MapChangeHandler.__construct;
-
-
--- Public Methods
 
 ---
 -- Event handler which is called when the map is changed.
@@ -84,6 +46,3 @@ function MapChangeHandler:updateGemaModeState()
   end
 
 end
-
-
-return MapChangeHandler;

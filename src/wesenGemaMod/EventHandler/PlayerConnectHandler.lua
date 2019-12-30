@@ -1,52 +1,3 @@
----
--- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
--- @release 0.1
--- @license MIT
---
-
-local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local StaticString = require("Output/StaticString");
-
----
--- Class that handles player connects.
--- PlayerConnectHandler inherits from BaseEventHandler
---
--- @type PlayerConnectHandler
---
-local PlayerConnectHandler = setmetatable({}, {__index = BaseEventHandler});
-
-
----
--- The maximum allowed number of connections with the same ip to the server
---
--- @tfield int maximumNumberOfConnectionsWithSameIp
---
-PlayerConnectHandler.maximumNumberOfConnectionsWithSameIp = nil;
-
-
----
--- PlayerConnectHandler constructor.
---
--- @tparam GemaMode _parentGemaMode The parent gema mode
---
--- @treturn PlayerConnectHandler The PlayerConnectHandler instance
---
-function PlayerConnectHandler:__construct(_parentGemaMode)
-
-  local instance = BaseEventHandler(_parentGemaMode, "onPlayerConnect");
-  setmetatable(instance, {__index = PlayerConnectHandler});
-
-  instance.maximumNumberOfConnectionsWithSameIp = 2;
-
-  return instance;
-
-end
-
-getmetatable(PlayerConnectHandler).__call = PlayerConnectHandler.__construct;
-
-
--- Public Methods
 
 ---
 -- Event handler which is called when a player connects.
@@ -54,6 +5,8 @@ getmetatable(PlayerConnectHandler).__call = PlayerConnectHandler.__construct;
 -- @tparam int _cn The client number of the player who connected
 --
 function PlayerConnectHandler:handleEvent(_cn)
+
+  instance.maximumNumberOfConnectionsWithSameIp = 2;
 
   local playerList = self.parentGemaMode:getPlayerList();
 
@@ -131,6 +84,3 @@ function PlayerConnectHandler:printServerInformation(_player)
   )
 
 end
-
-
-return PlayerConnectHandler;

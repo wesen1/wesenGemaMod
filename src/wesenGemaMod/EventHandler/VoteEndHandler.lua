@@ -1,71 +1,4 @@
----
--- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
--- @release 0.1
--- @license MIT
---
 
-local BaseEventHandler = require("EventHandler/BaseEventHandler");
-
----
--- Class that handles vote ends.
--- VoteEndHandler inherits from BaseEventHandler
---
--- @type VoteEndHandler
---
-local VoteEndHandler = setmetatable({}, {__index = BaseEventHandler});
-
-
----
--- VoteEndHandler constructor.
---
--- @tparam GemaMode _parentGemaMode The parent gema mode
---
--- @treturn VoteEndHandler The VoteEndHandler instance
---
-function VoteEndHandler:__construct(_parentGemaMode)
-
-  local instance = BaseEventHandler(_parentGemaMode, "onVoteEnd");
-  setmetatable(instance, {__index = VoteEndHandler});
-
-  return instance;
-
-end
-
-getmetatable(VoteEndHandler).__call = VoteEndHandler.__construct;
-
-
--- Class Methods
-
----
--- Event handler which is called when a vote ends.
---
--- @tparam int _result The result of the vote
--- @tparam int _cn The client number of the player who called the vote
--- @tparam int _type The vote type
--- @tparam string _text The map name, kick reason, etc.
--- @tparam int _number1 The game mode, target cn, etc.
--- @tparam int _number2 The time of the map vote, target team of teamchange vote, etc.
---
-function VoteEndHandler:handleEvent(_result, _cn, _type, _text, _number1, _number2)
-
-  local player = self:getPlayerByCn(_cn)
-
-  if (_type == SA_MAP) then
-    self:onMapVoteEnd(_result, player, _text, _number1, _number2);
-  end
-
-end
-
----
--- Handles map vote results.
---
--- @tparam int _result The result of the vote
--- @tparam Player _player The player who called the vote
--- @tparam string _mapName The map name
--- @tparam int _gameMode The game mode
--- @tparam int _minutes The minutes to load the map for
---
 function VoteEndHandler:onMapVoteEnd(_result, _player, _mapName, _gameMode, _minutes)
 
   local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
@@ -93,6 +26,3 @@ function VoteEndHandler:onMapVoteEnd(_result, _player, _mapName, _gameMode, _min
   end
 
 end
-
-
-return VoteEndHandler;

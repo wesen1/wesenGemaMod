@@ -31,15 +31,6 @@ end
 -- Public Methods
 
 ---
--- Adds a player to the players list.
---
--- @tparam int _cn The client number of the player
---
-function PlayerList:addPlayer(_cn)
-  self.players[_cn]:savePlayer();
-end
-
----
 -- Returns how many connected players have a specific ip.
 --
 -- @tparam string _ip The ip
