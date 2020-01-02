@@ -10,7 +10,6 @@ local ColorLoader = require("Output/Util/ColorLoader")
 local CommandLoader = require("CommandHandler/CommandLoader");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
 local MapTopHandler = require("Tops/MapTopHandler");
-local Output = require("Output/Output");
 local TemplateFactory = require("Output/Template/TemplateFactory")
 local TimeFormatter = require("TimeHandler/TimeFormatter")
 
@@ -48,13 +47,6 @@ GemaMode.gemaModeStateUpdater = nil;
 -- @tfield MapTopHandler mapTopHandler
 --
 GemaMode.mapTopHandler = nil;
-
----
--- The output
---
--- @tfield Output output
---
-GemaMode.output = nil;
 
 ---
 -- Indicates whether the gema mode is currently active
