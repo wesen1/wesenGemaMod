@@ -33,7 +33,7 @@ fieldTypes.ipField = FieldType({
   validator = function(_value)
 
     -- Check if the string contains four numbers that are divided by dots
-    local octets = {value:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)$")}
+    local octets = { _value:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)$") }
     if (#octets ~= 4) then
       return false
     end
