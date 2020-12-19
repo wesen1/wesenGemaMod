@@ -80,7 +80,7 @@ function Output:printTextTemplate(_templatePath, _templateValues, _player)
   local template = TemplateFactory.getInstance():getTemplate(_templatePath, _templateValues)
   template:renderAsText(true)
 
-  self:printTemplate(template)
+  self:printTemplate(template, _player)
 end
 
 ---
@@ -94,7 +94,7 @@ function Output:printTableTemplate(_templatePath, _templateValues, _player)
   local template = TemplateFactory.getInstance():getTemplate(_templatePath, _templateValues)
   template:renderAsTable()
 
-  self:printTemplate(template)
+  self:printTemplate(template, _player)
 end
 
 ---
