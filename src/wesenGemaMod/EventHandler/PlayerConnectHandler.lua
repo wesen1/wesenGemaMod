@@ -69,8 +69,9 @@ function PlayerConnectHandler:handleEvent(_cn)
       setautoteam (false);
     end
 
-    self:checkNumberOfConnections(player);
-    self:printServerInformation(player);
+    if (self:checkNumberOfConnections(player)) then
+      self:printServerInformation(player);
+    end
 
   else
     self.output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {}, player)
@@ -87,6 +88,8 @@ end
 --
 -- @tparam Player player The player who connected
 --
+-- @treturn bool True if the number of connections is valid, false otherwise
+--
 function PlayerConnectHandler:checkNumberOfConnections(_player)
 
   local playerList = self.parentGemaMode:getPlayerList();
@@ -100,6 +103,10 @@ function PlayerConnectHandler:checkNumberOfConnections(_player)
     playerList:removePlayer(_player:getCn());
     disconnect(_player:getCn(), DISC_NONE);
 
+    return false
+
+  else
+    return true
   end
 
 end

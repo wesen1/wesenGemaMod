@@ -22,7 +22,7 @@ local Map = Model({
       { name = "name", fieldType = fieldTypes.caseSensitiveCharField, maxLength = 64, escapeValue = true, unique = true },
 
       --
-      -- These fields may be null because the server owner can directly copy
+      -- These fields may be empty because the server owner can directly copy
       -- gema maps to the maps folder instead of uploading them ingame
       --
       { name = "uploaded_at", fieldType = fieldTypes.dateTimeField, mustBeSet = false },

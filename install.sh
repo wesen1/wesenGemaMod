@@ -36,7 +36,7 @@ getAbsolutePath()
   else
     # If the path does not start with a slash it is a relative path
     # Therefore the current working directory (absolute path) is added in front of it
-    absoluteDirectory="$(pwd)/$pathString"
+    absoluteDirectory="$(pwd)/$(dirname ${BASH_SOURCE[0]})/$pathString"
   fi
 
   echo $absoluteDirectory
