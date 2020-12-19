@@ -45,8 +45,8 @@ fieldTypes.ipField = FieldType({
       if (octetInteger < 0 or octetInteger > 255) then
         -- The octet is not between 0 and 255
         return false
-      elseif (octet:sub(0, 1) == "0" and octetInteger ~= 0) then
-        -- The octet starts with zero but is a different value than 0
+      elseif (octetInteger .. "" ~= octet) then
+        -- The octet's integer value casted to a string does not match the raw octet string
         return false
       end
 
