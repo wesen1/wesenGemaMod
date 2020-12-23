@@ -61,12 +61,6 @@ function MapRemover:removeMap(_mapName, _mapRot)
 
   end
 
-  -- Remove the map from the map rot
-  _mapRot:removeMap(_mapName);
-
-  -- Remove the map cgz and cfg files
-  removemap(_mapName);
-
 end
 
 ---
