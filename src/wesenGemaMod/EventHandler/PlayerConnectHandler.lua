@@ -18,14 +18,6 @@ local PlayerConnectHandler = setmetatable({}, {__index = BaseEventHandler});
 
 
 ---
--- The maximum allowed number of connections with the same ip to the server
---
--- @tfield int maximumNumberOfConnectionsWithSameIp
---
-PlayerConnectHandler.maximumNumberOfConnectionsWithSameIp = nil;
-
-
----
 -- PlayerConnectHandler constructor.
 --
 -- @tparam GemaMode _parentGemaMode The parent gema mode
@@ -36,8 +28,6 @@ function PlayerConnectHandler:__construct(_parentGemaMode)
 
   local instance = BaseEventHandler(_parentGemaMode, "onPlayerConnect");
   setmetatable(instance, {__index = PlayerConnectHandler});
-
-  instance.maximumNumberOfConnectionsWithSameIp = 2;
 
   return instance;
 
@@ -69,9 +59,7 @@ function PlayerConnectHandler:handleEvent(_cn)
       setautoteam (false);
     end
 
-    if (self:checkNumberOfConnections(player)) then
-      self:printServerInformation(player);
-    end
+    self:printServerInformation(player);
 
   else
     self.output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {}, player)
@@ -81,35 +69,6 @@ end
 
 
 -- Private Methods
-
----
--- Checks the amount of connections of a specific ip.
--- If there are too many connections the new connected player will be kicked.
---
--- @tparam Player player The player who connected
---
--- @treturn bool True if the number of connections is valid, false otherwise
---
-function PlayerConnectHandler:checkNumberOfConnections(_player)
-
-  local playerList = self.parentGemaMode:getPlayerList();
-
-  local numberOfPlayerConnections = playerList:getNumberOfPlayersWithIp(_player:getIp());
-  if (numberOfPlayerConnections > self.maximumNumberOfConnectionsWithSameIp) then
-
-    self.output:printTextTemplate(
-      "TextTemplate/InfoMessages/Player/PlayerDisconnectTooManyConnections", { ["player"] = _player }
-    )
-    playerList:removePlayer(_player:getCn());
-    disconnect(_player:getCn(), DISC_NONE);
-
-    return false
-
-  else
-    return true
-  end
-
-end
 
 ---
 -- Prints the map statistics and information about the commands to a player.
