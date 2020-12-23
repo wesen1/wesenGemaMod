@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
+local BaseCommand = require "CommandManager.BaseCommand"
 local StaticString = require("Output/StaticString");
 
 ---
@@ -15,30 +15,24 @@ local StaticString = require("Output/StaticString");
 --
 -- @type RulesCommand
 --
-local RulesCommand = setmetatable({}, {__index = BaseCommand});
+local RulesCommand = BaseCommand:extend()
 
 
 ---
 -- RulesCommand constructor.
 --
--- @treturn RulesCommand The RulesCommand instance
---
-function RulesCommand:__construct()
+function RulesCommand:new()
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("rulesCommandName"):getString(),
     0,
     nil,
     {},
     StaticString("rulesCommandDescription"):getString()
-  );
-  setmetatable(instance, {__index = RulesCommand});
-
-  return instance;
+  )
 
 end
-
-getmetatable(RulesCommand).__call = RulesCommand.__construct;
 
 
 -- Public Methods

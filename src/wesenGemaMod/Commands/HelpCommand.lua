@@ -5,19 +5,18 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
-local CommandArgument = require("CommandHandler/CommandArgument");
+local BaseCommand = require "CommandManager.BaseCommand"
+local CommandArgument = require "CommandManager.CommandArgument"
 local StaticString = require("Output/StaticString");
 local TemplateException = require("Util/TemplateException");
 
 ---
 -- Command !help.
 -- Prints help texts for each command.
--- ColorsCommand inherits from BaseCommand
 --
 -- @type HelpCommand
 --
-local HelpCommand = setmetatable({}, {__index = BaseCommand});
+local HelpCommand = BaseCommand:extend()
 
 
 ---
@@ -31,9 +30,7 @@ HelpCommand.commandHelpTextPrinter = nil;
 ---
 -- HelpCommand constructor.
 --
--- @treturn HelpCommand The HelpCommand instance
---
-function HelpCommand:__construct()
+function HelpCommand:new()
 
   local commandNameArgument = CommandArgument(
     StaticString("helpCommandCommandNameArgumentName"):getString(),
@@ -43,7 +40,8 @@ function HelpCommand:__construct()
     StaticString("helpCommandCommandNameArgumentDescription"):getString()
   );
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("helpCommandName"):getString(),
     0,
     nil,
@@ -51,13 +49,8 @@ function HelpCommand:__construct()
     StaticString("helpCommandDescription"):getString(),
     { StaticString("helpCommandAlias1"):getString() }
   );
-  setmetatable(instance, {__index = HelpCommand});
-
-  return instance;
 
 end
-
-getmetatable(HelpCommand).__call = HelpCommand.__construct;
 
 
 -- Public Methods
