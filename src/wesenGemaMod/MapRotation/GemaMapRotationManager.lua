@@ -57,6 +57,11 @@ function GemaMapRotationManager:initialize()
   mapRotation:changeMapRotationConfigFile("config/maprot_gema.cfg")
   self.mapRotGenerator:generateGemaMapRot(mapRotation, "packages/maps/servermaps/incoming")
 
+  self.output:printTextTemplate(
+    "TextTemplate/InfoMessages/MapRot/MapRotLoaded",
+    { ["mapRotType"] = StaticString("mapRotTypeGema"):getString() }
+  )
+
 end
 
 ---
@@ -69,6 +74,11 @@ function GemaMapRotationManager:terminate()
 
   local mapRotation = Server.getInstance():getMapRotation()
   mapRotation:changeMapRotationConfigFile("config/maprot.cfg")
+
+  self.output:printTextTemplate(
+    "TextTemplate/InfoMessages/MapRot/MapRotLoaded",
+    { ["mapRotType"] = StaticString("mapRotTypeRegular"):getString() }
+  )
 
 end
 

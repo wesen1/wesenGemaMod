@@ -45,8 +45,6 @@ getmetatable(MapChangeHandler).__call = MapChangeHandler.__construct;
 --
 function MapChangeHandler:handleEvent(_mapName, _gameMode)
 
-  self:updateGemaModeState();
-
   -- If gema mode is still active
   if (self.parentGemaMode:getIsActive()) then
 
@@ -61,26 +59,6 @@ function MapChangeHandler:handleEvent(_mapName, _gameMode)
       "TableTemplate/MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() }
     )
 
-  end
-
-end
-
-
--- Private Methods
-
----
--- Updates the gema mode state if necessary.
---
-function MapChangeHandler:updateGemaModeState()
-
-  local gemaModeStateUpdater = self.parentGemaMode:getGemaModeStateUpdater();
-  local newGemaModeState = gemaModeStateUpdater:switchToNextEnvironment();
-
-  if (newGemaModeState ~= nil) then
-    self.output:printTextTemplate(
-      "TextTemplate/InfoMessages/GemaModeState/GemaModeStateChange",
-      { ["isGemaModeActive"] = newGemaModeState }
-    )
   end
 
 end
