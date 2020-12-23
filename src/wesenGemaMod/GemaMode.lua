@@ -1,15 +1,15 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2020 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
+local BaseGameMode = require "AC-LuaServer.Extensions.GameModeManager.BaseGameMode"
 local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
 local ColorLoader = require("Output/Util/ColorLoader")
-local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
-local GemaModeStateUpdater = require("GemaModeStateUpdater");
+local MapNameChecker = require("Map/MapNameChecker");
 local MapRot = require("MapRot/MapRot");
 local MapTopHandler = require("Tops/MapTopHandler");
 local Output = require("Output/Output");
@@ -22,14 +22,7 @@ local TimeFormatter = require("TimeHandler/TimeFormatter")
 --
 -- @type GemaMode
 --
-local GemaMode = setmetatable({}, {});
-
----
--- The environment handler
---
--- @tfield EnvironmentHandler environmentHandler
---
-GemaMode.environmentHandler = nil;
+local GemaMode = BaseGameMode:extend()
 
 ---
 -- The event handler
@@ -39,11 +32,11 @@ GemaMode.environmentHandler = nil;
 GemaMode.eventHandler = nil;
 
 ---
--- The gema mode state updater
+-- The map name checker
 --
--- @tfield GemaModeStateUpdater gemaModeStateUpdater
+-- @tfield MapNameChecker mapNameChecker
 --
-GemaMode.gemaModeStateUpdater = nil;
+GemaMode.mapNameChecker = nil;
 
 ---
 -- The map top handler
@@ -73,61 +66,26 @@ GemaMode.output = nil;
 --
 GemaMode.playerList = nil;
 
----
--- Indicates whether the gema mode is currently active
---
--- @tfield bool isActive
---
-GemaMode.isActive = nil;
-
 
 ---
 -- GemaMode constructor.
 --
--- @treturn GemaMode The GemaMode instance
---
-function GemaMode:__construct()
+function GemaMode:new()
 
-  local instance = setmetatable({}, {__index = GemaMode});
+  self.super.new(self, "GemaGameMode", "Gema")
 
-  instance.environmentHandler = EnvironmentHandler();
-  instance.eventHandler = EventHandler();
-  instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
-  instance.mapRot = MapRot();
-  instance.output = Output();
-  instance.playerList = PlayerList();
+  self.eventHandler = EventHandler()
+  self.mapNameChecker = MapNameChecker()
+  self.mapRot = MapRot()
+  self.mapTopHandler = MapTopHandler()
 
-  -- Must be created after the output was created
-  instance.mapTopHandler = MapTopHandler(instance.output);
-
-  instance.isActive = true;
-
-  return instance;
+  self.output = Output()
+  self.playerList = PlayerList()
 
 end
-
-getmetatable(GemaMode).__call = GemaMode.__construct;
 
 
 -- Getters and setters
-
----
--- Returns the environment handler.
---
--- @treturn EnvironmentHandler The environment handler
---
-function GemaMode:getEnvironmentHandler()
-  return self.environmentHandler;
-end
-
----
--- Returns the gema mode state updater.
---
--- @treturn GemaModeStateUpdater The gema mode state updater
---
-function GemaMode:getGemaModeStateUpdater()
-  return self.gemaModeStateUpdater;
-end
 
 ---
 -- Returns the map rot.
@@ -165,26 +123,19 @@ function GemaMode:getPlayerList()
   return self.playerList;
 end
 
----
--- Returns whether the gema mode is active.
---
--- @treturn bool True if the gema mode is active, false otherwise
---
-function GemaMode:getIsActive()
-  return self.isActive;
-end
-
----
--- Sets whether the gema mode is active.
---
--- @tparam bool _isActive If true, the gema mode will be active, if false it will be deactivated
---
-function GemaMode:setIsActive(_isActive)
-  self.isActive = _isActive;
-end
-
 
 -- Public Methods
+
+---
+-- Returns whether this GameMode can be enabled for a specified Game.
+--
+-- @tparam Game _game The game to check
+--
+-- @treturn bool True if this GameMode can be enabled for the specified Game, false otherwise
+--
+function GemaMode:canBeEnabledForGame(_game)
+  return (_game:getGameModeId() == GM_CTF and self.mapNameChecker:isGemaMapName(_game:getMapName()))
+end
 
 ---
 -- Loads the commands and generates the gema maprot.
@@ -192,14 +143,14 @@ end
 function GemaMode:initialize()
 
   self:parseConfig()
-
-  self.mapRot:loadGemaMapRot();
-  self.environmentHandler:initialize(self.mapRot);
   self.mapTopHandler:initialize();
 
   self.eventHandler:loadEventHandlers(self, "lua/scripts/wesenGemaMod/EventHandler")
   self.eventHandler:initializeEventListeners()
 
+end
+
+function GemaMode:terminate()
 end
 
 ---
