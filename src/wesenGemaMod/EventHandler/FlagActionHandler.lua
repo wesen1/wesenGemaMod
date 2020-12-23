@@ -56,9 +56,6 @@ function FlagActionHandler:handleEvent(_cn, _action, _flag)
         self:registerRecord(scoreAttempt);
       end
 
-    elseif (_action == FA_DROP or _action == FA_LOST) then
-      -- instant flag reset (gameplay affecting)
-      self:resetFlag(player, _flag);
     end
 
   end
@@ -81,16 +78,6 @@ function FlagActionHandler:registerRecord(scoreAttempt)
   self.output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record })
   mapTop:addRecord(record)
 
-end
-
----
--- Triggers the flag action "player <name> returned the flag".
---
--- @tparam int _player The player who dropped the flag
--- @tparam int _flag The flag id of the flag that was dropped
---
-function FlagActionHandler:resetFlag(_player, _flag)
-  flagaction(_player:getCn(), FA_RESET, _flag)
 end
 
 
