@@ -32,6 +32,8 @@ LuaORM_API.ORM:initialize({
 })
 
 
+-- TODO: Add option for additional template directories to TemplateRenderer
+-- TODO: Add "lua/config/templates" as additional directory
 local GemaMode = require("GemaMode")
 
 local gemaMode = GemaMode()
