@@ -7,7 +7,6 @@
 
 local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
 local ColorLoader = require("Output/Util/ColorLoader")
-local CommandLoader = require("CommandHandler/CommandLoader");
 local EnvironmentHandler = require("EnvironmentHandler/EnvironmentHandler");
 local EventHandler = require("EventHandler");
 local GemaModeStateUpdater = require("GemaModeStateUpdater");
@@ -24,20 +23,6 @@ local TimeFormatter = require("TimeHandler/TimeFormatter")
 -- @type GemaMode
 --
 local GemaMode = setmetatable({}, {});
-
----
--- The command list
---
--- @tfield CommandList commandList
---
-GemaMode.commandList = nil;
-
----
--- The command loader
---
--- @tfield CommandLoader commandLoader
---
-GemaMode.commandLoader = nil;
 
 ---
 -- The environment handler
@@ -105,7 +90,6 @@ function GemaMode:__construct()
 
   local instance = setmetatable({}, {__index = GemaMode});
 
-  instance.commandLoader = CommandLoader();
   instance.environmentHandler = EnvironmentHandler();
   instance.eventHandler = EventHandler();
   instance.gemaModeStateUpdater = GemaModeStateUpdater(instance);
@@ -126,24 +110,6 @@ getmetatable(GemaMode).__call = GemaMode.__construct;
 
 
 -- Getters and setters
-
----
--- Returns the command list.
---
--- @treturn CommandList The command list
---
-function GemaMode:getCommandList()
-  return self.commandList;
-end
-
----
--- Returns the command loader.
---
--- @treturn CommandLoader The command loader
---
-function GemaMode:getCommandLoader()
-  return self.commandLoader;
-end
 
 ---
 -- Returns the environment handler.
@@ -226,9 +192,6 @@ end
 function GemaMode:initialize()
 
   self:parseConfig()
-
-  -- Load all commands
-  self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
 
   self.mapRot:loadGemaMapRot();
   self.environmentHandler:initialize(self.mapRot);

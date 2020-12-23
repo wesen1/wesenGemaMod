@@ -6,10 +6,6 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local CommandParser = require("CommandHandler/CommandParser");
-local CommandExecutor = require("CommandHandler/CommandExecutor");
-local Exception = require("Util/Exception");
-local ObjectUtils = require("Util/ObjectUtils");
 local TemplateFactory = require("Output/Template/TemplateFactory")
 
 ---
@@ -19,21 +15,6 @@ local TemplateFactory = require("Output/Template/TemplateFactory")
 -- @type PlayerSayTextHandler
 --
 local PlayerSayTextHandler = setmetatable({}, {__index = BaseEventHandler});
-
-
----
--- The command parser
---
--- @tfield CommandParser commandParser
---
-PlayerSayTextHandler.commandParser = nil;
-
----
--- The command executor
---
--- @tfield CommandExecutor commandExecutor
---
-PlayerSayTextHandler.commandExecutor = nil;
 
 
 ---
@@ -47,9 +28,6 @@ function PlayerSayTextHandler:__construct(_parentGemaMode)
 
   local instance = BaseEventHandler(_parentGemaMode, "onPlayerSayText");
   setmetatable(instance, {__index = PlayerSayTextHandler});
-
-  instance.commandParser = CommandParser(instance.output);
-  instance.commandExecutor = CommandExecutor();
 
   return instance;
 
@@ -78,48 +56,6 @@ function PlayerSayTextHandler:handleEvent(_cn, _text)
       "TextTemplate/LogMessages/PlayerSayText", { player = player, text = _text}
     ):renderAsText():getOutputRows()[1]
   );
-
-  if (self.parentGemaMode:getIsActive()) then
-
-    if (self.commandParser:isCommand(_text)) then
-
-      local status, exception = pcall(self.handleCommand, self, player, _text);
-      if (not status) then
-        if (ObjectUtils:isInstanceOf(exception, Exception)) then
-          self.output:printException(exception, player);
-        else
-          error(exception);
-        end
-      end
-
-    else
-      local players = self.parentGemaMode:getPlayerList():getPlayers();
-      self.output:playerSayText(_text, player:getCn(), players);
-    end
-
-    -- block the normal player text output of the server
-    return PLUGIN_BLOCK;
-
-  end
-
-end
-
----
--- Handles a command input of a player.
---
--- @tparam Player _player The player who used a command
--- @tparam string _text The text that the player said
---
--- @raise Error while parsing the command
--- @raise Error while executing the command
---
-function PlayerSayTextHandler:handleCommand(_player, _text)
-
-  self.commandParser:parseCommand(_text, self.parentGemaMode:getCommandList());
-
-  local command = self.commandParser:getCommand();
-  local arguments = self.commandParser:getArguments();
-  self.commandExecutor:executeCommand(command, arguments, _player);
 
 end
 
