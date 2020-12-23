@@ -5,40 +5,23 @@
 -- @license MIT
 --
 
-local Player = require("Player/Player");
+local BasePlayerList = require "AC-LuaServer.Core.PlayerList.PlayerList"
+local Object = require "classic"
+local Player = require "Player.Player"
 
 ---
 -- Stores a list of Player's and provides methods to add/remove entries from the list.
 --
 -- @type PlayerList
 --
-local PlayerList = setmetatable({}, {});
-
+local PlayerList = BasePlayerList:extend()
 
 ---
 -- The list of players
 --
 -- @tfield Player[] players
 --
-PlayerList.players = nil;
-
-
----
--- PlayerList constructor.
---
--- @treturn PlayerList The PlayerList instance
---
-function PlayerList:__construct()
-
-  local instance = setmetatable({}, { __index = PlayerList });
-
-  instance.players = {};
-
-  return instance;
-
-end
-
-getmetatable(PlayerList).__call = PlayerList.__construct;
+PlayerList.players = nil
 
 
 -- Getters and Setters
@@ -49,81 +32,46 @@ getmetatable(PlayerList).__call = PlayerList.__construct;
 -- @treturn Player[] The array of Player's
 --
 function PlayerList:getPlayers()
-  return self.players;
+  return self.players
 end
 
 
--- Public Methods
+-- Event Handlers
 
 ---
--- Adds a player to the players list.
+-- Event handler that is called when a player connects to the server.
 --
--- @tparam int _cn The client number of the player
+-- @tparam int _cn The client number of the player who connected
 --
-function PlayerList:addPlayer(_cn)
+function PlayerList:onPlayerConnect(_cn)
 
-  local playerIp = getip(_cn);
-  local playerName = getname(_cn);
+  self.super.onPlayerConnect(self, _cn)
 
-  self.players[_cn] = Player(_cn, playerName, playerIp);
-  self.players[_cn]:savePlayer();
+  self.players[_cn] = Player(self.players[_cn])
+  self.players[_cn]:savePlayer()
 
 end
 
 ---
--- Removes a player from the players list.
+-- Event handler that is called when a player changes his name.
 --
--- @tparam int _cn The client number of the player
+-- @tparam int _cn The client number of the player who changed his name
+-- @tparam string _newName The new name of the player
 --
-function PlayerList:removePlayer(_cn)
-  self.players[_cn] = nil;
-end
+-- @emits The "onPlayerNameChanged" event after the Player object was adjusted
+--
+function PlayerList:onPlayerNameChange(_cn, _newName)
 
----
--- Returns a player with a specific client number.
---
--- @tparam int _cn The client number of the player
---
--- @treturn Player The player
---
-function PlayerList:getPlayer(_cn)
-  return self.players[_cn];
-end
+  self.super.onPlayerNameChange(self, _cn, _newName)
 
----
--- Returns how many connected players have a specific ip.
---
--- @tparam string _ip The ip
---
--- @treturn int The number of connected players with that ip
---
-function PlayerList:getNumberOfPlayersWithIp(_ip)
-
-  local numberOfConnections = 0;
-  for _, player in pairs(self.players) do
-    if (player:getIp() == _ip) then
-      numberOfConnections = numberOfConnections + 1;
-    end
+  -- Must check whether the player object is set because it is possible that the player used a script
+  -- to change his name multiple times in a row within a small time frame and got autokicked for spam
+  local player = self:getPlayerByCn(_cn)
+  if (player) then
+    player:savePlayer()
   end
 
-  return numberOfConnections;
-
-  --[[
-  -- countConnections is called before the player list is updated, therefore
-  -- isconnected() and getip() are used here instead of an iteration over the player list
-  local ip = getip(_cn);
-
-  local amountConnections = 0;
-  for i = 0, 15, 1 do
-    if (isconnected(i) and getip(i) == ip) then
-      amountConnections = amountConnections + 1
-    end
-  end
-
-  return amountConnections;
-  --]]
-
 end
 
 
-return PlayerList;
+return PlayerList

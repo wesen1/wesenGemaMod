@@ -70,14 +70,14 @@ Player.scoreAttempt = nil;
 --
 -- @treturn Player The Player instance
 --
-function Player:__construct(_cn, _name, _ip)
+function Player:__construct(_basePlayer)
 
   local instance = setmetatable({}, {__index = Player});
 
   instance.id = -1;
-  instance.cn = _cn;
-  instance.name = _name;
-  instance.ip = _ip;
+  instance.cn = _basePlayer:getCn();
+  instance.name = _basePlayer:getName();
+  instance.ip = _basePlayer:getIp();
   instance.level = 0;
   instance.scoreAttempt = PlayerScoreAttempt(instance);
 
