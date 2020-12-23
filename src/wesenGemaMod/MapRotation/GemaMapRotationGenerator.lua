@@ -1,44 +1,35 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2020 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local lfs = require("lfs");
-local MapNameChecker = require("Map/MapNameChecker");
+local lfs = require "lfs"
+local MapNameChecker = require "Map.MapNameChecker"
+local Object = require "classic"
 
 ---
--- Generates maprots from the existing maps.
+-- Generates gema maprots from the existing maps.
 --
--- @type MapRotGenerator
+-- @type GemaMapRotationGenerator
 --
-local MapRotGenerator = setmetatable({}, {});
+local GemaMapRotationGenerator = Object:extend()
 
 ---
 -- The map name checker
 --
 -- @tfield MapNameChecker mapNameChecker
 --
-MapRotGenerator.mapNameChecker = nil;
+GemaMapRotationGenerator.mapNameChecker = nil
 
 
 ---
--- MapRotGenerator constructor.
+-- GemaMapRotationGenerator constructor.
 --
--- @treturn MapRotGenerator The MapRotGenerator instance
---
-function MapRotGenerator:__construct()
-
-  local instance = setmetatable({}, {__index = MapRotGenerator});
-
-  instance.mapNameChecker = MapNameChecker();
-
-  return instance;
-
+function GemaMapRotationGenerator:new()
+  self.mapNameChecker = MapNameChecker()
 end
-
-getmetatable(MapRotGenerator).__call = MapRotGenerator.__construct;
 
 
 -- Public Methods
@@ -49,7 +40,7 @@ getmetatable(MapRotGenerator).__call = MapRotGenerator.__construct;
 -- @tparam MapRot _mapRot The map rot to which the map entries will be added
 -- @tparam string _mapsDirectory The path to the maps directory
 --
-function MapRotGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
+function GemaMapRotationGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
 
   _mapRot:clear();
 
@@ -63,7 +54,7 @@ function MapRotGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
       if (not self.mapNameChecker:isValidMapName(mapName)) then
         os.remove(_mapsDirectory .. "/" .. luaFile);
       elseif (self.mapNameChecker:isGemaMapName(mapName)) then
-        _mapRot:addMap(mapName);
+        _mapRot::appendEntry(MapRotationEntry(mapName))
       end
 
     end
@@ -73,4 +64,4 @@ function MapRotGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
 end
 
 
-return MapRotGenerator;
+return GemaMapRotationGenerator
