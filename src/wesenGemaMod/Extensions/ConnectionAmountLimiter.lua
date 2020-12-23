@@ -17,7 +17,6 @@ local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 --
 local ConnectionAmountLimiter = BaseExtension:extend()
 
-
 ---
 -- The EventCallback for the "onPlayerAdded" event of the player list
 --
