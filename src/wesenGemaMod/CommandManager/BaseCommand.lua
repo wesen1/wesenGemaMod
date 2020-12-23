@@ -5,15 +5,16 @@
 -- @license MIT
 --
 
+local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local StaticString = require("Output/StaticString")
+local Server = require "AC-LuaServer.Core.Server"
 
 ---
 -- Stores the configuration for a single command.
 --
 -- @type BaseCommand
 --
-local BaseCommand = setmetatable({}, {})
-
+local BaseCommand = BaseExtension:extend()
 
 ---
 -- The main command name (with leading "!")
@@ -90,47 +91,41 @@ BaseCommand.output = nil
 -- @tparam string _description The description of the command (optional)
 -- @tparam string[] _aliases The list of aliases for the command (optional)
 --
--- @treturn BaseCommand The BaseCommand instance
---
-function BaseCommand:__construct(_name, _requiredLevel, _group, _arguments, _description, _aliases)
+function BaseCommand:new(_name, _requiredLevel, _group, _arguments, _description, _aliases)
 
-  local instance = setmetatable({}, {__index = BaseCommand})
+  self.super.new(self.name, "CommandManager")
 
-  instance.name = _name
+  self.name = _name
 
   if (_requiredLevel) then
-    instance.requiredLevel = _requiredLevel
+    self.requiredLevel = _requiredLevel
   end
 
   if (_group) then
-    instance.group = _group
+    self.group = _group
   else
-    instance.group = StaticString("defaultCommandGroup"):getString()
+    self.group = StaticString("defaultCommandGroup"):getString()
   end
 
   if (_description) then
-    instance.description = _description
+    self.description = _description
   else
-    instance.description = StaticString("defaultCommandDescription"):getString()
+    self.description = StaticString("defaultCommandDescription"):getString()
   end
 
   if (_arguments) then
-    instance.arguments = _arguments
+    self.arguments = _arguments
   else
-    instance.aliases = {}
+    self.aliases = {}
   end
 
   if (_aliases) then
-    instance.aliases = _aliases
+    self.aliases = _aliases
   else
-    instance.aliases = {}
+    self.aliases = {}
   end
 
-  return instance
-
 end
-
-getmetatable(BaseCommand).__call = BaseCommand.__construct
 
 
 -- Getters and setters
@@ -206,9 +201,9 @@ end
 --
 -- @tparam CommandList _commandList The command list to initialize this command with
 --
-function BaseCommand:initialize(_commandList)
-  self.parentCommandList = _commandList
-  self.output = _commandList:getParentGemaMode():getOutput()
+function BaseCommand:initialize(_commandManager)
+  self.parentCommandList = _commandManager:getCommandList()
+  self.output = Server.getInstance():getOutput()
 end
 
 ---

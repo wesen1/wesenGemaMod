@@ -5,8 +5,8 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
-local CommandArgument = require("CommandHandler/CommandArgument");
+local BaseCommand = require "CommandManager.BaseCommand"
+local CommandArgument = require "CommandManager.CommandArgument"
 local RemainigTimeExtender = require("TimeHandler/RemainingTimeExtender");
 local StaticString = require("Output/StaticString");
 
@@ -17,7 +17,7 @@ local StaticString = require("Output/StaticString");
 --
 -- @type ExtendTimeCommand
 --
-local ExtendTimeCommand = setmetatable({}, {__index = BaseCommand});
+local ExtendTimeCommand = BaseCommand:extend()
 
 
 ---
@@ -25,15 +25,13 @@ local ExtendTimeCommand = setmetatable({}, {__index = BaseCommand});
 --
 -- @tfield RemainingTimeExtender remainingTimeExtender
 --
-ExtendTimeCommand.remainingTimeExtender = nil;
+ExtendTimeCommand.remainingTimeExtender = nil
 
 
 ---
 -- ExtendTimeCommand constructor.
 --
--- @treturn ExtendTimeCommand The ExtendTimeCommand instance
---
-function ExtendTimeCommand:__construct()
+function ExtendTimeCommand:new()
 
   local numberOfMinutesArgument = CommandArgument(
     StaticString("extendTimeMinutesArgumentName"):getString(),
@@ -41,9 +39,10 @@ function ExtendTimeCommand:__construct()
     "integer",
     StaticString("extendTimeMinutesArgumentShortName"):getString(),
     StaticString("extendTimeMinutesArgumentDescription"):getString()
-  );
+  )
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("extendTimeCommandName"):getString(),
     0,
     StaticString("extendTimeCommandGroupName"):getString(),
@@ -51,16 +50,11 @@ function ExtendTimeCommand:__construct()
     StaticString("extendTimeCommandDescription"):getString(),
     { StaticString("extendTimeCommandAlias1"):getString(),
       StaticString("extendTimeCommandAlias2"):getString() }
-  );
-  setmetatable(instance, {__index = ExtendTimeCommand});
+  )
 
-  instance.remainingTimeExtender = RemainigTimeExtender(20);
-
-  return instance;
+  self.remainingTimeExtender = RemainigTimeExtender(20)
 
 end
-
-getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
 
 
 -- Public Methods

@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
+local BaseCommand = require "CommandManager.BaseCommand"
 local StaticString = require("Output/StaticString");
 
 ---
@@ -15,31 +15,25 @@ local StaticString = require("Output/StaticString");
 --
 -- @type MapTopCommand
 --
-local MapTopCommand = setmetatable({}, {__index = BaseCommand});
+local MapTopCommand = BaseCommand:extend()
 
 
 ---
 -- MapTopCommand constructor.
 --
--- @treturn MapTopCommand The MapTopCommand instance
---
-function MapTopCommand:__construct()
+function MapTopCommand:new()
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("mapTopCommandName"):getString(),
     0,
     StaticString("mapTopCommandGroupName"):getString(),
     {},
     StaticString("mapTopCommandDescription"):getString(),
     { StaticString("mapTopCommandAlias1"):getString() }
-  );
-  setmetatable(instance, {__index = MapTopCommand});
-
-  return instance;
+  )
 
 end
-
-getmetatable(MapTopCommand).__call = MapTopCommand.__construct;
 
 
 -- Public Methods

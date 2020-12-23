@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand")
+local BaseCommand = require "CommandManager.BaseCommand"
 local StaticString = require("Output/StaticString")
 local TemplateFactory = require("Output/Template/TemplateFactory")
 
@@ -16,7 +16,7 @@ local TemplateFactory = require("Output/Template/TemplateFactory")
 --
 -- @type CmdsCommand
 --
-local CmdsCommand = setmetatable({}, {__index = BaseCommand})
+local CmdsCommand = BaseCommand:extend()
 
 
 ---
@@ -30,25 +30,19 @@ CmdsCommand.cmdsCommandListTemplate = nil
 ---
 -- CmdsCommand constructor.
 --
--- @treturn CmdsCommand The CmdsCommand instance
---
-function CmdsCommand:__construct()
+function CmdsCommand:new()
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("cmdsCommandName"):getString(),
     0,
     nil,
     {},
     StaticString("cmdsCommandDescription"):getString(),
     { StaticString("cmdsCommandAlias1"):getString() }
-  );
-  setmetatable(instance, {__index = CmdsCommand})
-
-  return instance
+  )
 
 end
-
-getmetatable(CmdsCommand).__call = CmdsCommand.__construct
 
 
 -- Public Methods
