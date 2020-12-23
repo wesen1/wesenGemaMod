@@ -6,8 +6,8 @@
 --
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
-local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 
 ---
 -- Restricts the number of connections with the same IP.
@@ -16,17 +16,14 @@ local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventLi
 -- @type ConnectionAmountLimiter
 --
 local ConnectionAmountLimiter = BaseExtension:extend()
-ConnectionAmountLimiter:implement(ServerEventListener)
 
 
 ---
--- The list of server events for which this class listens
+-- The EventCallback for the "onPlayerAdded" event of the player list
 --
--- @tfield table serverEventListeners
+-- @tfield EventCallback onPlayerAddedEventCallback
 --
-ConnectionAmountLimiter.serverEventListeners = {
-  onPlayerConnect = "onPlayerConnect"
-}
+ConnectionAmountLimiter.onPlayerAddedEventCallback = nil
 
 ---
 -- The maximum allowed number of connections with the same IP to the server
@@ -42,6 +39,7 @@ ConnectionAmountLimiter.maximumNumberOfConnectionsWithSameIp = nil
 function ConnectionAmountLimiter:new(_maximumNumberOfConnectionsWithSameIp)
   self.super.new(self, "ConnectionAmountLimiter", "Server")
   self.maximumNumberOfConnectionsWithSameIp = _maximumNumberOfConnectionsWithSameIp
+  self.onPlayerAddedEventCallback = EventCallback({ object = self, methodName = "onPlayerAdded"})
 end
 
 
@@ -51,25 +49,25 @@ end
 -- Initializes the event listeners.
 --
 function ConnectionAmountLimiter:initialize()
-  self:registerAllServerEventListeners()
+  self.target:getPlayerList():on("onPlayerAdded", self.onPlayerAddedEventCallback)
 end
 
 ---
 -- Removes the event listeners.
 --
 function ConnectionAmountLimiter:terminate()
-  self:unregisterAllServerEventListeners()
+  self.target:getPlayerList():off("onPlayerAdded", self.onPlayerAddedEventCallback)
 end
 
 
 -- Event Handlers
 
 ---
--- Event handler which is called when a player connects.
+-- Event handler which is called after a player was added to the player list.
 --
--- @tparam int _cn The client number of the player who connected
+-- @tparam Player _player The player who connected
 --
-function ConnectionAmountLimiter:onPlayerConnect(_cn)
+function ConnectionAmountLimiter:onPlayerConnect(_player)
 
   local playerList = self.target:getPlayerList()
   local numberOfConnectionsWithIp = self:countConnectionsWithIp(playerList, _player:getIp())
