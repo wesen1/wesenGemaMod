@@ -82,6 +82,8 @@ function ConnectionAmountLimiter:onPlayerConnect(_player)
 
     -- TODO: Check if it is required to manually call this PlayerList event handler
     playerList:onPlayerDisconnectAfter(_player:getCn())
+
+    -- TODO: Following event handlers must be blocked
   end
 
 end
