@@ -8,11 +8,15 @@
 local CachedMapRot = require("MapRot/CachedMapRot");
 local Environment = require("EnvironmentHandler/Environment");
 local MapRotGenerator = require("MapRot/MapRotGenerator");
+local MapRotationEntry = require "AC-LuaServer.Core.MapRotation.MapRotationEntry"
 local SavedMapRot = require("MapRot/SavedMapRot");
 local StaticString = require("Output/StaticString");
 
 ---
 -- Represents the loaded maprot and the maprot config file.
+-- TODO: Remove obsolete code from this class
+-- TODO: Add event listener for GemaMapManager event
+-- TODO: Rename this class to GemaMapRotation
 --
 -- @type MapRot
 --
@@ -154,6 +158,18 @@ end
 function MapRot:loadRegularMapRot()
   self:switchToRegularMapRot();
   self.cachedMapRot:load(self.savedMapRot);
+end
+
+
+-- Event Handlers
+
+---
+-- Method that is called after a gema map was uploaded.
+--
+-- @tparam string _mapName The name of the gema map that was uploaded
+--
+function MapRot:onGemaMapUploaded(_mapName)
+  Server.getInstance():getMapRotation():addMap(MapRotationEntry(_mapName))
 end
 
 
