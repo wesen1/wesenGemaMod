@@ -47,9 +47,6 @@ function PlayerConnectHandler:handleEvent(_cn)
 
   local playerList = self.parentGemaMode:getPlayerList();
 
-  -- Add the player to the player list
-  playerList:addPlayer(_cn);
-
   -- Get the Player object for the new connected player
   local player = playerList:getPlayer(_cn);
 
@@ -76,15 +73,6 @@ end
 -- @tparam Player _player The player who connected
 --
 function PlayerConnectHandler:printServerInformation(_player)
-
-  local mapTopHandler = self.parentGemaMode:getMapTopHandler();
-  local mapTop = mapTopHandler:getMapTop("main");
-
-  self.output:printTableTemplate(
-    "TableTemplate/MapTop/MapStatistics",
-    { ["mapRecordList"] = mapTop:getMapRecordList() },
-    _player
-  )
 
   local commandList = self.parentGemaMode:getCommandList();
   local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString());

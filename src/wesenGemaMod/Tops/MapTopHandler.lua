@@ -21,13 +21,6 @@ local MapTopHandler = setmetatable({}, {});
 --
 MapTopHandler.mapTops = nil;
 
----
--- The map top printer
---
--- @tfield MapTopPrinter mapTopPrinter
---
-MapTopHandler.mapTopPrinter = nil;
-
 
 ---
 -- MapTopHandler constructor.

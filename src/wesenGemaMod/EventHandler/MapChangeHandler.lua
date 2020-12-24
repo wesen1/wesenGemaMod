@@ -54,10 +54,6 @@ function MapChangeHandler:handleEvent(_mapName, _gameMode)
     -- Load the map records for the map
     mapTop:loadRecords(_mapName);
 
-    -- Print the map statistics for the map to all players
-    self.output:printTableTemplate(
-      "TableTemplate/MapTop/MapStatistics", { ["mapRecordList"] = mapTop:getMapRecordList() }
-    )
 
   end
 
