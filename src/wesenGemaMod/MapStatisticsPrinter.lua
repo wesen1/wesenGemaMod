@@ -77,7 +77,7 @@ end
 ---
 -- Event handler which is called after a player was added to the player list.
 --
--- @tparam Player _player The player who connected
+-- @tparam Player _player The player who was added
 --
 function MapStatisticsPrinter:onPlayerAdded(_player)
   self:printMapStatistics(_player)
