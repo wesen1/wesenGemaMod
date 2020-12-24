@@ -7,7 +7,7 @@
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
-local RemainigTimeExtender = require("TimeHandler/RemainingTimeExtender");
+local RemainingTimeExtender = require("TimeHandler/RemainingTimeExtender");
 local StaticString = require("Output/StaticString");
 
 ---
@@ -18,7 +18,6 @@ local StaticString = require("Output/StaticString");
 -- @type ExtendTimeCommand
 --
 local ExtendTimeCommand = BaseCommand:extend()
-
 
 ---
 -- The remaining time extender
@@ -52,12 +51,28 @@ function ExtendTimeCommand:new()
       StaticString("extendTimeCommandAlias2"):getString() }
   )
 
-  self.remainingTimeExtender = RemainigTimeExtender(20)
+  self.remainingTimeExtender = RemainingTimeExtender(20)
 
 end
 
 
 -- Public Methods
+
+---
+-- Initializes this Extension.
+--
+function ExtendTimeCommand:initialize(_commandManager)
+  self.super.initialize(self, _commandManager)
+  self.remainingTimeExtender:initialize()
+end
+
+---
+-- Terminates this Extension.
+--
+function ExtendTimeCommand:terminate()
+  self.super.terminate(self)
+  self.remainingTimeExtender:terminate()
+end
 
 ---
 -- Extends the remaining time by a specific amount of time.
@@ -69,11 +84,7 @@ end
 --
 function ExtendTimeCommand:execute(_player, _arguments)
 
-  local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler()
-  local environment = environmentHandler:getCurrentEnvironment()
-
-  self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes)
-
+  self.remainingTimeExtender:extendTime(_player, _arguments.numberOfMinutes)
   self.output:printTextTemplate(
     "TextTemplate/InfoMessages/Time/TimeExtended",
     { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
