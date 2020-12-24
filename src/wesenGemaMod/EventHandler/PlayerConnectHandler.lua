@@ -6,7 +6,6 @@
 --
 
 local BaseEventHandler = require("EventHandler/BaseEventHandler");
-local StaticString = require("Output/StaticString");
 
 ---
 -- Class that handles player connects.
@@ -51,38 +50,9 @@ function PlayerConnectHandler:handleEvent(_cn)
   local player = playerList:getPlayer(_cn);
 
   if (self.parentGemaMode:getIsActive()) then
-
-    if (#playerList:getPlayers() == 1) then
-      setautoteam (false);
-    end
-
-    self:printServerInformation(player);
-
   else
     self.output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {}, player)
   end
-
-end
-
-
--- Private Methods
-
----
--- Prints the map statistics and information about the commands to a player.
---
--- @tparam Player _player The player who connected
---
-function PlayerConnectHandler:printServerInformation(_player)
-
-  local commandList = self.parentGemaMode:getCommandList();
-  local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString());
-  local rulesCommand = commandList:getCommand(StaticString("rulesCommandName"):getString());
-
-  self.output:printTableTemplate(
-    "TableTemplate/ServerInformation",
-    { ["cmdsCommand"] = cmdsCommand, ["rulesCommand"] = rulesCommand },
-    _player
-  )
 
 end
 

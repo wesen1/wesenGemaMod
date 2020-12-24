@@ -1,12 +1,13 @@
 ---
 -- @author wesen
--- @copyright 2019 wesen <wesen-ac@web.de>
+-- @copyright 2020 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local Server = require  "AC-LuaServer.Core.Server"
 local ServerEventListener = require  "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 
 ---
