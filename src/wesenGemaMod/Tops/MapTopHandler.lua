@@ -5,7 +5,9 @@
 -- @license MIT
 --
 
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local MapTop = require("Tops/MapTop/MapTop");
+local Server = require "AC-LuaServer.Core.Server"
 
 ---
 -- Handles the maptops.
@@ -13,6 +15,13 @@ local MapTop = require("Tops/MapTop/MapTop");
 -- @type MapTopHandler
 --
 local MapTopHandler = setmetatable({}, {});
+
+---
+-- The EventCallback for the "onGameModeStaysEnabledAfterGameChange" event of the GameHandler
+--
+-- @tfield EventCallback onGameModeStaysEnabledAfterGameChangeEventCallback
+--
+MapTopHandler.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
 
 ---
 -- The list of map tops
@@ -33,6 +42,7 @@ function MapTopHandler:__construct(_output)
 
   local instance = setmetatable({}, {__index = MapTopHandler});
 
+  instance.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange"})
   instance.mapTops = {};
 
   return instance;
@@ -57,10 +67,24 @@ end
 -- Public Methods
 
 ---
--- Initializes the main maptop.
+-- Initializes the main maptop and the event listeners.
 --
 function MapTopHandler:initialize()
   self.mapTops["main"] = MapTop();
+
+  local gameHandler = Server.getInstance():getGameHandler()
+  gameHandler:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+
+end
+
+---
+-- Removes the event listeners.
+--
+function MapTopHandler:terminate()
+
+  local gameHandler = Server.getInstance():getGameHandler()
+  gameHandler:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+
 end
 
 ---
@@ -70,6 +94,18 @@ end
 --
 function MapTopHandler:getMapTop(_mapTopId)
   return self.mapTops[_mapTopId];
+end
+
+
+-- Event Handlers
+
+---
+-- Event handler which is called when the game mode is not changed after a Game change.
+--
+-- @tparam Game _game The new current Game
+--
+function MapTopHandler:onGameModeStaysEnabledAfterGameChange(_game)
+  self.mapTops["main"]:loadRecords(_game:getMapName())
 end
 
 
