@@ -8,12 +8,8 @@
 local BaseGameMode = require "AC-LuaServer.Extensions.GameModeManager.BaseGameMode"
 local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
 local ColorLoader = require("Output/Util/ColorLoader")
-local EventHandler = require("EventHandler");
 local MapNameChecker = require("Map/MapNameChecker");
-local MapRot = require("MapRot/MapRot");
 local MapTopHandler = require("Tops/MapTopHandler");
-local Output = require("Output/Output");
-local PlayerList = require("Player/PlayerList");
 local TemplateFactory = require("Output/Template/TemplateFactory")
 local TimeFormatter = require("TimeHandler/TimeFormatter")
 
@@ -24,47 +20,20 @@ local TimeFormatter = require("TimeHandler/TimeFormatter")
 --
 local GemaMode = BaseGameMode:extend()
 
----
--- The event handler
---
--- @tfield EventHandler eventHandler
---
-GemaMode.eventHandler = nil;
 
 ---
 -- The map name checker
 --
 -- @tfield MapNameChecker mapNameChecker
 --
-GemaMode.mapNameChecker = nil;
+GemaMode.mapNameChecker = nil
 
 ---
 -- The map top handler
 --
 -- @tfield MapTopHandler mapTopHandler
 --
-GemaMode.mapTopHandler = nil;
-
----
--- The map rot
---
--- @tfield MapRot mapRot
---
-GemaMode.mapRot = nil;
-
----
--- The output
---
--- @tfield Output output
---
-GemaMode.output = nil;
-
----
--- The player list
---
--- @tfield PlayerList playerList
---
-GemaMode.playerList = nil;
+GemaMode.mapTopHandler = nil
 
 
 ---
@@ -74,13 +43,8 @@ function GemaMode:new()
 
   self.super.new(self, "GemaGameMode", "Gema")
 
-  self.eventHandler = EventHandler()
   self.mapNameChecker = MapNameChecker()
-  self.mapRot = MapRot()
   self.mapTopHandler = MapTopHandler()
-
-  self.output = Output()
-  self.playerList = PlayerList()
 
 end
 
@@ -88,39 +52,12 @@ end
 -- Getters and setters
 
 ---
--- Returns the map rot.
---
--- @treturn MapRot The map rot
---
-function GemaMode:getMapRot()
-  return self.mapRot;
-end
-
----
 -- Returns the map top handler.
 --
 -- @treturn MapTop The map top handler
 --
 function GemaMode:getMapTopHandler()
-  return self.mapTopHandler;
-end
-
----
--- Returns the output.
---
--- @treturn Output The output
---
-function GemaMode:getOutput()
-  return self.output;
-end
-
----
--- Returns the player list.
---
--- @treturn PlayerList The player list
---
-function GemaMode:getPlayerList()
-  return self.playerList;
+  return self.mapTopHandler
 end
 
 
@@ -141,13 +78,8 @@ end
 -- Loads the commands and generates the gema maprot.
 --
 function GemaMode:initialize()
-
   self:parseConfig()
   self.mapTopHandler:initialize();
-
-  self.eventHandler:loadEventHandlers(self, "lua/scripts/wesenGemaMod/EventHandler")
-  self.eventHandler:initializeEventListeners()
-
 end
 
 function GemaMode:terminate()
