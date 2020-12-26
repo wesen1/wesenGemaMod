@@ -5,16 +5,20 @@
 -- @license MIT
 --
 
+local EventEmitter = require "AC-LuaServer.Core.Event.EventEmitter"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local MapTop = require("Tops/MapTop/MapTop");
+local Object = require "classic"
 local Server = require "AC-LuaServer.Core.Server"
+local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Handles the maptops.
 --
 -- @type MapTopHandler
 --
-local MapTopHandler = setmetatable({}, {});
+local MapTopHandler = Object:extend()
+MapTopHandler:implement(EventEmitter)
 
 ---
 -- The EventCallback for the "onGameModeStaysEnabledAfterGameChange" event of the GameHandler
@@ -34,22 +38,11 @@ MapTopHandler.mapTops = nil;
 ---
 -- MapTopHandler constructor.
 --
--- @tparam Output _output The output
---
--- @treturn MapTopHandler The MapTopHandler instance
---
-function MapTopHandler:__construct(_output)
-
-  local instance = setmetatable({}, {__index = MapTopHandler});
-
-  instance.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange"})
-  instance.mapTops = {};
-
-  return instance;
-
+function MapTopHandler:new()
+  self.eventCallbacks = {}
+  self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange"})
+  self.mapTops = {}
 end
-
-getmetatable(MapTopHandler).__call = MapTopHandler.__construct;
 
 
 -- Getters and Setters
@@ -70,10 +63,15 @@ end
 -- Initializes the main maptop and the event listeners.
 --
 function MapTopHandler:initialize()
+
   self.mapTops["main"] = MapTop();
 
-  local gameHandler = Server.getInstance():getGameHandler()
-  gameHandler:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  gameModeManager:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+
+  local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
+  self.mapTops["main"]:loadRecords(currentGame:getMapName())
+  self:emit("onMapScoresForMapLoaded", currentGame:getMapName())
 
 end
 
@@ -82,8 +80,8 @@ end
 --
 function MapTopHandler:terminate()
 
-  local gameHandler = Server.getInstance():getGameHandler()
-  gameHandler:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  gameModeManager:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
 end
 
@@ -106,6 +104,7 @@ end
 --
 function MapTopHandler:onGameModeStaysEnabledAfterGameChange(_game)
   self.mapTops["main"]:loadRecords(_game:getMapName())
+  self:emit("onMapScoresForMapLoaded", _game:getMapName())
 end
 
 

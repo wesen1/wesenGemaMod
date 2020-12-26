@@ -6,12 +6,12 @@
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
-local StaticString = require("Output/StaticString");
+local StaticString = require "Output.StaticString"
+local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Command !maptop.
 -- Displays the best records of a map to a player
--- MapTopCommand inherits from BaseCommand
 --
 -- @type MapTopCommand
 --
@@ -46,11 +46,11 @@ end
 --
 function MapTopCommand:execute(_player, _arguments)
 
-  local mapTopHandler = self.parentCommandList:getParentGemaMode():getMapTopHandler();
+  local mapTopHandler = TmpUtil.getServerExtensionByName("GemaGameMode"):getMapTopHandler()
 
-  local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList();
-  local numberOfDisplayRecords = 5;
-  local startRank = 1;
+  local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList()
+  local numberOfDisplayRecords = 5
+  local startRank = 1
 
   self.output:printTableTemplate(
     "TableTemplate/MapTop/MapTop",
@@ -64,4 +64,4 @@ function MapTopCommand:execute(_player, _arguments)
 end
 
 
-return MapTopCommand;
+return MapTopCommand
