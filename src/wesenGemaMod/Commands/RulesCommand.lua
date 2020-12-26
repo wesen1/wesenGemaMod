@@ -6,12 +6,11 @@
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
-local StaticString = require("Output/StaticString");
+local StaticString = require "Output.StaticString"
 
 ---
 -- Command !rules.
 -- Displays the gema rules to a player
--- RulesCommand inherits from BaseCommand
 --
 -- @type RulesCommand
 --
@@ -44,8 +43,8 @@ end
 -- @tparam string[] _arguments The list of arguments which were passed by the player
 --
 function RulesCommand:execute(_player, _arguments)
-  self.output:printTableTemplate("TableTemplate/Commands/RulesCommandRules", _player);
+  self.output:printTableTemplate("Commands/Rules/Rules", {}, _player)
 end
 
 
-return RulesCommand;
+return RulesCommand
