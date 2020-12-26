@@ -1,0 +1,5 @@
+{#
+ # Generates a text that informs the player that the extend time is too small.
+ #}
+
+The number of extend minutes must be 1 or greater
