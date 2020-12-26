@@ -5,12 +5,14 @@
 -- @license MIT
 --
 
+local Object = require "classic"
+
 ---
 -- Handles loading of the color configuration.
 --
 -- @type ColorLoader
 --
-local ColorLoader = setmetatable({}, {})
+local ColorLoader = Object:extend()
 
 
 ---
@@ -26,16 +28,9 @@ ColorLoader.colorConfigFileName = nil
 --
 -- @tparam string _colorConfigFileName The name of the lua configuration file for colors
 --
--- @treturn ColorLoader The ColorLoader instance
---
-function ColorLoader:__construct(_colorConfigFileName)
-  local instance = setmetatable({}, {__index = ColorLoader})
-  instance.colorConfigFileName = _colorConfigFileName
-
-  return instance
+function ColorLoader:new(_colorConfigFileName)
+  self.colorConfigFileName = _colorConfigFileName
 end
-
-getmetatable(ColorLoader).__call = ColorLoader.__construct
 
 
 -- Public Methods
