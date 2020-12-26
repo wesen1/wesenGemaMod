@@ -38,7 +38,7 @@ ConnectionAmountLimiter.maximumNumberOfConnectionsWithSameIp = nil
 function ConnectionAmountLimiter:new(_maximumNumberOfConnectionsWithSameIp)
   self.super.new(self, "ConnectionAmountLimiter", "Server")
   self.maximumNumberOfConnectionsWithSameIp = _maximumNumberOfConnectionsWithSameIp
-  self.onPlayerAddedEventCallback = EventCallback({ object = self, methodName = "onPlayerAdded"})
+  self.onPlayerAddedEventCallback = EventCallback({ object = self, methodName = "onPlayerConnect"})
 end
 
 
@@ -72,17 +72,19 @@ function ConnectionAmountLimiter:onPlayerConnect(_player)
   local numberOfConnectionsWithIp = self:countConnectionsWithIp(playerList, _player:getIp())
   if (numberOfConnectionsWithIp > self.maximumNumberOfConnectionsWithSameIp) then
 
-    self.output:printTextTemplate(
+    self.target:getOutput():printTextTemplate(
       "TextTemplate/InfoMessages/Player/PlayerDisconnectTooManyConnections",
       { ["player"] = _player }
     )
 
     LuaServerApi.disconnect(_player:getCn(), LuaServerApi.DISC_NONE)
 
-    -- TODO: Check if it is required to manually call this PlayerList event handler
+    -- TODO: playerList:removePlayer(_cn)
+    -- TODO: LuaServerApi:on("playerManuallyDisconnected")
     playerList:onPlayerDisconnectAfter(_player:getCn())
 
-    -- TODO: Following event handlers must be blocked
+    return LuaServerApi.PLUGIN_BLOCK
+
   end
 
 end
@@ -99,7 +101,6 @@ end
 --
 function ConnectionAmountLimiter:countConnectionsWithIp(_playerList, _ip)
 
-  -- TODO: Add PlayerList:getPlayers() to AC-LuaServer
   local numberOfConnections = 0
   for _, player in pairs(_playerList.players) do
     if (player:getIp() == _ip) then
