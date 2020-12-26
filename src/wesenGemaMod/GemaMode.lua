@@ -6,50 +6,47 @@
 --
 
 local BaseGameMode = require "AC-LuaServer.Extensions.GameModeManager.BaseGameMode"
-local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
-local ColorLoader = require("Config.ColorLoader")
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local MapNameChecker = require("Map/MapNameChecker");
 local MapTopHandler = require("Tops/MapTopHandler");
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require("Output/StaticString");
-local TemplateFactory = require("Output/Template/TemplateFactory")
-local TimeFormatter = require("TimeHandler/TimeFormatter")
+local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Wrapper class for the gema mode.
 -- TODO: Rename to GemaGameMode
--- @type GemaMode
+-- @type GemaGameMode
 --
-local GemaMode = BaseGameMode:extend()
+local GemaGameMode = BaseGameMode:extend()
 
 ---
 -- The EventCallback for the "onPlayerAdded" event of the player list
 --
 -- @tfield EventCallback onPlayerAddedEventCallback
 --
-GemaMode.onPlayerAddedEventCallback = nil
+GemaGameMode.onPlayerAddedEventCallback = nil
 
 ---
 -- The map name checker
 --
 -- @tfield MapNameChecker mapNameChecker
 --
-GemaMode.mapNameChecker = nil
+GemaGameMode.mapNameChecker = nil
 
 ---
 -- The map top handler
 --
 -- @tfield MapTopHandler mapTopHandler
 --
-GemaMode.mapTopHandler = nil
+GemaGameMode.mapTopHandler = nil
 
 
 ---
--- GemaMode constructor.
+-- GemaGameMode constructor.
 --
-function GemaMode:new()
+function GemaGameMode:new()
 
   self.super.new(self, "GemaGameMode", "Gema")
 
@@ -67,7 +64,7 @@ end
 --
 -- @treturn MapTop The map top handler
 --
-function GemaMode:getMapTopHandler()
+function GemaGameMode:getMapTopHandler()
   return self.mapTopHandler
 end
 
@@ -81,16 +78,18 @@ end
 --
 -- @treturn bool True if this GameMode can be enabled for the specified Game, false otherwise
 --
-function GemaMode:canBeEnabledForGame(_game)
+function GemaGameMode:canBeEnabledForGame(_game)
   return (_game:getGameModeId() == GM_CTF and self.mapNameChecker:isGemaMapName(_game:getMapName()))
 end
 
 ---
 -- Loads the commands and generates the gema maprot.
 --
-function GemaMode:initialize()
-  self:parseConfig()
-  self.mapTopHandler:initialize();
+function GemaGameMode:initialize(_gameModeManager)
+
+  self.super.initialize(self, _gameModeManager)
+
+  self.mapTopHandler:initialize()
 
   local playerList = Server.getInstance():getPlayerList()
   playerList:on("onPlayerAdded", self.onPlayerAddedEventCallback)
@@ -101,44 +100,22 @@ function GemaMode:initialize()
   for _, player in pairs(playerList:getPlayers()) do
     self:printServerInformation(player)
   end
+
 end
 
 ---
 -- Terminates this Extension.
 --
-function GemaMode:terminate()
+function GemaGameMode:terminate()
+
+  self.super.terminate(self)
+
   self.mapTopHandler:terminate()
 
   local playerList = Server.getInstance():getPlayerList()
   playerList:off("onPlayerAdded", self.onPlayerAddedEventCallback)
 
   LuaServerApi.setautoteam(true)
-end
-
----
--- Parses the gema mode config.
---
-function GemaMode:parseConfig()
-
-  local config = cfg.totable("gemamod")
-
-  local colorConfigurationFileName = "colors"
-  ClientOutputFactory.getInstance():configure({
-      fontConfigFileName = "FontDefault",
-      defaultConfiguration = config
-  })
-
-  TemplateFactory.getInstance():configure({
-    templateRenderer = {
-      defaultTemplateValues = {
-        colors = ColorLoader(colorConfigurationFileName):getColors(),
-        timeFormatter = TimeFormatter()
-      },
-      basePath = "lua/config/templates",
-      suffix = ".template"
-    }
-  })
-
 end
 
 
@@ -168,7 +145,8 @@ end
 --
 function GemaGameMode:printServerInformation(_player)
 
-  local commandList = self:getExtension("CommandManager"):getCommandList()
+  local commandList= TmpUtil.getServerExtensionByName("CommandManager"):getCommandList()
+  --local commandList = self:getExtension("CommandManager"):getCommandList()
   local output = Server.getInstance():getOutput()
 
   local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString())
@@ -183,4 +161,4 @@ function GemaGameMode:printServerInformation(_player)
 end
 
 
-return GemaMode
+return GemaGameMode
