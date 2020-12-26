@@ -5,18 +5,20 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception");
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local MaximumRemainingTimeExceededException = require "AC-LuaServer.Core.GameHandler.Game.Exception.MaximumRemainingTimeExceededException"
+local Object = require "classic"
 local Server = require "AC-LuaServer.Core.Server"
-local StaticString = require("Output/StaticString");
-local TemplateException = require("Util/TemplateException");
+local StaticString = require "Output.StaticString"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Extends the remaining time by <x> minutes.
 --
 -- @type RemainingTimeExtender
 --
-local RemainingTimeExtender = setmetatable({}, {});
-
+local RemainingTimeExtender = Object:extend()
 
 ---
 -- The EventCallback for the game changed events of the GameHandler
@@ -29,7 +31,7 @@ RemainingTimeExtender.onGameChangedCallback = nil
 -- The number of minutes by which the time can be extended per map
 -- The remaining extend minutes will be reset to this value when a map change is detected by this class.
 --
-RemainingTimeExtender.numberOfExtendMinutesPerMap = nil;
+RemainingTimeExtender.numberOfExtendMinutesPerMap = nil
 
 ---
 -- The number of remaining extend minutes that can be used by every player
@@ -38,7 +40,7 @@ RemainingTimeExtender.numberOfExtendMinutesPerMap = nil;
 --
 -- @tfield int remainingExtendMinutes
 --
-RemainingTimeExtender.remainingExtendMinutes = nil;
+RemainingTimeExtender.remainingExtendMinutes = nil
 
 
 ---
@@ -46,20 +48,10 @@ RemainingTimeExtender.remainingExtendMinutes = nil;
 --
 -- @tparam int _numberOfExtendMinutesPerMap The number of extend minutes per map
 --
--- @treturn RemainingTimeExtender The RemainingTimeExtender instance
---
-function RemainingTimeExtender:__construct(_numberOfExtendMinutesPerMap)
-
-  local instance = setmetatable({}, {__index = RemainingTimeExtender});
-
-  instance.numberOfExtendMinutesPerMap = _numberOfExtendMinutesPerMap;
-  instance.onGameChangedCallback = EventCallback({ object = self, methodName = "onGameChanged"})
-
-  return instance;
-
+function RemainingTimeExtender:new(_numberOfExtendMinutesPerMap)
+  self.numberOfExtendMinutesPerMap = _numberOfExtendMinutesPerMap
+  self.onGameChangedCallback = EventCallback({ object = self, methodName = "onGameChanged"})
 end
-
-getmetatable(RemainingTimeExtender).__call = RemainingTimeExtender.__construct;
 
 
 -- Public Methods
@@ -72,6 +64,8 @@ function RemainingTimeExtender:initialize()
   local gameHandler = Server.getInstance():getGameHandler()
   gameHandler:on("onGameChangedMapChange", self.onGameChangedCallback)
   gameHandler:on("onGameChangedPlayerConnected", self.onGameChangedCallback)
+
+  self.remainingExtendMinutes = self.numberOfExtendMinutesPerMap
 
 end
 
@@ -96,21 +90,19 @@ end
 --
 function RemainingTimeExtender:extendTime(_player, _numberOfExtendMinutes)
 
-  local numberOfExtendMilliseconds = _numberOfExtendMinutes * 60 * 1000;
+  local numberOfExtendMilliseconds = _numberOfExtendMinutes * 60 * 1000
 
   -- Check the number of extend minutes
   if (_player:getLevel() == 0) then
 
     if (self.remainingExtendMinutes == 0 or self.remainingExtendMinutes < _numberOfExtendMinutes) then
       error(TemplateException(
-        "TextTemplate/ExceptionMessages/TimeHandler/InvalidUnarmedExtendTime",
+        "Commands/ExtendTime/Exceptions/InvalidUnarmedExtendTime",
         { ["remainingExtendMinutes"] = self.remainingExtendMinutes }
-      ));
+      ))
     end
 
   end
-
-  self:validateNumberOfExtendMilliseconds(numberOfExtendMilliseconds);
 
   local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
   local success, exception = pcall(function()
@@ -119,20 +111,30 @@ function RemainingTimeExtender:extendTime(_player, _numberOfExtendMinutes)
     )
   end)
 
-  if (not success and exception.is and exception.is(Exception)) then
-    error(TemplateException(
-      "TextTemplate/ExceptionMessages/TimeHandler/InvalidExtendTime",
-      { ["exceptionMessage"] = exception:getMessage() }
-    ));
+  if (not success) then
+    if (exception.is and exception:is(MaximumRemainingTimeExceededException)) then
+
+      local maximumNumberOfExtendMilliseconds = numberOfExtendMilliseconds - exception:getExceedanceInMilliseconds()
+      local maximumNumberOfExtendMinutes = math.floor(maximumNumberOfExtendMilliseconds / 60000)
+      local timeUntilExtraMinuteCanBeUsed = 60000 - LuaServerApi.getgamemillis()
+
+      error(TemplateException(
+        "Commands/ExtendTime/Exceptions/InvalidExtendTime",
+        {
+          ["maximumNumberOfExtendMinutes"] = maximumNumberOfExtendMinutes,
+          ["millisecondsUntilExtraMinuteCanBeUsed"] = timeUntilExtraMinuteCanBeUsed
+        }
+      ))
+    else
+      error(exception)
+    end
   end
 
 
   -- Subtract the number of extend minutes from the remaining extend minutes
   if (_player:getLevel() == 0) then
-    self.remainingExtendMinutes = self.remainingExtendMinutes - _numberOfExtendMinutes;
+    self.remainingExtendMinutes = self.remainingExtendMinutes - _numberOfExtendMinutes
   end
-
-  settimeleftmillis(gettimeleftmillis() + numberOfExtendMilliseconds);
 
 end
 
@@ -147,4 +149,4 @@ function RemainingTimeExtender:onGameChanged()
 end
 
 
-return RemainingTimeExtender;
+return RemainingTimeExtender

@@ -2,19 +2,24 @@
  # Prints the "player extended time" message.
  # The result is "<player> extended the time by x minute(s).".
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam Player player The player who extended the time
  # @tparam int numberOfMinutes The number of minutes by which the time was extended
  #}
 
 {# Extends ServerMessageInfo.template #}
-{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
+{% layout = getAbsoluteTemplatePath("TextTemplate/ServerMessageInfo") %}
 
 {-infoMessage-}
 
-  {(lua/config/templates/TextTemplate/Player/PlayerLevelColor.template,
-    { colors = colors, playerLevel = player:getLevel() }
-  )}
+  {[
+    getAbsoluteTemplatePath("CommandManager/CommandUser/LevelColor"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      playerLevel = player:getLevel()
+    }
+  ]}
   {* player:getName() *}
 
   {* colors.info *} extended the time by

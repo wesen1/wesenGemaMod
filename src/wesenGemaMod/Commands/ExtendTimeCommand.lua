@@ -7,13 +7,13 @@
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
-local RemainingTimeExtender = require("TimeHandler/RemainingTimeExtender");
-local StaticString = require("Output/StaticString");
+local RemainingTimeExtender = require "Commands.ExtendTime.RemainingTimeExtender"
+local StaticString = require "Output.StaticString"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Command !extend.
 -- Extends the remaining time by a specific amount of time
--- ExtendTimeCommand inherits from BaseCommand
 --
 -- @type ExtendTimeCommand
 --
@@ -61,8 +61,8 @@ end
 ---
 -- Initializes this Extension.
 --
-function ExtendTimeCommand:initialize(_commandManager)
-  self.super.initialize(self, _commandManager)
+function ExtendTimeCommand:initialize()
+  self.super.initialize(self)
   self.remainingTimeExtender:initialize()
 end
 
@@ -72,6 +72,24 @@ end
 function ExtendTimeCommand:terminate()
   self.super.terminate(self)
   self.remainingTimeExtender:terminate()
+end
+
+
+---
+-- Validates the input arguments.
+--
+-- @tparam mixed[] _arguments The list of arguments
+--
+-- @raise Error in case of an invalid input argument
+--
+function ExtendTimeCommand:validateInputArguments(_arguments)
+
+  if (_arguments["numberOfMinutes"] < 1) then
+    error(TemplateException(
+      "Commands/ExtendTime/Exceptions/ExtendMinutesLessThanOne", {}
+    ))
+  end
+
 end
 
 ---
@@ -86,7 +104,7 @@ function ExtendTimeCommand:execute(_player, _arguments)
 
   self.remainingTimeExtender:extendTime(_player, _arguments.numberOfMinutes)
   self.output:printTextTemplate(
-    "TextTemplate/InfoMessages/Time/TimeExtended",
+    "Commands/ExtendTime/TimeExtended",
     { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
   )
 
