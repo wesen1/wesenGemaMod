@@ -1,0 +1,27 @@
+{#
+ # Generates an exception message for the "no permission to use command" case.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam BaseCommand command The command for which arguments are missing
+ # @tparam Player player
+ #}
+
+You have no permission to use
+
+<whitespace>
+{[
+  getAbsoluteTemplatePath("CommandManager/Commands/Command/Command"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    command = command,
+    arguments = {}
+  }
+]}
+<whitespace>
+
+{* colors.error *}
+(
+  Required level: {* command:getRequiredLevel() *}
+  , your level: {* player:getLevel() *}
+)

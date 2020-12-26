@@ -6,8 +6,8 @@
 --
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
-local StaticString = require("Output/StaticString")
 local Server = require "AC-LuaServer.Core.Server"
+local StaticString = require "Output.StaticString"
 
 ---
 -- Stores the configuration for a single command.
@@ -29,7 +29,7 @@ BaseCommand.name = nil
 --
 -- @tfield string[] aliases
 --
-BaseCommand.aliases = {}
+BaseCommand.aliases = nil
 
 ---
 -- The minimum player level that is necessary to call the command
@@ -40,7 +40,7 @@ BaseCommand.aliases = {}
 --
 -- @tfield int requiredLevel
 --
-BaseCommand.requiredLevel = 0
+BaseCommand.requiredLevel = nil
 
 ---
 -- List of arguments that can/must be passed when calling the command
@@ -48,7 +48,7 @@ BaseCommand.requiredLevel = 0
 --
 -- @tfield CommandArgument[] arguments
 --
-BaseCommand.arguments = {}
+BaseCommand.arguments = nil
 
 ---
 -- Short description of what the command does
@@ -93,12 +93,14 @@ BaseCommand.output = nil
 --
 function BaseCommand:new(_name, _requiredLevel, _group, _arguments, _description, _aliases)
 
-  self.super.new(self.name, "CommandManager")
+  BaseExtension.new(self, _name, "CommandManager")
 
   self.name = _name
 
-  if (_requiredLevel) then
+  if (_requiredLevel ~= nil) then
     self.requiredLevel = _requiredLevel
+  else
+    self.requiredLevel = 0
   end
 
   if (_group) then
@@ -116,7 +118,7 @@ function BaseCommand:new(_name, _requiredLevel, _group, _arguments, _description
   if (_arguments) then
     self.arguments = _arguments
   else
-    self.aliases = {}
+    self.arguments = {}
   end
 
   if (_aliases) then
@@ -201,8 +203,8 @@ end
 --
 -- @tparam CommandList _commandList The command list to initialize this command with
 --
-function BaseCommand:initialize(_commandManager)
-  self.parentCommandList = _commandManager:getCommandList()
+function BaseCommand:initialize()
+  self.parentCommandList = self.target:getCommandList()
   self.output = Server.getInstance():getOutput()
 end
 

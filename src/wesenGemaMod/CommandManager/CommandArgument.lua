@@ -5,15 +5,15 @@
 -- @license MIT
 --
 
-local StaticString = require("Output/StaticString")
+local Object = require "classic"
+local StaticString = require "Output.StaticString"
 
 ---
 -- Stores the configuration for a single command argument.
 --
 -- @type CommandArgument
 --
-local CommandArgument = setmetatable({}, {})
-
+local CommandArgument = Object:extend()
 
 ---
 -- The full name of the argument
@@ -35,7 +35,7 @@ CommandArgument.shortName = nil
 --
 -- @tfield bool isOptional
 --
-CommandArgument.isOptional = false
+CommandArgument.isOptional = nil
 
 ---
 -- The description of the argument that will be shown in the help text of command
@@ -50,7 +50,7 @@ CommandArgument.description = nil
 --
 -- @tfield string type
 --
-CommandArgument.type = "string"
+CommandArgument.type = nil
 
 
 ---
@@ -62,39 +62,30 @@ CommandArgument.type = "string"
 -- @tparam string _shortName The short name of the argument (used in !cmds)
 -- @tparam string _description The description of the argument
 --
--- @treturn CommandArgument The CommandArgument instance
---
-function CommandArgument:__construct(_name, _isOptional, _type, _shortName, _description)
+function CommandArgument:new(_name, _isOptional, _type, _shortName, _description)
 
-  local instance = setmetatable({}, { __index = CommandArgument })
-
-  instance.name = _name
-
-  if (_isOptional ~= nil) then
-    instance.isOptional = _isOptional
-  end
+  self.name = _name
+  self.isOptional = (_isOptional == true)
 
   if (_type) then
-    instance.type = _type
+    self.type = _type
+  else
+    self.type = "string"
   end
 
   if (_shortName) then
-    instance.shortName = _shortName
+    self.shortName = _shortName
   else
-    instance.shortName = _name
+    self.shortName = _name
   end
 
   if (_description) then
-    instance.description = _description
+    self.description = _description
   else
-    instance.description = StaticString("defaultArgumentDescription"):getString()
+    self.description = StaticString("defaultArgumentDescription"):getString()
   end
 
-  return instance
-
 end
-
-getmetatable(CommandArgument).__call = CommandArgument.__construct
 
 
 -- Getters and Setters

@@ -5,13 +5,14 @@
 -- @license MIT
 --
 
+local Object = require "classic"
+
 ---
 -- Stores a list of all commands and provides methods to get the commands.
 --
 -- @type CommandList
 --
-local CommandList = setmetatable({}, {})
-
+local CommandList = Object:extend()
 
 ---
 -- The list of commands in the format { commandName => Command }
@@ -60,36 +61,16 @@ CommandList.sortedCommandLevels = nil
 --
 CommandList.sortedCommandGroupNames = nil
 
----
--- The parent gema mode
---
--- @tfield GemaMode parentGemaMode
---
-CommandList.parentGemaMode = nil
-
 
 ---
 -- CommandList constructor.
 --
--- @tparam GemaMode _parentGemaMode The parent gema mode
---
--- @treturn CommandList The CommandList instance
---
-function CommandList:__construct(_parentGemaMode)
-
-  local instance = setmetatable({}, {__index = CommandList})
-
-  instance.commands = {}
-  instance.groupedCommands = {}
-  instance.sortedCommandLevels = {}
-  instance.sortedCommandGroupNames = {}
-  instance.parentGemaMode = _parentGemaMode
-
-  return instance
-
+function CommandList:new()
+  self.commands = {}
+  self.groupedCommands = {}
+  self.sortedCommandLevels = {}
+  self.sortedCommandGroupNames = {}
 end
-
-getmetatable(CommandList).__call = CommandList.__construct
 
 
 -- Getters and setters
@@ -166,15 +147,6 @@ function CommandList:setSortedCommandGroupNames(_sortedCommandGroupNames)
   self.sortedCommandGroupNanmes = _sortedCommandGroupNames
 end
 
----
--- Returns the parent gema mode.
---
--- @treturn GemaMode The parent gema mode
---
-function CommandList:getParentGemaMode()
-  return self.parentGemaMode
-end
-
 
 -- Public Methods
 
@@ -184,8 +156,6 @@ end
 -- @tparam BaseCommand _command The command
 --
 function CommandList:addCommand(_command)
-
-  _command:initialize(self)
 
   self:addCommandToUnsortedCommandList(_command)
   self:addCommandToGroupedCommandList(_command)
