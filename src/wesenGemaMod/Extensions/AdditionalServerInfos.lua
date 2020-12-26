@@ -6,10 +6,12 @@
 --
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
-local GemaGameMode = require "GemaGameMode"
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local GemaGameMode = require "GemaMode"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Server = require  "AC-LuaServer.Core.Server"
 local ServerEventListener = require  "AC-LuaServer.Core.ServerEvent.ServerEventListener"
+local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Adds some server info messages that will be shown to all players.
@@ -65,8 +67,8 @@ function AdditionalServerInfos:initialize()
   local playerList = Server.getInstance():getPlayerList()
   playerList:on("onPlayerAdded", self.onPlayerAddedEventCallback)
 
-  local gameHandler = Server.getInstance():getGameHandler()
-  gameHandler:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  gameModeManager:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
 end
 
@@ -79,8 +81,8 @@ function AdditionalServerInfos:terminate()
   local playerList = Server.getInstance():getPlayerList()
   playerList:off("onPlayerAdded", self.onPlayerAddedEventCallback)
 
-  local gameHandler = Server.getInstance():getGameHandler()
-  gameHandler:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  gameModeManager:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
 end
 
@@ -110,10 +112,13 @@ end
 --
 -- @tparam Player _player The player who was added
 --
-function AdditionalServerInfos:onPlayerAdded(_player)
+function AdditionalServerInfos:onPlayerAdded(_player, _numberOfPlayers)
 
-  local currentGameMode = self.target:getExtension("GameModeManager"):getActiveGameMode()
-  if (not currentGameMode.is(GemaGameMode)) then
+  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  local currentGameMode = TmpUtil.getGameModeManagerActiveGameMode(gameModeManager)
+
+  --local currentGameMode = self.target:getExtension("GameModeManager"):getActiveGameMode()
+  if (not currentGameMode:is(GemaGameMode)) then
     local output = self.target:getOutput()
     output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {}, _player)
   end
@@ -125,9 +130,9 @@ end
 --
 -- @tparam BaseGameMode _currentGameMode The current GameMode
 --
-function AdditionalServerInfos:onGameModeStaysEnabledAfterGameChange(_currentGameMode)
+function AdditionalServerInfos:onGameModeStaysEnabledAfterGameChange(_game, _currentGameMode)
 
-  if (not _currentGameMode.is(GemaGameMode)) then
+  if (not _currentGameMode:is(GemaGameMode)) then
     local output = self.target:getOutput()
     output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {})
   end
