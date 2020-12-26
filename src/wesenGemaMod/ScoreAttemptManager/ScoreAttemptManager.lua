@@ -8,7 +8,8 @@
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local ScoreWeaponUpdater = require "ScoreAttemptManager.ScoreWeaponUpdater"
-local ServerEventListener = require  "AC-LuaServer.Core.ServerEvent.ServerEventListener"
+local Server = require "AC-LuaServer.Core.Server"
+local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 
 ---
 -- Manages the ScoreAttempt's of players.
@@ -126,7 +127,8 @@ function ScoreAttemptManager:registerRecord(scoreAttempt)
   local mapTop = self.target:getMapTopHandler():getMapTop("main")
   local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList())
 
-  self.output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record })
+  local output = Server.getInstance():getOutput()
+  output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record })
   mapTop:addRecord(record)
 
 end

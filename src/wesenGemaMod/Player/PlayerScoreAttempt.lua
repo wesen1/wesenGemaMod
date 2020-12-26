@@ -5,7 +5,7 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception");
+local Exception = require "AC-LuaServer.Core.Util.Exception.Exception"
 local MapRecord = require("Tops/MapTop/MapRecordList/MapRecord");
 local ObjectUtils = require("Util/ObjectUtils");
 local StaticString = require("Output/StaticString");
