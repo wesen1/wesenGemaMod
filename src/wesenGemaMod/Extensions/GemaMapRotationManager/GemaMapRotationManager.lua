@@ -6,8 +6,12 @@
 --
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
-local GemaMapRotationGenerator = require "MapRotation.GemaMapRotationGenerator"
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local GemaMapRotationGenerator = require "Extensions.GemaMapRotationManager.GemaMapRotationGenerator"
 local MapRotationEntry = require "AC-LuaServer.Core.MapRotation.MapRotationEntry"
+local Server = require "AC-LuaServer.Core.Server"
+local StaticString = require "Output.StaticString"
+local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Manages the gema map rotation.
@@ -30,14 +34,22 @@ GemaMapRotationManager.mapRotationGenerator = nil
 --
 GemaMapRotationManager.onGemaMapUploadedEventCallback = nil
 
+---
+-- The EventCallback for the "onGemaMapRemoved" event of the GemaMapManager
+--
+-- @tfield EventCallback onGemaMapRemovedEventCallback
+--
+GemaMapRotationManager.onGemaMapRemovedEventCallback = nil
+
 
 ---
 -- GemaMapRotationManager constructor.
 --
 function GemaMapRotationManager:new()
-  self.super.new(self, "GemaMapRotationManager", "GemaMode")
+  self.super.new(self, "GemaMapRotationManager", "GemaGameMode")
   self.mapRotationGenerator = GemaMapRotationGenerator()
   self.onGemaMapUploadedEventCallback = EventCallback({ object = self, methodName = "onGemaMapUploaded"})
+  self.onGemaMapRemovedEventCallback = EventCallback({ object = self, methodName = "onGemaMapRemoved"})
 
 end
 
@@ -49,15 +61,17 @@ end
 --
 function GemaMapRotationManager:initialize()
 
-  -- TODO: Server must allow to fetch extension by name
-  local gemaMapManager = Server.getInstance():getExtension("MapManager")
+  --local gemaMapManager = Server.getInstance():getExtension("GemaMapManager")
+  local gemaMapManager = TmpUtil.getServerExtensionByName("GemaMapManager")
   gemaMapManager:on("onGemaMapUploaded", self.onGemaMapUploadedEventCallback)
+  gemaMapManager:on("onGemaMapRemoved", self.onGemaMapRemovedEventCallback)
 
   local mapRotation = Server.getInstance():getMapRotation()
   mapRotation:changeMapRotationConfigFile("config/maprot_gema.cfg")
-  self.mapRotGenerator:generateGemaMapRot(mapRotation, "packages/maps/servermaps/incoming")
+  self.mapRotationGenerator:generateGemaMapRot(mapRotation, "packages/maps/servermaps/incoming")
 
-  self.output:printTextTemplate(
+  local output = Server.getInstance():getOutput()
+  output:printTextTemplate(
     "TextTemplate/InfoMessages/MapRot/MapRotLoaded",
     { ["mapRotType"] = StaticString("mapRotTypeGema"):getString() }
   )
@@ -69,13 +83,16 @@ end
 --
 function GemaMapRotationManager:terminate()
 
-  local gemaMapManager = Server.getInstance():getExtension("MapManager")
+  --local gemaMapManager = Server.getInstance():getExtension("GemaMapManager")
+  local gemaMapManager = TmpUtil.getServerExtensionByName("GemaMapManager")
   gemaMapManager:off("onGemaMapUploaded", self.onGemaMapUploadedEventCallback)
+  gemaMapManager:off("onGemaMapRemoved", self.onGemaMapRemovedEventCallback)
 
   local mapRotation = Server.getInstance():getMapRotation()
   mapRotation:changeMapRotationConfigFile("config/maprot.cfg")
 
-  self.output:printTextTemplate(
+  local output = Server.getInstance():getOutput()
+  output:printTextTemplate(
     "TextTemplate/InfoMessages/MapRot/MapRotLoaded",
     { ["mapRotType"] = StaticString("mapRotTypeRegular"):getString() }
   )
@@ -92,6 +109,15 @@ end
 --
 function GemaMapRotationManager:onGemaMapUploaded(_mapName)
   Server.getInstance():getMapRotation():appendEntry(MapRotationEntry(_mapName))
+end
+
+---
+-- Method that is called after a gema map was removed.
+--
+-- @tparam string _mapName The name of the gema map that was removed
+--
+function GemaMapRotationManager:onGemaMapRemoved(_mapName)
+  Server.getInstance():getMapRotation():removeEntriesForMap(_mapName)
 end
 
 

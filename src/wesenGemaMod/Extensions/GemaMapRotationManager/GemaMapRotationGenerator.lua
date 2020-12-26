@@ -7,6 +7,7 @@
 
 local lfs = require "lfs"
 local MapNameChecker = require "Map.MapNameChecker"
+local MapRotationEntry = require "AC-LuaServer.Core.MapRotation.MapRotationEntry"
 local Object = require "classic"
 
 ---
@@ -52,9 +53,9 @@ function GemaMapRotationGenerator:generateGemaMapRot(_mapRot, _mapsDirectory)
       local mapName = luaFile:gsub(".cgz", "");
 
       if (not self.mapNameChecker:isValidMapName(mapName)) then
-        os.remove(_mapsDirectory .. "/" .. luaFile);
+        os.remove(_mapsDirectory .. "/" .. luaFile)
       elseif (self.mapNameChecker:isGemaMapName(mapName)) then
-        _mapRot::appendEntry(MapRotationEntry(mapName))
+        _mapRot:appendEntry(MapRotationEntry(mapName))
       end
 
     end
