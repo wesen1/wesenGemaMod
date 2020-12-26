@@ -1,15 +1,21 @@
 {#
  # Generates an exception message for the "invalid value type" case.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam CommandArgument argument The argument
  #}
 
 Value for
 <whitespace>
-{(lua/config/templates/TextTemplate/CommandHandler/ArgumentShort.template,
-  { colors = colors, argument = argument }
-)}
+{[
+  getAbsoluteTemplatePath("CommandManager/Commands/Command/ArgumentShort"),
+  {
+    getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    argument = argument
+  }
+]}
 <whitespace>
 {* colors.error *}must be a
 

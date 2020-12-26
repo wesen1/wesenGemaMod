@@ -1,6 +1,7 @@
 {#
  # Prints a command list.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam CommandList commandList The command list
  # @tparam int maximumLevel The maximum command level for which commands will be shown
@@ -15,13 +16,15 @@
   {% for _, groupName in ipairs(commandList:getSortedCommandGroupNames()[level]) do %}
 
     <whitespace>
-    {(lua/config/templates/TableTemplate/CommandList/CommandGroup.template,
-      { colors = colors,
+    {[
+      getAbsoluteTemplatePath("CommandManager/Commands/ListCommands/CommandGroup"),
+      { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+        colors = colors,
         commandList = commandList,
         groupName = groupName,
         groupedCommands = commandList:getGroupedCommands()[level][groupName]
       }
-    )}
+    ]}
     ______________________________________________________________________________;
 
   {% end %}

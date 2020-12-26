@@ -1,6 +1,7 @@
 {#
  # Generates an exception message for the "not enough arguments passed to command" case.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam int numberOfPassedArguments The number of arguments that were passed to the CommandParser
  # @tparam BaseCommand command The command for which arguments are missing
@@ -16,9 +17,13 @@ Not enough arguments (Missing arguments:
   {% end %}
   <whitespace>
 
-  {(lua/config/templates/TextTemplate/CommandHandler/ArgumentShort.template,
-    { colors = colors, argument = requiredCommandArguments[index] }
-  )}
+  {[
+    getAbsoluteTemplatePath("CommandManager/Commands/Command/ArgumentShort"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      argument = requiredCommandArguments[index]
+    }
+  ]}
 
 {% end %}
 

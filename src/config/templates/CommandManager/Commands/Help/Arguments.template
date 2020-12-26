@@ -1,6 +1,7 @@
 {#
  # Prints a list of arguments and their descriptions in a table.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam CommandArgument[] arguments The list of arguments
  #}
@@ -15,9 +16,13 @@
   {% end %}
 
   <whitespace>
-  {(lua/config/templates/TextTemplate/CommandHandler/ArgumentFull.template,
-    { colors = colors, argument = argument }
-  )}
+  {[
+    getAbsoluteTemplatePath("CommandManager/Commands/Command/ArgumentFull"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      argument = argument
+    }
+  ]}
   -----------------------------------------------------------;
 
   {* colors.helpDescription *}{* argument:getDescription() *}

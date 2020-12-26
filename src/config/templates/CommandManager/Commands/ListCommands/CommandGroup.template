@@ -1,6 +1,7 @@
 {#
  # Prints a command group with a specific level for a command list.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam CommandList commandList The command list
  # @tparam string groupName The group name of the group in the command list
@@ -20,8 +21,12 @@
   {% end %}
 
   {# Print the command with required arguments #}
-  {(lua/config/templates/TextTemplate/CommandHandler/CommandWithRequiredArguments.template,
-    { colors = colors, command = commandList:getCommand(commandName) }
-  )}
+  {[
+    getAbsoluteTemplatePath("CommandManager/Commands/Command/CommandWithRequiredArguments"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      command = commandList:getCommand(commandName)
+    }
+  ]}
 
 {% end %}
