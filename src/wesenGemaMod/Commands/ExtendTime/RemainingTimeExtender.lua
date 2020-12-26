@@ -6,7 +6,8 @@
 --
 
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
-local Exception = require "AC-LuaServer.Core.Util.Exception.Exception"
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local MaximumRemainingTimeExceededException = require "AC-LuaServer.Core.GameHandler.Game.Exception.MaximumRemainingTimeExceededException"
 local Object = require "classic"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
@@ -110,11 +111,23 @@ function RemainingTimeExtender:extendTime(_player, _numberOfExtendMinutes)
     )
   end)
 
-  if (not success and exception.is and exception:is(Exception)) then
-    error(TemplateException(
-      "Commands/ExtendTime/Exceptions/InvalidExtendTime",
-      { ["exceptionMessage"] = exception:getMessage() }
-    ))
+  if (not success) then
+    if (exception.is and exception:is(MaximumRemainingTimeExceededException)) then
+
+      local maximumNumberOfExtendMilliseconds = numberOfExtendMilliseconds - exception:getExceedanceInMilliseconds()
+      local maximumNumberOfExtendMinutes = math.floor(maximumNumberOfExtendMilliseconds / 60000)
+      local timeUntilExtraMinuteCanBeUsed = 60000 - LuaServerApi.getgamemillis()
+
+      error(TemplateException(
+        "Commands/ExtendTime/Exceptions/InvalidExtendTime",
+        {
+          ["maximumNumberOfExtendMinutes"] = maximumNumberOfExtendMinutes,
+          ["millisecondsUntilExtraMinuteCanBeUsed"] = timeUntilExtraMinuteCanBeUsed
+        }
+      ))
+    else
+      error(exception)
+    end
   end
 
 
