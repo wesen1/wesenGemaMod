@@ -5,13 +5,16 @@
 -- @license MIT
 --
 
+local BaseCommand = require "CommandManager.BaseCommand"
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local CommandList = require "CommandManager.CommandList"
 local CommandParser = require "CommandManager.CommandParser"
 local CommandExecutor = require "CommandManager.CommandExecutor"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local Server = require "AC-LuaServer.Core.Server"
 local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
+local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Manages executing commands when players say "!<command name> <parameters>".
@@ -78,6 +81,20 @@ end
 -- Protected Methods
 
 ---
+-- Initializes this extension.
+--
+function CommandManager:initialize()
+  self:registerAllServerEventListeners()
+end
+
+---
+-- Terminates this extension.
+--
+function CommandManager:terminate()
+  self:unregisterAllServerEventListeners()
+end
+
+---
 -- Adds a extension to this CommandManager.
 --
 -- @tparam BaseExtension _extension The extension to add
@@ -108,8 +125,8 @@ function CommandManager:onPlayerSayText(_cn, _text)
     local player = Server.getInstance():getPlayerList():getPlayerByCn(_cn)
     local status, exception = pcall(self.handleCommand, self, player, _text)
     if (not status) then
-      if (exception.is and exception.is(TemplateException)) then
-        self.output:printException(exception, player)
+      if (exception.is and exception:is(TemplateException)) then
+        TmpUtil.printException(exception, player)
       else
         error(exception)
       end

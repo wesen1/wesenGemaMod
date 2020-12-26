@@ -5,28 +5,15 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception")
-local StaticString = require("Output/StaticString")
+local Object = require "classic"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Handles command execution.
 --
 -- @type CommandExecutor
 --
-local CommandExecutor = setmetatable({}, {})
-
-
----
--- CommandExecutor constructor.
---
--- @treturn CommandExecutor The CommandExecutor instance
---
-function CommandExecutor:__construct()
-  local instance = setmetatable({}, {__index = CommandExecutor})
-  return instance
-end
-
-getmetatable(CommandExecutor).__call = CommandExecutor.__construct
+local CommandExecutor = Object:extend()
 
 
 -- Public Methods
@@ -61,7 +48,10 @@ function CommandExecutor:executeCommand(_command, _arguments, _player)
     return _command:execute(_player, arguments)
 
   else
-    error(Exception(StaticString("exceptionNoPermissionToUseCommand"):getString()))
+    error(TemplateException(
+      "CommandManager/Exceptions/NoPermissionToUseCommand",
+      { command = _command, player = _player }
+    ))
   end
 
 end

@@ -5,19 +5,17 @@
 -- @license MIT
 --
 
-local Exception = require("Util/Exception")
-local StaticString = require("Output/StaticString")
-local StringUtils = require("Util/StringUtils")
-local TableUtils = require("Util/TableUtils")
-local TemplateException = require("Util/TemplateException")
+local Object = require "classic"
+local StringUtils = require "Util.StringUtils"
+local TableUtils = require "Util.TableUtils"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Parses command input strings.
 --
 -- @type CommandParser
 --
-local CommandParser = setmetatable({}, {})
-
+local CommandParser = Object:extend()
 
 ---
 -- The last parsed command
@@ -32,21 +30,6 @@ CommandParser.command = nil
 -- @tfield String[] arguments
 --
 CommandParser.arguments = nil
-
-
----
--- CommandParser constructor.
---
--- @tparam Output _output The output
---
--- @treturn CommandParser The CommandParser instance
---
-function CommandParser:__construct(_output)
-  local instance = setmetatable({}, {__index = CommandParser})
-  return instance
-end
-
-getmetatable(CommandParser).__call = CommandParser.__construct
 
 
 -- Getters and Setters
@@ -107,7 +90,7 @@ function CommandParser:parseCommand(_inputText, _commandList)
 
   if (not command) then
     error(TemplateException(
-      "TextTemplate/ExceptionMessages/CommandHandler/UnknownCommand",
+      "CommandManager/Exceptions/UnknownCommand",
       { ["commandName"] = commandName }
     ))
   end
@@ -138,12 +121,15 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
   -- Check whether the number of arguments is valid
   if (numberOfArgumentTextParts < _command:getNumberOfRequiredArguments()) then
     error(TemplateException(
-      "TextTemplate/ExceptionMessages/CommandHandler/NotEnoughCommandArguments",
+      "CommandManager/Exceptions/NotEnoughCommandArguments",
       { numberOfPassedArguments = numberOfArgumentTextParts, command = _command }
     ))
 
   elseif (numberOfArgumentTextParts > _command:getNumberOfArguments()) then
-    error(Exception(StaticString("exceptionTooManyCommandArguments"):getString()))
+    error(TemplateException(
+      "CommandManager/Exceptions/TooManyArguments",
+      { numberOfPassedArguments = numberOfArgumentTextParts, command = _command }
+    ))
   end
 
   -- Create an associative array from the input text parts
@@ -179,7 +165,7 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
     return _argumentValue
 
   elseif (_argument:getType() == "integer") then
-    if (_argumentValue:match("^%d+$") ~= nil) then
+    if (_argumentValue:match("^%-?%d+$") ~= nil) then
       return tonumber(_argumentValue)
     end
 
@@ -198,13 +184,13 @@ function CommandParser:castArgumentToType(_argument, _argumentValue)
   else
     -- Argument type is invalid
     error(TemplateException(
-      "TextTemplate/ExceptionMessages/CommandHandler/InvalidArgumentType", { argument = _argument }
+      "CommandManager/Exceptions/InvalidArgumentType", { argument = _argument }
     ))
   end
 
   -- Argument type is valid but value type did not match argument type
   error(TemplateException(
-    "TextTemplate/ExceptionMessages/CommandHandler/InvalidValueType", { argument = _argument }
+    "CommandManager/Exceptions/InvalidValueType", { argument = _argument }
   ))
 
 end

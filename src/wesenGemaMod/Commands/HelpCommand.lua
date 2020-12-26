@@ -7,8 +7,8 @@
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
-local StaticString = require("Output/StaticString");
-local TemplateException = require("Util/TemplateException");
+local StaticString = require "Output.StaticString"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Command !help.
@@ -18,13 +18,12 @@ local TemplateException = require("Util/TemplateException");
 --
 local HelpCommand = BaseCommand:extend()
 
-
 ---
 -- The command help text printer
 --
 -- @tfield CommandHelpTextPrinter The command help text printer
 --
-HelpCommand.commandHelpTextPrinter = nil;
+HelpCommand.commandHelpTextPrinter = nil
 
 
 ---
@@ -38,7 +37,7 @@ function HelpCommand:new()
     "string",
     StaticString("helpCommandCommandNameArgumentShortName"):getString(),
     StaticString("helpCommandCommandNameArgumentDescription"):getString()
-  );
+  )
 
   self.super.new(
     self,
@@ -48,7 +47,7 @@ function HelpCommand:new()
     { commandNameArgument },
     StaticString("helpCommandDescription"):getString(),
     { StaticString("helpCommandAlias1"):getString() }
-  );
+  )
 
 end
 
@@ -65,19 +64,19 @@ end
 --
 function HelpCommand:execute(_player, _arguments)
 
-  local command = self.parentCommandList:getCommand(_arguments.commandName);
+  local command = self.parentCommandList:getCommand(_arguments.commandName)
   if (command) then
     self.output:printTableTemplate(
-      "TableTemplate/CommandHelpText/CommandHelpText",
+      "CommandManager/Commands/Help",
       { ["command"] = command },
       _player
     )
 
   else
     error(TemplateException(
-      "TextTemplate/ExceptionMessages/CommandHandler/UnknownCommand",
+      "CommandManager/Exceptions/UnknownCommand",
       { ["commandName"] = _arguments.commandName }
-    ));
+    ))
   end
 
 end
@@ -91,15 +90,15 @@ end
 --
 function HelpCommand:adjustInputArguments(_arguments)
 
-  local arguments = _arguments;
+  local arguments = _arguments
 
   if (arguments.commandName:sub(1,1) ~= "!") then
-    arguments.commandName = "!" .. arguments.commandName;
+    arguments.commandName = "!" .. arguments.commandName
   end
 
-  return arguments;
+  return arguments
 
 end
 
 
-return HelpCommand;
+return HelpCommand
