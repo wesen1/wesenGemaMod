@@ -35,7 +35,7 @@ ______________________________________________________________________;
 ------------------------------------------------------------;
 : {* colors.helpLevel *}
 {[
-  getAbsoluteTemplatePath("CommandManager/Commands/CommandUser/LevelName"),
+  getAbsoluteTemplatePath("CommandManager/CommandUser/LevelName"),
   { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
     playerLevel = command:getRequiredLevel()
   }
