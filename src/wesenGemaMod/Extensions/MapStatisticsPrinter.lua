@@ -52,9 +52,13 @@ function MapStatisticsPrinter:initialize()
   local playerList = Server.getInstance():getPlayerList()
   playerList:on("onPlayerAdded", self.onPlayerAddedEventCallback)
 
-  -- TODO: Add this event to the GameHandler
-  local gameHandler = Server.getInstance():getGameHandler()
-  gameHandler:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local mapTopHandler = self.target:getMapTopHandler()
+  mapTopHandler:on("onMapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+
+  local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
+  if (mapTopHandler:getMapTop("main"):getLastMapName() == currentGame:getMapName()) then
+    self:onGameModeStaysEnabledAfterGameChange()
+  end
 
 end
 
@@ -66,8 +70,8 @@ function MapStatisticsPrinter:terminate()
   local playerList = Server.getInstance():getPlayerList()
   playerList:off("onPlayerAdded", self.onPlayerAddedEventCallback)
 
-  local gameHandler = Server.getInstance():getGameHandler()
-  gameHandler:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local mapTopHandler = self.target:getMapTopHandler()
+  mapTopHandler:off("onMapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
 end
 
@@ -102,7 +106,8 @@ function MapStatisticsPrinter:printMapStatistics(_player)
 
   local mapTop = self.target:getMapTopHandler():getMapTop("main");
 
-  self.output:printTableTemplate(
+  local output = Server.getInstance():getOutput()
+  output:printTableTemplate(
     "TableTemplate/MapTop/MapStatistics",
     { ["mapRecordList"] = mapTop:getMapRecordList() },
     _player

@@ -1,6 +1,7 @@
 {#
  # Prints the map top summary and the best map record to a player.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapRecordList mapRecordList The map record list
