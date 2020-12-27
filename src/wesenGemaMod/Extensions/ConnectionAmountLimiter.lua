@@ -100,7 +100,7 @@ end
 function ConnectionAmountLimiter:countConnectionsWithIp(_playerList, _ip)
 
   local numberOfConnections = 0
-  for _, player in pairs(_playerList.players) do
+  for _, player in pairs(_playerList:getPlayers()) do
     if (player:getIp() == _ip) then
       numberOfConnections = numberOfConnections + 1
     end
