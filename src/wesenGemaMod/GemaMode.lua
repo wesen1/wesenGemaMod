@@ -12,7 +12,6 @@ local MapNameChecker = require("Map/MapNameChecker");
 local MapTopHandler = require("Tops/MapTopHandler");
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require("Output/StaticString");
-local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Wrapper class for the gema mode.
@@ -145,8 +144,7 @@ end
 --
 function GemaGameMode:printServerInformation(_player)
 
-  local commandList= TmpUtil.getServerExtensionByName("CommandManager"):getCommandList()
-  --local commandList = self:getExtension("CommandManager"):getCommandList()
+  local commandList = self:getExtensionManager():getExtensionByName("CommandManager"):getCommandList()
   local output = Server.getInstance():getOutput()
 
   local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString())

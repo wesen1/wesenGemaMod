@@ -14,7 +14,6 @@ local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Server = require "AC-LuaServer.Core.Server"
 local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
-local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Manages executing commands when players say "!<command name> <parameters>".
@@ -126,7 +125,7 @@ function CommandManager:onPlayerSayText(_cn, _text)
     local status, exception = pcall(self.handleCommand, self, player, _text)
     if (not status) then
       if (exception.is and exception:is(TemplateException)) then
-        TmpUtil.printException(exception, player)
+        Server.getInstance:getOutput():printException(exception, player)
       else
         error(exception)
       end

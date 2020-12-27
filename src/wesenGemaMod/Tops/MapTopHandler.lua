@@ -10,7 +10,6 @@ local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local MapTop = require("Tops/MapTop/MapTop");
 local Object = require "classic"
 local Server = require "AC-LuaServer.Core.Server"
-local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Handles the maptops.
@@ -66,7 +65,7 @@ function MapTopHandler:initialize()
 
   self.mapTops["main"] = MapTop();
 
-  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  local gameModeManager = Server.getInstance():getExtensionManager():getExtensionByName("GameModeManager")
   gameModeManager:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
   local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
@@ -80,7 +79,7 @@ end
 --
 function MapTopHandler:terminate()
 
-  local gameModeManager = TmpUtil.getServerExtensionByName("GameModeManager")
+  local gameModeManager = Server.getInstance():getExtensionManager():getExtensionByName("GameModeManager")
   gameModeManager:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
 end

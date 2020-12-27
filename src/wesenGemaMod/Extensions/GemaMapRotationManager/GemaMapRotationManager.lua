@@ -11,7 +11,6 @@ local GemaMapRotationGenerator = require "Extensions.GemaMapRotationManager.Gema
 local MapRotationEntry = require "AC-LuaServer.Core.MapRotation.MapRotationEntry"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
-local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Manages the gema map rotation.
@@ -61,8 +60,7 @@ end
 --
 function GemaMapRotationManager:initialize()
 
-  --local gemaMapManager = Server.getInstance():getExtension("GemaMapManager")
-  local gemaMapManager = TmpUtil.getServerExtensionByName("GemaMapManager")
+  local gemaMapManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaMapManager")
   gemaMapManager:on("onGemaMapUploaded", self.onGemaMapUploadedEventCallback)
   gemaMapManager:on("onGemaMapRemoved", self.onGemaMapRemovedEventCallback)
 
@@ -83,8 +81,7 @@ end
 --
 function GemaMapRotationManager:terminate()
 
-  --local gemaMapManager = Server.getInstance():getExtension("GemaMapManager")
-  local gemaMapManager = TmpUtil.getServerExtensionByName("GemaMapManager")
+  local gemaMapManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaMapManager")
   gemaMapManager:off("onGemaMapUploaded", self.onGemaMapUploadedEventCallback)
   gemaMapManager:off("onGemaMapRemoved", self.onGemaMapRemovedEventCallback)
 

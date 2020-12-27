@@ -7,7 +7,6 @@
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local StaticString = require "Output.StaticString"
-local TmpUtil = require "TmpUtil.TmpUtil"
 
 ---
 -- Command !maptop.
@@ -46,7 +45,8 @@ end
 --
 function MapTopCommand:execute(_player, _arguments)
 
-  local mapTopHandler = TmpUtil.getServerExtensionByName("GemaGameMode"):getMapTopHandler()
+  local gemaGameMode = Server.getInstance():getExtensionManager():getExtensionByName("GemaGameMode")
+  local mapTopHandler = gemaGameMode:getMapTopHandler()
 
   local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList()
   local numberOfDisplayRecords = 5
