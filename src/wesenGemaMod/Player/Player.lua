@@ -56,7 +56,6 @@ function Player:new(_cn, _ip, _name)
   self.scoreAttempt = PlayerScoreAttempt(self)
 end
 
-
 ---
 -- Creates and returns a Player instance from a connected player.
 --
@@ -71,13 +70,31 @@ function Player.createFromConnectedPlayer(_cn)
     local playerIp = LuaServerApi.getip(_cn)
     local playerName = LuaServerApi.getname(_cn)
 
-    return Player(_cn, playerIp, playerName)
+    local player = Player(_cn, playerIp, playerName)
+    player:savePlayer()
+    return player
 
   else
     self.super.createFromConnectedPlayer(_cn)
   end
 
 end
+
+
+-- Getters and Setters
+
+---
+-- Sets the player name.
+--
+-- @tparam string _name The player name
+--
+function Player:setName(_name)
+  self.super.setName(_name)
+  player:savePlayer()
+end
+
+
+-- Public Methods
 
 ---
 -- Returns whether a player object equals this player.
