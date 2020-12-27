@@ -26,6 +26,10 @@ require "pl.compat"
 -- Configure LuaORM
 local LuaORM_API = require "LuaORM.API"
 
+-- Wait for 5 seconds so that the database container has enough time to start
+local sleep = require "sleep"
+sleep(5000)
+
 local config = cfg.totable("luaorm")
 LuaORM_API.ORM:initialize({
   connection = "LuaSQL/MySQL",
