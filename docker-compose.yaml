@@ -1,0 +1,32 @@
+version: "3"
+services:
+    ac-lua-server:
+        build: .
+        ports:
+            - "28763:28763/udp"
+            - "28764:28764/udp"
+        volumes:
+            - ./ac-server/config:/ac-server/config:rw
+            - ./ac-server/packages:/ac-server/packages:rw
+            - ./src/config:/ac-server/lua/config:rw
+            - ./src:/ac-server/lua/scripts:rw
+        networks:
+          - database
+        depends_on:
+          - database
+
+    database:
+      image: mysql/mysql-server:5.7
+      container_name: database
+      environment:
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_DATABASE: assaultcube_gema
+        MYSQL_USER: assaultcube
+        MYSQL_PASSWORD: password
+      networks:
+        - database
+      volumes:
+        - ./test server/mysql-data:/var/lib/mysql:rw
+
+networks:
+  database:
