@@ -89,8 +89,8 @@ end
 -- @tparam string _name The player name
 --
 function Player:setName(_name)
-  self.super.setName(_name)
-  player:savePlayer()
+  self.super.setName(self, _name)
+  self:savePlayer()
 end
 
 

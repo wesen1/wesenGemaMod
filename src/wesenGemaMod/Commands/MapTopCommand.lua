@@ -6,6 +6,7 @@
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
+local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
 
 ---

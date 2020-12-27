@@ -83,7 +83,6 @@ function UnplayableGemaMapsRemover:onPlayerFailedToCallVote(_vote, _voteError)
     local player = self.target:getPlayerList():getPlayerByCn(_vote:getCallerCn())
     self:removeUnplayableMap(_vote:getMapName(), player)
 
-    -- TODO: Check if this is forwarded to the vote event listener
     return LuaServerApi.PLUGIN_BLOCK
 
   end

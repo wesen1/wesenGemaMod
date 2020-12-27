@@ -9,7 +9,6 @@ local Object = require "classic"
 
 ---
 -- Stores a string id of a static string and provides methods to fetch the static string from the config file.
--- TODO: Replace by "i18n()"
 --
 -- @type StaticString
 --

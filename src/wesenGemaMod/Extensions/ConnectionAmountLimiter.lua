@@ -79,8 +79,6 @@ function ConnectionAmountLimiter:onPlayerConnect(_player)
 
     LuaServerApi.disconnect(_player:getCn(), LuaServerApi.DISC_NONE)
 
-    -- TODO: playerList:removePlayer(_cn)
-    -- TODO: LuaServerApi:on("playerManuallyDisconnected")
     playerList:onPlayerDisconnectAfter(_player:getCn())
 
     return LuaServerApi.PLUGIN_BLOCK

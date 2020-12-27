@@ -15,7 +15,6 @@ local StaticString = require("Output/StaticString");
 
 ---
 -- Wrapper class for the gema mode.
--- TODO: Rename to GemaGameMode
 -- @type GemaGameMode
 --
 local GemaGameMode = BaseGameMode:extend()
@@ -144,7 +143,7 @@ end
 --
 function GemaGameMode:printServerInformation(_player)
 
-  local commandList = self:getExtensionManager():getExtensionByName("CommandManager"):getCommandList()
+  local commandList = Server.getInstance():getExtensionManager():getExtensionByName("CommandManager"):getCommandList()
   local output = Server.getInstance():getOutput()
 
   local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString())

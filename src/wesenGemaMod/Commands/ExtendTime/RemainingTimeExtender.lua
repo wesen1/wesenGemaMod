@@ -112,10 +112,11 @@ function RemainingTimeExtender:extendTime(_player, _numberOfExtendMinutes)
 
   if (not success) then
     if (exception.is and exception:is(MaximumRemainingTimeExceededException)) then
+      local maximumNumberOfExtendMilliseconds = numberOfExtendMilliseconds - exception:getExceedanceInMilliseconds()
       error(TemplateException(
         "Commands/ExtendTime/Exceptions/InvalidExtendTime",
         {
-          ["maximumNumberOfExtendMinutes"] = math.floor(exception:getMaximumNumberOfExtendMilliseconds() / 60000),
+          ["maximumNumberOfExtendMinutes"] = math.floor(maximumNumberOfExtendMilliseconds / 60000),
           ["millisecondsUntilExtraMinuteCanBeUsed"] = exception:getMillisecondsUntilExtraMinuteCanBeUsed()
         }
       ))

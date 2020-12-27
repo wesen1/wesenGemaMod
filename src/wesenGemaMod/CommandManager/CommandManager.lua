@@ -134,7 +134,7 @@ function CommandManager:onPlayerSayText(_cn, _text)
     local status, exception = pcall(self.handleCommand, self, player, _text)
     if (not status) then
       if (exception.is and exception:is(TemplateException)) then
-        Server.getInstance:getOutput():printException(exception, player)
+        Server.getInstance():getOutput():printException(exception, player)
       else
         error(exception)
       end
