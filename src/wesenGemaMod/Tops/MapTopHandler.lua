@@ -5,14 +5,26 @@
 -- @license MIT
 --
 
+local EventEmitter = require "AC-LuaServer.Core.Event.EventEmitter"
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local MapTop = require("Tops/MapTop/MapTop");
+local Object = require "classic"
+local Server = require "AC-LuaServer.Core.Server"
 
 ---
 -- Handles the maptops.
 --
 -- @type MapTopHandler
 --
-local MapTopHandler = setmetatable({}, {});
+local MapTopHandler = Object:extend()
+MapTopHandler:implement(EventEmitter)
+
+---
+-- The EventCallback for the "onGameModeStaysEnabledAfterGameChange" event of the GameHandler
+--
+-- @tfield EventCallback onGameModeStaysEnabledAfterGameChangeEventCallback
+--
+MapTopHandler.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
 
 ---
 -- The list of map tops
@@ -21,32 +33,15 @@ local MapTopHandler = setmetatable({}, {});
 --
 MapTopHandler.mapTops = nil;
 
----
--- The map top printer
---
--- @tfield MapTopPrinter mapTopPrinter
---
-MapTopHandler.mapTopPrinter = nil;
-
 
 ---
 -- MapTopHandler constructor.
 --
--- @tparam Output _output The output
---
--- @treturn MapTopHandler The MapTopHandler instance
---
-function MapTopHandler:__construct(_output)
-
-  local instance = setmetatable({}, {__index = MapTopHandler});
-
-  instance.mapTops = {};
-
-  return instance;
-
+function MapTopHandler:new()
+  self.eventCallbacks = {}
+  self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange"})
+  self.mapTops = {}
 end
-
-getmetatable(MapTopHandler).__call = MapTopHandler.__construct;
 
 
 -- Getters and Setters
@@ -64,10 +59,29 @@ end
 -- Public Methods
 
 ---
--- Initializes the main maptop.
+-- Initializes the main maptop and the event listeners.
 --
 function MapTopHandler:initialize()
+
   self.mapTops["main"] = MapTop();
+
+  local gameModeManager = Server.getInstance():getExtensionManager():getExtensionByName("GameModeManager")
+  gameModeManager:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+
+  local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
+  self.mapTops["main"]:loadRecords(currentGame:getMapName())
+  self:emit("onMapScoresForMapLoaded", currentGame:getMapName())
+
+end
+
+---
+-- Removes the event listeners.
+--
+function MapTopHandler:terminate()
+
+  local gameModeManager = Server.getInstance():getExtensionManager():getExtensionByName("GameModeManager")
+  gameModeManager:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+
 end
 
 ---
@@ -77,6 +91,20 @@ end
 --
 function MapTopHandler:getMapTop(_mapTopId)
   return self.mapTops[_mapTopId];
+end
+
+
+-- Event Handlers
+
+---
+-- Event handler which is called when the game mode is not changed after a Game change.
+--
+-- @tparam BaseGameMode _gameMode The current game mode
+-- @tparam Game _game The new current Game
+--
+function MapTopHandler:onGameModeStaysEnabledAfterGameChange(_gameMode, _game)
+  self.mapTops["main"]:loadRecords(_game:getMapName())
+  self:emit("onMapScoresForMapLoaded", _game:getMapName())
 end
 
 

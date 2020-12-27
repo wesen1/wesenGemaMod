@@ -5,35 +5,32 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
-local CommandArgument = require("CommandHandler/CommandArgument");
-local RemainigTimeExtender = require("TimeHandler/RemainingTimeExtender");
-local StaticString = require("Output/StaticString");
+local BaseCommand = require "CommandManager.BaseCommand"
+local CommandArgument = require "CommandManager.CommandArgument"
+local RemainingTimeExtender = require "Commands.ExtendTime.RemainingTimeExtender"
+local StaticString = require "Output.StaticString"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Command !extend.
 -- Extends the remaining time by a specific amount of time
--- ExtendTimeCommand inherits from BaseCommand
 --
 -- @type ExtendTimeCommand
 --
-local ExtendTimeCommand = setmetatable({}, {__index = BaseCommand});
-
+local ExtendTimeCommand = BaseCommand:extend()
 
 ---
 -- The remaining time extender
 --
 -- @tfield RemainingTimeExtender remainingTimeExtender
 --
-ExtendTimeCommand.remainingTimeExtender = nil;
+ExtendTimeCommand.remainingTimeExtender = nil
 
 
 ---
 -- ExtendTimeCommand constructor.
 --
--- @treturn ExtendTimeCommand The ExtendTimeCommand instance
---
-function ExtendTimeCommand:__construct()
+function ExtendTimeCommand:new()
 
   local numberOfMinutesArgument = CommandArgument(
     StaticString("extendTimeMinutesArgumentName"):getString(),
@@ -41,9 +38,10 @@ function ExtendTimeCommand:__construct()
     "integer",
     StaticString("extendTimeMinutesArgumentShortName"):getString(),
     StaticString("extendTimeMinutesArgumentDescription"):getString()
-  );
+  )
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("extendTimeCommandName"):getString(),
     0,
     StaticString("extendTimeCommandGroupName"):getString(),
@@ -51,19 +49,48 @@ function ExtendTimeCommand:__construct()
     StaticString("extendTimeCommandDescription"):getString(),
     { StaticString("extendTimeCommandAlias1"):getString(),
       StaticString("extendTimeCommandAlias2"):getString() }
-  );
-  setmetatable(instance, {__index = ExtendTimeCommand});
+  )
 
-  instance.remainingTimeExtender = RemainigTimeExtender(20);
-
-  return instance;
+  self.remainingTimeExtender = RemainingTimeExtender(20)
 
 end
 
-getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
-
 
 -- Public Methods
+
+---
+-- Initializes this Extension.
+--
+function ExtendTimeCommand:initialize()
+  self.super.initialize(self)
+  self.remainingTimeExtender:initialize()
+end
+
+---
+-- Terminates this Extension.
+--
+function ExtendTimeCommand:terminate()
+  self.super.terminate(self)
+  self.remainingTimeExtender:terminate()
+end
+
+
+---
+-- Validates the input arguments.
+--
+-- @tparam mixed[] _arguments The list of arguments
+--
+-- @raise Error in case of an invalid input argument
+--
+function ExtendTimeCommand:validateInputArguments(_arguments)
+
+  if (_arguments["numberOfMinutes"] < 1) then
+    error(TemplateException(
+      "Commands/ExtendTime/Exceptions/ExtendMinutesLessThanOne", {}
+    ))
+  end
+
+end
 
 ---
 -- Extends the remaining time by a specific amount of time.
@@ -75,13 +102,9 @@ getmetatable(ExtendTimeCommand).__call = ExtendTimeCommand.__construct;
 --
 function ExtendTimeCommand:execute(_player, _arguments)
 
-  local environmentHandler = self.parentCommandList:getParentGemaMode():getEnvironmentHandler()
-  local environment = environmentHandler:getCurrentEnvironment()
-
-  self.remainingTimeExtender:extendTime(_player, environment, _arguments.numberOfMinutes)
-
+  self.remainingTimeExtender:extendTime(_player, _arguments.numberOfMinutes)
   self.output:printTextTemplate(
-    "TextTemplate/InfoMessages/Time/TimeExtended",
+    "Commands/ExtendTime/TimeExtended",
     { player = _player, numberOfMinutes = _arguments.numberOfMinutes }
   )
 

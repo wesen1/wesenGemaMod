@@ -5,41 +5,35 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
-local StaticString = require("Output/StaticString");
+local BaseCommand = require "CommandManager.BaseCommand"
+local Server = require "AC-LuaServer.Core.Server"
+local StaticString = require "Output.StaticString"
 
 ---
 -- Command !maptop.
 -- Displays the best records of a map to a player
--- MapTopCommand inherits from BaseCommand
 --
 -- @type MapTopCommand
 --
-local MapTopCommand = setmetatable({}, {__index = BaseCommand});
+local MapTopCommand = BaseCommand:extend()
 
 
 ---
 -- MapTopCommand constructor.
 --
--- @treturn MapTopCommand The MapTopCommand instance
---
-function MapTopCommand:__construct()
+function MapTopCommand:new()
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("mapTopCommandName"):getString(),
     0,
     StaticString("mapTopCommandGroupName"):getString(),
     {},
     StaticString("mapTopCommandDescription"):getString(),
     { StaticString("mapTopCommandAlias1"):getString() }
-  );
-  setmetatable(instance, {__index = MapTopCommand});
-
-  return instance;
+  )
 
 end
-
-getmetatable(MapTopCommand).__call = MapTopCommand.__construct;
 
 
 -- Public Methods
@@ -52,11 +46,12 @@ getmetatable(MapTopCommand).__call = MapTopCommand.__construct;
 --
 function MapTopCommand:execute(_player, _arguments)
 
-  local mapTopHandler = self.parentCommandList:getParentGemaMode():getMapTopHandler();
+  local gemaGameMode = Server.getInstance():getExtensionManager():getExtensionByName("GemaGameMode")
+  local mapTopHandler = gemaGameMode:getMapTopHandler()
 
-  local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList();
-  local numberOfDisplayRecords = 5;
-  local startRank = 1;
+  local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList()
+  local numberOfDisplayRecords = 5
+  local startRank = 1
 
   self.output:printTableTemplate(
     "TableTemplate/MapTop/MapTop",
@@ -70,4 +65,4 @@ function MapTopCommand:execute(_player, _arguments)
 end
 
 
-return MapTopCommand;
+return MapTopCommand

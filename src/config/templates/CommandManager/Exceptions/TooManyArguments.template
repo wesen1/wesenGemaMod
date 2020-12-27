@@ -1,0 +1,18 @@
+{#
+ # Generates an exception message for the "not enough arguments passed to command" case.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam int numberOfPassedArguments The number of arguments that were passed to the CommandParser
+ # @tparam BaseCommand command The command for which arguments are missing
+ #}
+
+Too many arguments
+<whitespace>
+(
+  Expected: {* command:getNumberOfRequiredArguments() *}
+  {% if (command:getNumberOfRequiredArguments() < command:getNumberOfArguments()) then %}
+    to {* command:getNumberOfArguments() *}
+  {% end %}
+  , got: {* numberOfPassedArguments *}
+)

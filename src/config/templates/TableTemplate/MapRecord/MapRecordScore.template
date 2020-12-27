@@ -1,21 +1,37 @@
 {#
  # Prints the "player scored" message.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapRecord mapRecord The map record
  #}
 
-{(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreTime.template,
-  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
-)}
+{[
+  getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordScoreTime"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    timeFormatter = timeFormatter,
+    mapRecord = mapRecord
+  }
+]}
 
 <whitespace>
-{(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRank.template,
-  { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
-)}
+{[
+  getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordScoreRank"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    timeFormatter = timeFormatter,
+    mapRecord = mapRecord
+  }
+]}
 _______________________________________________;
 
 {% if (mapRecord:getRank() == 1) then %}
-  {(lua/config/templates/TextTemplate/MapRecord/MapRecordNewBestTime.template, { colors = colors })}
+  {[
+    getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordNewBestTime"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors
+    }
+  ]}
 {% end %}

@@ -69,6 +69,15 @@ getmetatable(MapTop).__call = MapTop.__construct;
 -- Getters and setters
 
 ---
+-- Returns the name of the last map for which the map top was initialized.
+--
+-- @treturn string The map name
+--
+function MapTop:getLastMapName()
+  return self.lastMapName
+end
+
+---
 -- Returns the map record list.
 --
 -- @treturn MapRecordList The map record list

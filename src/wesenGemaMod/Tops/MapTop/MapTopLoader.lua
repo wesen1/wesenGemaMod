@@ -58,7 +58,7 @@ function MapTopLoader:fetchRecords(_mapName, _mapRecordList)
 
     local mapScore = mapScores[i]
 
-    local player = Player(-1, mapScore.players[1].names[1].name, mapScore.players[1].ips[1].ip)
+    local player = Player(-1, mapScore.players[1].ips[1].ip, mapScore.players[1].names[1].name)
     local record = MapRecord(player, mapScore.milliseconds, mapScore.weapon_id, mapScore.team_id, _mapRecordList, i)
     record:setCreatedAt(mapScore.created_at)
 

@@ -5,12 +5,14 @@
 -- @license MIT
 --
 
+local Object = require "classic"
+
 ---
 -- Stores a string id of a static string and provides methods to fetch the static string from the config file.
 --
 -- @type StaticString
 --
-local StaticString = setmetatable({}, {})
+local StaticString = Object:extend()
 
 
 ---
@@ -26,16 +28,9 @@ StaticString.stringId = nil
 --
 -- @tparam string _stringId The id of the static string in the Strings.cfg file
 --
--- @treturn StaticString The StaticString instance
---
-function StaticString:__construct(_stringId)
-  local instance = setmetatable({}, {__index = StaticString})
-  instance.stringId = _stringId
-
-  return instance
+function StaticString:new(_stringId)
+  self.stringId = _stringId
 end
-
-getmetatable(StaticString).__call = StaticString.__construct
 
 
 ---

@@ -1,0 +1,27 @@
+{#
+ # Generates a message that tells a player that the extend time is invalid because of the maximum
+ # possible game time.
+ #
+ # @tparam int maximumNumberOfExtendMinutes The maximum number of remaining extend minutes
+ # @tparam int millisecondsUntilExtraMinuteCanBeUsed The number of milliseconds that must pass before the extra minute that may be unavailable because of the integer overflow in the intermission check is available
+ #}
+
+{% if (maximumNumberOfExtendMinutes == 0) then %}
+  {# Time can be extended by 0 more minutes #}
+
+  {% if (millisecondsUntilExtraMinuteCanBeUsed < 0) then %}
+    {# The extra minute is already available but the remaining number of extend minutes is 0 #}
+    The time can not be extended any further
+
+  {% else %}
+    The time can only be extended by 1 more minute in
+    <whitespace>
+    {* timeFormatter:generateTimeString(millisecondsUntilExtraMinuteCanBeUsed, "%02s,%03v") *}
+    <whitespace>
+    seconds
+  {% end %}
+
+{% else %}
+  {# Time can be extended by more than 0 minutes #}
+  The time can only be extended by {* maximumNumberOfExtendMinutes *} more minutes
+{% end %}

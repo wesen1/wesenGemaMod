@@ -1,0 +1,16 @@
+{#
+ # Prints a command including all of its arguments.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam BaseCommand command The command
+ #}
+
+{[
+  getAbsoluteTemplatePath("CommandManager/Commands/Command/Command"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    command = command,
+    arguments = command:getArguments()
+  }
+]}

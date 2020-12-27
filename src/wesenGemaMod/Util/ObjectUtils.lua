@@ -67,31 +67,5 @@ function ObjectUtils:clone(_object, _clonedObjects)
 
 end
 
----
--- Returns whether an object is an instance of a class or one of its subclasses.
---
--- @tparam table _object The object
--- @tparam table _class The class
---
--- @treturn bool True if the object is an instance of the class or one of its subclasses, false otherwise
---
-function ObjectUtils:isInstanceOf(_object, _class)
 
-  local metaTable = getmetatable(_object);
-  if (metaTable == nil) then
-    return false;
-  else
-
-    local parentClass = metaTable.__index;
-    if (parentClass == _class) then
-      return true;
-    else
-      return self:isInstanceOf(parentClass, _class);
-    end
-
-  end
-
-end
-
-
-return ObjectUtils;
+return ObjectUtils

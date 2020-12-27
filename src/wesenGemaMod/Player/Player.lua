@@ -5,7 +5,9 @@
 -- @license MIT
 --
 
-local PlayerScoreAttempt = require("Player/PlayerScoreAttempt");
+local BasePlayer = require "AC-LuaServer.Core.PlayerList.Player"
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local PlayerScoreAttempt = require("Player/PlayerScoreAttempt")
 local Ip = require("ORM/Models/Ip")
 local Name = require("ORM/Models/Name")
 local PlayerModel = require("ORM/Models/Player")
@@ -15,8 +17,7 @@ local PlayerModel = require("ORM/Models/Player")
 --
 -- @type Player
 --
-local Player = setmetatable({}, {});
-
+local Player = BasePlayer:extend()
 
 ---
 -- The id of the player in the database
@@ -24,27 +25,6 @@ local Player = setmetatable({}, {});
 -- @tfield int id
 --
 Player.id = -1;
-
----
--- The client number of the player
---
--- @tfield int cn
---
-Player.cn = -1;
-
----
--- The player name
---
--- @tfield string name
---
-Player.name = nil;
-
----
--- The player ip
---
--- @tfield string ip
---
-Player.ip = nil;
 
 ---
 -- The player level (0 = unarmed, 1 = admin)
@@ -62,31 +42,59 @@ Player.scoreAttempt = nil;
 
 
 ---
--- Player Constructor.
+-- Player constructor.
 --
 -- @tparam int _cn The client number of the player
--- @tparam string _name The player name
 -- @tparam string _ip The player ip
+-- @tparam string _name The player name
 --
--- @treturn Player The Player instance
+function Player:new(_cn, _ip, _name)
+  self.super.new(self, _cn, _ip, _name)
+
+  self.id = -1;
+  self.level = 0;
+  self.scoreAttempt = PlayerScoreAttempt(self)
+end
+
+---
+-- Creates and returns a Player instance from a connected player.
 --
-function Player:__construct(_cn, _name, _ip)
+-- @tparam int _cn The client number of the connected player
+--
+-- @treturn Player The Player instance for the connected player
+--
+function Player.createFromConnectedPlayer(_cn)
 
-  local instance = setmetatable({}, {__index = Player});
+  if (LuaServerApi.isconnected(_cn)) then
 
-  instance.id = -1;
-  instance.cn = _cn;
-  instance.name = _name;
-  instance.ip = _ip;
-  instance.level = 0;
-  instance.scoreAttempt = PlayerScoreAttempt(instance);
+    local playerIp = LuaServerApi.getip(_cn)
+    local playerName = LuaServerApi.getname(_cn)
 
-  return instance;
+    local player = Player(_cn, playerIp, playerName)
+    player:savePlayer()
+    return player
+
+  else
+    self.super.createFromConnectedPlayer(_cn)
+  end
 
 end
 
-getmetatable(Player).__call = Player.__construct;
 
+-- Getters and Setters
+
+---
+-- Sets the player name.
+--
+-- @tparam string _name The player name
+--
+function Player:setName(_name)
+  self.super.setName(self, _name)
+  self:savePlayer()
+end
+
+
+-- Public Methods
 
 ---
 -- Returns whether a player object equals this player.
@@ -116,57 +124,12 @@ function Player:getId()
 end
 
 ---
--- Returns the client number of the player.
---
--- @treturn int The client number of the player
---
-function Player:getCn()
-  return self.cn;
-end
-
----
--- Returns the player name.
---
--- @treturn string The player name
---
-function Player:getName()
-  return self.name;
-end
-
----
--- Sets the player name.
---
--- @tparam string _name The player name
---
-function Player:setName(_name)
-  self.name = _name;
-end
-
----
--- Returns the player ip.
---
--- @treturn string The player ip
---
-function Player:getIp()
-  return self.ip;
-end
-
----
--- Sets the player ip.
---
--- @tparam string _ip The player ip
---
-function Player:setIp(_ip)
-  self.ip = _ip;
-end
-
----
 -- Returns the player level.
 --
 -- @treturn int The player level
 --
 function Player:getLevel()
-  return self.level;
+  return self.hasAdminRole and 1 or 0
 end
 
 ---

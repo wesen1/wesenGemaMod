@@ -5,35 +5,31 @@
 -- @license MIT
 --
 
-local BaseCommand = require("CommandHandler/BaseCommand");
-local CommandArgument = require("CommandHandler/CommandArgument");
-local StaticString = require("Output/StaticString");
-local TemplateException = require("Util/TemplateException");
+local BaseCommand = require "CommandManager.BaseCommand"
+local CommandArgument = require "CommandManager.CommandArgument"
+local StaticString = require "Output.StaticString"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Command !help.
 -- Prints help texts for each command.
--- ColorsCommand inherits from BaseCommand
 --
 -- @type HelpCommand
 --
-local HelpCommand = setmetatable({}, {__index = BaseCommand});
-
+local HelpCommand = BaseCommand:extend()
 
 ---
 -- The command help text printer
 --
 -- @tfield CommandHelpTextPrinter The command help text printer
 --
-HelpCommand.commandHelpTextPrinter = nil;
+HelpCommand.commandHelpTextPrinter = nil
 
 
 ---
 -- HelpCommand constructor.
 --
--- @treturn HelpCommand The HelpCommand instance
---
-function HelpCommand:__construct()
+function HelpCommand:new()
 
   local commandNameArgument = CommandArgument(
     StaticString("helpCommandCommandNameArgumentName"):getString(),
@@ -41,23 +37,19 @@ function HelpCommand:__construct()
     "string",
     StaticString("helpCommandCommandNameArgumentShortName"):getString(),
     StaticString("helpCommandCommandNameArgumentDescription"):getString()
-  );
+  )
 
-  local instance = BaseCommand(
+  self.super.new(
+    self,
     StaticString("helpCommandName"):getString(),
     0,
     nil,
     { commandNameArgument },
     StaticString("helpCommandDescription"):getString(),
     { StaticString("helpCommandAlias1"):getString() }
-  );
-  setmetatable(instance, {__index = HelpCommand});
-
-  return instance;
+  )
 
 end
-
-getmetatable(HelpCommand).__call = HelpCommand.__construct;
 
 
 -- Public Methods
@@ -72,19 +64,19 @@ getmetatable(HelpCommand).__call = HelpCommand.__construct;
 --
 function HelpCommand:execute(_player, _arguments)
 
-  local command = self.parentCommandList:getCommand(_arguments.commandName);
+  local command = self.parentCommandList:getCommand(_arguments.commandName)
   if (command) then
     self.output:printTableTemplate(
-      "TableTemplate/CommandHelpText/CommandHelpText",
+      "CommandManager/Commands/Help",
       { ["command"] = command },
       _player
     )
 
   else
     error(TemplateException(
-      "TextTemplate/ExceptionMessages/CommandHandler/UnknownCommand",
+      "CommandManager/Exceptions/UnknownCommand",
       { ["commandName"] = _arguments.commandName }
-    ));
+    ))
   end
 
 end
@@ -98,15 +90,15 @@ end
 --
 function HelpCommand:adjustInputArguments(_arguments)
 
-  local arguments = _arguments;
+  local arguments = _arguments
 
   if (arguments.commandName:sub(1,1) ~= "!") then
-    arguments.commandName = "!" .. arguments.commandName;
+    arguments.commandName = "!" .. arguments.commandName
   end
 
-  return arguments;
+  return arguments
 
 end
 
 
-return HelpCommand;
+return HelpCommand
