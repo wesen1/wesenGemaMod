@@ -5,7 +5,9 @@
 -- @license MIT
 --
 
-local PlayerScoreAttempt = require("Player/PlayerScoreAttempt");
+local BasePlayer = require "AC-LuaServer.Core.PlayerList.Player"
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local PlayerScoreAttempt = require("Player/PlayerScoreAttempt")
 local Ip = require("ORM/Models/Ip")
 local Name = require("ORM/Models/Name")
 local PlayerModel = require("ORM/Models/Player")
@@ -15,8 +17,7 @@ local PlayerModel = require("ORM/Models/Player")
 --
 -- @type Player
 --
-local Player = setmetatable({}, {});
-
+local Player = BasePlayer:extend()
 
 ---
 -- The id of the player in the database
@@ -41,24 +42,59 @@ Player.scoreAttempt = nil;
 
 
 ---
--- Player Constructor.
+-- Player constructor.
 --
--- @treturn Player The Player instance
+-- @tparam int _cn The client number of the player
+-- @tparam string _ip The player ip
+-- @tparam string _name The player name
 --
-function Player:__construct()
+function Player:new(_cn, _ip, _name)
+  self.super.new(self, _cn, _ip, _name)
 
-  local instance = setmetatable({}, {__index = Player});
+  self.id = -1;
+  self.level = 0;
+  self.scoreAttempt = PlayerScoreAttempt(self)
+end
 
-  instance.id = -1;
-  instance.level = 0;
-  instance.scoreAttempt = PlayerScoreAttempt(instance);
+---
+-- Creates and returns a Player instance from a connected player.
+--
+-- @tparam int _cn The client number of the connected player
+--
+-- @treturn Player The Player instance for the connected player
+--
+function Player.createFromConnectedPlayer(_cn)
 
-  return instance;
+  if (LuaServerApi.isconnected(_cn)) then
+
+    local playerIp = LuaServerApi.getip(_cn)
+    local playerName = LuaServerApi.getname(_cn)
+
+    local player = Player(_cn, playerIp, playerName)
+    player:savePlayer()
+    return player
+
+  else
+    self.super.createFromConnectedPlayer(_cn)
+  end
 
 end
 
-getmetatable(Player).__call = Player.__construct;
 
+-- Getters and Setters
+
+---
+-- Sets the player name.
+--
+-- @tparam string _name The player name
+--
+function Player:setName(_name)
+  self.super.setName(self, _name)
+  self:savePlayer()
+end
+
+
+-- Public Methods
 
 ---
 -- Returns whether a player object equals this player.
@@ -93,7 +129,7 @@ end
 -- @treturn int The player level
 --
 function Player:getLevel()
-  return self.level;
+  return self.hasAdminRole and 1 or 0
 end
 
 ---

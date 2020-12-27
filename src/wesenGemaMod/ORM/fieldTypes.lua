@@ -6,7 +6,6 @@
 --
 
 local LuaORM_API = require("LuaORM/API")
-local StringUtils = require("Util/StringUtils")
 
 local FieldType = LuaORM_API.FieldType
 local fieldTypes = LuaORM_API.fieldTypes
@@ -33,15 +32,21 @@ fieldTypes.ipField = FieldType({
 
   validator = function(_value)
 
-    local octets = StringUtils:split(_value, "%.")
+    -- Check if the string contains four numbers that are divided by dots
+    local octets = { _value:match("^(%d+)%.(%d+)%.(%d+)%.(%d+)$") }
     if (#octets ~= 4) then
       return false
     end
 
+    -- Check if each octet is valid
     for _, octet in ipairs(octets) do
 
       local octetInteger = tonumber(octet)
-      if (octetInteger .. "" ~= octet or octetInteger < 0 or octetInteger > 255) then
+      if (octetInteger < 0 or octetInteger > 255) then
+        -- The octet is not between 0 and 255
+        return false
+      elseif (octetInteger .. "" ~= octet) then
+        -- The octet's integer value casted to a string does not match the raw octet string
         return false
       end
 

@@ -1,6 +1,7 @@
 {#
  # Prints a map record row for the map top.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapRecord mapRecord The map record

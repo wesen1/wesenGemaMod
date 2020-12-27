@@ -1,194 +1,161 @@
 ---
 -- @author wesen
--- @copyright 2018 wesen <wesen-ac@web.de>
+-- @copyright 2018-2020 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
-local ClientOutputFactory = require("AC-ClientOutput/ClientOutputFactory")
-local ColorLoader = require("Output/Util/ColorLoader")
-local CommandLoader = require("CommandHandler/CommandLoader");
-local GemaModeStateUpdater = require("GemaModeStateUpdater");
+local BaseGameMode = require "AC-LuaServer.Extensions.GameModeManager.BaseGameMode"
+local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local MapNameChecker = require("Map/MapNameChecker");
 local MapTopHandler = require("Tops/MapTopHandler");
-local TemplateFactory = require("Output/Template/TemplateFactory")
-local TimeFormatter = require("TimeHandler/TimeFormatter")
+local Server = require "AC-LuaServer.Core.Server"
+local StaticString = require("Output/StaticString");
 
 ---
 -- Wrapper class for the gema mode.
+-- @type GemaGameMode
 --
--- @type GemaMode
---
-local GemaMode = setmetatable({}, {});
+local GemaGameMode = BaseGameMode:extend()
 
 ---
--- The command list
+-- The EventCallback for the "onPlayerAdded" event of the player list
 --
--- @tfield CommandList commandList
+-- @tfield EventCallback onPlayerAddedEventCallback
 --
-GemaMode.commandList = nil;
+GemaGameMode.onPlayerAddedEventCallback = nil
 
 ---
--- The command loader
+-- The map name checker
 --
--- @tfield CommandLoader commandLoader
+-- @tfield MapNameChecker mapNameChecker
 --
-GemaMode.commandLoader = nil;
-
----
--- The gema mode state updater
---
--- @tfield GemaModeStateUpdater gemaModeStateUpdater
---
-GemaMode.gemaModeStateUpdater = nil;
+GemaGameMode.mapNameChecker = nil
 
 ---
 -- The map top handler
 --
 -- @tfield MapTopHandler mapTopHandler
 --
-GemaMode.mapTopHandler = nil;
-
----
--- Indicates whether the gema mode is currently active
---
--- @tfield bool isActive
---
-GemaMode.isActive = nil;
+GemaGameMode.mapTopHandler = nil
 
 
 ---
--- GemaMode constructor.
+-- GemaGameMode constructor.
 --
--- @treturn GemaMode The GemaMode instance
---
-function GemaMode:__construct()
+function GemaGameMode:new()
 
-  local instance = setmetatable({}, {__index = GemaMode});
+  self.super.new(self, "GemaGameMode", "Gema")
 
-  instance.commandLoader = CommandLoader();
-  instance.environmentHandler = EnvironmentHandler();
-  instance.output = Output();
-
-  -- Must be created after the output was created
-  instance.mapTopHandler = MapTopHandler(instance.output);
-
-  instance.isActive = true;
-
-  return instance;
+  self.onPlayerAddedEventCallback = EventCallback({ object = self, methodName = "onPlayerAdded"})
+  self.mapNameChecker = MapNameChecker()
+  self.mapTopHandler = MapTopHandler()
 
 end
-
-getmetatable(GemaMode).__call = GemaMode.__construct;
 
 
 -- Getters and setters
-
----
--- Returns the command list.
---
--- @treturn CommandList The command list
---
-function GemaMode:getCommandList()
-  return self.commandList;
-end
-
----
--- Returns the command loader.
---
--- @treturn CommandLoader The command loader
---
-function GemaMode:getCommandLoader()
-  return self.commandLoader;
-end
-
----
--- Returns the gema mode state updater.
---
--- @treturn GemaModeStateUpdater The gema mode state updater
---
-function GemaMode:getGemaModeStateUpdater()
-  return self.gemaModeStateUpdater;
-end
 
 ---
 -- Returns the map top handler.
 --
 -- @treturn MapTop The map top handler
 --
-function GemaMode:getMapTopHandler()
-  return self.mapTopHandler;
-end
-
----
--- Returns the output.
---
--- @treturn Output The output
---
-function GemaMode:getOutput()
-  return self.output;
-end
-
----
--- Returns whether the gema mode is active.
---
--- @treturn bool True if the gema mode is active, false otherwise
---
-function GemaMode:getIsActive()
-  return self.isActive;
-end
-
----
--- Sets whether the gema mode is active.
---
--- @tparam bool _isActive If true, the gema mode will be active, if false it will be deactivated
---
-function GemaMode:setIsActive(_isActive)
-  self.isActive = _isActive;
+function GemaGameMode:getMapTopHandler()
+  return self.mapTopHandler
 end
 
 
 -- Public Methods
 
 ---
+-- Returns whether this GameMode can be enabled for a specified Game.
+--
+-- @tparam Game _game The game to check
+--
+-- @treturn bool True if this GameMode can be enabled for the specified Game, false otherwise
+--
+function GemaGameMode:canBeEnabledForGame(_game)
+  return (_game:getGameModeId() == GM_CTF and self.mapNameChecker:isGemaMapName(_game:getMapName()))
+end
+
+---
 -- Loads the commands and generates the gema maprot.
 --
-function GemaMode:initialize()
+function GemaGameMode:initialize(_gameModeManager)
 
-  self:parseConfig()
+  self.super.initialize(self, _gameModeManager)
 
-  -- Load all commands
-  self.commandList = self.commandLoader:loadCommands(self, "lua/scripts/wesenGemaMod/Commands");
+  self.mapTopHandler:initialize()
 
-  self.mapRot:loadGemaMapRot();
-  self.mapTopHandler:initialize();
+  local playerList = Server.getInstance():getPlayerList()
+  playerList:on("onPlayerAdded", self.onPlayerAddedEventCallback)
+
+  LuaServerApi.setautoteam(false)
+
+  local playerList = Server.getInstance():getPlayerList()
+  for _, player in pairs(playerList:getPlayers()) do
+    self:printServerInformation(player)
+  end
 
 end
 
 ---
--- Parses the gema mode config.
+-- Terminates this Extension.
 --
-function GemaMode:parseConfig()
+function GemaGameMode:terminate()
 
-  local config = cfg.totable("gemamod")
+  self.super.terminate(self)
 
-  local colorConfigurationFileName = "colors"
-  ClientOutputFactory.getInstance():configure({
-      fontConfigFileName = "FontDefault",
-      defaultConfiguration = config
-  })
+  self.mapTopHandler:terminate()
 
-  TemplateFactory.getInstance():configure({
-    templateRenderer = {
-      defaultTemplateValues = {
-        colors = ColorLoader(colorConfigurationFileName):getColors(),
-        timeFormatter = TimeFormatter()
-      },
-      basePath = "lua/config/templates",
-      suffix = ".template"
-    }
-  })
+  local playerList = Server.getInstance():getPlayerList()
+  playerList:off("onPlayerAdded", self.onPlayerAddedEventCallback)
+
+  LuaServerApi.setautoteam(true)
+end
+
+
+-- Event Handlers
+
+---
+-- Event handler which is called after a player was added to the player list.
+--
+-- @tparam Player _player The player who connected
+-- @tparam int _newNumberOfConnectedPlayers The new total number of connected players
+--
+function GemaGameMode:onPlayerAdded(_player, _newNumberOfConnectedPlayers)
+  if (_newNumberOfConnectedPlayers == 1) then
+    LuaServerApi.setautoteam(false)
+  end
+
+  self:printServerInformation(_player)
+end
+
+
+-- Private Methods
+
+---
+-- Prints the map statistics and information about the commands to a player.
+--
+-- @tparam Player _player The player to print the server information to
+--
+function GemaGameMode:printServerInformation(_player)
+
+  local commandList = Server.getInstance():getExtensionManager():getExtensionByName("CommandManager"):getCommandList()
+  local output = Server.getInstance():getOutput()
+
+  local cmdsCommand = commandList:getCommand(StaticString("cmdsCommandName"):getString())
+  local rulesCommand = commandList:getCommand(StaticString("rulesCommandName"):getString())
+
+  output:printTableTemplate(
+    "TableTemplate/ServerInformation",
+    { ["cmdsCommand"] = cmdsCommand, ["rulesCommand"] = rulesCommand },
+    _player
+  )
 
 end
 
 
-return GemaMode
+return GemaGameMode

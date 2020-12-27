@@ -1,0 +1,20 @@
+{#
+ # Prints the argument with its short name.
+ # The result is "<<shortArgumentName>>".
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam CommandArgument argument The command argument
+ #}
+
+{# Fetch the argument color #}
+{[
+  getAbsoluteTemplatePath("CommandManager/Commands/Command/ArgumentColor"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    argument = argument
+  }
+]}
+
+{# Print the argument #}
+<{* argument:getShortName() *}>

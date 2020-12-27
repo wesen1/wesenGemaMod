@@ -31,8 +31,10 @@ function LuaUnitCustom.assertInstanceOf(_object, _class)
   else
 
     local parentClass = metaTable.__index;
-    if (parentClass ~= _class) then
-      luaunit.assertInstanceOf(parentClass, _class);
+    if (parentClass == _class) then
+      return true;
+    else
+      return luaunit.assertInstanceOf(parentClass, _class);
     end
 
   end

@@ -1,0 +1,34 @@
+{#
+ # Prints a list of arguments and their descriptions in a table.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam CommandArgument[] arguments The list of arguments
+ #}
+
+{% for i, argument in ipairs(arguments) do %}
+
+  {% if (i == 1) then %}
+    {# The first argument is in the same row like the title "Arguments", so it must contain the colon #}
+    :
+  {% else %}
+    <whitespace>
+  {% end %}
+
+  <whitespace>
+  {[
+    getAbsoluteTemplatePath("CommandManager/Commands/Command/ArgumentFull"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      argument = argument
+    }
+  ]}
+  -----------------------------------------------------------;
+
+  {* colors.helpDescription *}{* argument:getDescription() *}
+  {% if (argument:getIsOptional()) then %}
+    <whitespace>(Optional)
+  {% end %}
+  _____________________________________________________________________;
+
+{% end %}
