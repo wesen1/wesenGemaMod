@@ -99,9 +99,10 @@ end
 ---
 -- Event handler which is called when the game mode is not changed after a Game change.
 --
+-- @tparam BaseGameMode _gameMode The current game mode
 -- @tparam Game _game The new current Game
 --
-function MapTopHandler:onGameModeStaysEnabledAfterGameChange(_game)
+function MapTopHandler:onGameModeStaysEnabledAfterGameChange(_gameMode, _game)
   self.mapTops["main"]:loadRecords(_game:getMapName())
   self:emit("onMapScoresForMapLoaded", _game:getMapName())
 end

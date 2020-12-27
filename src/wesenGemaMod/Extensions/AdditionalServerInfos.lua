@@ -125,11 +125,11 @@ end
 ---
 -- Event handler which is called when the game mode is not changed after a Game change.
 --
--- @tparam BaseGameMode _currentGameMode The current GameMode
+-- @tparam BaseGameMode _gameMode The current GameMode
 --
-function AdditionalServerInfos:onGameModeStaysEnabledAfterGameChange(_game, _currentGameMode)
+function AdditionalServerInfos:onGameModeStaysEnabledAfterGameChange(_gameMode)
 
-  if (not _currentGameMode:is(GemaGameMode)) then
+  if (not _gameMode:is(GemaGameMode)) then
     local output = self.target:getOutput()
     output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {})
   end
