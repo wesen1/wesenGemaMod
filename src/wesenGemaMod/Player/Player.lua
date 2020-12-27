@@ -56,6 +56,23 @@ function Player:new(_cn, _ip, _name)
   self.scoreAttempt = PlayerScoreAttempt(self)
 end
 
+
+---
+-- Creates and returns a Player from a given Player model.
+--
+-- @tparam ORM.Models.Player _playerModel The Player model to create a Player instance from
+--
+-- @treturn Player The created Player instance
+--
+function Player.createFromPlayerModel(_playerModel)
+
+  local player = Player(-1, _playerModel.names[1].name, _playerModel.ips[1].ip)
+  self.id = _playerModel.id
+
+  return player
+
+end
+
 ---
 -- Creates and returns a Player instance from a connected player.
 --
