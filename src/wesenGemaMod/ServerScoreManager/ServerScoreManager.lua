@@ -10,6 +10,7 @@ local MapRankPointsProvider = require "ServerScoreManager.ServerTop.MapRankPoint
 local ServerScoreList = require "ServerScoreManager.ServerTop.ServerScoreList"
 local ServerTop = require "ServerScoreManager.ServerTop.ServerTop"
 local ServerTopLoader = require "ServerScoreManager.ServerTop.ServerTopLoader"
+local tablex = require "pl.tablex"
 
 ---
 -- Manages the lists of server scores (Points per Player based on their map scores).
@@ -66,7 +67,7 @@ end
 --
 -- @treturn ServerTop|nil The ServerTop for the given ID
 --
-function ServerTopHandler:getServerTop(_serverTopId)
+function ServerScoreManager:getServerTop(_serverTopId)
   return self.serverTops[_serverTopId]
 end
 
@@ -78,7 +79,7 @@ end
 --
 function ServerScoreManager:initialize()
 
-  if (self.serverTops == {}) then
+  if (#tablex.keys(self.serverTops) == 0) then
     -- Initialize the ServerTop's only once because they do not change while the GemaGameMode is not enabled
     self.serverTops["main"] = ServerTop(
       ServerTopLoader(self.mapRankPointsProvider),

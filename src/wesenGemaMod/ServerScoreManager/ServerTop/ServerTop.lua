@@ -53,7 +53,7 @@ ServerTop.serverScoreList = nil
 function ServerTop:new(_serverTopLoader, _serverScoreList)
   self.serverTopLoader = _serverTopLoader
   self.serverScoreList = _serverScoreList
-  self.onMapRecordAddedEventCallback = EventCallback({ object = self, method = "onMapRecordAdded" })
+  self.onMapRecordAddedEventCallback = EventCallback({ object = self, methodName = "onMapRecordAdded" })
 end
 
 
@@ -103,9 +103,15 @@ end
 -- @tparam MapRecord|nil _previousMapRecord The old MapRecord that was replaced by the MapRecord
 --
 function ServerTop:onMapRecordAdded(_mapRecord, _previousMapRecord)
+
+  local previousMapRank = nil
+  if (_previousMapRecord ~= nil) then
+    previousMapRank = _previousMapRecord:getRank()
+  end
+
   self.serverScoreList:processMapRecord(
     _mapRecord,
-    _previousMapRecord and _previousMapRecord:getRank() or nil,
+    previousMapRank,
     self.targetMapTop:getMapRecordList()
   )
 end

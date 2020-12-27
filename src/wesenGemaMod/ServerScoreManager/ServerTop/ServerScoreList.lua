@@ -77,34 +77,36 @@ function ServerScoreList:processMapRecord(_mapRecord, _previousMapRank, _mapReco
 
   local playerScore = self:getScoreByPlayer(_mapRecord:getPlayer())
 
-  -- Process the points
+  -- Process the points for the Player who scored
   local mapRecordPoints = self:calculateMapRankPoints(_mapRecord:getRank())
   if (playerScore) then
     playerScore:addPoints(mapRecordPoints)
-    if (_previousMapRank ~= nil) then
-      playerScore:subtractPoints(self:calculateMapRankPoints(_previousMapRank))
-
-      for _, mapRecord in ipairs(_mapRecordList:getRecords()) do
-        if (mapRecord:getRank() > _mapRecord:getRank()) then
-          local oldMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank() - 1)
-          local newMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank())
-
-          if (oldMapRecordPoints > newMapRecordPoints) then
-            self:getScoreByPlayer(mapRecord:getPlayer()):subtractPoints(oldMapRecordPoints - newMapRecordPoints)
-          end
-        end
-      end
-
-      if (_mapRecord:getRank() == 1 and _previousMapRank ~= 1) then
-        local oldBestTimePlayer = _mapRecordList:getRecordByRank(2):getPlayer()
-        self:getScoreByPlayer(oldBestTimePlayer):decreaseNumberOfBestTimes()
-      end
-
-    end
-
   else
     playerScore = ServerScore(_mapRecord:getPlayer(), mapRecordPoints, self:getNumberOfScores() + 1)
     table.insert(self.scores, playerScore)
+  end
+
+  if (_previousMapRank ~= nil) then
+    playerScore:subtractPoints(self:calculateMapRankPoints(_previousMapRank))
+  end
+
+  -- Process the necessary point changes for the Player's whose times were beaten by the new map score
+  for _, mapRecord in ipairs(_mapRecordList:getRecords()) do
+    if (mapRecord:getRank() > _mapRecord:getRank()) then
+      local oldMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank() - 1)
+      local newMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank())
+
+      if (oldMapRecordPoints > newMapRecordPoints) then
+        self:getScoreByPlayer(mapRecord:getPlayer()):subtractPoints(oldMapRecordPoints - newMapRecordPoints)
+      end
+    end
+  end
+
+  if (_mapRecord:getRank() == 1 and _previousMapRank ~= 1) then
+    local previousBestMapScore = _mapRecordList:getRecordByRank(2)
+    if (previousBestMapScore) then
+      self:getScoreByPlayer(previousBestMapScore:getPlayer()):decreaseNumberOfBestTimes()
+    end
   end
 
   -- Process the number of map scores

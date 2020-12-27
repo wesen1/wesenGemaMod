@@ -66,8 +66,8 @@ end
 --
 function Player.createFromPlayerModel(_playerModel)
 
-  local player = Player(-1, _playerModel.names[1].name, _playerModel.ips[1].ip)
-  self.id = _playerModel.id
+  local player = Player(-1, _playerModel.ips[1].ip, _playerModel.names[1].name)
+  player.id = _playerModel.id
 
   return player
 
