@@ -105,7 +105,7 @@ end
 function ServerTop:onMapRecordAdded(_mapRecord, _previousMapRecord)
   self.serverScoreList:processMapRecord(
     _mapRecord,
-    _previousMapRecord:getRank(),
+    _previousMapRecord and _previousMapRecord:getRank() or nil,
     self.targetMapTop:getMapRecordList()
   )
 end

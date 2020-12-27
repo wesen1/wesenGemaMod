@@ -6,7 +6,7 @@
 --
 
 local Object = require "classic"
-local ServerScore = require "Tops.ServerTop.ServerScore"
+local ServerScore = require "ServerScoreManager.ServerTop.ServerScore"
 
 ---
 -- Manages the list of ServerScore's for a single ServerTop.
