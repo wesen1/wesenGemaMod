@@ -122,6 +122,15 @@ function CommandManager:onPlayerSayText(_cn, _text)
   if (self.commandParser:isCommand(_text)) then
 
     local player = Server.getInstance():getPlayerList():getPlayerByCn(_cn)
+
+    LuaServerApi.logline(
+      LuaServerApi.ACLOG_INFO,
+      string.format(
+        "[%s] %s used command: '%s'",
+        player:getIp(), player:getName(), _text
+      )
+    )
+
     local status, exception = pcall(self.handleCommand, self, player, _text)
     if (not status) then
       if (exception.is and exception:is(TemplateException)) then
