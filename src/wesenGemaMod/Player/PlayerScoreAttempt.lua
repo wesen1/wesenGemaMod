@@ -231,7 +231,9 @@ function PlayerScoreAttempt:getMapRecord(_parentMapRecordList)
     self.endTime - self.startTime,
     self.weaponId,
     self.teamId,
-    _parentMapRecordList
+    _parentMapRecordList,
+    nil,
+    (self.didStealFlag == true)
   );
 
 end
