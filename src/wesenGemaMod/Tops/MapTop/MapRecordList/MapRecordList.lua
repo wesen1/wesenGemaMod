@@ -18,21 +18,21 @@ local MapRecordList = setmetatable({}, {});
 --
 -- @tfield MapRecord[] records
 --
-MapRecordList.records = {};
+MapRecordList.records = nil
 
 ---
 -- The last player that was used in getRecordByPlayer()
 --
 -- @tfield string getRecordByPlayerLastPlayer
 --
-MapRecordList.getRecordByPlayerLastPlayer = nil;
+MapRecordList.getRecordByPlayerLastPlayer = nil
 
 ---
 -- The last player record that was the result of getRecordByPlayer()
 --
 -- @tfield MapRecord|nil getRecordByPlayerLastRecord
 --
-MapRecordList.getRecordByPlayerLastRecord = nil;
+MapRecordList.getRecordByPlayerLastRecord = nil
 
 
 ---
@@ -112,7 +112,7 @@ end
 --
 function MapRecordList:clear()
   self.getRecordByPlayerLastPlayer = nil;
-  self.getReocrdByPlayerLastRecord = nil;
+  self.getRecordByPlayerLastRecord = nil;
   self.records = {};
 end
 

@@ -5,17 +5,19 @@
 -- @license MIT
 --
 
+local EventEmitter = require "AC-LuaServer.Core.Event.EventEmitter"
 local MapRecordList = require("Tops/MapTop/MapRecordList/MapRecordList");
 local MapTopLoader = require("Tops/MapTop/MapTopLoader");
 local MapTopSaver = require("Tops/MapTop/MapTopSaver");
+local Object = require "classic"
 
 ---
 -- Handles listing, loading and saving the records of the current map.
 --
 -- @type MapTop
 --
-local MapTop = setmetatable({}, {});
-
+local MapTop = Object:extend()
+MapTop:implement(EventEmitter)
 
 ---
 -- The name of the last map for which the map top was initialized
@@ -49,21 +51,14 @@ MapTop.mapTopSaver = nil;
 ---
 -- MapTop constructor.
 --
--- @treturn MapTop The MapTop instance
---
-function MapTop:__construct()
+function MapTop:new()
 
-  local instance = setmetatable({}, {__index = MapTop});
-
-  instance.mapRecordList = MapRecordList();
-  instance.mapTopLoader = MapTopLoader();
-  instance.mapTopSaver = MapTopSaver();
-
-  return instance;
+  self.eventCallbacks = {}
+  self.mapRecordList = MapRecordList()
+  self.mapTopLoader = MapTopLoader()
+  self.mapTopSaver = MapTopSaver()
 
 end
-
-getmetatable(MapTop).__call = MapTop.__construct;
 
 
 -- Getters and setters
@@ -97,8 +92,10 @@ end
 function MapTop:addRecord(_newMapRecord)
 
   if (self.mapRecordList:isPersonalBestTime(_newMapRecord)) then
-    self.mapRecordList:addRecord(_newMapRecord);
-    self.mapTopSaver:addRecord(_newMapRecord, self.lastMapName);
+    local previousMapRecord = self.mapRecordList:getRecordByPlayer(_newMapRecord:getPlayer())
+    self.mapRecordList:addRecord(_newMapRecord)
+    self.mapTopSaver:addRecord(_newMapRecord, self.lastMapName)
+    self:emit("mapRecordAdded", _newMapRecord, previousMapRecord)
   end
 
 end

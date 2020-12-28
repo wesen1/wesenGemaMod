@@ -1,0 +1,24 @@
+{#
+ # Prints the server top title for when the start rank is 1.
+ # The result is "The x best player(s) on this server is/are:".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam int numberOfDisplayRecords The number of displayed records
+ #}
+
+{* colors.serverTopInfo *}The
+{* colors.serverTopNumberOfRecords *} {* numberOfDisplayedScores *}
+{* colors.serverTopInfo *} best player
+{% if (numberOfDisplayRecords ~= 1) then %}
+  s
+{% end %}
+<whitespace>
+on this server
+<whitespace>
+
+{% if (numberOfDisplayRecords == 1) then %}
+  is
+{% else %}
+  are
+{% end %}
+:

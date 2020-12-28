@@ -1,0 +1,50 @@
+{#
+ # Prints a ServerScore row for the server top.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScoreList serverScoreList The ServerScoreList
+ # @tparam ServerScore serverScore The ServerScore
+ # @tparam int maxRankLength The maximum rank length
+ # @tparam int maxPointsLength The maximum points length
+ # @tparam int maxBestTimesLength The maximum "number of best times" number length
+ # @tparam int maxMapsCompletedLength The maximum "number of completed maps" number length
+ #}
+
+{# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
+{* colors.serverScoreRank *}{* string.format("%0" .. maxRankLength .. "d", serverScore:getRank()) *}
+)
+
+{* colors.serverScoreName *} {* serverScore:getPlayer():getName() *}
+----------------------------------------------------------------------------------------------------------;
+
+{% if (not serverScoreList:isPlayerNameUnique(serverScore:getPlayer():getName())) then %}
+  {* colors.serverScoreInfo *}
+  (
+    {[ getAbsoluteTemplatePath("TextTemplate/Player/PlayerIp"),
+      { colors = colors, ip = serverScore:getPlayer():getIp() }
+    ]}
+    {* colors.serverScoreInfo *}
+  )
+{% end %}
+
+----------------------------------------------------------------------------------------------------------;
+
+{* colors.serverScorePoints *}
+{* string.format("%0" .. maxPointsLength .. "d", serverScore:getPoints()) *}
+{* colors.serverScoreInfo *} points
+
+<whitespace>
+{* colors.serverScoreInfo *}
+(
+  {* colors.serverScoreNumberOfBestTimes *}
+  {* string.format("%0" .. maxBestTimesLength .. "d", serverScore:getNumberOfBestTimes()) *}
+  {* colors.serverScoreNumberOfBestTimesText *} best
+
+  {* colors.serverScoreInfo *},
+  <whitespace>
+  {* colors.serverScoreNumberOfCompletedMaps *}
+  {* string.format("%0" .. maxMapsCompletedLength .. "d", serverScore:getNumberOfMapRecords()) *}
+  {* colors.serverScoreNumberOfCompletedMapsText *} completed
+
+  {* colors.serverScoreInfo *}
+)

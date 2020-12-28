@@ -93,6 +93,8 @@ local MapStatisticsPrinter = require "Extensions.MapStatisticsPrinter"
 local MapTopCommand = require "Commands.MapTopCommand"
 local RulesCommand = require "Commands.RulesCommand"
 local ScoreAttemptManager = require "ScoreAttemptManager.ScoreAttemptManager"
+local ServerScoreManager = require "ServerScoreManager.ServerScoreManager"
+local ServerTopCommand = require "Commands.ServerTopCommand"
 local UnplayableGemaMapsRemover = require "Extensions.UnplayableGemaMapsRemover"
 
 local extensionManager = server:getExtensionManager()
@@ -111,8 +113,10 @@ extensionManager:addExtension(HelpCommand())
 extensionManager:addExtension(ExtendTimeCommand())
 extensionManager:addExtension(MapTopCommand())
 extensionManager:addExtension(RulesCommand())
+extensionManager:addExtension(ServerTopCommand())
 
 -- Optional extensions
+extensionManager:addExtension(ServerScoreManager())
 extensionManager:addExtension(AutoFlagReset())
 extensionManager:addExtension(AdditionalServerInfos())
 extensionManager:addExtension(ConnectionAmountLimiter(2))

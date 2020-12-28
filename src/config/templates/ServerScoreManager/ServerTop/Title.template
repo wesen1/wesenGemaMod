@@ -1,0 +1,18 @@
+{#
+ # Prints the server top title.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam int startRank The start rank
+ # @tparam int numberOfDisplayRecords The number of displayed records
+ #}
+
+{% if (startRank == 1) then %}
+  {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/TitleDefaultStartRank"),
+    { colors = colors, numberOfDisplayedScores = numberOfDisplayedScores }
+  ]}
+{% else %}
+  {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/TitleCustomStartRank"),
+    { colors = colors, startRank = startRank, numberOfDisplayedScores = numberOfDisplayedScores }
+  ]}
+{% end %}
