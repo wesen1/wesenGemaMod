@@ -76,11 +76,15 @@ end
 --
 -- @tparam GemaGameMode _gemaGameMode The GemaGameMode to which the parent ServerScoreManager was added
 -- @tparam string _mapTopType The MapTop type whose records should be added to this ServerTop (e.g. "main")
+-- @tparam bool _loadInitialServerTop True to load the initial server top, false otherwise
 --
-function ServerTop:initialize(_gemaGameMode, _mapTopType)
-  self.serverScoreList:initialize(
-    self.serverTopLoader:loadInitialServerTop()
-  )
+function ServerTop:initialize(_gemaGameMode, _mapTopType, _loadInitialServerTop)
+
+  if (_loadInitialServerTop) then
+    self.serverScoreList:initialize(
+      self.serverTopLoader:loadInitialServerTop()
+    )
+  end
 
   self.targetMapTop = _gemaGameMode:getMapTopHandler():getMapTop(_mapTopType)
   self.targetMapTop:on("mapRecordAdded", self.onMapRecordAddedEventCallback)

@@ -79,15 +79,18 @@ end
 --
 function ServerScoreManager:initialize()
 
+  local loadInitialServerTop = false
   if (#tablex.keys(self.serverTops) == 0) then
     -- Initialize the ServerTop's only once because they do not change while the GemaGameMode is not enabled
     self.serverTops["main"] = ServerTop(
       ServerTopLoader(self.mapRankPointsProvider),
       ServerScoreList(self.mapRankPointsProvider)
     )
-    self.serverTops["main"]:initialize(self.target, "main")
+    loadInitialServerTop = true
 
   end
+
+  self.serverTops["main"]:initialize(self.target, "main", loadInitialServerTop)
 
 end
 
