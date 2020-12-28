@@ -39,7 +39,7 @@ MapTopHandler.mapTops = nil;
 --
 function MapTopHandler:new()
   self.eventCallbacks = {}
-  self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange"})
+  self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange" })
   self.mapTops = {}
 end
 
@@ -88,6 +88,8 @@ end
 -- Returns a maptop with a specific id from the list of maptops.
 --
 -- @tparam string _mapTopId The maptop id
+--
+-- @treturn MapTop|nil The MapTop for the given ID
 --
 function MapTopHandler:getMapTop(_mapTopId)
   return self.mapTops[_mapTopId];
