@@ -43,7 +43,6 @@ ScoreAttemptManager.scoreWeaponUpdater = nil
 --
 function ScoreAttemptManager:new()
   self.super.new(self, "ScoreAttemptManager", "GemaGameMode")
-  self.eventCallbacks = {}
   self.scoreWeaponUpdater = ScoreWeaponUpdater()
 end
 
@@ -76,13 +75,25 @@ end
 --
 function ScoreAttemptManager:onFlagAction(_cn, _action, _flag)
 
-  if (_action == LuaServerApi.FA_SCORE) then
+  if (_action == LuaServerApi.FA_STEAL) then
+    local scoreAttempt = self:getPlayerScoreAttemptByCn(_cn)
+    scoreAttempt:setDidStealFlag(true)
 
-    local player = Server.getInstance():getPlayerList():getPlayerByCn(_cn)
-    local scoreAttempt = player:getScoreAttempt();
+  elseif (_action == LuaServerApi.FA_PICKUP) then
+    local scoreAttempt = self:getPlayerScoreAttemptByCn(_cn)
+    if (scoreAttempt:getDidStealFlag() == false) then
+      Server.getInstance():getOutput():printTextTemplate(
+        "ScoreAttemptManager/Messages/WarningFlagNotStolen",
+        {},
+        scoreAttempt:getParentPlayer()
+      )
+    end
+
+  elseif (_action == LuaServerApi.FA_SCORE) then
+    local scoreAttempt = self:getPlayerScoreAttemptByCn(_cn)
     if (not scoreAttempt:isFinished()) then
-      scoreAttempt:finish();
-      self:registerRecord(scoreAttempt);
+      scoreAttempt:finish()
+      self:registerRecord(scoreAttempt)
     end
 
   end
@@ -95,12 +106,9 @@ end
 -- @tparam int _cn The client number of the player who spawned
 --
 function ScoreAttemptManager:onPlayerSpawn(_cn)
-
-  local player = Server.getInstance():getPlayerList():getPlayerByCn(_cn)
-
-  player:getScoreAttempt():start()
-  player:getScoreAttempt():setTeamId(getteam(_cn))
-
+  local scoreAttempt = self:getPlayerScoreAttemptByCn(_cn)
+  scoreAttempt:start()
+  scoreAttempt:setTeamId(getteam(_cn))
 end
 
 ---
@@ -110,12 +118,22 @@ end
 -- @tparam int _weapon The weapon with which the player shot
 --
 function ScoreAttemptManager:onPlayerShoot(_cn, _weapon)
-  local player = Server.getInstance():getPlayerList():getPlayerByCn(_cn)
-  self.scoreWeaponUpdater:updateScoreWeapon(player:getScoreAttempt(), _weapon)
+  self.scoreWeaponUpdater:updateScoreWeapon(self:getPlayerScoreAttemptByCn(_cn), _weapon)
 end
 
 
 -- Private Methods
+
+---
+-- Returns the PlayerScoreAttempt of the Player with a given client number.
+--
+-- @tparam int _cn The client number
+--
+-- @treturn PlayerScoreAttempt The PlayerScoreAttempt of the Player with the given client number
+--
+function ScoreAttemptManager:getPlayerScoreAttemptByCn(_cn)
+  return Server.getInstance():getPlayerList():getPlayerByCn(_cn):getScoreAttempt()
+end
 
 ---
 -- Adds a record to the maptop and prints the score message.
