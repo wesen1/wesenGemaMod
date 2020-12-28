@@ -81,7 +81,7 @@ function ScoreAttemptManager:onFlagAction(_cn, _action, _flag)
 
   elseif (_action == LuaServerApi.FA_PICKUP) then
     local scoreAttempt = self:getPlayerScoreAttemptByCn(_cn)
-    if (scoreAttempt:getDidStealFlag() == false) then
+    if (not scoreAttempt:isFinished() and scoreAttempt:getDidStealFlag() == false) then
       Server.getInstance():getOutput():printTextTemplate(
         "ScoreAttemptManager/Messages/WarningFlagNotStolen",
         {},
