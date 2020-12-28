@@ -1,0 +1,62 @@
+{#
+ # Prints the servertop.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam ServerScoreList serverScoreList The ServerScoreList
+ # @tparam int startRank The start rank
+ # @tparam int numberOfDisplayRecords The number of display records
+ #}
+
+{% if (serverScoreList:getNumberOfScores() == 0) then %}
+  {* colors.emptyTop *}The server top is empty
+
+{% else %}
+
+  {# Adjust number of display records #}
+  {% local numberOfDisplayedScores = numberOfDisplayedScores; %}
+  {% if (serverScoreList:getNumberOfScores() < numberOfDisplayedScores) then %}
+    {% numberOfDisplayedScores = serverScoreList:getNumberOfScores(); %}
+  {% end %}
+
+  {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/Title"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      startRank = startRank,
+      numberOfDisplayedScores = numberOfDisplayedScores
+    }
+  ]}
+  ___________________________________________________;
+
+    ----------[FIELD]----------;
+    {% local endRank = startRank + (numberOfDisplayedScores - 1); %}
+    {% local maxRankLength = string.len(endRank); %}
+    {% local maxPointsLength = string.len(serverScoreList:getScoreByRank(startRank):getPoints()) %}
+    {% local maxBestTimesLength = 1 %}
+    {% local maxMapsCompletedLength = 1 %}
+    {% for _, serverScore in ipairs(serverScoreList:getScores()) do %}
+      {% local scoreBestTimesLength = string.len(serverScore:getNumberOfBestTimes()) %}
+      {% local scoreCompletedLength = string.len(serverScore:getNumberOfMapRecords()) %}
+      {% if (scoreBestTimesLength > maxBestTimesLength) then maxBestTimesLength = scoreBestTimesLength end %}
+      {% if (scoreCompletedLength > maxMapsCompletedLength) then maxMapsCompletedLength = scoreCompletedLength end %}
+    {% end %}
+
+    {% for i = startRank, endRank, 1 do %}
+
+      {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/ServerScore"),
+        { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+          colors = colors,
+          serverScoreList = serverScoreList,
+          serverScore = serverScoreList:getScoreByRank(i),
+          maxRankLength = maxRankLength,
+          maxPointsLength = maxPointsLength,
+          maxBestTimesLength = maxBestTimesLength,
+          maxMapsCompletedLength = maxMapsCompletedLength
+        }
+      ]}
+      _________________________________________________;
+    {% end %}
+    ----------[ENDFIELD]----------;
+
+{% end %}
