@@ -147,7 +147,9 @@ function ScoreAttemptManager:registerRecord(scoreAttempt)
 
   local output = Server.getInstance():getOutput()
   output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record })
-  mapTop:addRecord(record)
+  if (record:getIsValid()) then
+    mapTop:addRecord(record)
+  end
 
 end
 
