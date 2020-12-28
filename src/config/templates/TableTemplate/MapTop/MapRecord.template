@@ -19,14 +19,9 @@
 
 {* colors.mapRecordInfo *} by
 {* colors.mapRecordName *} {* mapRecord:getPlayer():getName() *}
-----------------------------------------------------------------------------------------------------------;
 
 {% if (not mapRecord:getParentMapRecordList():isPlayerNameUnique(mapRecord:getPlayer():getName())) then %}
-  {* colors.mapRecordInfo *}(
-  {(lua/config/templates/TextTemplate/Player/PlayerIp.template,
-    { colors = colors, ip = mapRecord:getPlayer():getIp() }
-  )}
-  {* colors.mapRecordInfo *})
+  {* colors.playerId *}#{* mapRecord:getPlayer():getId() *}
 {% end %}
 
 ----------------------------------------------------------------------------------------------------------;

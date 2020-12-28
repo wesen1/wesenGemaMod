@@ -15,16 +15,9 @@
 )
 
 {* colors.serverScoreName *} {* serverScore:getPlayer():getName() *}
-----------------------------------------------------------------------------------------------------------;
 
 {% if (not serverScoreList:isPlayerNameUnique(serverScore:getPlayer():getName())) then %}
-  {* colors.serverScoreInfo *}
-  (
-    {[ getAbsoluteTemplatePath("TextTemplate/Player/PlayerIp"),
-      { colors = colors, ip = serverScore:getPlayer():getIp() }
-    ]}
-    {* colors.serverScoreInfo *}
-  )
+  {* colors.playerId *}#{* serverScore:getPlayer():getId() *}
 {% end %}
 
 ----------------------------------------------------------------------------------------------------------;
