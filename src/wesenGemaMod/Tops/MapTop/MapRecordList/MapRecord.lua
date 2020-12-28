@@ -69,6 +69,14 @@ MapRecord.timeString = nil;
 --
 MapRecord.parentMapRecordList = nil;
 
+---
+-- Stores whether this MapRecord is valid
+-- MapRecords that are loaded from the database are always valid, only new MapRecord's may be invalid
+--
+-- @tfield bool isValid
+--
+MapRecord.isValid = nil
+
 
 ---
 -- MapRecord constructor.
@@ -79,10 +87,11 @@ MapRecord.parentMapRecordList = nil;
 -- @tparam int _team The team id with which the player scored
 -- @tparam MapRecordList _parentMapRecordList The parent map record list
 -- @tparam int _rank The rank of the record in the maptop (if known)
+-- @tparam int _isValid True if the MapRecord is valid, false otherwise (Default: true)
 --
 -- @treturn MapRecord The MapRecord instance
 --
-function MapRecord:__construct(_player, _milliseconds, _weapon, _team, _parentMapRecordList, _rank)
+function MapRecord:__construct(_player, _milliseconds, _weapon, _team, _parentMapRecordList, _rank, _isValid)
 
   local instance = setmetatable({}, {__index = MapRecord});
 
@@ -92,6 +101,7 @@ function MapRecord:__construct(_player, _milliseconds, _weapon, _team, _parentMa
   instance.weapon = _weapon;
   instance.team = _team;
   instance.createdAt = os.time();
+  instance.isValid = _isValid and true or false
 
   if (_rank == nil) then
     instance.rank = _parentMapRecordList:predictRank(_milliseconds);
@@ -270,6 +280,15 @@ end
 --
 function MapRecord:setParentMapRecordList(_parentMapRecordList)
   self.parentMapRecordList = _parentMapRecordList;
+end
+
+---
+-- Returns whether this MapRecord is valid.
+--
+-- @treturn bool True if this MapRecord is valid, false otherwise
+--
+function MapRecord:getIsValid()
+  return self.isValid
 end
 
 

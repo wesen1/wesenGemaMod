@@ -1,0 +1,14 @@
+{#
+ # Prints a warning message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string warningMessage The warning message
+ #}
+
+##########################[CONFIG]##########################;
+newLineIndent = "         ";
+#########################[ENDCONFIG]########################;
+
+{* colors.infoWarning *}[WARN]
+<whitespace>
+{* blocks.warningMessage *}

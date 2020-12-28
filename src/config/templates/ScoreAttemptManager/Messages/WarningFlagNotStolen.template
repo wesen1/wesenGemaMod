@@ -1,0 +1,13 @@
+{#
+ # Generates a warning message that tells a Player that his ScoreAttempt will be invalid because he did not
+ # steal the flag at least once.
+ #
+ # @tparam string[] colors The list of colors
+ #}
+
+{# Extends ServerMessageWarning.template #}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageWarning.template" %}
+
+{-warningMessage-}
+  If you score now your time will not be saved because you did not steal the flag from its original position.
+{-warningMessage-}

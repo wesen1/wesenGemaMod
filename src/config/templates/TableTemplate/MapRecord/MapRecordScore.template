@@ -16,22 +16,28 @@
   }
 ]}
 
-<whitespace>
-{[
-  getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordScoreRank"),
-  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
-    colors = colors,
-    timeFormatter = timeFormatter,
-    mapRecord = mapRecord
-  }
-]}
+{% if (mapRecord:getIsValid()) then %}
+  <whitespace>
+  {[
+    getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordScoreRank"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      timeFormatter = timeFormatter,
+      mapRecord = mapRecord
+    }
+  ]}
+{% end %}
 _______________________________________________;
 
-{% if (mapRecord:getRank() == 1) then %}
+{% if (mapRecord:getIsValid() and mapRecord:getRank() == 1) then %}
   {[
     getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordNewBestTime"),
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
       colors = colors
     }
   ]}
+
+{% elseif (not mapRecord:getIsValid()) then %}
+  {* colors.infoWarning *}
+  Map score was not added to the map top
 {% end %}

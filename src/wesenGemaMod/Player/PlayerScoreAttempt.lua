@@ -54,6 +54,13 @@ PlayerScoreAttempt.weaponId = nil;
 --
 PlayerScoreAttempt.teamId = nil;
 
+---
+-- Stores whether the flag was stolen by the PlayerScoreAttempt's Player during the current attempt
+--
+-- @tfield bool didStealFlag
+--
+PlayerScoreAttempt.didStealFlag = nil
+
 
 ---
 -- PlayerScoreAttempt constructor.
@@ -70,6 +77,7 @@ function PlayerScoreAttempt:__construct(_parentPlayer)
   instance.startTime = -1;
   instance.weaponId = -1;
   instance.teamId = -1;
+  instance.didStealFlag = false
 
   return instance;
 
@@ -152,6 +160,24 @@ function PlayerScoreAttempt:setTeamId(_teamId)
   self.teamId = _teamId;
 end
 
+---
+-- Returns whether this PlayerScoreAttempt's Player did steal the flag during the current attempt.
+--
+-- @treturn bool True if the Player did steal the flag during the current attempt, false otherwise
+--
+function PlayerScoreAttempt:getDidStealFlag()
+  return self.didStealFlag
+end
+
+---
+-- Sets whether this PlayerScoreAttempt's Player did steal the flag during the current attempt.
+--
+-- @tparam bool _didStealFlag True if the Player did steal the flag during the current attempt, false otherwise
+--
+function PlayerScoreAttempt:setDidStealFlag(_didStealFlag)
+  self.didStealFlag = _didStealFlag
+end
+
 
 -- Public Methods
 
@@ -177,6 +203,7 @@ function PlayerScoreAttempt:start()
   self.startTime = getsvtick();
   self.endTime = nil;
   self.weaponId = GUN_KNIFE;
+  self.didStealFlag = false
 end
 
 ---
@@ -204,7 +231,9 @@ function PlayerScoreAttempt:getMapRecord(_parentMapRecordList)
     self.endTime - self.startTime,
     self.weaponId,
     self.teamId,
-    _parentMapRecordList
+    _parentMapRecordList,
+    nil,
+    (self.didStealFlag == true)
   );
 
 end
