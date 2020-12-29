@@ -45,7 +45,7 @@ return {
     "CommandManager.CommandManager",
     "Commands.CmdsCommand",
     "Commands.HelpCommand",
-    "Commands.ExtendTimeCommand",
+    ["Commands.ExtendTimeCommand"] = { 20 },
     "Commands.MapTopCommand",
     "Commands.RulesCommand",
     "Commands.ServerTopCommand",

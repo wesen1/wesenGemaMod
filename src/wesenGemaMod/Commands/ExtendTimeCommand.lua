@@ -30,7 +30,9 @@ ExtendTimeCommand.remainingTimeExtender = nil
 ---
 -- ExtendTimeCommand constructor.
 --
-function ExtendTimeCommand:new()
+-- @tparam int _numberOfExtendMinutesPerMap The number of extend minutes that should be available for non admins per map (Default: 20)
+--
+function ExtendTimeCommand:new(_numberOfExtendMinutesPerMap)
 
   local numberOfMinutesArgument = CommandArgument(
     StaticString("extendTimeMinutesArgumentName"):getString(),
@@ -51,7 +53,7 @@ function ExtendTimeCommand:new()
       StaticString("extendTimeCommandAlias2"):getString() }
   )
 
-  self.remainingTimeExtender = RemainingTimeExtender(20)
+  self.remainingTimeExtender = RemainingTimeExtender(_numberOfExtendMinutesPerMap or 20)
 
 end
 
