@@ -6,8 +6,10 @@
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
+local CommandArgument = require "CommandManager.CommandArgument"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
+local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
 -- Command !maptop.
@@ -23,12 +25,20 @@ local MapTopCommand = BaseCommand:extend()
 --
 function MapTopCommand:new()
 
+  local startRankArgument = CommandArgument(
+    StaticString("maptopCommandStartRankArgumentName"):getString(),
+    true,
+    "integer",
+    StaticString("maptopCommandStartRankArgumentShortName"):getString(),
+    StaticString("maptopCommandStartRankArgumentDescription"):getString()
+  )
+
   self.super.new(
     self,
     StaticString("mapTopCommandName"):getString(),
     0,
     StaticString("mapTopCommandGroupName"):getString(),
-    {},
+    { startRankArgument },
     StaticString("mapTopCommandDescription"):getString(),
     { StaticString("mapTopCommandAlias1"):getString() }
   )
@@ -37,6 +47,23 @@ end
 
 
 -- Public Methods
+
+---
+-- Validates the input arguments.
+--
+-- @tparam mixed[] _arguments The list of arguments
+--
+-- @raise Error in case of an invalid input argument
+--
+function MapTopCommand:validateInputArguments(_arguments)
+
+  if (_arguments["startRank"] ~= nil and _arguments["startRank"] < 1) then
+    error(TemplateException(
+      "Commands/MapTop/Exceptions/StartRankLowerThanOne", {}
+    ))
+  end
+
+end
 
 ---
 -- Displays the 5 best players of a map to a player.
@@ -53,6 +80,19 @@ function MapTopCommand:execute(_player, _arguments)
   local numberOfRecords = mapRecordList:getNumberOfRecords()
 
   local startRank = 1
+  if (numberOfRecords ~= 0 and _arguments["startRank"] ~= nil) then
+    -- Only check the startRank option if there are records
+    if (_arguments["startRank"] > numberOfRecords) then
+      error(TemplateException(
+        "Commands/MapTop/Exceptions/StartRankHigherThanNumberOfRecords",
+        { maximumStartRank = numberOfRecords }
+      ))
+    end
+
+    startRank = _arguments["startRank"]
+
+  end
+
   local numberOfDisplayRecords = 5
   if (startRank + numberOfDisplayRecords - 1 > numberOfRecords) then
     numberOfDisplayRecords = numberOfRecords - startRank + 1

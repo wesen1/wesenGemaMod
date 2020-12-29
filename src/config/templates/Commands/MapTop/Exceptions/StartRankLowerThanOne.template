@@ -1,0 +1,7 @@
+{#
+ # Generates a text that informs the player that the given start rank is too low.
+ #
+ # @tparam string[] colors The list of colors
+ #}
+
+The start rank must be at least {* colors.mapRecordRank *}1
