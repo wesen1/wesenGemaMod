@@ -50,8 +50,13 @@ function MapTopCommand:execute(_player, _arguments)
   local mapTopHandler = gemaGameMode:getMapTopHandler()
 
   local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList()
-  local numberOfDisplayRecords = 5
+  local numberOfRecords = mapRecordList:getNumberOfRecords()
+
   local startRank = 1
+  local numberOfDisplayRecords = 5
+  if (startRank + numberOfDisplayRecords - 1 > numberOfRecords) then
+    numberOfDisplayRecords = numberOfRecords - startRank + 1
+  end
 
   self.output:printTableTemplate(
     "TableTemplate/MapTop/MapTop",

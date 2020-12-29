@@ -14,12 +14,6 @@
 
 {% else %}
 
-  {# Adjust number of display records #}
-  {% local numberOfDisplayRecords = numberOfDisplayRecords; %}
-  {% if (mapRecordList:getNumberOfRecords() < numberOfDisplayRecords) then %}
-    {% numberOfDisplayRecords = mapRecordList:getNumberOfRecords(); %}
-  {% end %}
-
   {(lua/config/templates/TextTemplate/MapTop/MapTopTitle.template,
     { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
   )}
