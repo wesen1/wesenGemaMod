@@ -1,0 +1,72 @@
+{#
+ # Prints the rank and best map score of a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam MapRecord|nil mapRecord The MapRecord to print
+ # @tparam string playerName The name of the player whose MapRecord is shown
+ # @tparam bool isSelf True if the MapRecord belongs to the command executor himself, false otherwise
+ # @tparam int numberOfMapScores The total number of map scores for the current map
+ #}
+
+{% if (mapRecord) then %}
+
+  {* colors.mapRecordInfo *}
+  {% if (isSelf) then %}
+    Your
+  {% else %}
+    {* colors.mapRecordName *}{* playerName *}
+    {* colors.mapRecordInfo *}'s
+  {% end %}
+
+  <whitespace>
+  best time for this map is
+  <whitespace>
+
+  {[ getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordTime"),
+     {
+       colors = colors,
+       timeFormatter = timeFormatter,
+       mapRecord = mapRecord
+     }
+  ]}
+
+  {* colors.mapRecordInfo *}
+  <whitespace>
+  (
+    Rank
+    {* colors.mapRecordRank *} {* mapRecord:getRank() *}
+    {* colors.mapRecordInfo *}/
+    {* colors.totalNumberOfMapScores *}{* numberOfMapScores *}
+  )
+
+  {* colors.mapRecordInfo *} with
+  <whitespace>
+  {(lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
+    { colors = colors, teamId = mapRecord:getTeam() }
+  )}
+  {(lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}
+
+  {* colors.mapRecordInfo *}
+  <whitespace>
+  (
+    Created on
+    <whitespace>
+    {* colors.mapRecordTimeStamp *}
+    {* os.date("%Y-%m-%d", mapRecord:getCreatedAt()) *}
+    {* colors.mapRecordInfo *}
+  )
+
+
+{% else %}
+
+  {* colors.emptyTop *}
+  {% if (isSelf) then %}
+    You
+  {% else %}
+    {* colors.mapRecordName *}{* playerName *}
+  {% end %}
+
+  {* colors.emptyTop *} didn't score on this map yet
+
+{% end %}

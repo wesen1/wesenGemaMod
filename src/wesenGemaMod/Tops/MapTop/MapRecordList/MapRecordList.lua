@@ -159,6 +159,23 @@ function MapRecordList:getRecordByPlayer(_player)
 
 end
 
+---
+-- Returns the best record for a player with a given player name.
+--
+-- @tparam string _playerName The player name to search for
+--
+-- @treturn MapRecord|nil The best record for the player with the given name
+--
+function MapRecordList:getBestRecordForPlayerName(_playerName)
+
+  for _, record in ipairs(self.records) do
+    if (record:getPlayer():getName() == _playerName) then
+      return record
+    end
+  end
+
+end
+
 
 -- Fetch information about the list
 

@@ -47,6 +47,7 @@ return {
     "Commands.HelpCommand",
     ["Commands.ExtendTimeCommand"] = { 20 },
     "Commands.MapTopCommand",
+    "Commands.MapScoreCommand",
     "Commands.RulesCommand",
     "Commands.ServerTopCommand",
 
