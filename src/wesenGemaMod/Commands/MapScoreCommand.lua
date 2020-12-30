@@ -34,7 +34,7 @@ function MapScoreCommand:new()
 
   self.super.new(
     self,
-    StaticString("mapsoreCommandName"):getString(),
+    StaticString("mapscoreCommandName"):getString(),
     0,
     StaticString("mapscoreCommandGroupName"):getString(),
     { playerNameArgument },
