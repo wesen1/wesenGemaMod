@@ -179,6 +179,23 @@ function ServerScoreList:getScoreByPlayer(_player)
 end
 
 ---
+-- Returns the best server score for a player with a given player name.
+--
+-- @tparam string _playerName The player name to search for
+--
+-- @treturn ServerScore|nil The best server score for the player with the given name
+--
+function ServerScoreList:getBestScoreForPlayerName(_playerName)
+
+  for _, score in ipairs(self.scores) do
+    if (score:getPlayer():getName() == _playerName) then
+      return score
+    end
+  end
+
+end
+
+---
 -- Returns the number of ServerScore's that are stored inside this list.
 --
 -- @treturn int The number of ServerScore's
