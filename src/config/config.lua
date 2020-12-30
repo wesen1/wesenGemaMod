@@ -56,6 +56,7 @@ return {
     "Extensions.AdditionalServerInfos",
     ["Extensions.ConnectionAmountLimiter"] = { 2 },
     "Extensions.UnplayableGemaMapsRemover",
-    "Extensions.GlobalVoicecom"
+    "Extensions.GlobalVoicecom",
+    "Extensions.ItemReset"
   }
 }

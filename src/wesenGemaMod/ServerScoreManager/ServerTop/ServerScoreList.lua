@@ -113,7 +113,7 @@ function ServerScoreList:processMapRecord(_mapRecord, _previousMapRank, _mapReco
   if (_previousMapRank == nil) then
     playerScore:increaseNumberOfMapRecords()
   end
-  if (_mapRecord:getRank() == 1) then
+  if (_previousMapRank ~= 1 and _mapRecord:getRank() == 1) then
     playerScore:increaseNumberOfBestTimes()
   end
 
