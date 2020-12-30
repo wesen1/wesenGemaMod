@@ -1,0 +1,60 @@
+{#
+ # Prints the rank and server score of a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScore|nil serverScore The ServeScore to print
+ # @tparam string playerName The name of the player whose ServerScore is shown
+ # @tparam bool isSelf True if the ServerScore belongs to the command executor himself, false otherwise
+ # @tparam int numberOfServerScores The total number of server scores
+ #}
+
+{% if (serverScore) then %}
+
+  {* colors.serverScoreInfo *}
+  {% if (isSelf) then %}
+    Your
+  {% else %}
+    {* colors.serverScoreName *}{* playerName *}
+    {* colors.serverScoreInfo *}'s
+  {% end %}
+
+  <whitespace>
+  server score is
+  {* colors.serverScorePoints *} {* serverScore:getPoints() *}
+  {* colors.serverScoreInfo *} points
+
+  {* colors.serverScoreInfo *}
+  <whitespace>
+  (
+    Rank
+    {* colors.serverScoreRank *} {* serverScore:getRank() *}
+    {* colors.serverScoreInfo *}/
+    {* colors.totalNumberOfServerScores *}{* numberOfServerScores *}
+    ,
+    <whitespace>
+
+    {* colors.serverScoreNumberOfBestTimes *}
+    {* serverScore:getNumberOfBestTimes() *}
+    {* colors.serverScoreNumberOfBestTimesText *} best
+    {* colors.serverScoreInfo *},
+    <whitespace>
+    {* colors.serverScoreNumberOfCompletedMaps *}
+    {* serverScore:getNumberOfMapRecords() *}
+    {* colors.serverScoreNumberOfCompletedMapsText *} completed
+
+    {* colors.serverScoreInfo *}
+  )
+
+{% else %}
+
+  {* colors.emptyTop *}
+  {% if (isSelf) then %}
+    You
+  {% else %}
+    {* colors.serverScoreName *}{* playerName *}
+  {% end %}
+
+  {* colors.emptyTop *} didn't score on any map yet
+
+{% end %}
