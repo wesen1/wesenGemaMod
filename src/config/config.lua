@@ -50,6 +50,7 @@ return {
     "Commands.MapScoreCommand",
     "Commands.RulesCommand",
     "Commands.ServerTopCommand",
+    "Commands.ServerScoreCommand",
 
     -- Optional extensions
     "ServerScoreManager.ServerScoreManager",
