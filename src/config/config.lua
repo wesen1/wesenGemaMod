@@ -51,6 +51,7 @@ return {
     "Commands.RulesCommand",
     "Commands.ServerTopCommand",
     "Commands.ServerScoreCommand",
+    "Commands.ResetCommand",
 
     -- Optional extensions
     "ServerScoreManager.ServerScoreManager",
