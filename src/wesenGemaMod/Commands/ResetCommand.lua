@@ -67,7 +67,7 @@ function ResetCommand:execute(_player, _arguments)
     -- Kill the player to make him drop the flag if he currently holds it
     LuaServerApi.forcedeath(_player:getCn())
 
-    -- Set the players primary weapon to his next requested priamry weapon
+    -- Set the players primary weapon to his next requested primary weapon
     LuaServerApi.setprimary(_player:getCn(), LuaServerApi.getnextprimary(_player:getCn()))
 
     -- Respawn the player at a random spawn point
