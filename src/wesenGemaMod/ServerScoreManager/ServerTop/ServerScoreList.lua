@@ -91,30 +91,33 @@ function ServerScoreList:processMapRecord(_mapRecord, _previousMapRank, _mapReco
   end
 
   -- Process the necessary point changes for the Player's whose times were beaten by the new map score
-  for _, mapRecord in ipairs(_mapRecordList:getRecords()) do
-    if (mapRecord:getRank() > _mapRecord:getRank()) then
-      local oldMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank() - 1)
-      local newMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank())
+  if (_previousMapRank ~= _mapRecord:getRank()) then
 
-      if (oldMapRecordPoints > newMapRecordPoints) then
-        self:getScoreByPlayer(mapRecord:getPlayer()):subtractPoints(oldMapRecordPoints - newMapRecordPoints)
+    for _, mapRecord in ipairs(_mapRecordList:getRecords()) do
+      if (mapRecord:getRank() > _mapRecord:getRank()) then
+        local oldMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank() - 1)
+        local newMapRecordPoints = self:calculateMapRankPoints(mapRecord:getRank())
+
+        if (oldMapRecordPoints > newMapRecordPoints) then
+          self:getScoreByPlayer(mapRecord:getPlayer()):subtractPoints(oldMapRecordPoints - newMapRecordPoints)
+        end
       end
     end
-  end
 
-  if (_mapRecord:getRank() == 1 and _previousMapRank ~= 1) then
-    local previousBestMapScore = _mapRecordList:getRecordByRank(2)
-    if (previousBestMapScore) then
-      self:getScoreByPlayer(previousBestMapScore:getPlayer()):decreaseNumberOfBestTimes()
-    end
   end
 
   -- Process the number of map scores
   if (_previousMapRank == nil) then
     playerScore:increaseNumberOfMapRecords()
   end
-  if (_previousMapRank ~= 1 and _mapRecord:getRank() == 1) then
+  if (_mapRecord:getRank() == 1 and _previousMapRank ~= 1) then
     playerScore:increaseNumberOfBestTimes()
+
+    local previousBestMapScore = _mapRecordList:getRecordByRank(2)
+    if (previousBestMapScore) then
+      self:getScoreByPlayer(previousBestMapScore:getPlayer()):decreaseNumberOfBestTimes()
+    end
+
   end
 
   -- Sort the list of ServerScore's by points
