@@ -1,0 +1,5 @@
+{#
+ # Generates a text that informs the player that he can't reset his position because he is in spectate mode.
+ #}
+
+!reset is not usable while in spectate mode
