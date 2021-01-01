@@ -78,14 +78,17 @@ function ServerScoreCommand:execute(_player, _arguments)
     serverScore = serverScoreList:getScoreByPlayer(_player)
   end
 
+  local gemaMapManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaMapManager")
+
   self.output:printTextTemplate(
     "Commands/ServerScore/ServerScore",
     { ["serverScore"] = serverScore,
       ["playerName"] = playerName,
       ["isSelf"] = isSelf,
-      ["numberOfServerScores"] = serverScoreList:getNumberOfScores()
-    }
-    , _player
+      ["numberOfServerScores"] = serverScoreList:getNumberOfScores(),
+      ["numberOfGemaMaps"] = gemaMapManager:getNumberOfGemaMaps()
+    },
+    _player
   )
 
 end

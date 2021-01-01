@@ -7,6 +7,7 @@
  # @tparam ServerScoreList serverScoreList The ServerScoreList
  # @tparam int startRank The start rank
  # @tparam int numberOfDisplayRecords The number of display records
+ # @tparam int numberOfGemaMaps The total number of gema maps
  #}
 
 {% if (serverScoreList:getNumberOfScores() == 0) then %}
@@ -52,7 +53,8 @@
           maxRankLength = maxRankLength,
           maxPointsLength = maxPointsLength,
           maxBestTimesLength = maxBestTimesLength,
-          maxMapsCompletedLength = maxMapsCompletedLength
+          maxMapsCompletedLength = maxMapsCompletedLength,
+          numberOfGemaMaps = numberOfGemaMaps
         }
       ]}
       _________________________________________________;
