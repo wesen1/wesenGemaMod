@@ -8,6 +8,7 @@
  # @tparam int maxPointsLength The maximum points length
  # @tparam int maxBestTimesLength The maximum "number of best times" number length
  # @tparam int maxMapsCompletedLength The maximum "number of completed maps" number length
+ # @tparam int numberOfGemaMaps The total number of gema maps
  #}
 
 {# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
@@ -29,15 +30,13 @@
 <whitespace>
 {* colors.serverScoreInfo *}
 (
-  {* colors.serverScoreNumberOfBestTimes *}
-  {* string.format("%0" .. maxBestTimesLength .. "d", serverScore:getNumberOfBestTimes()) *}
-  {* colors.serverScoreNumberOfBestTimesText *} best
-
-  {* colors.serverScoreInfo *},
-  <whitespace>
-  {* colors.serverScoreNumberOfCompletedMaps *}
-  {* string.format("%0" .. maxMapsCompletedLength .. "d", serverScore:getNumberOfMapRecords()) *}
-  {* colors.serverScoreNumberOfCompletedMapsText *} completed
-
+  {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/ServerScore/NumberOfScores"),
+    { colors = colors,
+      serverScore = serverScore,
+      numberOfGemaMaps = numberOfGemaMaps,
+      maxBestTimesLength = maxBestTimesLength,
+      maxMapsCompletedLength = maxMapsCompletedLength
+    }
+  ]}
   {* colors.serverScoreInfo *}
 )

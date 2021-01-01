@@ -1,0 +1,26 @@
+{#
+ # Prints the "best maps, completed maps" statistics of a player.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScore serverScore The ServeScore to print
+ # @tparam int numberOfGemaMaps The total number of gema maps
+ # @tparam int maxBestTimesLength The maximum "number of best times" number length
+ # @tparam int maxMapsCompletedLength The maximum "number of completed maps" number length
+ #}
+
+{* colors.serverScoreNumberOfBestTimes *}
+{* string.format("%0" .. maxBestTimesLength .. "d", serverScore:getNumberOfBestTimes()) *}
+{* colors.serverScoreNumberOfBestTimesText *} best
+{* colors.serverScoreInfo *},
+
+<whitespace>
+
+{* colors.serverScoreNumberOfCompletedMaps *}
+{* string.format("%0" .. maxMapsCompletedLength .. "d", serverScore:getNumberOfMapRecords()) *}
+{* colors.serverScoreInfo *}/
+{* colors.serverScoreNumberOfCompletedMaps *}{* numberOfGemaMaps *}
+<whitespace>
+{* colors.serverScoreInfo *}(
+{* colors.serverScoreNumberOfCompletedMaps *}{* string.format("%05.02f", (serverScore:getNumberOfMapRecords() / numberOfGemaMaps) * 100) *}%
+{* colors.serverScoreInfo *})
+{* colors.serverScoreNumberOfCompletedMapsText *} completed

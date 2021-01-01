@@ -41,6 +41,13 @@ GemaMapManager.serverEventListeners = {
 --
 GemaMapManager.mapNameChecker = nil
 
+---
+-- The total number of gema maps that are currently available on the server
+--
+-- @tfield int numberOfGemaMaps
+--
+GemaMapManager.numberOfGemaMaps = nil
+
 
 ---
 -- GemaMapManager constructor.
@@ -48,6 +55,19 @@ GemaMapManager.mapNameChecker = nil
 function GemaMapManager:new()
   self.super.new(self, "GemaMapManager", "Server")
   self.mapNameChecker = MapNameChecker()
+  self.numberOfGemaMaps = 0
+end
+
+
+-- Getters and Setters
+
+---
+-- Returns the total number of gema maps that are currently available on the server.
+--
+-- @treturn int The total number of gema maps
+--
+function GemaMapManager:getNumberOfGemaMaps()
+  return self.numberOfGemaMaps
 end
 
 
@@ -61,6 +81,14 @@ function GemaMapManager:initialize()
   self:registerAllServerEventListeners()
   LuaServerApi:on("beforeMapRemove", EventCallback({ object = self, methodName = "onBeforeMapRemove" }))
   LuaServerApi:on("mapRemoved", EventCallback({ object = self, methodName = "onMapRemoved" }))
+
+  -- Count the initial number of gema maps
+  self.numberOfGemaMaps = 0
+  for _, mapName in ipairs(LuaServerApi.getservermaps()) do
+    if (self.mapNameChecker:isGemaMapName(mapName)) then
+      self.numberOfGemaMaps = self.numberOfGemaMaps + 1
+    end
+  end
 end
 
 ---
@@ -97,6 +125,7 @@ function GemaMapManager:onPlayerSendMap(_mapName, _cn, _revision, _mapSize, _cfg
       uploaded_at = os.time()
     }):save()
 
+    self.numberOfGemaMaps = self.numberOfGemaMaps + 1
     self:emit("onGemaMapUploaded", _mapName)
 
   end
@@ -141,6 +170,7 @@ end
 function GemaMapManager:onMapRemoved(_mapName)
 
   if (self.mapNameChecker:isGemaMapName(_mapName)) then
+    self.numberOfGemaMaps = self.numberOfGemaMaps - 1
     self:emit("onGemaMapRemoved", _mapName)
   end
 

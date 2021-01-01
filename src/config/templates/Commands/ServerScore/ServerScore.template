@@ -7,6 +7,7 @@
  # @tparam string playerName The name of the player whose ServerScore is shown
  # @tparam bool isSelf True if the ServerScore belongs to the command executor himself, false otherwise
  # @tparam int numberOfServerScores The total number of server scores
+ # @tparam int numberOfGemaMaps The total number of gema maps
  #}
 
 {% if (serverScore) then %}
@@ -34,15 +35,14 @@
     ,
     <whitespace>
 
-    {* colors.serverScoreNumberOfBestTimes *}
-    {* serverScore:getNumberOfBestTimes() *}
-    {* colors.serverScoreNumberOfBestTimesText *} best
-    {* colors.serverScoreInfo *},
-    <whitespace>
-    {* colors.serverScoreNumberOfCompletedMaps *}
-    {* serverScore:getNumberOfMapRecords() *}
-    {* colors.serverScoreNumberOfCompletedMapsText *} completed
-
+    {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/ServerScore/NumberOfScores"),
+      { colors = colors,
+        serverScore = serverScore,
+        numberOfGemaMaps = numberOfGemaMaps,
+        maxBestTimesLength = string.len(serverScore:getNumberOfBestTimes()),
+        maxMapsCompletedLength = string.len(serverScore:getNumberOfMapRecords())
+      }
+    ]}
     {* colors.serverScoreInfo *}
   )
 

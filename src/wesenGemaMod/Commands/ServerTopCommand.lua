@@ -51,13 +51,16 @@ function ServerTopCommand:execute(_player, _arguments)
   local numberOfDisplayedScores = 5
   local startRank = 1
 
+  local gemaMapManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaMapManager")
+
   self.output:printTableTemplate(
     "ServerScoreManager/ServerTop/ServerTop",
     { ["serverScoreList"] = serverScoreList,
       ["numberOfDisplayedScores"] = numberOfDisplayedScores,
-      ["startRank"] = startRank
-    }
-    , _player
+      ["startRank"] = startRank,
+      ["numberOfGemaMaps"] = gemaMapManager:getNumberOfGemaMaps()
+    },
+    _player
   )
 
 end
