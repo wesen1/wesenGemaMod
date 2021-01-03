@@ -73,12 +73,7 @@ function ServerTopLoader:loadInitialServerTop()
       currentRank = currentRank + 1
     end
 
-    playerRecord = PlayerModel:get()
-                              :innerJoinIps()
-                              :innerJoinNames()
-                              :filterById(mapScore.player_id)
-                              :findOne()
-    player = Player.createFromPlayerModel(playerRecord)
+    player = Player.createFromPlayerModel(mapScore.players[1])
 
     mapScorePoints = self.mapRankPointsProvider:getPointsForMapRank(currentRank)
 

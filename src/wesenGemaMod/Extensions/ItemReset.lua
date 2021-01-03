@@ -136,8 +136,18 @@ end
 -- @tparam Player _player The player who was removed
 --
 function ItemReset:onPlayerRemoved(_player)
-  self.playerItemRespawnManagers[_player:getCn()]:cancelAllItemRespawns()
-  self.playerItemRespawnManagers[_player:getCn()] = nil
+
+  ---
+  -- The "playerAdded" event is fired when the player fully connected, but the player is actually
+  -- added before that
+  -- If a player connects with a wrong password, is banned or blacklisted he will be removed from the
+  -- player list without the "playerAdded" event having been fired
+  --
+  if (self.playerItemRespawnManagers[_player:getCn()] ~= nil) then
+    self.playerItemRespawnManagers[_player:getCn()]:cancelAllItemRespawns()
+    self.playerItemRespawnManagers[_player:getCn()] = nil
+  end
+
 end
 
 ---
