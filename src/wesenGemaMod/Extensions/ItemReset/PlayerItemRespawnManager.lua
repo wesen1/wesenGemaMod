@@ -7,7 +7,7 @@
 
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Object = require "classic"
-local Timer = require "Extensions.ItemReset.Timer"
+local Timer = require "AC-LuaServer.Core.Util.Timer"
 
 ---
 -- Manages respawning items (pickups) for a single Player.
