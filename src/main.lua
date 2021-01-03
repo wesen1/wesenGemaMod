@@ -31,6 +31,16 @@ sleep(config.waitMillisecondsBeforeDatabaseConnection or 5000)
 local LuaORM_API = require "LuaORM.API"
 LuaORM_API.ORM:initialize(config.LuaORM or {})
 
+local Timer = require "AC-LuaServer.Core.Util.Timer"
+local keepDatabaseConnectionAliveTimer = Timer(
+  Timer.TYPE_PERIODIC,
+  config.databaseKeepAliveQueryInterval or 30 * 60 * 1000,
+  function()
+    LuaORM_API.ORM:getDatabaseConnection():execute("DO 0;")
+  end
+)
+
+
 -- Configure AC-ClientOutput
 local ClientOutputFactory = require "AC-ClientOutput.ClientOutputFactory"
 ClientOutputFactory.getInstance():configure(config.ClientOutputFactory or {})
