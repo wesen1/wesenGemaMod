@@ -6,8 +6,8 @@ services:
             - "28763:28763/udp"
             - "28764:28764/udp"
         volumes:
-            - ./ac-server/config:/ac-server/config:rw
-            - ./ac-server/packages:/ac-server/packages:rw
+            - ./test-server/config:/ac-server/config:rw
+            - ./test-server/packages:/ac-server/packages:rw
             - ./src/config:/ac-server/lua/config:rw
             - ./src:/ac-server/lua/scripts:rw
         networks:
@@ -26,7 +26,7 @@ services:
       networks:
         - database
       volumes:
-        - ./test server/mysql-data:/var/lib/mysql:rw
+        - ./test-server/mysql-data:/var/lib/mysql:rw
 
 networks:
   database:
