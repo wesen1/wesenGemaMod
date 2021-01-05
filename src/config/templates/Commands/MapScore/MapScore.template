@@ -34,10 +34,11 @@
   {* colors.mapRecordInfo *}
   <whitespace>
   (
-    Rank
-    {* colors.mapRecordRank *} {* mapRecord:getRank() *}
+    {* colors.mapRecordRank *}Rank
+    {* colors.mapRecordCurrentRank *} {* mapRecord:getRank() *}
     {* colors.mapRecordInfo *}/
     {* colors.totalNumberOfMapScores *}{* numberOfMapScores *}
+    {* colors.mapRecordInfo *}
   )
 
   {* colors.mapRecordInfo *} with

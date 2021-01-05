@@ -7,5 +7,11 @@
  # @tparam int numberOfRecords The total number of records
  #}
 
-{* colors.mapRecordRank *}
-(Rank {* mapRecord:getRank() *} of {* numberOfRecords *})
+{* colors.mapRecordInfo *}
+(
+  {* colors.mapRecordRank *}Rank
+  {* colors.mapRecordCurrentRank *} {* mapRecord:getRank() *}
+  {* colors.mapRecordInfo *}/
+  {* colors.totalNumberOfMapScores *}{* numberOfRecords *}
+  {* colors.mapRecordInfo *}
+)

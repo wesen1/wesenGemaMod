@@ -18,7 +18,7 @@
 {* colors.serverScoreNumberOfCompletedMaps *}
 {* string.format("%0" .. maxMapsCompletedLength .. "d", serverScore:getNumberOfMapRecords()) *}
 {* colors.serverScoreInfo *}/
-{* colors.serverScoreNumberOfCompletedMaps *}{* numberOfGemaMaps *}
+{* colors.serverScoreTotalNumberOfMaps *}{* numberOfGemaMaps *}
 <whitespace>
 {* colors.serverScoreInfo *}(
 {* colors.serverScoreNumberOfCompletedMaps *}{* string.format("%05.02f", (serverScore:getNumberOfMapRecords() / numberOfGemaMaps) * 100) *}%
