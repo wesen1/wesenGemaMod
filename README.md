@@ -34,13 +34,12 @@ Setup development environment
 * Navigate to the project folder in a console and type `vagrant up` to initialize the vagrant box
 * Next type `vagrant ssh` to connect to the vagrant box
 * Now inside the vagrant box type `cd /vagrant`
-* Finally type `docker-compose run`
+* Finally type `docker-compose up`
 
 After that you should be able to connect to your test server by typing `/connect localhost` ingame.
 
 
 Note that the following files will be automatically created during the setup:
 
-* test-server/mysql-data: The data of your test-servers database
 * test-server/config: The config files of your test-server
 * test-server/packages: The packages of your test-server (maps, map models, textures, etc)

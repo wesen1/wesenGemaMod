@@ -26,7 +26,10 @@ services:
       networks:
         - database
       volumes:
-        - ./test-server/mysql-data:/var/lib/mysql:rw
+        - db-data:/var/lib/mysql:rw
 
 networks:
   database:
+
+volumes:
+  db-data:
