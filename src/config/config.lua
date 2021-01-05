@@ -23,6 +23,7 @@ return {
     logger = { isEnabled = true, isDebugEnabled = false }
   },
   databaseKeepAliveQueryInterval = 30 * 60 * 1000,
+  databaseKeepAliveQuery = "SELECT COUNT(`maps`.`id`) FROM `maps`;",
 
   ClientOutputFactory = {
     fontConfigFileName = "FontDefault",
