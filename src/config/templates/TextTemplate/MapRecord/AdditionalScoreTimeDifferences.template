@@ -1,0 +1,62 @@
+{#
+ # Prints the additional score time differences message.
+ # This includes the difference to the next rank and the difference to the first rank.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam int nextRank The next rank that the player can reach
+ # @tparam int differenceToNextRank The difference to the next rank's time (nil if the next rank is 1)
+ # @tparam int differenceToFirstRank The difference to the best time of the map
+ #}
+
+{# Difference to next rank #}
+{% if (differenceToNextRank ~= nil) then %}
+
+  {[
+    getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+    {
+      colors = colors,
+      timeFormatter = timeFormatter,
+      differenceInMilliseconds = differenceToNextRank
+    }
+  ]}
+
+  {* colors.mapRecordInfo *}
+  <whitespace>
+  from
+  <whitespace>
+  {* colors.mapRecordRank *}
+  {[
+    getAbsoluteTemplatePath("TextTemplate/MapRecord/Rank"),
+    { rank = nextRank }
+  ]}
+
+  {* colors.mapRecordInfo *} (next)
+
+  <whitespace>
+  /
+  <whitespace>
+
+{% end %}
+
+
+{# Difference to first rank #}
+{[
+  getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+  {
+    colors = colors,
+    timeFormatter = timeFormatter,
+    differenceInMilliseconds = differenceToFirstRank
+  }
+]}
+
+{* colors.mapRecordInfo *}
+<whitespace>
+from
+<whitespace>
+{* colors.mapRecordRank *}
+{[
+  getAbsoluteTemplatePath("TextTemplate/MapRecord/Rank"),
+  { rank = 1 }
+]}

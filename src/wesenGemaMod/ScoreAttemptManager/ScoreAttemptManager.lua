@@ -173,6 +173,8 @@ function ScoreAttemptManager:registerRecord(scoreAttempt)
       differenceToFirstRank = differenceToFirstRank * -1
     end
   end
+
+  -- Print the score time and the comparison to the old personal best time to all players
   local output = Server.getInstance():getOutput()
   output:printTableTemplate(
     "TableTemplate/MapRecord/MapRecordScore",
@@ -183,6 +185,21 @@ function ScoreAttemptManager:registerRecord(scoreAttempt)
   )
 
   if (record:getIsValid()) then
+
+    if (nextRank >= 1) then
+
+      -- Print the comparison to the next and first rank only to the player who scored
+      output:printTextTemplate(
+        "TextTemplate/MapRecord/AdditionalScoreTimeDifferences",
+        {
+          nextRank = nextRank,
+          differenceToNextRank = differenceToNextRank,
+          differenceToFirstRank = differenceToFirstRank
+        },
+        scoreAttempt:getParentPlayer()
+      )
+    end
+
     mapTop:addRecord(record)
   end
 
