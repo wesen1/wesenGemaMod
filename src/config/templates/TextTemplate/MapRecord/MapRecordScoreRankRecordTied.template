@@ -4,4 +4,4 @@
  # @tparam string[] colors The list of colors
  #}
 
-{* colors.scoreRecordTied *}(Tied current personal best record)
+{* colors.scoreRecordTied *}(Tied own best time)

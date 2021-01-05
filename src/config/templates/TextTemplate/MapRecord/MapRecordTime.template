@@ -9,7 +9,15 @@
 {% if (not mapRecord:getTimeString()) then %}
 
   {# There is no cached time string, generate one #}
-  {% local timeString = timeFormatter:generateTimeString(mapRecord:getMilliseconds(), "%02i:%02s,%03v"); %}
+  {% local timeString = timeFormatter:generateTimeString(
+       mapRecord:getMilliseconds(),
+       "-%02i- %02s- %03v-",
+       {
+         time = colors.mapScoreTimeDigit,
+         timeUnit = colors.mapScoreTimeUnit,
+         text = colors.mapScoreTimeText
+       }
+     ) %}
   {% mapRecord:setTimeString(timeString); %}
 
 {% end %}

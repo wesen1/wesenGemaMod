@@ -28,10 +28,11 @@
   {* colors.serverScoreInfo *}
   <whitespace>
   (
-    Rank
-    {* colors.serverScoreRank *} {* serverScore:getRank() *}
+    {* colors.serverScoreRank *}Rank
+    {* colors.serverScoreCurrentRank *} {* serverScore:getRank() *}
     {* colors.serverScoreInfo *}/
     {* colors.totalNumberOfServerScores *}{* numberOfServerScores *}
+    {* colors.serverScoreInfo *}
     ,
     <whitespace>
 

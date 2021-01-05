@@ -144,10 +144,62 @@ function ScoreAttemptManager:registerRecord(scoreAttempt)
 
   local mapTop = self.target:getMapTopHandler():getMapTop("main")
   local record = scoreAttempt:getMapRecord(mapTop:getMapRecordList())
+  local previousRecord = mapTop:getMapRecordList():getRecordByPlayer(scoreAttempt:getParentPlayer())
+  local bestMapScore = mapTop:getMapRecordList():getRecordByRank(1)
 
+  local nextRank = record:getRank() - 1
+  if (previousRecord and previousRecord:getRank() < record:getRank()) then
+    -- The previous personal best score has a better rank, compare to the next score relative from that rank
+    nextRank = previousRecord:getRank() - 1
+  end
+
+  local differenceToPreviousRecord, differenceToNextRank, differenceToFirstRank
+  if (previousRecord) then
+    differenceToPreviousRecord = previousRecord:getMilliseconds() - record:getMilliseconds()
+    if (differenceToPreviousRecord < 0) then
+      differenceToPreviousRecord = differenceToPreviousRecord * -1
+    end
+  end
+
+  if (nextRank > 1) then
+    -- There is at least one rank between the ScoreAttempt's rank and the first rank
+    local nextRankMapScore = mapTop:getMapRecordList():getRecordByRank(nextRank)
+    differenceToNextRank = record:getMilliseconds() - nextRankMapScore:getMilliseconds()
+  end
+
+  if (bestMapScore) then
+    differenceToFirstRank = record:getMilliseconds() - bestMapScore:getMilliseconds()
+    if (record:getRank() == 1) then
+      differenceToFirstRank = differenceToFirstRank * -1
+    end
+  end
+
+  -- Print the score time and the comparison to the old personal best time to all players
   local output = Server.getInstance():getOutput()
-  output:printTableTemplate("TableTemplate/MapRecord/MapRecordScore", { mapRecord = record })
+  output:printTableTemplate(
+    "TableTemplate/MapRecord/MapRecordScore",
+    { mapRecord = record,
+      differenceToOwnBestTime = differenceToPreviousRecord,
+      differenceToBestTime = differenceToFirstRank
+    }
+  )
+
   if (record:getIsValid()) then
+
+    if (nextRank >= 1) then
+
+      -- Print the comparison to the next and first rank only to the player who scored
+      output:printTextTemplate(
+        "TextTemplate/MapRecord/AdditionalScoreTimeDifferences",
+        {
+          nextRank = nextRank,
+          differenceToNextRank = differenceToNextRank,
+          differenceToFirstRank = differenceToFirstRank
+        },
+        scoreAttempt:getParentPlayer()
+      )
+    end
+
     mapTop:addRecord(record)
   end
 

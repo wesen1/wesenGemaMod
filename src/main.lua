@@ -36,7 +36,7 @@ local keepDatabaseConnectionAliveTimer = Timer(
   Timer.TYPE_PERIODIC,
   config.databaseKeepAliveQueryInterval or 30 * 60 * 1000,
   function()
-    LuaORM_API.ORM:getDatabaseConnection():execute("DO 0;")
+    LuaORM_API.ORM:getDatabaseConnection():execute(config.databaseKeepAliveQuery or "SELECT COUNT(`maps`.`id`) FROM `maps`;")
   end
 )
 

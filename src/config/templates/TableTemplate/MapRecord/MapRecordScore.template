@@ -5,6 +5,8 @@
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapRecord mapRecord The map record
+ # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
+ # @tparam int differenceToBestTime The difference to the best time of the map
  #}
 
 {[
@@ -23,7 +25,9 @@
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
       colors = colors,
       timeFormatter = timeFormatter,
-      mapRecord = mapRecord
+      mapRecord = mapRecord,
+      differenceToOwnBestTime = differenceToOwnBestTime,
+      differenceToBestTime = differenceToBestTime
     }
   ]}
 {% end %}
@@ -33,7 +37,9 @@ _______________________________________________;
   {[
     getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordNewBestTime"),
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
-      colors = colors
+      timeFormatter = timeFormatter,
+      colors = colors,
+      differenceToBestTime = differenceToBestTime
     }
   ]}
 
