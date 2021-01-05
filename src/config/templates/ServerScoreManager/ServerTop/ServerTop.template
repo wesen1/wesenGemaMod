@@ -15,12 +15,6 @@
 
 {% else %}
 
-  {# Adjust number of display records #}
-  {% local numberOfDisplayedScores = numberOfDisplayedScores; %}
-  {% if (serverScoreList:getNumberOfScores() < numberOfDisplayedScores) then %}
-    {% numberOfDisplayedScores = serverScoreList:getNumberOfScores(); %}
-  {% end %}
-
   {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/Title"),
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
       colors = colors,
