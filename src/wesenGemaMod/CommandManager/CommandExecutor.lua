@@ -27,10 +27,10 @@ local CommandExecutor = Object:extend()
 --
 -- @treturn string|nil The error message or nil if no error occured
 --
--- @raise Error in case of wrong number of arguments
--- @raise Error during the argument validation
--- @raise Error during the command execution
--- @raise Error because of missing permission to use the command
+-- @raise * Error in case of wrong number of arguments
+-- * Error during the argument validation
+-- * Error during the command execution
+-- * Error because of missing permission to use the command
 --
 function CommandExecutor:executeCommand(_command, _arguments, _player)
 

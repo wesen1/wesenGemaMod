@@ -156,8 +156,8 @@ end
 -- @tparam Player _player The player who used a command
 -- @tparam string _text The text that the player said
 --
--- @raise Error while parsing the command
--- @raise Error while executing the command
+-- @raise * Error while parsing the command
+-- * Error while executing the command
 --
 function CommandManager:handleCommand(_player, _text)
 

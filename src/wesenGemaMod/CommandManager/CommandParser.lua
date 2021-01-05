@@ -74,8 +74,8 @@ end
 -- @tparam string _inputText The input text in the format "!commandName args"
 -- @tparam CommandList _commandList The command list
 --
--- @raise Error in case of unknown command
--- @raise Error while parsing the arguments
+-- @raise * Error in case of unknown command
+-- * Error while parsing the arguments
 --
 function CommandParser:parseCommand(_inputText, _commandList)
 
@@ -156,8 +156,8 @@ end
 -- @tparam CommandArgument _argument The argument
 -- @tparam string _argumentValue The input argument value
 --
--- @raise Error in case of wrong input value type
--- @raise Error in case of invalid argument type
+-- @raise * Error in case of wrong input value type
+-- * Error in case of invalid argument type
 --
 function CommandParser:castArgumentToType(_argument, _argumentValue)
 

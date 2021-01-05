@@ -1,27 +1,23 @@
 #!/bin/bash
 
-# Install the lua server with the install script
-/vagrant/install.sh /home/vagrant/lua_server <<END
-y
-y
-n
-y
-n
-y
-root
-root
-password
-password
-END
+apt-get update
+
+# Install docker-compose which should be used to run the test server
+apt-get install -y docker-compose
 
 
-# Install the gema server test framework dependencies
-sudo apt-get install -y luarocks
+# Install all wesenGemaMod dependencies for the unit tests
+apt-get install -y luarocks
+apt-get install -y lua-sql-mysql
 
+luarocks install ac-luaserver
+luarocks install luaorm
+luarocks install sleep
+
+# Install the dependencies for the test framework
 luarocks install luacov
 luarocks install luaunit
 luarocks install mach
-
 
 # Install LDoc
 luarocks install penlight
@@ -31,47 +27,42 @@ luarocks install ldoc
 luarocks install luacheck
 
 
-# Configure remote database login with the "root" user
-sql="UPDATE mysql.user SET host='%' WHERE user='root';
-     UPDATE mysql.user SET plugin='' WHERE user='root';"
-mysql -u root -Bse "$sql"
+# Setup the test-server files that are linked into the wesenGemaMod docker container
+archiveFilePath="/vagrant/tmp/AssaultCube_v1.2.0.2.tar.bz2"
+archiveMainDirectoryName="AssaultCube_v1.2.0.2"
+outputDirectory="/vagrant/test-server"
 
-# Allow remote connection to database by commenting out the line "bind-address = 127.0.0.1"
-sed -i "/bind-address/s/^/#/" /etc/mysql/mariadb.conf.d/50-server.cnf
+if [ ! -f "$archiveFilePath" ]; then
+  echo "Downloading AssaultCube ..."
+  wget https://github.com/assaultcube/AC/releases/download/v1.2.0.2/AssaultCube_v1.2.0.2.tar.bz2 -P "/vagrant/tmp"
+fi
+
+if [ ! -d "$outputDirectory" ]; then
+  mkdir "$outputDirectory"
+fi
+
+filesToExtract=(
+  # Extract the default config files
+  "$archiveMainDirectoryName/config/forbidden.cfg"
+  "$archiveMainDirectoryName/config/maprot.cfg"
+  "$archiveMainDirectoryName/config/motd_en.txt"
+  "$archiveMainDirectoryName/config/nicknameblacklist.cfg"
+  "$archiveMainDirectoryName/config/serverblacklist.cfg"
+  "$archiveMainDirectoryName/config/servercmdline.txt"
+  "$archiveMainDirectoryName/config/serverinfo_en.txt"
+  "$archiveMainDirectoryName/config/serverkillmessages.cfg"
+  "$archiveMainDirectoryName/config/serverpwd.cfg"
+
+  # Extract the default server packages
+  "$archiveMainDirectoryName/packages/audio/ambience"
+  "$archiveMainDirectoryName/packages/maps"
+  "$archiveMainDirectoryName/packages/models/mapmodels"
+  "$archiveMainDirectoryName/packages/textures"
+)
+
+tar -xvf "$archiveFilePath" -C "$outputDirectory/" --strip-components=1 "${filesToExtract[@]}" --keep-old-files
 
 
-# Create the test database
-sql="CREATE DATABASE assaultcube_gema_tests;
-     GRANT ALL PRIVILEGES ON assaultcube_gema_tests.* TO 'assaultcube'@'localhost';
-     FLUSH PRIVILEGES;"
-mysql -u root -Bse "$sql"
-
-
-# Restart the database server
-service mysql restart
-
-
-# Create links for the lua files
-ln -fs /vagrant/src/wesenGemaMod /home/vagrant/lua_server/lua/scripts
-
-rm -rf /home/vagrant/lua_server/lua/config
-ln -fs /vagrant/src/config /home/vagrant/lua_server/lua
-
-ln -fs /vagrant/src/main.lua /home/vagrant/lua_server/lua/scripts
-
-
-# Create links for the test server configuration
-rm -rf /home/vagrant/lua_server/config
-ln -fs /vagrant/test\ server/config /home/vagrant/lua_server/config
-
-rm -rf /home/vagrant/lua_server/packages/maps/servermaps/incoming
-ln -fs /vagrant/test\ server/maps /home/vagrant/lua_server/packages/maps/servermaps/incoming
-
-
-# Redirect logs to logfile
-mkdir -p /vagrant/test\ server/log
-ln -fs /vagrant/test\ server/log /var/log/assaultcube
-
-echo -e "\n\n# Custom Rules" >> /etc/rsyslog.conf
-echo ":programname, isequal, AssaultCube /var/log/assaultcube/assaultcube_server.log" >> /etc/rsyslog.conf
-/etc/init.d/rsyslog restart
+# Setup the vagrant user to be able to use "docker" and "docker-compose" commands
+groupadd docker
+usermod -aG docker vagrant

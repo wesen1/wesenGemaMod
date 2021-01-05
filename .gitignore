@@ -1,5 +1,5 @@
 .vagrant
 docs
 luacov*
-test\ server
+test-server
 tmp

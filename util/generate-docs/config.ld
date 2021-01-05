@@ -21,3 +21,10 @@ package = "wesenGemaMod";
 dir = "docs";
 
 wrap = true;
+
+custom_see_handler(
+  "^(https?://([^/]+).+)$",
+  function (_fullUrl, _baseUrl)
+    return _baseUrl, _fullUrl
+  end
+)
