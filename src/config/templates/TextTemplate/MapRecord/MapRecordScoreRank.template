@@ -2,8 +2,12 @@
  # Prints the score record rank if the record is a new personal best time or a "record tied" or "record
  # slower message" in the other cases.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam string[] colors The list of colors
  # @tparam MapRecord mapRecord The map record
+ # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
+ # @tparam int differenceToBestTime The difference to the best time of the map
  #}
 
 {% local mapRecordList = mapRecord:getParentMapRecordList(); %}
@@ -23,11 +27,26 @@
   {% end %}
 
   {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankPersonalBest.template,
-    { colors = colors, mapRecord = mapRecord, numberOfRecords = numberOfRecords }
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      timeFormatter = timeFormatter,
+      colors = colors,
+      mapRecord = mapRecord,
+      numberOfRecords = numberOfRecords,
+      differenceToOwnBestTime = differenceToOwnBestTime,
+      differenceToBestTime = differenceToBestTime
+    }
   )}
 
 {% elseif (currentRecord:getMilliseconds() == mapRecord:getMilliseconds()) then %}
   {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankRecordTied.template, { colors = colors })}
 {% else %}
-  {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankRecordSlower.template, { colors = colors })}
+  {(lua/config/templates/TextTemplate/MapRecord/MapRecordScoreRankRecordSlower.template,
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      timeFormatter = timeFormatter,
+      colors = colors,
+      differenceToOwnBestTime = differenceToOwnBestTime
+    }
+  )}
 {% end %}

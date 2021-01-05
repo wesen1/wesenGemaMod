@@ -1,0 +1,15 @@
+{#
+ # Prints a map record rank.
+ #
+ # @tparam int rank The rank
+ #}
+
+{% if (rank == 1) then %}
+  1st
+{% elseif (rank == 2) then %}
+  2nd
+{% elseif (rank == 3) then %}
+  3rd
+{% else %}
+  {* rank *}th
+{% end %}
