@@ -84,6 +84,7 @@ function PlayerItemRespawnManager:cancelAllItemRespawns()
   for _, itemRespawnTimer in pairs(self.itemRespawnTimers) do
     itemRespawnTimer:cancel()
   end
+  self.itemRespawnTimers = {}
 end
 
 ---
@@ -95,6 +96,8 @@ function PlayerItemRespawnManager:respawnAllItems()
     self:respawnItem(itemId)
     itemRespawnTimer:cancel()
   end
+
+  self.itemRespawnTimers = {}
 
 end
 
