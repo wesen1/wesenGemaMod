@@ -41,7 +41,8 @@ function ServerScoreCommand:new()
     StaticString("serverscoreCommandDescription"):getString(),
     {
       StaticString("serverscoreCommandAlias1"):getString(),
-      StaticString("serverscoreCommandAlias2"):getString()
+      StaticString("serverscoreCommandAlias2"):getString(),
+      StaticString("serverscoreCommandAlias3"):getString()
     }
   )
 

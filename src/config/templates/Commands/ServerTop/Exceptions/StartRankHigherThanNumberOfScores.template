@@ -1,0 +1,8 @@
+{#
+ # Generates a message that tells a player that the given start rank is higher than the number of server scores.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam int maximumStartRank The maximum allowed start rank
+ #}
+
+The maximum allowed start rank is {* colors.serverScoreRank *}{* maximumStartRank *}

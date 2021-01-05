@@ -42,7 +42,8 @@ function MapScoreCommand:new()
     {
       StaticString("mapscoreCommandAlias1"):getString(),
       StaticString("mapscoreCommandAlias2"):getString(),
-      StaticString("mapscoreCommandAlias3"):getString()
+      StaticString("mapscoreCommandAlias3"):getString(),
+      StaticString("mapscoreCommandAlias4"):getString()
     }
   )
 
