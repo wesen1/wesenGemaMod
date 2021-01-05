@@ -15,7 +15,7 @@
   { colors = colors, timeFormatter = timeFormatter, mapRecord = mapRecord }
 )}
 
-{* colors.mapRecordInfo *} minutes with
+{* colors.mapRecordInfo *} with
 
 <whitespace>
 {(lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
