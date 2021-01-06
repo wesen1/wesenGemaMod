@@ -54,6 +54,7 @@ return {
     "Commands.ServerTopCommand",
     "Commands.ServerScoreCommand",
     "Commands.ResetCommand",
+    "Commands.LatestMapsCommand",
 
     -- Optional extensions
     "ServerScoreManager.ServerScoreManager",
