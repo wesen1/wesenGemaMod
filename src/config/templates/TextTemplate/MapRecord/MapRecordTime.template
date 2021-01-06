@@ -11,7 +11,7 @@
   {# There is no cached time string, generate one #}
   {% local timeString = timeFormatter:generateTimeString(
        mapRecord:getMilliseconds(),
-       "-%02i- %02s- %03v-",
+       "%02i- %02s- %03v-",
        {
          time = colors.mapScoreTimeDigit,
          timeUnit = colors.mapScoreTimeUnit,

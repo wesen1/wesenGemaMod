@@ -16,7 +16,7 @@ local TimeFormatter = Object:extend()
 
 -- The available trimming mode for leading time parts whose value is 0
 TimeFormatter.LEADING_ZERO_TIME_PART_TRIMMING_NONE = 1
-TimeFormatter.LEADING_ZERO_TIME_PART_TRIMMING_UNTIL_FIRST_NON_WHITESPACE = 1
+TimeFormatter.LEADING_ZERO_TIME_PART_TRIMMING_UNTIL_FIRST_NON_WHITESPACE = 2
 
 ---
 -- The custom time unit names to use when a custom time unit name is requested
