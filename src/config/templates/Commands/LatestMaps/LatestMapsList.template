@@ -1,0 +1,50 @@
+{#
+ # Prints the maptop.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam Map[] maps The list of maps
+ #}
+
+{% if (#maps == 0) then %}
+  {* colors.noLatestGemaMaps *}No gema maps uploaded yet
+
+{% else %}
+
+  {* colors.latestGemaMapsTitle *}The latest added gema maps are:
+  ___________________________________________________;
+
+    ----------[FIELD]----------;
+
+    {% for i, map in ipairs(maps) do %}
+
+      {* colors.latestGemaMapsNumber *}{* i *})
+      {* colors.gemaMapName *} {* map.name *}
+      -------------------------------------------------;
+
+      {* colors.latestGemaMapsText *}Uploaded on
+      <whitespace>
+
+      {% if (map.uploaded_at) then %}
+        {* colors.latestGemaMapsDate *}{* os.date("%Y-%m-%d", map.uploaded_at) *}
+        {* colors.latestGemaMapsText *} at
+        {* colors.latestGemaMapsDate *} {* os.date("%X", map.uploaded_at) *}
+        {* colors.latestGemaMapsText *} o'clock
+      {% else %}
+        {* colors.latestGemaMapsUnknownDate *}unknown date
+      {% end %}
+
+      {* colors.latestGemaMapsText *} by
+      <whitespace>
+
+      {% if (map.uploaded_by) then %}
+        {* colors.latestGemaMapsUploader *}{* map.players[1].names[1].name *}
+      {% else %}
+        {* colors.latestGemaMapsUnknownUploader *}server admin
+      {% end %}
+      _________________________________________________;
+
+    {% end %}
+    ----------[ENDFIELD]----------;
+
+{% end %}
