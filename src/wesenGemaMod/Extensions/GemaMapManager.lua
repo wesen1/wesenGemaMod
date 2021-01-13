@@ -7,10 +7,12 @@
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local dir = require "pl.dir"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Map = require "ORM.Models.Map"
 local MapNameChecker = require "Map.MapNameChecker"
 local MapRecord = require "ORM.Models.MapRecord"
+local path = require "pl.path"
 local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
@@ -31,7 +33,8 @@ GemaMapManager:implement(ServerEventListener)
 -- @tfield table serverEventListeners
 --
 GemaMapManager.serverEventListeners = {
-  onPlayerSendMap = "onPlayerSendMap"
+  onPlayerSendMap = "onPlayerSendMap",
+  onPlayerRemoveMap = "onPlayerRemoveMap"
 }
 
 ---
@@ -118,15 +121,60 @@ function GemaMapManager:onPlayerSendMap(_mapName, _cn, _revision, _mapSize, _cfg
   if (_uploadError == LuaServerApi.UE_NOERROR and self.mapNameChecker:isGemaMapName(_mapName)) then
     -- It's a gema map upload that was not rejected
 
-    local player = self.target:getPlayerList():getPlayerByCn(_cn)
-    Map:new({
-      name = _mapName,
-      uploaded_by = player:getId(),
-      uploaded_at = os.time()
-    }):save()
+    local map = Map:get()
+                   :where():column("name"):equals(_mapName)
+                   :findOne()
 
-    self.numberOfGemaMaps = self.numberOfGemaMaps + 1
-    self:emit("onGemaMapUploaded", _mapName)
+    if (map == nil) then
+      -- Initial upload of the map
+      local player = self.target:getPlayerList():getPlayerByCn(_cn)
+      Map:new({
+          name = _mapName,
+          uploaded_by = player:getId(),
+          uploaded_at = os.time()
+      }):save()
+
+      self.numberOfGemaMaps = self.numberOfGemaMaps + 1
+      self:emit("onGemaMapUploaded", _mapName)
+
+    else
+      -- The map gets updated, backup the old version
+      self:backupMap(_mapName)
+    end
+
+  end
+
+end
+
+---
+-- Event handler that is called before a Player removes a map via /deleteservermap.
+--
+-- @tparam string _mapName The name of the map that should be removed
+-- @tparam int _cn The client number of the player who tries to remove the map
+-- @tparam int _removeError The remove error code for the map deletion
+--
+function GemaMapManager:onPlayerRemoveMap(_mapName, _cn, _removeError)
+
+  if (_removeError == LuaServerApi.RE_NOERROR) then
+    -- Server allows the player to delete the map
+    local status, result = pcall(self.checkMapRemovalRequest, self, _mapName)
+    if (status == false) then
+
+      local exception = result
+      if (exception.is and exception:is(TemplateException)) then
+        local player = self.target:getPlayerList():getPlayerByCn(_cn)
+        self.target:getOutput():printException(exception, player)
+        return LuaServerApi.RE_NOPERMISSION
+
+      elseif (exception.is and exception:is(Exception)) then
+        error(exception:getMessage())
+      else
+        error(exception)
+      end
+
+    else
+      self:doRemoveGemaMap(_mapName)
+    end
 
   end
 
@@ -141,25 +189,8 @@ end
 -- @raise Error when there are scores for the map that should be removed
 --
 function GemaMapManager:onBeforeMapRemove(_mapName)
-
-  if (self.mapNameChecker:isGemaMapName(_mapName)) then
-    -- It's a gema map
-    local map = Map:get()
-                   :filterByName(_mapName)
-                   :findOne()
-    if (map) then
-      -- The map exists in the database
-      if (self:mapScoresExistForMap(map)) then
-        error(TemplateException(
-          "TextTemplate/ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
-          { ["mapName"] = _mapName }
-        ))
-      else
-        map:delete()
-      end
-    end
-  end
-
+  self:checkMapRemovalRequest(_mapName)
+  self:doRemoveGemaMap(_mapName)
 end
 
 ---
@@ -178,6 +209,92 @@ end
 
 
 -- Private Methods
+
+---
+-- Checks if a map removal request is valid.
+--
+-- @tparam string _mapName The name of the map that should be removed
+--
+-- @raise Error when the map removal request is not valid
+--
+function GemaMapManager:checkMapRemovalRequest(_mapName)
+
+  if (self.mapNameChecker:isGemaMapName(_mapName)) then
+    -- It's a gema map
+    local map = Map:get()
+                   :filterByName(_mapName)
+                   :findOne()
+    if (map) then
+      -- The map exists in the database
+      if (self:mapScoresExistForMap(map)) then
+        error(TemplateException(
+          "TextTemplate/ExceptionMessages/MapRemover/MapRecordsExistForDeleteMap",
+          { ["mapName"] = _mapName }
+        ))
+      end
+    end
+  end
+
+end
+
+---
+-- Backs up and removes a gema map from the database.
+--
+-- @tparam string _mapName The name of the gema map to remove
+--
+function GemaMapManager:doRemoveGemaMap(_mapName)
+
+  -- Backup the map
+  self:backupMap(_mapName)
+
+  -- Remove the map from the database
+  local map = Map:get()
+                 :filterByName(_mapName)
+                 :delete()
+
+  -- Trigger the "onMapRemoved" handler
+  self:onMapRemoved(_mapName)
+
+end
+
+---
+-- Backs up a given map.
+--
+-- @tparam string _mapName The name of the map to back up
+--
+function GemaMapManager:backupMap(_mapName)
+
+  -- Find the path to the map cgz file
+  local mapPath = LuaServerApi.getmappath(_mapName)
+  if (mapPath == nil) then
+    mapPath = "packages/maps/servermaps/incoming/" .. _mapName .. ".cgz"
+    if (not path.isfile(mapPath)) then
+      return
+    end
+  end
+
+  -- Make sure the backup directory exists
+  local backupDirectory = "packages/map_backups"
+  dir.makepath(backupDirectory)
+
+  -- Find a unique name for the backup
+  local mapNumber = 0
+  local backupMapPath
+  repeat
+    mapNumber = mapNumber + 1
+    backupMapPath = backupDirectory .. "/" .. _mapName .. ".cgz_" .. mapNumber
+  until (not path.isfile(backupMapPath))
+
+  -- Copy the cgz file to the backup directory
+  dir.copyfile(mapPath, backupMapPath)
+
+  -- Check if a cfg file exists for the map and copy it too to the backup directory
+  local mapCfgPath = mapPath:sub(1, -4) .. "cfg"
+  if (path.isfile(mapCfgPath)) then
+    dir.copyfile(mapCfgPath, backupMapPath:sub(1, -6) .. "cfg_" .. mapNumber)
+  end
+
+end
 
 ---
 -- Returns whether there are map scores for a given map.
