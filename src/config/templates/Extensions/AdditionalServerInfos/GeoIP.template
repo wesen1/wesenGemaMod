@@ -1,0 +1,12 @@
+{#
+ # Prints a message that tells all players from which country (code + name) a player connected.
+ #
+ # @tparam Player player The Player who connected
+ # @tparam table geoipCountryData The geoip country data for the Player's IP
+ #}
+
+{* colors.nameUnarmed *}{* player:getName() *}
+{* colors.info *} connected from
+{* colors.geoipCountry *} {* geoipCountryData.code *}
+{* colors.info *},
+{* colors.geoipCountry *} {* geoipCountryData.name *}

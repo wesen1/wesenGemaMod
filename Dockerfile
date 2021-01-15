@@ -4,6 +4,7 @@ RUN apt-get install -y luarocks && \
     luarocks install luaorm && \
     luarocks install sleep && \
     apt-get install -y lua-sql-mysql && \
+    apt-get install -y lua-geoip && \
     apt-get autoremove -y luarocks
 COPY ./src/config /ac-server/lua/config
 COPY ./src/wesenGemaMod /ac-server/lua/scripts/wesenGemaMod
