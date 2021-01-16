@@ -16,8 +16,8 @@ luarocks install sleep
 
 # Install the dependencies for the test framework
 luarocks install luacov
-luarocks install luaunit
-luarocks install mach
+luarocks install luacov-html
+luarocks install wluaunit
 
 # Install LDoc
 luarocks install penlight
