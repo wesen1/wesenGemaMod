@@ -82,8 +82,8 @@ end
 function GemaMapManager:initialize()
   self.super.initialize(self)
   self:registerAllServerEventListeners()
-  LuaServerApi:on("beforeMapRemove", EventCallback({ object = self, methodName = "onBeforeMapRemove" }))
-  LuaServerApi:on("mapRemoved", EventCallback({ object = self, methodName = "onMapRemoved" }))
+  LuaServerApi:on("before_removemap", EventCallback({ object = self, methodName = "onBeforeMapRemove" }))
+  LuaServerApi:on("after_removemap", EventCallback({ object = self, methodName = "onMapRemoved" }))
 
   -- Count the initial number of gema maps
   self.numberOfGemaMaps = 0
