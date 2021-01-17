@@ -76,13 +76,14 @@ end
 
 
 ---
--- Returns the number of rank MapScore's that have lower milliseconds than a given number of milliseconds.
+-- Returns the number of rank MapScore's that have lower or equal milliseconds like a
+-- given number of milliseconds.
 --
 -- @tparam int _milliseconds The number of milliseconds to compare the MapScore's to
 --
--- @treturn int The number of rank MapScore's with lower milliseconds than the given number of milliseconds
+-- @treturn int The number of rank MapScore's with lower or equal milliseconds like the given number of milliseconds
 --
-function MapScoreList:getNumberOfRanksWithLowerMillisecondsThan(_milliseconds)
+function MapScoreList:getNumberOfRanksWithLessThanOrEqualMilliseconds(_milliseconds)
 
   for rank, mapScore in self:iterateByRanks() do
     if (mapScore:getMilliseconds() > _milliseconds) then

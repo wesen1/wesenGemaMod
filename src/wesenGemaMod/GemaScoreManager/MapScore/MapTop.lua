@@ -153,7 +153,7 @@ end
 function MapTop:addMapScoreToScoreList(_mapScore, _previousMapScore)
 
   -- Calculate and set the rank of the new MapScore
-  local mapScoreRank = self.scoreList:getNumberOfRanksWithLowerMillisecondsThan(_mapScore:getMilliseconds()) + 1
+  local mapScoreRank = self.scoreList:getNumberOfRanksWithLessThanOrEqualMilliseconds(_mapScore:getMilliseconds()) + 1
   _mapScore:setRank(mapScoreRank)
 
   -- Move the records between the new rank and the old rank up by one
