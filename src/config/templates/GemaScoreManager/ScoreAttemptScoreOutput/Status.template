@@ -1,0 +1,47 @@
+{#
+ # Prints the comparison status of a MapScore to the previous MapScore of the player.
+ # It will show the rank if the record is a new personal best time or a "record tied" or "record
+ # slower message" in the other cases.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ # @tparam int totalNumberOfMapScores The total number of MapScore's
+ # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
+ # @tparam int differenceToBestTime The difference to the best time of the map
+ #}
+
+{% if (differenceToOwnBestTime == nil or differenceToOwnBestTime < 0) then %}
+  {# New personal best time #}
+
+  {[
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/Status/NewPersonalBest"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      timeFormatter = timeFormatter,
+      colors = colors,
+      mapScore = mapScore,
+      totalNumberOfMapScores = totalNumberOfMapScores,
+      differenceToOwnBestTime = (differenceToOwnBestTime ~= nil and differenceToOwnBestTime * -1 or nil),
+      differenceToBestTime = differenceToBestTime
+    }
+  ]}
+
+{% elseif (differenceToOwnBestTime == 0) then %}
+  {[
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/Status/TiedPersonalBest"),
+    { colors = colors }
+  ]}
+
+{% else %}
+  {[
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/Status/SlowerThanPersonalBest"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      timeFormatter = timeFormatter,
+      colors = colors,
+      differenceToOwnBestTime = differenceToOwnBestTime
+    }
+  ]}
+{% end %}
