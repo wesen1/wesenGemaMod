@@ -1,5 +1,6 @@
 .vagrant
 docs
 luacov*
+coverage-report
 test-server
 tmp
