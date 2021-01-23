@@ -10,7 +10,7 @@
 {% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
 
 {-infoMessage-}
-  Your score was saved but not added to the map top because a better score for the name
-  {* colors.colors.mapRecordName *} {* playerName *}
+  Your score was saved but not added to the map top because a better score for
+  {* colors.mapRecordName *} {* playerName *}
   {* colors.info*} exists.
 {-infoMessage-}
