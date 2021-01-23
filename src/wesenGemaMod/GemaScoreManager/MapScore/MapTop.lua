@@ -112,7 +112,7 @@ function MapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(_mapScore)
 
   local previousMapScore = self.scoreList:getScoreByPlayer(_mapScore:getPlayer())
   local previousHiddenMapScore = self.scoreList:getHiddenMapScoreByPlayer(_mapScore:getPlayer())
-  local playerMatchesPreviousMapScorePlayer = (previousMapScore and _mapScore:getPlayer():equals(previousMapScore:getPlayer()) or true)
+  local playerMatchesPreviousMapScorePlayer = (previousMapScore and _mapScore:getPlayer():equals(previousMapScore:getPlayer()) or false)
 
   if (not previousMapScore or previousMapScore:getMilliseconds() > _mapScore:getMilliseconds()) then
     -- It's a new best time for the Player
@@ -127,13 +127,12 @@ function MapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(_mapScore)
     self:addMapScoreToScoreList(_mapScore, previousMapScore)
     self:emit("mapScoreAdded", _mapScore, previousMapScore)
 
-  elseif (not playerMatchesPreviousMapScorePlayer) then
-    -- The MapScore Player is not the same as the player who scored (IP + name combination does not match)
-    if (previousHiddenMapScore == nil or previousHiddenMapScore:getMilliseconds() > _mapScore:getMilliseconds()) then
-      -- It's a new best time for the Player, but it is not shown in the output
-      self.scoreList:addHiddenMapScore(_mapScore)
-      self:emit("hiddenMapScoreAdded", _mapScore, previousMapScore, previousHiddenMapScore)
-    end
+  elseif (not playerMatchesPreviousMapScorePlayer and
+          (not previousHiddenMapScore or previousHiddenMapScore:getMilliseconds() > _mapScore:getMilliseconds())) then
+    -- The MapScore Player is not the same as the player who scored (IP + name combination does not match),
+    -- and it's a new best time for the Player
+    self.scoreList:addHiddenMapScore(_mapScore)
+    self:emit("hiddenMapScoreAdded", _mapScore, previousMapScore, previousHiddenMapScore)
 
   else
     self:emit("mapScoreNotAdded", _mapScore, previousMapScore)
