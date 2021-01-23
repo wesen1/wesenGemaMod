@@ -35,7 +35,7 @@ MapTopManager.mapScoreStorage = nil
 MapTopManager.mergeScoresByPlayerName = nil
 
 ---
--- The EventCallback for the "onGameModeStaysEnabledAfterGameChange" event of the GameHandler
+-- The EventCallback for the "onGameModeStaysEnabledAfterGameChange" event of the GameModeManager
 --
 -- @tfield EventCallback onGameModeStaysEnabledAfterGameChangeEventCallback
 --
@@ -52,7 +52,7 @@ MapTopManager.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
 function MapTopManager:new(_mapScoreStorage, _contexts, _mergeScoresByPlayerName)
 
   self.mapScoreStorage = _mapScoreStorage
-  self.mergeScoresByPlayerName = (_mergeScoresByPlayerName ~= false and true) or false
+  self.mergeScoresByPlayerName = (_mergeScoresByPlayerName ~= false)
   ScoreManager.new(self, _contexts)
 
   self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange" })
