@@ -1,5 +1,5 @@
 {#
- # Prints a score time difference for a map record.
+ # Prints a score time difference for a MapScore.
  #
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter

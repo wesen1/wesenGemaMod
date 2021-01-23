@@ -14,7 +14,7 @@
 {% if (differenceToNextRank ~= nil) then %}
 
   {[
-    getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/ScoreTimeDifference"),
     {
       colors = colors,
       timeFormatter = timeFormatter,
@@ -28,7 +28,7 @@
   <whitespace>
   {* colors.mapRecordRank *}
   {[
-    getAbsoluteTemplatePath("TextTemplate/MapRecord/Rank"),
+    getAbsoluteTemplatePath("Generic/MapScore/Rank"),
     { rank = nextRank }
   ]}
 
@@ -43,7 +43,7 @@
 
 {# Difference to first rank #}
 {[
-  getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+  getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/ScoreTimeDifference"),
   {
     colors = colors,
     timeFormatter = timeFormatter,
@@ -57,6 +57,6 @@ from
 <whitespace>
 {* colors.mapRecordRank *}
 {[
-  getAbsoluteTemplatePath("TextTemplate/MapRecord/Rank"),
+  getAbsoluteTemplatePath("Generic/MapScore/Rank"),
   { rank = 1 }
 ]}
