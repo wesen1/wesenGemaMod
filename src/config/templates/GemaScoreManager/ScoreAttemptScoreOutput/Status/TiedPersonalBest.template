@@ -1,5 +1,5 @@
 {#
- # Prints the "record tied" message.
+ # Prints the status for a MapScore that has the exact same time like the personal best MapScore.
  #
  # @tparam string[] colors The list of colors
  #}

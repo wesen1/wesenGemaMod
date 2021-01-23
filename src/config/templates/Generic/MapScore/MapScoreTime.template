@@ -1,16 +1,17 @@
 {#
- # Prints the time string for a map record.
- # Generates and caches the time string if there is no cached time string for that map record yet.
+ # Prints the time string for a MapScore.
+ # Generates and caches the time string if there is no cached time string for that MapScore yet.
  #
+ # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
- # @tparam MapRecord mapRecord The map record
+ # @tparam MapScore mapScore The MapScore
  #}
 
-{% if (not mapRecord:getTimeString()) then %}
+{% if (not mapScore:getTimeString()) then %}
 
   {# There is no cached time string, generate one #}
   {% local timeString = timeFormatter:generateTimeString(
-       mapRecord:getMilliseconds(),
+       mapScore:getMilliseconds(),
        "%02i- %02s- %03v-",
        {
          time = colors.mapScoreTimeDigit,
@@ -18,9 +19,9 @@
          text = colors.mapScoreTimeText
        }
      ) %}
-  {% mapRecord:setTimeString(timeString); %}
+  {% mapScore:setTimeString(timeString) %}
 
 {% end %}
 
 {# Print the cached time string #}
-{* colors.mapRecordTime *}{* mapRecord:getTimeString() *}
+{* colors.mapRecordTime *}{* mapScore:getTimeString() *}

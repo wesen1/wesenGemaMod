@@ -1,5 +1,6 @@
 {#
- # Prints the "record slower" message.
+ # Prints the status for a MapScore that is slower than the personal best MapScore.
+ # The result is "<time difference> slower than own best time".
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam TimeFormatter timeFormatter The time formatter
@@ -10,7 +11,7 @@
 {* colors.mapRecordInfo *}
 (
   {[
-    getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/ScoreTimeDifference"),
     {
       colors = colors,
       timeFormatter = timeFormatter,

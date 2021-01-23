@@ -1,12 +1,14 @@
 {#
- # Prints the score rank for a map record.
+ # Prints the status for a new personal best MapScore.
  # The result is "Rank x of y".
+ # If there is a previous MapScore that was improved by the new best time the difference to that MapScore
+ # will be shown too.
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam string[] colors The list of colors
- # @tparam MapRecord mapRecord The map record
- # @tparam int numberOfRecords The total number of records
+ # @tparam MapScore mapScore The MapScore
+ # @tparam int totalNumberOfMapScores The total number of MapScore's
  # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
  # @tparam int differenceToBestTime The difference to the best time of the map
  #}
@@ -18,7 +20,7 @@
     Improved by
     <whitespace>
     {[
-      getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+      getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/ScoreTimeDifference"),
       {
         colors = colors,
         timeFormatter = timeFormatter,
@@ -26,14 +28,13 @@
       }
     ]}
 
-    {* colors.mapRecordInfo *}
-    ,
+    {* colors.mapRecordInfo *},
     <whitespace>
   {% end %}
 
   {* colors.mapRecordRank *}Rank
-  {* colors.mapRecordCurrentRank *} {* mapRecord:getRank() *}
+  {* colors.mapRecordCurrentRank *} {* mapScore:getRank() *}
   {* colors.mapRecordInfo *}/
-  {* colors.totalNumberOfMapScores *}{* numberOfRecords *}
+  {* colors.totalNumberOfMapScores *}{* totalNumberOfMapScores *}
   {* colors.mapRecordInfo *}
 )

@@ -1,6 +1,8 @@
 {#
  # Prints the "new best time" message.
  # The result is "***** NEW BEST TIME *****".
+ # If there is a previous best MapScore that was beaten by the time the result will be "BEST TIME BEATEN BY
+ # <time difference>".
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam TimeFormatter timeFormatter The time formatter
@@ -19,7 +21,7 @@
   <whitespace>
 
   {[
-    getAbsoluteTemplatePath("TextTemplate/MapRecord/ScoreTimeDifference"),
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/ScoreTimeDifference"),
     {
       colors = colors,
       timeFormatter = timeFormatter,
