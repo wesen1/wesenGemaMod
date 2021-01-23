@@ -11,7 +11,6 @@ local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local MapNameChecker = require "Map.MapNameChecker"
 local MapVote = require "AC-LuaServer.Core.VoteListener.Vote.MapVote"
 local Server = require "AC-LuaServer.Core.Server"
-local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---

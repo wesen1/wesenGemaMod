@@ -9,7 +9,6 @@ local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local MaximumRemainingTimeExceededException = require "AC-LuaServer.Core.GameHandler.Game.Exception.MaximumRemainingTimeExceededException"
 local Object = require "classic"
 local Server = require "AC-LuaServer.Core.Server"
-local StaticString = require "Output.StaticString"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
