@@ -1,5 +1,5 @@
 {#
- # Prints a map record rank.
+ # Prints a MapScore rank.
  #
  # @tparam int rank The rank
  #}
