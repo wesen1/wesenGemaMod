@@ -1,0 +1,16 @@
+{#
+ # Generates a info message that tells a Player that his MapScore was saved but was not added to the map top
+ # because a better MapScore for his player name exists.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string playerName The name of the player for which a hidden MapScore was added
+ #}
+
+{# Extends ServerMessageInfo.template #}
+{% layout = "lua/config/templates/TextTemplate/ServerMessageInfo.template" %}
+
+{-infoMessage-}
+  Your score was saved but not added to the map top because a better score for the name
+  {* colors.colors.mapRecordName *} {* playerName *}
+  {* colors.info*} exists.
+{-infoMessage-}
