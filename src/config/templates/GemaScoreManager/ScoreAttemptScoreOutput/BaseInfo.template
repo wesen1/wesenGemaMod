@@ -1,0 +1,27 @@
+{#
+ # Prints the base information that is shown for all ScoreAttempt MapScore's.
+ # The result is "<player> scored after <time> minutes with <weapon>".
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ #}
+
+{* colors.mapRecordName *}{* mapScore:getPlayer():getName() *}
+{* colors.mapRecordInfo *} scored after
+
+<whitespace>
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/MapScoreTime"),
+  { timeFormatter = timeFormatter, colors = colors, mapScore = mapScore }
+]}
+
+{* colors.mapRecordInfo *} with
+
+<whitespace>
+
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
+]}

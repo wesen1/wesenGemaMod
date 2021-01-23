@@ -2,30 +2,33 @@
  # Prints the "player scored" message.
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
- # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
- # @tparam MapRecord mapRecord The map record
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ # @tparam int totalNumberOfMapScores The total number of MapScore's
  # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
  # @tparam int differenceToBestTime The difference to the best time of the map
+ # @tparam bool isMapScoreValid True if the MapScore is valid, false otherwise
  #}
 
 {[
-  getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordScoreTime"),
+  getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/BaseInfo"),
   { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
-    colors = colors,
     timeFormatter = timeFormatter,
-    mapRecord = mapRecord
+    colors = colors,
+    mapScore = mapScore
   }
 ]}
 
-{% if (mapRecord:getIsValid()) then %}
+{% if (isMapScoreValid) then %}
   <whitespace>
   {[
-    getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordScoreRank"),
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/Status"),
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
-      colors = colors,
       timeFormatter = timeFormatter,
-      mapRecord = mapRecord,
+      colors = colors,
+      mapScore = mapScore,
+      totalNumberOfMapScores = totalNumberOfMapScores,
       differenceToOwnBestTime = differenceToOwnBestTime,
       differenceToBestTime = differenceToBestTime
     }
@@ -33,9 +36,9 @@
 {% end %}
 _______________________________________________;
 
-{% if (mapRecord:getIsValid() and mapRecord:getRank() == 1) then %}
+{% if (isMapScoreValid and mapScore:getRank() == 1) then %}
   {[
-    getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordNewBestTime"),
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/NewBestMapScore"),
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
       timeFormatter = timeFormatter,
       colors = colors,
@@ -43,7 +46,7 @@ _______________________________________________;
     }
   ]}
 
-{% elseif (not mapRecord:getIsValid()) then %}
+{% elseif (not isMapScoreValid) then %}
   {* colors.infoWarning *}
   Map score was not added to the map top
 {% end %}
