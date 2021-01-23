@@ -73,19 +73,18 @@ end
 --
 function MapTopCommand:execute(_player, _arguments)
 
-  local gemaGameMode = Server.getInstance():getExtensionManager():getExtensionByName("GemaGameMode")
-  local mapTopHandler = gemaGameMode:getMapTopHandler()
+  local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
+  local mapScoreList = gemaScoreManager:getMapTopManager():getMapTop("main"):getScoreList()
 
-  local mapRecordList = mapTopHandler:getMapTop("main"):getMapRecordList()
-  local numberOfRecords = mapRecordList:getNumberOfRecords()
+  local numberOfScores = mapScoreList:getNumberOfScores()
 
   local startRank = 1
-  if (numberOfRecords ~= 0 and _arguments["startRank"] ~= nil) then
+  if (numberOfScores ~= 0 and _arguments["startRank"] ~= nil) then
     -- Only check the startRank option if there are records
-    if (_arguments["startRank"] > numberOfRecords) then
+    if (_arguments["startRank"] > numberOfScores) then
       error(TemplateException(
         "Commands/MapTop/Exceptions/StartRankHigherThanNumberOfRecords",
-        { maximumStartRank = numberOfRecords }
+        { maximumStartRank = numberOfScores }
       ))
     end
 
@@ -93,15 +92,15 @@ function MapTopCommand:execute(_player, _arguments)
 
   end
 
-  local numberOfDisplayRecords = 5
-  if (startRank + numberOfDisplayRecords - 1 > numberOfRecords) then
-    numberOfDisplayRecords = numberOfRecords - startRank + 1
+  local numberOfDisplayScores = 5
+  if (startRank + numberOfDisplayScores - 1 > numberOfScores) then
+    numberOfDisplayScores = numberOfScores - startRank + 1
   end
 
   self.output:printTableTemplate(
-    "TableTemplate/MapTop/MapTop",
-    { ["mapRecordList"] = mapRecordList,
-      ["numberOfDisplayRecords"] = numberOfDisplayRecords,
+    "Commands/MapTop/MapTop",
+    { ["mapScoreList"] = mapScoreList,
+      ["numberOfDisplayScores"] = numberOfDisplayScores,
       ["startRank"] = startRank
     }
     , _player
