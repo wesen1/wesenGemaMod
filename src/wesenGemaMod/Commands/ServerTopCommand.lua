@@ -73,8 +73,9 @@ end
 --
 function ServerTopCommand:execute(_player, _arguments)
 
-  local serverScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("ServerScoreManager")
-  local serverScoreList = serverScoreManager:getServerTop("main"):getServerScoreList()
+  local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
+  local serverScoreList = gemaScoreManager:getServerTopManager():getServerTop("main"):getScoreList()
+
   local numberOfScores = serverScoreList:getNumberOfScores()
 
   local startRank = 1

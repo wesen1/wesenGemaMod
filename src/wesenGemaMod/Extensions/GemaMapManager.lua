@@ -7,6 +7,7 @@
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local Exception = require "AC-LuaServer.Core.Util.Exception.Exception"
 local dir = require "pl.dir"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Map = require "ORM.Models.Map"
@@ -248,9 +249,9 @@ function GemaMapManager:doRemoveGemaMap(_mapName)
   self:backupMap(_mapName)
 
   -- Remove the map from the database
-  local map = Map:get()
-                 :filterByName(_mapName)
-                 :delete()
+  Map:get()
+     :filterByName(_mapName)
+     :delete()
 
   -- Trigger the "onMapRemoved" handler
   self:onMapRemoved(_mapName)

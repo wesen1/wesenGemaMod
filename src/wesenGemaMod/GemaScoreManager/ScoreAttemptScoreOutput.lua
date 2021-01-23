@@ -116,7 +116,7 @@ end
 function ScoreAttemptScoreOutput:onFlagPickedUpWithoutStealing(_cn)
 
   Server.getInstance():getOutput():printTextTemplate(
-    "GemaScoreManager/ScoreAttempt/WarningFlagNotStolen",
+    "GemaScoreManager/ScoreAttemptScoreOutput/Messages/WarningFlagNotStolen",
     {},
     Server.getInstance():getPlayerList():getPlayerByCn(_cn)
   )
@@ -242,7 +242,7 @@ function ScoreAttemptScoreOutput:outputMapScore(_mapScore, _previousMapScore, _i
     -- Print a info message to the player that tells him that his MapScore was saved but a better
     -- score for his player name exists
     output:printTextTemplate(
-      "GemaScoreManager/ScoreAttemptScoreOutput/HiddenMapScoreAdded",
+      "GemaScoreManager/ScoreAttemptScoreOutput/Messages/HiddenMapScoreAdded",
       {
         playerName = _mapScore:getPlayer():getName()
       },

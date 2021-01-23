@@ -7,7 +7,6 @@
 
 local BasePlayer = require "AC-LuaServer.Core.PlayerList.Player"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
-local PlayerScoreAttempt = require("Player/PlayerScoreAttempt")
 local Ip = require("ORM/Models/Ip")
 local Name = require("ORM/Models/Name")
 local PlayerModel = require("ORM/Models/Player")
@@ -33,13 +32,6 @@ Player.id = -1;
 --
 Player.level = 0;
 
----
--- The players score attempt
---
--- @tfield PlayerScoreAttempt scoreAttempt
---
-Player.scoreAttempt = nil;
-
 
 ---
 -- Player constructor.
@@ -53,7 +45,6 @@ function Player:new(_cn, _ip, _name)
 
   self.id = -1;
   self.level = 0;
-  self.scoreAttempt = PlayerScoreAttempt(self)
 end
 
 
@@ -92,7 +83,7 @@ function Player.createFromConnectedPlayer(_cn)
     return player
 
   else
-    self.super.createFromConnectedPlayer(_cn)
+    BasePlayer.createFromConnectedPlayer(_cn)
   end
 
 end
@@ -158,14 +149,6 @@ function Player:setLevel(_level)
   self.level = _level;
 end
 
----
--- Returns the players score attempt.
---
--- @treturn PlayerScoreAttempt The players score attempt
---
-function Player:getScoreAttempt()
-  return self.scoreAttempt;
-end
 
 
 -- Class Methods

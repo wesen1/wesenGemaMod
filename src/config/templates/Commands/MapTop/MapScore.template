@@ -1,0 +1,38 @@
+{#
+ # Prints a MapScore row for the map top.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ # @tparam bool isMapScorePlayerNameUnique True if the MapScore player name is unique, false otherwise
+ # @tparam int maxRankLength The maximum rank length
+ #
+
+{# Pad rank with zeros so that all entries have the same number of digits in their ranks #}
+{* colors.mapRecordRank *}
+{* string.rep("0", maxRankLength - string.len(mapScore:getRank())) *}{* mapScore:getRank() *})
+
+<whitespace>
+{(lua/config/templates/Generic/MapScore/MapScoreTime.template,
+  { colors = colors, timeFormatter = timeFormatter, mapScore = mapScore }
+)}
+
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {* mapScore:getPlayer():getName() *}
+
+{% if (not isMapScorePlayerNameUnique) then %}
+  {* colors.playerId *}#{* mapScore:getPlayer():getId() *}
+{% end %}
+
+----------------------------------------------------------------------------------------------------------;
+
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
+]}
+
+----------------------------------------------------------------------------------------------------------;
+
+{* colors.mapRecordTimeStamp *}
+{* os.date("%Y-%m-%d", mapScore:getCreatedAt()) *}

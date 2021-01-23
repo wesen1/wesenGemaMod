@@ -30,9 +30,9 @@
     {% local maxPointsLength = string.len(serverScoreList:getScoreByRank(startRank):getPoints()) %}
     {% local maxBestTimesLength = 1 %}
     {% local maxMapsCompletedLength = 1 %}
-    {% for _, serverScore in ipairs(serverScoreList:getScores()) do %}
+    {% for _, serverScore in serverScoreList:iterateByRanks() do %}
       {% local scoreBestTimesLength = string.len(serverScore:getNumberOfBestTimes()) %}
-      {% local scoreCompletedLength = string.len(serverScore:getNumberOfMapRecords()) %}
+      {% local scoreCompletedLength = string.len(serverScore:getNumberOfMapScores()) %}
       {% if (scoreBestTimesLength > maxBestTimesLength) then maxBestTimesLength = scoreBestTimesLength end %}
       {% if (scoreCompletedLength > maxMapsCompletedLength) then maxMapsCompletedLength = scoreCompletedLength end %}
     {% end %}

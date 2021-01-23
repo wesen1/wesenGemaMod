@@ -204,7 +204,8 @@ function TimeFormatter:generateFormatSpecifierReplaceText(_colors, _formatSpecif
   end
 
   if (self.leadingZeroTimePartTrimmingMode == self.LEADING_ZERO_TIME_PART_TRIMMING_UNTIL_FIRST_NON_WHITESPACE) then
-    if (formatSpecifierValue == 0 and not self.nonZeroTimePartFound) then
+    if (formatSpecifierValue == 0 and not self.nonZeroTimePartFound and _formatSpecifierId ~= "v") then
+      -- It's a leading zero time part and its not the milliseconds time part
       return ""
     end
   end

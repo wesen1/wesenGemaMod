@@ -5,8 +5,6 @@
 -- @license MIT
 --
 
-local StringUtils = require("Util/StringUtils");
-
 ---
 -- Checks whether map names are valid gema map names.
 --

@@ -1,0 +1,28 @@
+{#
+ # Prints the map top summary and the best map record to a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapScoreList mapScoreList The MapScoreList
+ #}
+
+{% if (mapScoreList:getNumberOfScores() == 0) then %}
+  {[ getAbsoluteTemplatePath("TextTemplate/MapTop/MapTopEmpty"),
+     { colors = colors }
+  ]}
+{% else %}
+  {[ getAbsoluteTemplatePath("TextTemplate/MapTop/MapTopSummary"),
+     { colors = colors, mapScoreList = mapScoreList }
+  ]}
+  _________________________________________________________________________________________;
+
+  {[ getAbsoluteTemplatePath("Extensions/MapStatisticsPrinter/BestMapScore"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      timeFormatter = timeFormatter,
+      mapScore = mapScoreList:getScoreByRank(1)
+    }
+  ]}
+{% end %}

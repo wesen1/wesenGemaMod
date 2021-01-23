@@ -3,13 +3,13 @@
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
- # @tparam MapRecord|nil mapRecord The MapRecord to print
+ # @tparam MapScore|nil mapScore The MapScore to print
  # @tparam string playerName The name of the player whose MapRecord is shown
  # @tparam bool isSelf True if the MapRecord belongs to the command executor himself, false otherwise
  # @tparam int numberOfMapScores The total number of map scores for the current map
  #}
 
-{% if (mapRecord) then %}
+{% if (mapScore) then %}
 
   {* colors.mapRecordInfo *}
   {% if (isSelf) then %}
@@ -23,11 +23,12 @@
   best time for this map is
   <whitespace>
 
-  {[ getAbsoluteTemplatePath("TextTemplate/MapRecord/MapRecordTime"),
+  {[
+     getAbsoluteTemplatePath("Generic/MapScore/MapScoreTime"),
      {
        colors = colors,
        timeFormatter = timeFormatter,
-       mapRecord = mapRecord
+       mapScore = mapScore
      }
   ]}
 
@@ -35,7 +36,7 @@
   <whitespace>
   (
     {* colors.mapRecordRank *}Rank
-    {* colors.mapRecordCurrentRank *} {* mapRecord:getRank() *}
+    {* colors.mapRecordCurrentRank *} {* mapScore:getRank() *}
     {* colors.mapRecordInfo *}/
     {* colors.totalNumberOfMapScores *}{* numberOfMapScores *}
     {* colors.mapRecordInfo *}
@@ -43,10 +44,10 @@
 
   {* colors.mapRecordInfo *} with
   <whitespace>
-  {(lua/config/templates/TextTemplate/Player/PlayerTeamColor.template,
-    { colors = colors, teamId = mapRecord:getTeam() }
-  )}
-  {(lua/config/templates/TextTemplate/WeaponName.template, { weaponId = mapRecord:getWeapon() })}
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
+  ]}
 
   {* colors.mapRecordInfo *}
   <whitespace>
@@ -54,7 +55,7 @@
     Created on
     <whitespace>
     {* colors.mapRecordTimeStamp *}
-    {* os.date("%Y-%m-%d", mapRecord:getCreatedAt()) *}
+    {* os.date("%Y-%m-%d", mapScore:getCreatedAt()) *}
     {* colors.mapRecordInfo *}
   )
 

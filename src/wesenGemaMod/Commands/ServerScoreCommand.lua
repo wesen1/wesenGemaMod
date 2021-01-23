@@ -59,13 +59,13 @@ end
 --
 function ServerScoreCommand:execute(_player, _arguments)
 
-  local serverScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("ServerScoreManager")
-  local serverScoreList = serverScoreManager:getServerTop("main"):getServerScoreList()
+  local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
+  local serverScoreList = gemaScoreManager:getServerTopManager():getServerTop("main"):getScoreList()
 
   local serverScore, playerName, isSelf
   if (_arguments["playerName"] ~= nil) then
     playerName = _arguments["playerName"]
-    serverScore = serverScoreList:getBestScoreForPlayerName(playerName)
+    serverScore = serverScoreList:getScoreByPlayerName(playerName)
     if ((serverScore and serverScore:getPlayer():equals(_player)) or
         (not serverScore and playerName == _player:getName())
     ) then

@@ -3,15 +3,15 @@
  #
  # @tparam string[] colors The list of colors
  # @tparam int startRank The start rank
- # @tparam int numberOfDisplayRecords The number of displayed records
+ # @tparam int numberOfDisplayScores The number of displayed records
  #}
 
 {% if (startRank == 1) then %}
   {( lua/config/templates/TextTemplate/MapTop/MapTopTitleDefaultStartRank.template,
-    { colors = colors, numberOfDisplayRecords = numberOfDisplayRecords }
+    { colors = colors, numberOfDisplayScores = numberOfDisplayScores }
   )}
 {% else %}
   {( lua/config/templates/TextTemplate/MapTop/MapTopTitleCustomStartRank.template,
-    { colors = colors, startRank = startRank, numberOfDisplayRecords = numberOfDisplayRecords }
+    { colors = colors, startRank = startRank, numberOfDisplayScores = numberOfDisplayScores }
   )}
 {% end %}

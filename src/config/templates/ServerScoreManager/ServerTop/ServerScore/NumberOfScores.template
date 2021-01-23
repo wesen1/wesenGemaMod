@@ -16,11 +16,11 @@
 <whitespace>
 
 {* colors.serverScoreNumberOfCompletedMaps *}
-{* string.format("%0" .. maxMapsCompletedLength .. "d", serverScore:getNumberOfMapRecords()) *}
+{* string.format("%0" .. maxMapsCompletedLength .. "d", serverScore:getNumberOfMapScores()) *}
 {* colors.serverScoreInfo *}/
 {* colors.serverScoreTotalNumberOfMaps *}{* numberOfGemaMaps *}
 <whitespace>
 {* colors.serverScoreInfo *}(
-{* colors.serverScoreNumberOfCompletedMaps *}{* string.format("%05.02f", (serverScore:getNumberOfMapRecords() / numberOfGemaMaps) * 100) *}%
+{* colors.serverScoreNumberOfCompletedMaps *}{* string.format("%05.02f", (serverScore:getNumberOfMapScores() / numberOfGemaMaps) * 100) *}%
 {* colors.serverScoreInfo *})
 {* colors.serverScoreNumberOfCompletedMapsText *} completed
