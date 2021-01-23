@@ -26,11 +26,11 @@ local ObjectUtils = {};
 --
 -- @treturn table The clone of the table
 --
-function ObjectUtils:clone(_object, _clonedObjects)
+function ObjectUtils.clone(_object, _clonedObjects)
 
   -- If the object is not a table, return the raw data (number, string, bool, ect.)
   if (type(_object) ~= "table") then
-    return _object;
+    return _object
   end
 
   -- If the object was already cloned in another cycle of this method, return the already cloned object
@@ -44,26 +44,26 @@ function ObjectUtils:clone(_object, _clonedObjects)
   -- Initialize the list of already cloned objects
   local clonedObjects = {};
   if (_clonedObjects) then
-    clonedObjects = _clonedObjects;
+    clonedObjects = _clonedObjects
   end
 
   -- Create an empty object with the same meta table like the target object
-  local clonedObject = setmetatable({}, getmetatable(_object));
+  local clonedObject = setmetatable({}, getmetatable(_object))
 
   -- Add the new cloned object to the list of already cloned objects
-  clonedObjects[_object] = clonedObject;
+  clonedObjects[_object] = clonedObject
 
   -- Iterate over all properties of the object
   for propertyIndex, propertyValue in pairs(_object) do
 
-    local clonedPropertyIndex = self:clone(propertyIndex, clonedObjects);
-    local clonedPropertyValue = self:clone(propertyValue, clonedObjects);
+    local clonedPropertyIndex = ObjectUtils.clone(propertyIndex, clonedObjects)
+    local clonedPropertyValue = ObjectUtils.clone(propertyValue, clonedObjects)
 
-    clonedObject[clonedPropertyIndex] = clonedPropertyValue;
+    clonedObject[clonedPropertyIndex] = clonedPropertyValue
 
   end
 
-  return clonedObject;
+  return clonedObject
 
 end
 
