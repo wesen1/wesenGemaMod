@@ -1,0 +1,24 @@
+{#
+ # Prints the "best record" message.
+ # The result is "The best record of this map is <time> by <player> with <weapon>".
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ #}
+
+{* colors.mapRecordInfo *}The best record for this map is
+
+<whitespace>
+{[ getAbsoluteTemplatePath("Generic/MapScore/MapScoreTime"),
+  { colors = colors, timeFormatter = timeFormatter, mapScore = mapScore }
+]}
+
+{* colors.mapRecordInfo *} by
+{* colors.mapRecordName *} {* mapScore:getPlayer():getName() *}
+{* colors.mapRecordInfo *} with
+
+<whitespace>
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
+]}
