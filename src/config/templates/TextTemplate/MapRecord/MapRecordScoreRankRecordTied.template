@@ -1,7 +1,0 @@
-{#
- # Prints the "record tied" message.
- #
- # @tparam string[] colors The list of colors
- #}
-
-{* colors.scoreRecordTied *}(Tied own best time)

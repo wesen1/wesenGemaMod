@@ -60,15 +60,15 @@ end
 --
 function MapScoreCommand:execute(_player, _arguments)
 
-  local gemaGameMode = Server.getInstance():getExtensionManager():getExtensionByName("GemaGameMode")
-  local mapRecordList = gemaGameMode:getMapTopHandler():getMapTop("main"):getMapRecordList()
+  local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
+  local mapScoreList = gemaScoreManager:getMapTopManager():getMapTop("main"):getScoreList()
 
-  local mapRecord, playerName, isSelf
+  local mapScore, playerName, isSelf
   if (_arguments["playerName"] ~= nil) then
     playerName = _arguments["playerName"]
-    mapRecord = mapRecordList:getBestRecordForPlayerName(playerName)
-    if ((mapRecord and mapRecord:getPlayer():equals(_player)) or
-        (not mapRecord and playerName == _player:getName())
+    mapScore = mapScoreList:getScoreByPlayerName(playerName)
+    if ((mapScore and mapScore:getPlayer():equals(_player)) or
+        (not mapScore and playerName == _player:getName())
     ) then
       isSelf = true
     else
@@ -77,15 +77,15 @@ function MapScoreCommand:execute(_player, _arguments)
   else
     playerName = _player:getName()
     isSelf = true
-    mapRecord = mapRecordList:getRecordByPlayer(_player)
+    mapScore = mapScoreList:getScoreByPlayer(_player)
   end
 
   self.output:printTextTemplate(
     "Commands/MapScore/MapScore",
-    { ["mapRecord"] = mapRecord,
+    { ["mapScore"] = mapScore,
       ["playerName"] = playerName,
       ["isSelf"] = isSelf,
-      ["numberOfMapScores"] = mapRecordList:getNumberOfRecords()
+      ["numberOfMapScores"] = mapScoreList:getNumberOfScores()
     }
     , _player
   )

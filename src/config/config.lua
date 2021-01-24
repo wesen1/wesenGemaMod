@@ -39,9 +39,12 @@ return {
     -- Core extensions
     "AC-LuaServer.Extensions.GameModeManager.GameModeManager",
     "GemaMode",
+    [ "GemaScoreManager.GemaScoreManager" ] = {
+      { mergeScoresByPlayerName = true },
+      { mergeScoresByPlayerName = true }
+    },
     "Extensions.GemaMapManager",
     "Extensions.MapStatisticsPrinter",
-    "ScoreAttemptManager.ScoreAttemptManager",
     "Extensions.GemaMapRotationManager.GemaMapRotationManager",
 
     "CommandManager.CommandManager",
@@ -57,7 +60,6 @@ return {
     "Commands.LatestMapsCommand",
 
     -- Optional extensions
-    "ServerScoreManager.ServerScoreManager",
     "Extensions.AutoFlagReset",
     "Extensions.AdditionalServerInfos",
     ["Extensions.ConnectionAmountLimiter"] = { 2 },

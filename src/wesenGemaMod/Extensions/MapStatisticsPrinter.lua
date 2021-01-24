@@ -52,11 +52,11 @@ function MapStatisticsPrinter:initialize()
   local playerList = Server.getInstance():getPlayerList()
   playerList:on("onPlayerAdded", self.onPlayerAddedEventCallback)
 
-  local mapTopHandler = self.target:getMapTopHandler()
-  mapTopHandler:on("onMapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local mapTopManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager"):getMapTopManager()
+  mapTopManager:on("mapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
   local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
-  if (mapTopHandler:getMapTop("main"):getLastMapName() == currentGame:getMapName()) then
+  if (mapTopManager:getMapTop("main"):getMapName() == currentGame:getMapName()) then
     self:onGameModeStaysEnabledAfterGameChange()
   end
 
@@ -70,8 +70,8 @@ function MapStatisticsPrinter:terminate()
   local playerList = Server.getInstance():getPlayerList()
   playerList:off("onPlayerAdded", self.onPlayerAddedEventCallback)
 
-  local mapTopHandler = self.target:getMapTopHandler()
-  mapTopHandler:off("onMapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  local mapTopManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager"):getMapTopManager()
+  mapTopManager:off("mapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
 end
 
@@ -104,12 +104,12 @@ end
 --
 function MapStatisticsPrinter:printMapStatistics(_player)
 
-  local mapTop = self.target:getMapTopHandler():getMapTop("main");
+  local mapTopManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager"):getMapTopManager()
 
   local output = Server.getInstance():getOutput()
   output:printTableTemplate(
-    "TableTemplate/MapTop/MapStatistics",
-    { ["mapRecordList"] = mapTop:getMapRecordList() },
+    "Extensions/MapStatisticsPrinter/MapStatistics",
+    { ["mapScoreList"] = mapTopManager:getMapTop("main"):getScoreList() },
     _player
   )
 

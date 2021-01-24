@@ -7,6 +7,7 @@
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local Exception = require "AC-LuaServer.Core.Util.Exception.Exception"
 local dir = require "pl.dir"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Map = require "ORM.Models.Map"
@@ -82,8 +83,8 @@ end
 function GemaMapManager:initialize()
   self.super.initialize(self)
   self:registerAllServerEventListeners()
-  LuaServerApi:on("beforeMapRemove", EventCallback({ object = self, methodName = "onBeforeMapRemove" }))
-  LuaServerApi:on("mapRemoved", EventCallback({ object = self, methodName = "onMapRemoved" }))
+  LuaServerApi:on("before_removemap", EventCallback({ object = self, methodName = "onBeforeMapRemove" }))
+  LuaServerApi:on("after_removemap", EventCallback({ object = self, methodName = "onMapRemoved" }))
 
   -- Count the initial number of gema maps
   self.numberOfGemaMaps = 0
@@ -248,9 +249,9 @@ function GemaMapManager:doRemoveGemaMap(_mapName)
   self:backupMap(_mapName)
 
   -- Remove the map from the database
-  local map = Map:get()
-                 :filterByName(_mapName)
-                 :delete()
+  Map:get()
+     :filterByName(_mapName)
+     :delete()
 
   -- Trigger the "onMapRemoved" handler
   self:onMapRemoved(_mapName)

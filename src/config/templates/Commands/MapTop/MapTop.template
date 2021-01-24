@@ -1,0 +1,43 @@
+{#
+ # Prints the maptop.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScoreList mapScoreList The MapScoreList
+ # @tparam int startRank The start rank
+ # @tparam int numberOfDisplayScores The number of displayed MapScore's
+ #}
+
+{% if (mapScoreList:getNumberOfScores() == 0) then %}
+  {(lua/config/templates/TextTemplate/MapTop/MapTopEmpty.template, { colors = colors })}
+
+{% else %}
+
+  {(lua/config/templates/TextTemplate/MapTop/MapTopTitle.template,
+    { colors = colors, startRank = startRank, numberOfDisplayScores = numberOfDisplayScores }
+  )}
+  ___________________________________________________;
+
+    ----------[FIELD]----------;
+    {% local endRank = startRank + (numberOfDisplayScores - 1); %}
+    {% local maxRankLength = string.len(endRank); %}
+
+    {% for i = startRank, endRank, 1 do %}
+
+      {% local mapScore = mapScoreList:getScoreByRank(i) %}
+      {[
+        getAbsoluteTemplatePath("Commands/MapTop/MapScore"),
+        { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+          colors = colors,
+          timeFormatter = timeFormatter,
+          mapScore = mapScore,
+          isMapScorePlayerNameUnique = mapScoreList:isPlayerNameUnique(mapScore:getPlayer():getName()),
+          maxRankLength = maxRankLength
+        }
+      ]}
+      _________________________________________________;
+    {% end %}
+    ----------[ENDFIELD]----------;
+
+{% end %}

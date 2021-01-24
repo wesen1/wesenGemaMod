@@ -1,0 +1,17 @@
+{#
+ # Prints the ScoreWeapon of a MapScore.
+ # The result is "<team color><weapon name>".
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ #}
+
+{[
+  getAbsoluteTemplatePath("TextTemplate/Player/PlayerTeamColor"),
+  { colors = colors, teamId = mapScore:getTeamId() }
+]}
+{[
+  getAbsoluteTemplatePath("TextTemplate/WeaponName"),
+  { weaponId = mapScore:getWeaponId() }
+]}

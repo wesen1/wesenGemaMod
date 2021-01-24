@@ -41,7 +41,7 @@
         serverScore = serverScore,
         numberOfGemaMaps = numberOfGemaMaps,
         maxBestTimesLength = string.len(serverScore:getNumberOfBestTimes()),
-        maxMapsCompletedLength = string.len(serverScore:getNumberOfMapRecords())
+        maxMapsCompletedLength = string.len(serverScore:getNumberOfMapScores())
       }
     ]}
     {* colors.serverScoreInfo *}

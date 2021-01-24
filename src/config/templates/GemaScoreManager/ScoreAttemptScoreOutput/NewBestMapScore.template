@@ -1,0 +1,34 @@
+{#
+ # Prints the "new best time" message.
+ # The result is "***** NEW BEST TIME *****".
+ # If there is a previous best MapScore that was beaten by the time the result will be "BEST TIME BEATEN BY
+ # <time difference>".
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam int differenceToBestTime The difference to the best time of the map
+ #}
+
+{% if (differenceToBestTime == nil) then %}
+  {# It's the first time that someone scores on this map, so no comparison time is available #}
+  {* colors.newBestTimeString *}***** NEW BEST TIME *****
+
+{% else %}
+  {* colors.newBestTimeString *}*****
+  <whitespace>
+  BEST TIME BEATEN BY
+  <whitespace>
+
+  {[
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/ScoreTimeDifference"),
+    {
+      colors = colors,
+      timeFormatter = timeFormatter,
+      differenceInMilliseconds = differenceToBestTime
+    }
+  ]}
+
+  <whitespace>
+  {* colors.newBestTimeString *}*****
+{% end %}

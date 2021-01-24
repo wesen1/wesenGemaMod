@@ -3,20 +3,20 @@
  # The result is "The x best player(s) of this map is/are:".
  #
  # @tparam string[] colors The list of colors
- # @tparam int numberOfDisplayRecords The number of displayed records
+ # @tparam int numberOfDisplayScores The number of displayed records
  #}
 
 {* colors.mapTopInfo *}The
-{* colors.mapTopNumberOfRecords *} {* numberOfDisplayRecords *}
+{* colors.mapTopNumberOfRecords *} {* numberOfDisplayScores *}
 {* colors.mapTopInfo *} best player
-{% if (numberOfDisplayRecords ~= 1) then %}
+{% if (numberOfDisplayScores ~= 1) then %}
   s
 {% end %}
 <whitespace>
 of this map
 <whitespace>
 
-{% if (numberOfDisplayRecords == 1) then %}
+{% if (numberOfDisplayScores == 1) then %}
   is
 {% else %}
   are

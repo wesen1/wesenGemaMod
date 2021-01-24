@@ -71,7 +71,7 @@ end
 --initializeORM()
 
 -- Require all lua files in the wesenGemaMod sub directory
---requireTests("wesenGemaMod");
+requireTests("wesenGemaMod/GemaScoreManager");
 
 -- Run the tests
 os.exit(luaunit.LuaUnit:run())

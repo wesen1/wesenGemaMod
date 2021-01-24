@@ -1,0 +1,52 @@
+{#
+ # Prints the "player scored" message.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore mapScore The MapScore
+ # @tparam int totalNumberOfMapScores The total number of MapScore's
+ # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
+ # @tparam int differenceToBestTime The difference to the best time of the map
+ # @tparam bool isMapScoreValid True if the MapScore is valid, false otherwise
+ #}
+
+{[
+  getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/BaseInfo"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    timeFormatter = timeFormatter,
+    colors = colors,
+    mapScore = mapScore
+  }
+]}
+
+{% if (isMapScoreValid) then %}
+  <whitespace>
+  {[
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/Status"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      timeFormatter = timeFormatter,
+      colors = colors,
+      mapScore = mapScore,
+      totalNumberOfMapScores = totalNumberOfMapScores,
+      differenceToOwnBestTime = differenceToOwnBestTime,
+      differenceToBestTime = differenceToBestTime
+    }
+  ]}
+{% end %}
+_______________________________________________;
+
+{% if (isMapScoreValid and mapScore:getRank() == 1) then %}
+  {[
+    getAbsoluteTemplatePath("GemaScoreManager/ScoreAttemptScoreOutput/NewBestMapScore"),
+    { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      timeFormatter = timeFormatter,
+      colors = colors,
+      differenceToBestTime = differenceToBestTime
+    }
+  ]}
+
+{% elseif (not isMapScoreValid) then %}
+  {* colors.infoWarning *}
+  Map score was not added to the map top
+{% end %}

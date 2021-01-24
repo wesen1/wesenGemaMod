@@ -5,6 +5,7 @@
 -- @license MIT
 --
 
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Object = require "classic"
 
 ---
@@ -42,7 +43,7 @@ end
 --
 function ColorLoader:getColors()
 
-  local colorConfiguration = cfg.totable(self.colorConfigFileName)
+  local colorConfiguration = LuaServerApi.cfg.totable(self.colorConfigFileName)
 
   local colors = {}
   for colorName, colorId in pairs(colorConfiguration) do

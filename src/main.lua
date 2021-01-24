@@ -71,6 +71,7 @@ server:configure({
 })
 
 -- Add the extensions to the server
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local extensionManager = server:getExtensionManager()
 
 local extensionPath, constructorParameters, extensionClass
@@ -84,6 +85,7 @@ for key, value in pairs(config.extensions or {}) do
     constructorParameters = {}
   end
 
+  LuaServerApi.logline(LuaServerApi.ACLOG_INFO, "Loading extension " .. extensionPath)
   extensionClass = require(extensionPath)
   extensionManager:addExtension(extensionClass(table.unpack(constructorParameters)))
 

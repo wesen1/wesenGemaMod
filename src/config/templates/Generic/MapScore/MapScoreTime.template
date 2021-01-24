@@ -1,0 +1,27 @@
+{#
+ # Prints the time string for a MapScore.
+ # Generates and caches the time string if there is no cached time string for that MapScore yet.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam MapScore mapScore The MapScore
+ #}
+
+{% if (not mapScore:getTimeString()) then %}
+
+  {# There is no cached time string, generate one #}
+  {% local timeString = timeFormatter:generateTimeString(
+       mapScore:getMilliseconds(),
+       "%02i- %02s- %03v-",
+       {
+         time = colors.mapScoreTimeDigit,
+         timeUnit = colors.mapScoreTimeUnit,
+         text = colors.mapScoreTimeText
+       }
+     ) %}
+  {% mapScore:setTimeString(timeString) %}
+
+{% end %}
+
+{# Print the cached time string #}
+{* colors.mapRecordTime *}{* mapScore:getTimeString() *}

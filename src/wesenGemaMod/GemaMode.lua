@@ -1,6 +1,6 @@
 ---
 -- @author wesen
--- @copyright 2018-2020 wesen <wesen-ac@web.de>
+-- @copyright 2018-2021 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
@@ -9,7 +9,6 @@ local BaseGameMode = require "AC-LuaServer.Extensions.GameModeManager.BaseGameMo
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local MapNameChecker = require("Map/MapNameChecker");
-local MapTopHandler = require("Tops/MapTopHandler");
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require("Output/StaticString");
 
@@ -33,13 +32,6 @@ GemaGameMode.onPlayerAddedEventCallback = nil
 --
 GemaGameMode.mapNameChecker = nil
 
----
--- The map top handler
---
--- @tfield MapTopHandler mapTopHandler
---
-GemaGameMode.mapTopHandler = nil
-
 
 ---
 -- GemaGameMode constructor.
@@ -50,20 +42,7 @@ function GemaGameMode:new()
 
   self.onPlayerAddedEventCallback = EventCallback({ object = self, methodName = "onPlayerAdded"})
   self.mapNameChecker = MapNameChecker()
-  self.mapTopHandler = MapTopHandler()
 
-end
-
-
--- Getters and setters
-
----
--- Returns the map top handler.
---
--- @treturn MapTop The map top handler
---
-function GemaGameMode:getMapTopHandler()
-  return self.mapTopHandler
 end
 
 
@@ -77,7 +56,7 @@ end
 -- @treturn bool True if this GameMode can be enabled for the specified Game, false otherwise
 --
 function GemaGameMode:canBeEnabledForGame(_game)
-  return (_game:getGameModeId() == GM_CTF and self.mapNameChecker:isGemaMapName(_game:getMapName()))
+  return (_game:getGameModeId() == LuaServerApi.GM_CTF and self.mapNameChecker:isGemaMapName(_game:getMapName()))
 end
 
 ---
@@ -87,14 +66,11 @@ function GemaGameMode:initialize(_gameModeManager)
 
   self.super.initialize(self, _gameModeManager)
 
-  self.mapTopHandler:initialize()
-
   local playerList = Server.getInstance():getPlayerList()
   playerList:on("onPlayerAdded", self.onPlayerAddedEventCallback)
 
   LuaServerApi.setautoteam(false)
 
-  local playerList = Server.getInstance():getPlayerList()
   for _, player in pairs(playerList:getPlayers()) do
     self:printServerInformation(player)
   end
@@ -107,8 +83,6 @@ end
 function GemaGameMode:terminate()
 
   self.super.terminate(self)
-
-  self.mapTopHandler:terminate()
 
   local playerList = Server.getInstance():getPlayerList()
   playerList:off("onPlayerAdded", self.onPlayerAddedEventCallback)
