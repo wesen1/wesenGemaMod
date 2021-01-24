@@ -153,7 +153,7 @@ end
 --
 function GemaScoreManager:terminate()
 
-  self.scoreAttemptManager:off("scoreAttemptFinished", self.onScoreAttemptFinishedEventCallback)
+  self.scoreAttemptManager:getScoreAttemptCollection():off("scoreAttemptFinished", self.onScoreAttemptFinishedEventCallback)
   self.scoreAttemptManager:terminate()
 
   self.mapTopManager:terminate()
