@@ -10,10 +10,12 @@ services:
             - ./test-server/packages:/ac-server/packages:rw
             - ./src/config:/ac-server/lua/config:rw
             - ./src:/ac-server/lua/scripts:rw
+            - ./test-server/geoip-data:/usr/share/GeoIP
         networks:
           - database
         depends_on:
           - database
+          - geoip-updater
 
     database:
       image: mysql/mysql-server:5.7
@@ -28,6 +30,15 @@ services:
       volumes:
         - db-data:/var/lib/mysql:rw
 
+    geoip-updater:
+      image: maxmindinc/geoipupdate
+      environment:
+        GEOIPUPDATE_ACCOUNT_ID: <your account id>
+        GEOIPUPDATE_LICENSE_KEY: <your license key>
+        GEOIPUPDATE_EDITION_IDS: GeoLite2-Country
+        GEOIPUPDATE_FREQUENCY: 24
+      volumes:
+        - ./test-server/geoip-data:/usr/share/GeoIP
 networks:
   database:
 

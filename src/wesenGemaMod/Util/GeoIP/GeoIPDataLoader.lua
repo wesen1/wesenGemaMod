@@ -5,8 +5,8 @@
 -- @license MIT
 --
 
-local GeoipCountryDatabaseConnection = require "geoip.country"
 local GeoIPData = require "Util.GeoIP.GeoIPData"
+local maxminddb = require "maxminddb"
 local Object = require "classic"
 
 ---
@@ -29,11 +29,17 @@ local GeoIPDataLoader = Object:extend()
 --
 function GeoIPDataLoader:loadGeoIPDataForIp(_ip)
 
-  local geoipCountryDatabaseConnection = GeoipCountryDatabaseConnection.open()
-  local geoipCountryData = geoipCountryDatabaseConnection:query_by_addr(_ip)
-  geoipCountryDatabaseConnection:close()
+  local geoipCountryDatabaseConnection = maxminddb.open("/usr/share/GeoIP/GeoLite2-Country.mmdb")
+  local geoipCountryData
 
-  return GeoIPData(geoipCountryData.code, geoipCountryData.name)
+  local success, result = pcall(function()
+    geoipCountryData = geoipCountryDatabaseConnection:lookup(_ip)
+  end)
+
+  return GeoIPData(
+    geoipCountryData and geoipCountryData:get("country", "iso_code") or "--",
+    geoipCountryData and geoipCountryData:get("country", "names", "en") or "N/A"
+  )
 
 end
 
