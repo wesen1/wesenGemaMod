@@ -8,7 +8,7 @@
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local GemaGameMode = require "GemaMode"
-local GeoipCountryDatabaseConnection = require "geoip.country"
+local GeoIPDataLoader = require "Util.GeoIP.GeoIPDataLoader"
 local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local Server = require  "AC-LuaServer.Core.Server"
 local ServerEventListener = require  "AC-LuaServer.Core.ServerEvent.ServerEventListener"
@@ -31,6 +31,13 @@ AdditionalServerInfos.serverEventListeners = {
 }
 
 ---
+-- The GeoIPDataLoader that will be used to load GeoIPData for new connected Player's
+--
+-- @tfield GeoIPDataLoader geoIPDataLoader
+--
+AdditionalServerInfos.geoIPDataLoader = nil
+
+---
 -- The EventCallback for the "onPlayerAdded" event of the player list
 --
 -- @tfield EventCallback onPlayerAddedEventCallback
@@ -51,6 +58,7 @@ AdditionalServerInfos.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
 function AdditionalServerInfos:new()
   self.super.new(self, "AdditionalServerInfos", "Server")
 
+  self.geoIPDataLoader = GeoIPDataLoader()
   self.onPlayerAddedEventCallback = EventCallback({ object = self, methodName = "onPlayerAdded"})
   self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange"})
 end
@@ -122,13 +130,10 @@ function AdditionalServerInfos:onPlayerAdded(_player, _numberOfPlayers)
     output:printTextTemplate("TextTemplate/InfoMessages/GemaModeState/GemaModeNotEnabled", {}, _player)
   end
 
-  local geoipCountryDatabaseConnection = GeoipCountryDatabaseConnection.open()
-  local geoipCountryData = geoipCountryDatabaseConnection:query_by_addr(_player:getIp())
-  geoipCountryDatabaseConnection:close()
 
   output:printTextTemplate("Extensions/AdditionalServerInfos/GeoIP", {
     player = _player,
-    geoipCountryData = geoipCountryData
+    geoipData = self.geoIPDataLoader:loadGeoIPDataForIp(_player:getIp())
   })
 
 end
