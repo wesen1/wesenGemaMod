@@ -8,6 +8,7 @@
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local ObjectUtils = require "Util.ObjectUtils"
 local ScoreListManager = require "GemaScoreManager.Score.ScoreListManager"
+local TableUtils = require "Util.TableUtils"
 
 ---
 -- Manages a single ServerScoreList.
@@ -127,15 +128,31 @@ end
 --
 function ServerTop:loadInitialServerScores()
 
+  local currentMapId, scoresForCurrentMapId
+  local effectiveRank
+
   for mapId, mapScore in self.mapScoreStorage:loadAllMapScores() do
 
-    local mapScorePoints = self.mapScorePointsProvider:getPointsForMapScore(mapScore)
-    local score = self.scoreList:getOrCreateScore(mapScore:getPlayer())
+    if (currentMapId ~= mapId) then
+      currentMapId = mapId
+      scoresForCurrentMapId = {}
+      effectiveRank = 0
+    end
 
-    score:addPoints(mapScorePoints)
-    score:increaseNumberOfMapScores()
-    if (mapScore:getRank() == 1) then
-      score:increaseNumberOfBestTimes()
+    local score = self.scoreList:getOrCreateScore(mapScore:getPlayer())
+    if (not TableUtils.tableHasValue(scoresForCurrentMapId, score)) then
+      table.insert(scoresForCurrentMapId, score)
+      effectiveRank = effectiveRank + 1
+
+      mapScore:setRank(effectiveRank)
+      local mapScorePoints = self.mapScorePointsProvider:getPointsForMapScore(mapScore)
+
+      score:addPoints(mapScorePoints)
+      score:increaseNumberOfMapScores()
+      if (mapScore:getRank() == 1) then
+        score:increaseNumberOfBestTimes()
+      end
+
     end
 
   end
