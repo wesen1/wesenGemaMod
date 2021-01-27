@@ -31,11 +31,16 @@ sleep(config.waitMillisecondsBeforeDatabaseConnection or 5000)
 local LuaORM_API = require "LuaORM.API"
 LuaORM_API.ORM:initialize(config.LuaORM or {})
 
+
+local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+
+-- Set up a timer to keep the database connection alive
 local Timer = require "AC-LuaServer.Core.Util.Timer"
 local keepDatabaseConnectionAliveTimer = Timer(
   Timer.TYPE_PERIODIC,
   config.databaseKeepAliveQueryInterval or 30 * 60 * 1000,
   function()
+    LuaServerApi.logline(LuaServerApi.ACLOG_INFO, "Executing database keep alive query")
     LuaORM_API.ORM:getDatabaseConnection():execute(config.databaseKeepAliveQuery or "SELECT COUNT(`maps`.`id`) FROM `maps`;")
   end
 )
@@ -71,7 +76,6 @@ server:configure({
 })
 
 -- Add the extensions to the server
-local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
 local extensionManager = server:getExtensionManager()
 
 local extensionPath, constructorParameters, extensionClass
