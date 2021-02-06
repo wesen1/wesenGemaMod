@@ -29,10 +29,10 @@ local GeoIPDataLoader = Object:extend()
 --
 function GeoIPDataLoader:loadGeoIPDataForIp(_ip)
 
-  local geoipCountryDatabaseConnection = maxminddb.open("/usr/share/GeoIP/GeoLite2-Country.mmdb")
   local geoipCountryData
 
   local success, result = pcall(function()
+    local geoipCountryDatabaseConnection = maxminddb.open("/usr/share/GeoIP/GeoLite2-Country.mmdb")
     geoipCountryData = geoipCountryDatabaseConnection:lookup(_ip)
   end)
 

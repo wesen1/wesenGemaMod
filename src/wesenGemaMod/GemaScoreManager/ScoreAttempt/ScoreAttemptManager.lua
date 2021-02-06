@@ -1,15 +1,16 @@
 ---
 -- @author wesen
--- @copyright 2020-2021 wesen <wesen-ac@web.de>
+-- @copyright 2021 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
-local LuaServerApi = require "AC-LuaServer.Core.LuaServerApi"
+local EventEmitter = require "AC-LuaServer.Core.Event.EventEmitter"
 local Object = require "classic"
-local Server = require "AC-LuaServer.Core.Server"
-local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
+local ScoreAttemptCollection = require "GemaScoreManager.ScoreAttempt.ScoreAttemptCollection"
+local ScoreAttemptStateUpdater = require "GemaScoreManager.ScoreAttempt.ScoreAttemptStateUpdater"
+local ScoreAttemptValidator = require "GemaScoreManager.ScoreAttempt.ScoreAttemptValidator"
 
 ---
 -- Manages the ScoreAttempt's of players.
@@ -17,44 +18,7 @@ local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventLi
 -- @type ScoreAttemptManager
 --
 local ScoreAttemptManager = Object:extend()
-ScoreAttemptManager:implement(ServerEventListener)
-
----
--- The list of server events for which this class listens
---
--- @tfield table serverEventListeners
---
-ScoreAttemptManager.serverEventListeners = {
-
-  -- ScoreAttempt start
-  onPlayerSpawn = "onPlayerSpawn",
-
-  -- ScoreAttempt modify
-  onPlayerShoot = "onPlayerShoot",
-
-  -- ScoreAttempt finish
-  onFlagAction = "onFlagAction",
-
-  -- ScoreAttempt cancel
-  onPlayerDisconnect = "onPlayerDisconnect",
-  onPlayerDeath = "onPlayerDeath",
-  onPlayerTeamChange = "onPlayerTeamChange",
-  onMapEnd = "onMapEnd"
-}
-
----
--- The EventCallback for the "after_forcedeath" event of the LuaServerApi
---
--- @tfield EventCallback onAfterForceDeathEventCallback
---
-ScoreAttemptManager.onAfterForceDeathEventCallback = nil
-
----
--- The EventCallback for the "onGameModeStaysEnabledAfterGameChange" event of the GameHandler
---
--- @tfield EventCallback onGameModeStaysEnabledAfterGameChangeEventCallback
---
-ScoreAttemptManager.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
+ScoreAttemptManager:implement(EventEmitter)
 
 ---
 -- The ScoreAttemptCollection
@@ -63,16 +27,40 @@ ScoreAttemptManager.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
 --
 ScoreAttemptManager.scoreAttemptCollection = nil
 
+---
+-- The ScoreAttemptStateUpdater
+--
+-- @tfield ScoreAttemptStateUpdater scoreAttemptStateUpdater
+--
+ScoreAttemptManager.scoreAttemptStateUpdater = nil
+
+---
+-- The ScoreAttemptValidator
+--
+-- @tfield ScoreAttemptValidator scoreAttemptValidator
+--
+ScoreAttemptManager.scoreAttemptValidator = nil
+
+---
+-- The EventCallback for the "scoreAttemptFinished" event of the ScoreAttemptCollection
+--
+-- @tfield EventCallback onScoreAttemptFinishedEventCallback
+--
+ScoreAttemptManager.onScoreAttemptFinishedEventCallback = nil
+
 
 ---
 -- ScoreAttemptManager constructor.
 --
--- @tparam ScoreAttemptCollection _scoreAttemptCollection The ScoreAttemptCollection to use
---
-function ScoreAttemptManager:new(_scoreAttemptCollection)
-  self.scoreAttemptCollection = _scoreAttemptCollection
-  self.onAfterForceDeathEventCallback = EventCallback({ object = self, methodName = "onPlayerDeath" })
-  self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange" })
+function ScoreAttemptManager:new()
+  self.scoreAttemptCollection = ScoreAttemptCollection()
+  self.scoreAttemptStateUpdater = ScoreAttemptStateUpdater(self.scoreAttemptCollection)
+  self.scoreAttemptValidator = ScoreAttemptValidator()
+
+  self.onScoreAttemptFinishedEventCallback = EventCallback({ object = self, methodName = "onScoreAttemptFinished" })
+
+  -- EventEmitter
+  self.eventCallbacks = {}
 end
 
 
@@ -96,22 +84,18 @@ end
 function ScoreAttemptManager:initialize()
   self.scoreAttemptCollection:clear()
 
-  self:registerAllServerEventListeners()
-  LuaServerApi:on("after_forcedeath", self.onAfterForceDeathEventCallback)
-
-  local gameModeManager = Server.getInstance():getExtensionManager():getExtensionByName("GameModeManager")
-  gameModeManager:on("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  self.scoreAttemptValidator:initialize()
+  self.scoreAttemptCollection:on("scoreAttemptFinished", self.onScoreAttemptFinishedEventCallback)
+  self.scoreAttemptStateUpdater:initialize()
 end
 
 ---
 -- Terminates this ScoreAttemptManager.
 --
 function ScoreAttemptManager:terminate()
-  self:unregisterAllServerEventListeners()
-  LuaServerApi:off("after_forcedeath", self.onAfterForceDeathEventCallback)
-
-  local gameModeManager = Server.getInstance():getExtensionManager():getExtensionByName("GameModeManager")
-  gameModeManager:off("onGameModeStaysEnabledAfterGameChange", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
+  self.scoreAttemptStateUpdater:terminate()
+  self.scoreAttemptValidator:terminate()
+  self.scoreAttemptCollection:off("scoreAttemptFinished", self.onScoreAttemptFinishedEventCallback)
 
   self.scoreAttemptCollection:clear()
 end
@@ -120,81 +104,20 @@ end
 -- Event Handlers
 
 ---
--- Event handler which is called when a player spawns.
+-- Event handler that is called when a ScoreAttempt was finished.
 --
--- @tparam int _cn The client number of the player who spawned
+-- @tparam int _cn The client number of the player whose ScoreAttempt was finished
+-- @tparam ScoreAttempt _scoreAttempt The player's finished ScoreAttempt
 --
-function ScoreAttemptManager:onPlayerSpawn(_cn)
-  self.scoreAttemptCollection:startScoreAttempt(_cn)
-end
+function ScoreAttemptManager:onScoreAttemptFinished(_cn, _scoreAttempt)
 
----
--- Event handler that is called when a player shoots.
---
--- @tparam int _cn The client number of the player who shot
--- @tparam int _weaponId The ID of the weapon with which the player shot
---
-function ScoreAttemptManager:onPlayerShoot(_cn, _weaponId)
-  self.scoreAttemptCollection:updateScoreAttemptWeaponIfRequired(_cn, _weaponId)
-end
-
----
--- Event handler that is called when the state of the flag is changed.
---
--- @tparam int _cn The client number of the player who changed the state
--- @tparam int _action The ID of the flag action
---
-function ScoreAttemptManager:onFlagAction(_cn, _action)
-
-  if (_action == LuaServerApi.FA_STEAL) then
-    self.scoreAttemptCollection:markScoreAttemptFlagStolen(_cn)
-  elseif (_action == LuaServerApi.FA_PICKUP) then
-    self.scoreAttemptCollection:processFlagPickup(_cn)
-  elseif (_action == LuaServerApi.FA_SCORE) then
-    self.scoreAttemptCollection:processFlagScore(_cn)
+  local scoreAttemptNotValidReason = self.scoreAttemptValidator:getScoreAttemptNotValidReason(_cn, _scoreAttempt)
+  if (scoreAttemptNotValidReason == nil) then
+    self:emit("validScoreAttemptFinished", _cn, _scoreAttempt)
+  else
+    self:emit("invalidScoreAttemptFinished", _cn, _scoreAttempt, scoreAttemptNotValidReason)
   end
 
-end
-
----
--- Event handler that is called when a player disconnects.
---
--- @tparam int _cn The client number of the player who disconnected
---
-function ScoreAttemptManager:onPlayerDisconnect(_cn)
-  self.scoreAttemptCollection:cancelScoreAttempt(_cn, "Player disconnected")
-end
-
----
--- Event handler that is called when a player dies (including /suicide).
---
--- @tparam int _cn The client number of the player who died
---
-function ScoreAttemptManager:onPlayerDeath(_cn)
-  self.scoreAttemptCollection:cancelScoreAttempt(_cn, "Player died")
-end
-
----
--- Event handler that is called when a player changes teams (to spectator or enemy team).
---
--- @tparam int _cn The client number of the player who changed teams
---
-function ScoreAttemptManager:onPlayerTeamChange(_cn)
-  self.scoreAttemptCollection:cancelScoreAttempt(_cn, "Player changed teams")
-end
-
----
--- Event handler which is called when the game mode is not changed after a Game change.
---
-function ScoreAttemptManager:onGameModeStaysEnabledAfterGameChange()
-  self.scoreAttemptCollection:cancelAllScoreAttempts("Game changed")
-end
-
----
--- Event handler that is called when the current game ends (on intermission).
---
-function ScoreAttemptManager:onMapEnd()
-  self.scoreAttemptCollection:cancelAllScoreAttempts("Game ended")
 end
 
 

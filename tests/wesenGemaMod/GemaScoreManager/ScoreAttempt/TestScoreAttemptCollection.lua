@@ -40,13 +40,6 @@ TestScoreAttemptCollection.dependencyPaths = {
 TestScoreAttemptCollection.onScoreAttemptStartedListener = nil
 
 ---
--- Event listener for the "flagPickedUpWithoutStealing" event of the ScoreAttemptCollection
---
--- @tfield function onFlagPickedUpWithoutStealingListener
---
-TestScoreAttemptCollection.onFlagPickedUpWithoutStealingListener = nil
-
----
 -- Event listener for the "scoreAttemptFinished" event of the ScoreAttemptCollection
 --
 -- @tfield function onScoreAttemptFinishedListener
@@ -70,7 +63,6 @@ function TestScoreAttemptCollection:setUp()
   TestCase.setUp(self)
 
   self.onScoreAttemptStartedListener = self.mach.mock_function("onScoreAttemptStartedListener")
-  self.onFlagPickedUpWithoutStealingListener = self.mach.mock_function("onFlagPickedUpWithoutStealingListener")
   self.onScoreAttemptFinishedListener = self.mach.mock_function("onScoreAttemptFinishedListener")
   self.onScoreAttemptCancelledListener = self.mach.mock_function("onScoreAttemptCancelledListener")
 
@@ -104,7 +96,6 @@ function TestScoreAttemptCollection:tearDown()
   TestCase.tearDown(self)
 
   self.onScoreAttemptStartedListener = nil
-  self.onFlagPickedUpWithoutStealingListener = nil
   self.onScoreAttemptFinishedListener = nil
   self.onScoreAttemptCancelledListener = nil
 end
@@ -348,89 +339,6 @@ function TestScoreAttemptCollection:testCanUpdateScoreAttemptWeapon()
 end
 
 ---
--- Checks that the flag can be marked as stolen for a ScoreAttempt.
---
-function TestScoreAttemptCollection:testCanMarkFlagStolenForScoreAttempt()
-
-  local LuaServerApiMock = self.dependencyMocks.LuaServerApi
-
-  local scoreAttemptCollection = self:createScoreAttemptCollection()
-  local scoreAttemptMock = self:getMock("GemaScoreManager.ScoreAttempt.ScoreAttempt")
-
-  self:expectScoreAttemptStart(7, 491231, LuaServerApiMock.TEAM_RVSF, scoreAttemptMock)
-      :and_then(
-        -- markScoreAttemptFlagStolen() #1
-        scoreAttemptMock.getDidStealFlag
-                        :should_be_called()
-                        :and_will_return(false)
-                        :and_then(
-                          scoreAttemptMock.markFlagStolen
-                                          :should_be_called()
-                        )
-      )
-      :and_then(
-        -- markScoreAttemptFlagStolen() #2
-        scoreAttemptMock.getDidStealFlag
-                        :should_be_called()
-                        :and_will_return(true)
-      )
-      :when(
-        function()
-          scoreAttemptCollection:startScoreAttempt(7)
-          scoreAttemptCollection:markScoreAttemptFlagStolen(7)
-          scoreAttemptCollection:markScoreAttemptFlagStolen(7)
-
-          -- Nothing should happen for a player without active ScoreAttempt
-          scoreAttemptCollection:markScoreAttemptFlagStolen(11)
-        end
-      )
-
-end
-
----
--- Checks that a flag pick up of a player is processed as expected.
---
-function TestScoreAttemptCollection:testCanProcessFlagPickUpForPlayer()
-
-  local LuaServerApiMock = self.dependencyMocks.LuaServerApi
-
-  local scoreAttemptCollection = self:createScoreAttemptCollection()
-  local scoreAttemptMockA = self:getMock("GemaScoreManager.ScoreAttempt.ScoreAttempt")
-  local scoreAttemptMockB = self:getMock("GemaScoreManager.ScoreAttempt.ScoreAttempt")
-
-  self:expectScoreAttemptStart(5, 491231, LuaServerApiMock.TEAM_RVSF, scoreAttemptMockA)
-      :and_then(
-        self:expectScoreAttemptStart(6, 123125, LuaServerApiMock.TEAM_CLA, scoreAttemptMockB)
-      )
-      :and_then(
-        scoreAttemptMockA.getDidStealFlag
-                         :should_be_called()
-                         :and_will_return(true)
-      )
-      :and_then(
-        scoreAttemptMockB.getDidStealFlag
-                         :should_be_called()
-                         :and_will_return(false)
-                         :and_then(
-                           self.onFlagPickedUpWithoutStealingListener
-                               :should_be_called_with(6)
-                         )
-      )
-      :when(
-        function()
-          scoreAttemptCollection:startScoreAttempt(5)
-          scoreAttemptCollection:startScoreAttempt(6)
-          scoreAttemptCollection:processFlagPickup(5)
-          scoreAttemptCollection:processFlagPickup(6)
-
-          -- Flag pick up of player with no active ScoreAttempt should be ignored
-          scoreAttemptCollection:processFlagPickup(7)
-        end
-      )
-
-end
-
----
 -- Checks that a flag score of a player is processed as expected.
 --
 function TestScoreAttemptCollection:testCanProcessFlagScoreForPlayer()
@@ -489,9 +397,6 @@ function TestScoreAttemptCollection:createScoreAttemptCollection()
 
   scoreAttemptCollection:on("scoreAttemptStarted", EventCallback(function(...)
     self.onScoreAttemptStartedListener(...)
-  end))
-  scoreAttemptCollection:on("flagPickedUpWithoutStealing", EventCallback(function(...)
-    self.onFlagPickedUpWithoutStealingListener(...)
   end))
   scoreAttemptCollection:on("scoreAttemptFinished", EventCallback(function(...)
     self.onScoreAttemptFinishedListener(...)
@@ -553,8 +458,6 @@ function TestScoreAttemptCollection:verifyThatNoScoreAttemptForPlayerExists(_sco
   local LuaServerApiMock = self.dependencyMocks.LuaServerApi
 
   _scoreAttemptCollection:updateScoreAttemptWeaponIfRequired(_cn, LuaServerApiMock.GUN_SNIPER)
-  _scoreAttemptCollection:markScoreAttemptFlagStolen(_cn)
-  _scoreAttemptCollection:processFlagPickup(_cn)
   _scoreAttemptCollection:processFlagScore(_cn)
   _scoreAttemptCollection:cancelScoreAttempt(_cn, "Checking if this will do something")
 
