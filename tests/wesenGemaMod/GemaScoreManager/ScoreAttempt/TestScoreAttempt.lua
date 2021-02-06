@@ -60,7 +60,7 @@ end
 
 
 ---
--- Checks that a ScoreAttempt can be finished without stealing the flag from its original position.
+-- Checks that a ScoreAttempt can be finished.
 --
 function TestScoreAttempt:testCanBeFinishedWithoutStealingTheFlagFromOriginalPosition()
 
@@ -69,32 +69,9 @@ function TestScoreAttempt:testCanBeFinishedWithoutStealingTheFlagFromOriginalPos
 
   local scoreAttempt = ScoreAttempt(13214, LuaServerApiMock.TEAM_RVSF)
   self:assertFalse(scoreAttempt:isFinished())
-  self:assertFalse(scoreAttempt:getDidStealFlag())
 
   scoreAttempt:finish(49401)
   self:assertTrue(scoreAttempt:isFinished())
-  self:assertFalse(scoreAttempt:getDidStealFlag())
-
-end
-
----
--- Checks that a ScoreAttempt can be finished with stealing the flag from its original position.
---
-function TestScoreAttempt:testCanBeFinishedWithStealingTheFlag()
-
-  local LuaServerApiMock = self.dependencyMocks.LuaServerApi
-  local ScoreAttempt = self.testClass
-
-  local scoreAttempt = ScoreAttempt(13214, LuaServerApiMock.TEAM_RVSF)
-  self:assertFalse(scoreAttempt:isFinished())
-  self:assertFalse(scoreAttempt:getDidStealFlag())
-
-  scoreAttempt:markFlagStolen()
-  self:assertTrue(scoreAttempt:getDidStealFlag())
-
-  scoreAttempt:finish(49401)
-  self:assertTrue(scoreAttempt:isFinished())
-  self:assertTrue(scoreAttempt:getDidStealFlag())
 
 end
 
@@ -110,18 +87,12 @@ function TestScoreAttempt:testKeepsTrackOfTeamId()
   local claScoreAttempt = ScoreAttempt(126356, LuaServerApiMock.TEAM_CLA)
   self:assertEquals(LuaServerApiMock.TEAM_CLA, claScoreAttempt:getTeamId())
 
-  claScoreAttempt:markFlagStolen()
-  self:assertEquals(LuaServerApiMock.TEAM_CLA, claScoreAttempt:getTeamId())
-
   claScoreAttempt:finish(136900)
   self:assertEquals(LuaServerApiMock.TEAM_CLA, claScoreAttempt:getTeamId())
 
 
   -- RVSF
   local rvsfScoreAttempt = ScoreAttempt(512316, LuaServerApiMock.TEAM_RVSF)
-  self:assertEquals(LuaServerApiMock.TEAM_RVSF, rvsfScoreAttempt:getTeamId())
-
-  rvsfScoreAttempt:markFlagStolen()
   self:assertEquals(LuaServerApiMock.TEAM_RVSF, rvsfScoreAttempt:getTeamId())
 
   rvsfScoreAttempt:finish(617003)
@@ -139,14 +110,12 @@ function TestScoreAttempt:testCanCalculateDuration()
 
   -- Score attempt that steals the flag from the original position
   local scoreAttemptA = ScoreAttempt(13214, LuaServerApiMock.TEAM_RVSF)
-  scoreAttemptA:markFlagStolen()
   scoreAttemptA:finish(49401)
   self:assertTrue(scoreAttemptA:isFinished())
   self:assertEquals(36187, scoreAttemptA:getDuration())
 
   -- Score attempt that does not steal the flag from the original position
   local scoreAttemptB = ScoreAttempt(512316, LuaServerApiMock.TEAM_RVSF)
-  scoreAttemptB:markFlagStolen()
   scoreAttemptB:finish(617003)
   self:assertTrue(scoreAttemptB:isFinished())
   self:assertEquals(104687, scoreAttemptB:getDuration())
@@ -424,12 +393,6 @@ function TestScoreAttempt:testThrowsExceptionWhenScoreAttemptShouldBeModifiedAft
   self:throwsExceptionWhenWeaponUsageIsReportedAfterItWasFinished(scoreAttempt, LuaServerApiMock.GUN_SHOTGUN)
   self:throwsExceptionWhenWeaponUsageIsReportedAfterItWasFinished(scoreAttempt, LuaServerApiMock.GUN_CARBINE)
   self:throwsExceptionWhenWeaponUsageIsReportedAfterItWasFinished(scoreAttempt, LuaServerApiMock.GUN_GRENADE)
-
-  -- Flag stolen is reported to the ScoreAttempt after it was finished
-  local status, result = pcall(scoreAttempt.markFlagStolen, scoreAttempt)
-  self:assertFalse(status)
-  self:assertTrue(result:is(ScoreAttemptAlreadyFinishedException))
-  self:assertEquals("didStealFlag", result:getModifiedAttributeName())
 
   -- ScoreAttempt should be finished a second time
   status, result = pcall(scoreAttempt.finish, scoreAttempt, 70121)

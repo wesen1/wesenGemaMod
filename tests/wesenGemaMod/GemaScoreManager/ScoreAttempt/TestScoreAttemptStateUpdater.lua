@@ -8,11 +8,11 @@
 local TestCase = require "wLuaUnit.TestCase"
 
 ---
--- Checks that the ScoreAttemptManager works as expected.
+-- Checks that the ScoreAttemptStateUpdater works as expected.
 --
--- @type TestScoreAttemptManager
+-- @type TestScoreAttemptStateUpdater
 --
-local TestScoreAttemptManager = TestCase:extend()
+local TestScoreAttemptStateUpdater = TestCase:extend()
 
 
 ---
@@ -20,14 +20,14 @@ local TestScoreAttemptManager = TestCase:extend()
 --
 -- @tfield string testClassPath
 --
-TestScoreAttemptManager.testClassPath = "GemaScoreManager.ScoreAttempt.ScoreAttemptManager"
+TestScoreAttemptStateUpdater.testClassPath = "GemaScoreManager.ScoreAttempt.ScoreAttemptStateUpdater"
 
 ---
 -- The paths of the classes that the test class depends on
 --
 -- @tfield table[] dependencyPaths
 --
-TestScoreAttemptManager.dependencyPaths = {
+TestScoreAttemptStateUpdater.dependencyPaths = {
   { id = "EventCallback", path = "AC-LuaServer.Core.Event.EventCallback" },
   { id = "LuaServerApi", path = "AC-LuaServer.Core.LuaServerApi", ["type"] = "table" },
   { id = "Server", path = "AC-LuaServer.Core.Server" }
@@ -38,77 +38,77 @@ TestScoreAttemptManager.dependencyPaths = {
 --
 -- @tfield ScoreAttemptCollection scoreAttemptCollectionMock
 --
-TestScoreAttemptManager.scoreAttemptCollectionMock = nil
+TestScoreAttemptStateUpdater.scoreAttemptCollectionMock = nil
 
 ---
 -- The EventCallback mock for the "onPlayerSpawn" server event
 --
 -- @tfield EventCallback onPlayerSpawnEventCallbackMock
 --
-TestScoreAttemptManager.onPlayerSpawnEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onPlayerSpawnEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onPlayerShoot" server event
 --
 -- @tfield EventCallback onPlayerShootEventCallbackMock
 --
-TestScoreAttemptManager.onPlayerShootEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onPlayerShootEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onFlagAction" server event
 --
 -- @tfield EventCallback onFlagActionEventCallbackMock
 --
-TestScoreAttemptManager.onFlagActionEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onFlagActionEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onPlayerDisconnect" server event
 --
 -- @tfield EventCallback onPlayerDisconnectEventCallbackMock
 --
-TestScoreAttemptManager.onPlayerDisconnectEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onPlayerDisconnectEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onPlayerDeath" server event
 --
 -- @tfield EventCallback onPlayerDeathEventCallbackMock
 --
-TestScoreAttemptManager.onPlayerDeathEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onPlayerDeathEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onPlayerTeamChange" server event
 --
 -- @tfield EventCallback onPlayerTeamChangeEventCallbackMock
 --
-TestScoreAttemptManager.onPlayerTeamChangeEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onPlayerTeamChangeEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onMapEnd" server event
 --
 -- @tfield EventCallback onMapEndEventCallbackMock
 --
-TestScoreAttemptManager.onMapEndEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onMapEndEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "after_forcedeath" event of the LuaServerApi
 --
 -- @tfield EventCallback onAfterForceDeathEventCallbackMock
 --
-TestScoreAttemptManager.onAfterForceDeathEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onAfterForceDeathEventCallbackMock = nil
 
 ---
 -- The EventCallback mock for the "onGameModeStaysEnabledAfterGameChange" event of the GameModeManager
 --
 -- @tfield EventCallback onGameModeStaysEnabledAfterGameChangeEventCallbackMock
 --
-TestScoreAttemptManager.onGameModeStaysEnabledAfterGameChangeEventCallbackMock = nil
+TestScoreAttemptStateUpdater.onGameModeStaysEnabledAfterGameChangeEventCallbackMock = nil
 
 
 ---
 -- Method that is called before a test is executed.
 -- Sets up the mocks.
 --
-function TestScoreAttemptManager:setUp()
+function TestScoreAttemptStateUpdater:setUp()
   TestCase.setUp(self)
 
   self.scoreAttemptCollectionMock = self:getMock("GemaScoreManager.ScoreAttempt.ScoreAttemptCollection")
@@ -129,7 +129,7 @@ end
 -- Method that is called after a test was executed.
 -- Clears the mocks.
 --
-function TestScoreAttemptManager:tearDown()
+function TestScoreAttemptStateUpdater:tearDown()
   TestCase.tearDown(self)
 
   self.scoreAttemptCollectionMock = nil
@@ -148,7 +148,7 @@ end
 ---
 -- Checks that the ScoreAttempt relevant events are handled as expected.
 --
-function TestScoreAttemptManager:testCanManageScoreAttempts()
+function TestScoreAttemptStateUpdater:testCanManageScoreAttempts()
 
   local LuaServerApiMock = self.dependencyMocks.LuaServerApi
   LuaServerApiMock.GUN_ASSAULT = 6
@@ -173,24 +173,6 @@ function TestScoreAttemptManager:testCanManageScoreAttempts()
                                  :when(
                                    function()
                                      scoreAttemptManager:onPlayerShoot(3, LuaServerApiMock.GUN_ASSAULT)
-                                   end
-                                 )
-
-  -- Player steals the flag
-  self.scoreAttemptCollectionMock.markScoreAttemptFlagStolen
-                                 :should_be_called_with(3)
-                                 :when(
-                                   function()
-                                     scoreAttemptManager:onFlagAction(3, LuaServerApiMock.FA_STEAL)
-                                   end
-                                 )
-
-  -- Player picks up the flag after dropping it
-  self.scoreAttemptCollectionMock.processFlagPickup
-                                 :should_be_called_with(3)
-                                 :when(
-                                   function()
-                                     scoreAttemptManager:onFlagAction(3, LuaServerApiMock.FA_PICKUP)
                                    end
                                  )
 
@@ -251,9 +233,9 @@ function TestScoreAttemptManager:testCanManageScoreAttempts()
 end
 
 ---
--- Checks that the ScoreAttemptManager can be terminated as expected.
+-- Checks that the ScoreAttemptStateUpdater can be terminated as expected.
 --
-function TestScoreAttemptManager:testCanBeTerminated()
+function TestScoreAttemptStateUpdater:testCanBeTerminated()
 
   local LuaServerApiMock = self.dependencyMocks.LuaServerApi
   LuaServerApiMock.off = self.mach.mock_method("off")
@@ -340,10 +322,6 @@ function TestScoreAttemptManager:testCanBeTerminated()
                                        )
                   )
             )
-            :and_also(
-              self.scoreAttemptCollectionMock.clear
-                                             :should_be_called()
-            )
             :when(
               function()
                 scoreAttemptManager:terminate()
@@ -356,11 +334,11 @@ end
 -- Private Methods
 
 ---
--- Creates and returns a ScoreAttemptManager instance.
+-- Creates and returns a ScoreAttemptStateUpdater instance.
 --
--- @treturn ScoreAttemptManager The created ScoreAttemptManager instance
+-- @treturn ScoreAttemptStateUpdater The created ScoreAttemptStateUpdater instance
 --
-function TestScoreAttemptManager:createScoreAttemptManager()
+function TestScoreAttemptStateUpdater:createScoreAttemptManager()
 
   local ScoreAttemptManager = self.testClass
   local scoreAttemptManager
@@ -384,7 +362,7 @@ function TestScoreAttemptManager:createScoreAttemptManager()
           },
           nil,
           self.onAfterForceDeathEventCallbackMock,
-          TestScoreAttemptManager.matchEventCallback
+          TestScoreAttemptStateUpdater.matchEventCallback
         },
         {
           {
@@ -393,7 +371,7 @@ function TestScoreAttemptManager:createScoreAttemptManager()
           },
           nil,
           self.onGameModeStaysEnabledAfterGameChangeEventCallbackMock,
-          TestScoreAttemptManager.matchEventCallback
+          TestScoreAttemptStateUpdater.matchEventCallback
         }
       )
       :when(
@@ -401,8 +379,6 @@ function TestScoreAttemptManager:createScoreAttemptManager()
           scoreAttemptManager = ScoreAttemptManager(self.scoreAttemptCollectionMock)
         end
       )
-
-  self:assertEquals(self.scoreAttemptCollectionMock, scoreAttemptManager:getScoreAttemptCollection())
 
 
   -- Initialize the ScoreAttemptManager
@@ -515,10 +491,6 @@ function TestScoreAttemptManager:createScoreAttemptManager()
                                  )
             )
       )
-      :and_also(
-        self.scoreAttemptCollectionMock.clear
-            :should_be_called()
-      )
       :when(
         function()
           scoreAttemptManager:initialize()
@@ -536,7 +508,7 @@ end
 --
 -- @treturn table The generated expectations
 --
-function TestScoreAttemptManager:expectEventCallbackCreations(...)
+function TestScoreAttemptStateUpdater:expectEventCallbackCreations(...)
 
   local eventCallbackCreationExpectationConfigs = {...}
 
@@ -574,7 +546,7 @@ end
 --
 -- @treturn table The generated expectations
 --
-function TestScoreAttemptManager:expectEventCallbackCreation(_eventCallbackConfig, _priority, _eventCallbackMock, _matcherFunction)
+function TestScoreAttemptStateUpdater:expectEventCallbackCreation(_eventCallbackConfig, _priority, _eventCallbackMock, _matcherFunction)
 
   return self.dependencyMocks.EventCallback.__call
                                            :should_be_called_with(
@@ -594,7 +566,7 @@ end
 --
 -- @treturn bool True if the actual value met the expectations, false otherwise
 --
-function TestScoreAttemptManager.matchEventCallback(_expected, _actual)
+function TestScoreAttemptStateUpdater.matchEventCallback(_expected, _actual)
   return (_actual.object:is(_expected.object) and _actual.methodName == _expected.methodName)
 end
 
@@ -606,7 +578,7 @@ end
 --
 -- @treturn table The generated expectations
 --
-function TestScoreAttemptManager:expectExtensionFetching(_extensionName, _extensionMock)
+function TestScoreAttemptStateUpdater:expectExtensionFetching(_extensionName, _extensionMock)
 
   local ServerMock = self.dependencyMocks.Server
 
@@ -630,4 +602,4 @@ function TestScoreAttemptManager:expectExtensionFetching(_extensionName, _extens
 end
 
 
-return TestScoreAttemptManager
+return TestScoreAttemptStateUpdater
