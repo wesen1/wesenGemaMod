@@ -50,13 +50,6 @@ ScoreAttempt.weaponId = nil
 --
 ScoreAttempt.teamId = nil
 
----
--- Stores whether the flag was stolen from its original position during the attempt
---
--- @tfield bool didStealFlag
---
-ScoreAttempt.didStealFlag = nil
-
 
 ---
 -- ScoreAttempt constructor.
@@ -69,7 +62,6 @@ function ScoreAttempt:new(_startTimestamp, _teamId)
   self.endTimestamp = nil
   self.weaponId = LuaServerApi.GUN_KNIFE
   self.teamId = _teamId
-  self.didStealFlag = false
 end
 
 
@@ -91,15 +83,6 @@ end
 --
 function ScoreAttempt:getTeamId()
   return self.teamId
-end
-
----
--- Returns whether the flag was stolen from its original position during the attempt.
---
--- @treturn bool True if the flag was stolen from its original position during the attempt, false otherwise
---
-function ScoreAttempt:getDidStealFlag()
-  return self.didStealFlag
 end
 
 
@@ -142,19 +125,6 @@ function ScoreAttempt:updateWeaponIfRequired(_usedWeaponId)
     self.weaponId = _usedWeaponId
   end
 
-end
-
----
--- Sets the attempt's "flag was stolen" status to true.
---
--- @raise The Exception when the ScoreAttempt is already finished
---
-function ScoreAttempt:markFlagStolen()
-  if (self:isFinished()) then
-    error(ScoreAttemptAlreadyFinishedException("didStealFlag"))
-  end
-
-  self.didStealFlag = true
 end
 
 ---

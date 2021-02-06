@@ -18,13 +18,6 @@ local ScoreAttemptScoreOutput = Object:extend()
 
 
 ---
--- The EventCallback for the "flagPickedUpWithoutStealing" event of the ScoreAttemptManager
---
--- @tfield EventCallback onFlagPickedUpWithoutStealingEventCallback
---
-ScoreAttemptScoreOutput.onFlagPickedUpWithoutStealingEventCallback = nil
-
----
 -- The EventCallback for the "mapScoreAdded" event of the main MapTop
 --
 -- @tfield EventCallback onMapScoreAddedEventCallback
@@ -58,7 +51,6 @@ ScoreAttemptScoreOutput.onInvalidScoreAttemptFinished = nil
 --
 function ScoreAttemptScoreOutput:new()
 
-  self.onFlagPickedUpWithoutStealingEventCallback = EventCallback({ object = self, methodName = "onFlagPickedUpWithoutStealing" })
   self.onMapScoreAddedEventCallback = EventCallback({ object = self, methodName = "onMapScoreAdded" })
   self.onHiddenMapScoreAddEventCallback = EventCallback({ object = self, methodName = "onHiddenMapScoreAdded" })
   self.onMapScoreNotAddedEventCallback = EventCallback({ object = self, methodName = "onMapScoreNotAdded" })
@@ -76,10 +68,8 @@ end
 --
 function ScoreAttemptScoreOutput:initialize(_gemaScoreManager)
 
-  local scoreAttemptManager = _gemaScoreManager:getScoreAttemptManager()
   local mainMapTop = _gemaScoreManager:getMapTopManager():getMapTop("main")
 
-  scoreAttemptManager:getScoreAttemptCollection():on("flagPickedUpWithoutStealing", self.onFlagPickedUpWithoutStealingEventCallback)
   mainMapTop:on("mapScoreAdded", self.onMapScoreAddedEventCallback)
   mainMapTop:on("hiddenMapScoreAdded", self.onHiddenMapScoreAddEventCallback)
   mainMapTop:on("mapScoreNotAdded", self.onMapScoreNotAddedEventCallback)
@@ -94,10 +84,8 @@ end
 --
 function ScoreAttemptScoreOutput:terminate(_gemaScoreManager)
 
-  local scoreAttemptManager = _gemaScoreManager:getScoreAttemptManager()
   local mainMapTop = _gemaScoreManager:getMapTopManager():getMapTop("main")
 
-  scoreAttemptManager:getScoreAttemptCollection():off("flagPickedUpWithoutStealing", self.onFlagPickedUpWithoutStealingEventCallback)
   mainMapTop:off("mapScoreAdded", self.onMapScoreAddedEventCallback)
   mainMapTop:off("hiddenMapScoreAdded", self.onHiddenMapScoreAddEventCallback)
   mainMapTop:off("mapScoreNotAdded", self.onMapScoreNotAddedEventCallback)
@@ -107,21 +95,6 @@ end
 
 
 -- Event Handlers
-
----
--- Event handler that is called when a player picked up the flag without stealing it from its original position.
---
--- @tparam int _cn The client number of the player who picked up the flag without stealing it
---
-function ScoreAttemptScoreOutput:onFlagPickedUpWithoutStealing(_cn)
-
-  Server.getInstance():getOutput():printTextTemplate(
-    "GemaScoreManager/ScoreAttemptScoreOutput/Messages/WarningFlagNotStolen",
-    {},
-    Server.getInstance():getPlayerList():getPlayerByCn(_cn)
-  )
-
-end
 
 ---
 -- Event handler that is called when a MapScore was added to the main MapTop.

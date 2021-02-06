@@ -146,10 +146,6 @@ end
 --
 function ScoreAttemptManager:onFlagAction(_cn, _action)
 
-  if (_action == LuaServerApi.FA_STEAL) then
-    self.scoreAttemptCollection:markScoreAttemptFlagStolen(_cn)
-  elseif (_action == LuaServerApi.FA_PICKUP) then
-    self.scoreAttemptCollection:processFlagPickup(_cn)
   elseif (_action == LuaServerApi.FA_SCORE) then
     self.scoreAttemptCollection:processFlagScore(_cn)
   end
