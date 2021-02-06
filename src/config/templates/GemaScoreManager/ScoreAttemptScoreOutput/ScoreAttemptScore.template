@@ -9,6 +9,7 @@
  # @tparam int differenceToOwnBestTime The difference to the best time of the player who scored
  # @tparam int differenceToBestTime The difference to the best time of the map
  # @tparam bool isMapScoreValid True if the MapScore is valid, false otherwise
+ # @tparam string|nil mapScoreNotValidReason The reason why the MapScore is not valid (if isMapScoreValid is false)
  #}
 
 {[
@@ -48,5 +49,5 @@ _______________________________________________;
 
 {% elseif (not isMapScoreValid) then %}
   {* colors.infoWarning *}
-  Map score was not added to the map top
+  Map score was not added to the map top: {* mapScoreNotValidReason *}
 {% end %}

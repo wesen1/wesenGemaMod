@@ -13,7 +13,6 @@ local MapScoreSaver = require "GemaScoreManager.MapScoreSaver"
 local MapScoreStorage = require "GemaScoreManager.MapScoreStorage"
 local MapScorePointsProvider = require "GemaScoreManager.ServerScore.MapScorePointsProvider"
 local ObjectUtils = require "Util.ObjectUtils"
-local ScoreAttemptCollection = require "GemaScoreManager.ScoreAttempt.ScoreAttemptCollection"
 local ScoreAttemptManager = require "GemaScoreManager.ScoreAttempt.ScoreAttemptManager"
 local ScoreAttemptScoreOutput = require "GemaScoreManager.ScoreAttemptScoreOutput"
 local Server = require "AC-LuaServer.Core.Server"
@@ -62,11 +61,18 @@ GemaScoreManager.scoreAttemptScoreOutput = nil
 GemaScoreManager.serverTopManager = nil
 
 ---
--- The EventCallback for the "scoreAttemptFinished" event of the ScoreAttemptManager
+-- The EventCallback for the "validScoreAttemptFinished" event of the ScoreAttemptManager
 --
--- @tfield EventCallback onScoreAttemptFinishedEventCallback
+-- @tfield EventCallback onValidScoreAttemptFinishedEventCallback
 --
-GemaScoreManager.onScoreAttemptFinishedEventCallback = nil
+GemaScoreManager.onValidScoreAttemptFinishedEventCallback = nil
+
+---
+-- The EventCallback for the "invalidScoreAttemptFinished" event of the ScoreAttemptManager
+--
+-- @tfield EventCallback onInvalidScoreAttemptFinishedEventCallback
+--
+GemaScoreManager.onInvalidScoreAttemptFinishedEventCallback = nil
 
 ---
 -- GemaScoreManager constructor.
@@ -77,7 +83,7 @@ GemaScoreManager.onScoreAttemptFinishedEventCallback = nil
 function GemaScoreManager:new(_mapTopManagerOptions, _serverTopManagerOptions)
   BaseExtension.new(self, "GemaScoreManager", "GemaGameMode")
 
-  self.scoreAttemptManager = ScoreAttemptManager(ScoreAttemptCollection())
+  self.scoreAttemptManager = ScoreAttemptManager()
 
   local mapTopManagerOptions = _mapTopManagerOptions or {}
   local mapScoreStorage = MapScoreStorage()
@@ -96,7 +102,8 @@ function GemaScoreManager:new(_mapTopManagerOptions, _serverTopManagerOptions)
     mapScoreStorage, serverTopContexts, mergeServerScoresByPlayerName, mapScorePointsProvider
   )
 
-  self.onScoreAttemptFinishedEventCallback = EventCallback({ object = self, methodName = "onScoreAttemptFinished" })
+  self.onValidScoreAttemptFinishedEventCallback = EventCallback({ object = self, methodName = "onValidScoreAttemptFinished" })
+  self.onInvalidScoreAttemptFinishedEventCallback = EventCallback({ object = self, methodName = "onInvalidScoreAttemptFinished" })
 
 end
 
@@ -138,7 +145,8 @@ end
 --
 function GemaScoreManager:initialize()
 
-  self.scoreAttemptManager:getScoreAttemptCollection():on("scoreAttemptFinished", self.onScoreAttemptFinishedEventCallback)
+  self.scoreAttemptManager:on("validScoreAttemptFinished", self.onValidScoreAttemptFinishedEventCallback)
+  self.scoreAttemptManager:on("invalidScoreAttemptFinished", self.onInvalidScoreAttemptFinishedEventCallback)
   self.scoreAttemptManager:initialize()
 
   self.mapTopManager:initialize()
@@ -153,7 +161,8 @@ end
 --
 function GemaScoreManager:terminate()
 
-  self.scoreAttemptManager:getScoreAttemptCollection():off("scoreAttemptFinished", self.onScoreAttemptFinishedEventCallback)
+  self.scoreAttemptManager:off("validScoreAttemptFinished", self.onValidScoreAttemptFinishedEventCallback)
+  self.scoreAttemptManager:off("invalidScoreAttemptFinished", self.onInvalidScoreAttemptFinishedEventCallback)
   self.scoreAttemptManager:terminate()
 
   self.mapTopManager:terminate()
@@ -167,27 +176,52 @@ end
 -- Event Handlers
 
 ---
--- Event handler that is called when a ScoreAttempt was finished.
+-- Event handler that is called when a valid ScoreAttempt was finished.
 --
 -- @tparam int _cn The client number of the player whose ScoreAttempt was finished
 -- @tparam ScoreAttempt _scoreAttempt The player's finished ScoreAttempt
 --
-function GemaScoreManager:onScoreAttemptFinished(_cn, _scoreAttempt)
+function GemaScoreManager:onValidScoreAttemptFinished(_cn, _scoreAttempt)
+  self.mapTopManager:addMapScore(
+    self:generateMapScoreFromScoreAttempt(_cn, _scoreAttempt)
+  )
+end
+
+---
+-- Event handler that is called when an invalid  ScoreAttempt was finished.
+--
+-- @tparam int _cn The client number of the player whose ScoreAttempt was finished
+-- @tparam ScoreAttempt _scoreAttempt The player's finished ScoreAttempt
+-- @tparam string _scoreAttemptNotValidReason The reason why the ScoreAttempt is not valid
+--
+function GemaScoreManager:onInvalidScoreAttemptFinished(_cn, _scoreAttempt, _scoreAttemptNotValidReason)
+  self:emit(
+    "invalidScoreAttemptFinished",
+    self:generateMapScoreFromScoreAttempt(_cn, _scoreAttempt),
+    _scoreAttemptNotValidReason
+  )
+end
+
+
+-- Private Methods
+
+---
+-- Generates and returns a MapScore from a given ScoreAttempt.
+--
+-- @tparam int _cn The client number of the player to which the ScoreAttempt belongs
+-- @tparam ScoreAttempt _scoreAttempt The ScoreAttempt to generate a MapScore from
+--
+-- @treturn MapScore The generated MapScore
+--
+function GemaScoreManager:generateMapScoreFromScoreAttempt(_cn, _scoreAttempt)
 
   local player = Server.getInstance():getPlayerList():getPlayerByCn(_cn)
-  local mapScore = MapScore(
+  return MapScore(
     ObjectUtils.clone(player), -- Clone the Player to prevent name changes from affecting the MapTop
     _scoreAttempt:getDuration(),
     _scoreAttempt:getWeaponId(),
     _scoreAttempt:getTeamId()
   )
-
-  local isMapScoreValid = (_scoreAttempt:getDidStealFlag() == true)
-  if (isMapScoreValid) then
-    self.mapTopManager:addMapScore(mapScore)
-  else
-    self:emit("invalidScoreAttemptFinished", mapScore)
-  end
 
 end
 

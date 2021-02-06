@@ -130,10 +130,11 @@ end
 -- Event handler that is called when a Player's finished ScoreAttempt is invalid.
 --
 -- @tparam MapScore _mapScore The MapScore that would have been added for the Player if the ScoreAttempt was valid
+-- @tparam string _scoreAttemptNotValidReason The reason why the ScoreAttempt is not valid
 --
-function ScoreAttemptScoreOutput:onInvalidScoreAttemptFinished(_mapScore)
+function ScoreAttemptScoreOutput:onInvalidScoreAttemptFinished(_mapScore, _scoreAttemptNotValidReason)
   -- The previous MapScore is set to nil because the difference to it is not shown
-  self:outputMapScore(_mapScore, nil, false, false)
+  self:outputMapScore(_mapScore, nil, false, false, _scoreAttemptNotValidReason)
 end
 
 
@@ -146,8 +147,9 @@ end
 -- @tparam MapScore|nil _previousMapScore The previous MapScore for the score Player to calculate differences to
 -- @tparam bool _isValid True if the MapScore is valid, false otherwise
 -- @tparam bool _isHiddenMapScore True if the MapScore is a hidden MapScore, false otherwise
+-- @tparam string|nil _mapScoreNotValidReason The reason why the MapScore is not valid (if _isValid is false)
 --
-function ScoreAttemptScoreOutput:outputMapScore(_mapScore, _previousMapScore, _isValid, _isHiddenMapScore)
+function ScoreAttemptScoreOutput:outputMapScore(_mapScore, _previousMapScore, _isValid, _isHiddenMapScore, _mapScoreNotValidReason)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
   local mainMapTop = gemaScoreManager:getMapTopManager():getMapTop("main")
@@ -183,7 +185,8 @@ function ScoreAttemptScoreOutput:outputMapScore(_mapScore, _previousMapScore, _i
       totalNumberOfMapScores = totalNumberOfMapScores,
       differenceToOwnBestTime = differenceToPreviousScore,
       differenceToBestTime = differenceToFirstRank,
-      isMapScoreValid = _isValid
+      isMapScoreValid = _isValid,
+      mapScoreNotValidReason = _mapScoreNotValidReason
     }
   )
 
