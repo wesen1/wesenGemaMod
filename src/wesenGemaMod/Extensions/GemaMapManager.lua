@@ -15,6 +15,7 @@ local MapNameChecker = require "Map.MapNameChecker"
 local MapRecord = require "ORM.Models.MapRecord"
 local path = require "pl.path"
 local ServerEventListener = require "AC-LuaServer.Core.ServerEvent.ServerEventListener"
+local tablex = require "pl.tablex"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
 
 ---
@@ -46,11 +47,11 @@ GemaMapManager.serverEventListeners = {
 GemaMapManager.mapNameChecker = nil
 
 ---
--- The total number of gema maps that are currently available on the server
+-- The names of all gema maps that are currently available on this server
 --
--- @tfield int numberOfGemaMaps
+-- @tfield string[] gemaMapNames
 --
-GemaMapManager.numberOfGemaMaps = nil
+GemaMapManager.gemaMapNames = nil
 
 
 ---
@@ -59,7 +60,7 @@ GemaMapManager.numberOfGemaMaps = nil
 function GemaMapManager:new()
   self.super.new(self, "GemaMapManager", "Server")
   self.mapNameChecker = MapNameChecker()
-  self.numberOfGemaMaps = 0
+  self.gemaMapNames = {}
 end
 
 
@@ -71,7 +72,16 @@ end
 -- @treturn int The total number of gema maps
 --
 function GemaMapManager:getNumberOfGemaMaps()
-  return self.numberOfGemaMaps
+  return #self.gemaMapNames
+end
+
+---
+-- Returns the names of all gema maps that are currently available on this server.
+--
+-- @treturn string The names of all gema maps that are currently available on this server
+--
+function GemaMapManager:getGemaMapNames()
+  return self.gemaMapNames
 end
 
 
@@ -87,10 +97,10 @@ function GemaMapManager:initialize()
   LuaServerApi:on("after_removemap", EventCallback({ object = self, methodName = "onMapRemoved" }))
 
   -- Count the initial number of gema maps
-  self.numberOfGemaMaps = 0
+  self.gemaMapNames = {}
   for _, mapName in ipairs(LuaServerApi.getservermaps()) do
     if (self.mapNameChecker:isGemaMapName(mapName)) then
-      self.numberOfGemaMaps = self.numberOfGemaMaps + 1
+      table.insert(self.gemaMapNames, mapName)
     end
   end
 end
@@ -135,7 +145,7 @@ function GemaMapManager:onPlayerSendMap(_mapName, _cn, _revision, _mapSize, _cfg
           uploaded_at = os.time()
       }):save()
 
-      self.numberOfGemaMaps = self.numberOfGemaMaps + 1
+      table.insert(self.gemaMapNames, _mapName)
       self:emit("onGemaMapUploaded", _mapName)
 
     else
@@ -202,7 +212,11 @@ end
 function GemaMapManager:onMapRemoved(_mapName)
 
   if (self.mapNameChecker:isGemaMapName(_mapName)) then
-    self.numberOfGemaMaps = self.numberOfGemaMaps - 1
+    local gemaMapNameIndex = tablex.find(self.gemaMapNames, _mapName)
+    if (gemaMapNameIndex ~= nil) then
+      self.gemaMapNames = tablex.removevalues(self.gemaMapNames, gemaMapNameIndex, gemaMapNameIndex)
+    end
+
     self:emit("onGemaMapRemoved", _mapName)
   end
 
