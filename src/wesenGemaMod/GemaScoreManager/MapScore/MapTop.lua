@@ -72,6 +72,7 @@ end
 --
 function MapTop:terminate()
   self.scoreList:clear()
+  self.mapName = nil
 end
 
 
