@@ -45,7 +45,7 @@ return {
     },
     "Extensions.GemaMapManager",
     "Extensions.MapStatisticsPrinter",
-    "Extensions.GemaMapRotationManager.GemaMapRotationManager",
+    "Extensions.GemaMapRotationManager",
 
     "CommandManager.CommandManager",
     "Commands.CmdsCommand",
