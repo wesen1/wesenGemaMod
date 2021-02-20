@@ -23,7 +23,11 @@
   <whitespace>
   server score is
   {* colors.serverScorePoints *} {* serverScore:getPoints() *}
-  {* colors.serverScoreInfo *} points
+  {* colors.serverScoreInfo *} point
+
+  {% if (serverScore:getPoints() ~= 1) then %}
+    s
+  {% end %}
 
   {* colors.serverScoreInfo *}
   <whitespace>

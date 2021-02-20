@@ -4,7 +4,7 @@
  #
  # @tparam string[] colors The list of colors
  # @tparam int startRank The start rank
- # @tparam int numberOfDisplayRecords The number of displayed records
+ # @tparam int numberOfDisplayedScores The number of displayed ServerScore's
  #}
 
 {* colors.serverTopInfo *}Server top rank

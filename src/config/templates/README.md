@@ -33,18 +33,21 @@ Additionally they can be split into rows and columns by using these tags:
 #### Row separator ####
 
 * At least 2x "_" followed by ";"
+* Optional: A leading "|" if the content before the tag is variable and may end with "_"
 * The text will be split into rows at a row separator
 * Example: `_____________;`
 
 #### Column separator ####
 
 * At least 2x "-" followed by ";"
+* Optional: A leading "|" if the content before the tag is variable and may end with "-"
 * The text inside a row will be split into columns at a column separator
 * Example: `-------------;`
 
 #### Field Tag ####
 
 * At least 2x "-" followed by "[FIELD]" or "[ENDFIELD]" and ending with zero or more "_" and ";"
+* Optional: A leading "|" if the content before the tag is variable and may end with "-"
 * This will force the contents between the opening and closing field tag into a single row field in the current row
 * Example: `------[FIELD]------;`, `------[ENDFIELD]------;`
 
