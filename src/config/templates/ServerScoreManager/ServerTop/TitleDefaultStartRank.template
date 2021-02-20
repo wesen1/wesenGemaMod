@@ -3,20 +3,20 @@
  # The result is "The x best player(s) on this server is/are:".
  #
  # @tparam string[] colors The list of colors
- # @tparam int numberOfDisplayRecords The number of displayed records
+ # @tparam int numberOfDisplayedScores The number of displayed ServerScore's
  #}
 
 {* colors.serverTopInfo *}The
 {* colors.serverTopNumberOfRecords *} {* numberOfDisplayedScores *}
 {* colors.serverTopInfo *} best player
-{% if (numberOfDisplayRecords ~= 1) then %}
+{% if (numberOfDisplayedScores ~= 1) then %}
   s
 {% end %}
 <whitespace>
 on this server
 <whitespace>
 
-{% if (numberOfDisplayRecords == 1) then %}
+{% if (numberOfDisplayedScores == 1) then %}
   is
 {% else %}
   are
