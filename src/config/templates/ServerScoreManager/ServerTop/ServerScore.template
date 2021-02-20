@@ -25,7 +25,13 @@
 
 {* colors.serverScorePoints *}
 {* string.format("%0" .. maxPointsLength .. "d", serverScore:getPoints()) *}
-{* colors.serverScoreInfo *} points
+{* colors.serverScoreInfo *} point
+
+{% if (serverScore:getPoints() == 1) then %}
+  <whitespace>
+{% else %}
+  s
+{% end %}
 
 <whitespace>
 {* colors.serverScoreInfo *}
