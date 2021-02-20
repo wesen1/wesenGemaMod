@@ -20,7 +20,7 @@
 
       {* colors.latestGemaMapsNumber *}{* i *})
       {* colors.gemaMapName *} {* map.name *}
-      -------------------------------------------------;
+      |-------------------------------------------------;
 
       {* colors.latestGemaMapsText *}Uploaded on
       <whitespace>
@@ -42,7 +42,7 @@
       {% else %}
         {* colors.latestGemaMapsUnknownUploader *}server admin
       {% end %}
-      _________________________________________________;
+      |_________________________________________________;
 
     {% end %}
     ----------[ENDFIELD]----------;
