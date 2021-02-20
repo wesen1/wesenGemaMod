@@ -55,7 +55,7 @@ function GemaMapRotationManager:initialize()
   gemaMapManager:on("onGemaMapRemoved", self.onGemaMapRemovedEventCallback)
 
   local mapRotation = Server.getInstance():getMapRotation()
-  mapRotation:changeMapRotationConfigFile("config/maprot_gema.cfg", false)
+  mapRotation:changeMapRotationConfigFile("config/maprot_gema.cfg", true)
   self:generateInitialGemaMapRot(mapRotation)
 
   local output = Server.getInstance():getOutput()
