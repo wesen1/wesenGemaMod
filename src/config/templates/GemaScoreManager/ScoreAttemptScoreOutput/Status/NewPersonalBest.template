@@ -15,7 +15,9 @@
 
 {* colors.mapRecordInfo *}
 (
-  {% if (differenceToOwnBestTime ~= nil and differenceToOwnBestTime ~= differenceToBestTime) then %}
+  {% if (differenceToOwnBestTime ~= nil and (mapScore:getRank() ~= 1 or differenceToOwnBestTime ~= differenceToBestTime)) then %}
+    {# It's not the previous 1st player that improved his score, show the difference #}
+
     {* colors.newBestTimeString *}
     Improved by
     <whitespace>
@@ -24,7 +26,7 @@
       {
         colors = colors,
         timeFormatter = timeFormatter,
-        differenceInMilliseconds = differenceToOwnBestTime
+        differenceInMilliseconds = differenceToOwnBestTime * -1
       }
     ]}
 

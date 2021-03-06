@@ -170,9 +170,6 @@ function ScoreAttemptScoreOutput:outputMapScore(_mapScore, _previousMapScore, _i
     local bestMapScore = self:findBestMapScore(_mapScore, _previousMapScore, mainMapTop)
     if (bestMapScore) then
       differenceToFirstRank = _mapScore:getMilliseconds() - bestMapScore:getMilliseconds()
-      if (_mapScore:getRank() == 1) then
-        differenceToFirstRank = differenceToFirstRank * -1
-      end
     end
 
   end
