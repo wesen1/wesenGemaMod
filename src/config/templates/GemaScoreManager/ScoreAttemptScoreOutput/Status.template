@@ -23,7 +23,7 @@
       colors = colors,
       mapScore = mapScore,
       totalNumberOfMapScores = totalNumberOfMapScores,
-      differenceToOwnBestTime = (differenceToOwnBestTime ~= nil and differenceToOwnBestTime * -1 or nil),
+      differenceToOwnBestTime = differenceToOwnBestTime,
       differenceToBestTime = differenceToBestTime
     }
   ]}

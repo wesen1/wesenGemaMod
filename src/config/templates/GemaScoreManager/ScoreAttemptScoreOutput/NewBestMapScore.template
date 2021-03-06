@@ -25,7 +25,7 @@
     {
       colors = colors,
       timeFormatter = timeFormatter,
-      differenceInMilliseconds = differenceToBestTime
+      differenceInMilliseconds = differenceToBestTime * -1
     }
   ]}
 
