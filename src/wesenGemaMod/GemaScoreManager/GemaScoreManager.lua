@@ -103,7 +103,7 @@ function GemaScoreManager:new(_mapTopManagerOptions, _serverTopManagerOptions)
   local mergeMapScoresByPlayerName = mapTopManagerOptions["mergeScoresByPlayerName"]
   self.mapTopManager = MapTopManager(mapScoreStorage, self.scoreContextProvider, mapTopContexts, mergeMapScoresByPlayerName)
 
-  self.mapScoreSaver = MapScoreSaver(mapScoreStorage)
+  self.mapScoreSaver = MapScoreSaver(mapScoreStorage, self.scoreContextProvider)
   self.scoreAttemptScoreOutput = ScoreAttemptScoreOutput()
 
   local serverTopManagerOptions = _serverTopManagerOptions or {}

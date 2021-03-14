@@ -114,6 +114,8 @@ function MapTopManager:addMapScore(_mapScore)
   for _, mapTop in pairs(self:getMapTops()) do
     mapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(ObjectUtils.clone(_mapScore))
   end
+
+  self:emit("mapScoreProcessed", _mapScore)
 end
 
 ---
