@@ -21,13 +21,22 @@ local ScoreManager = Object:extend()
 --
 ScoreManager.scoreListManagers = nil
 
+---
+-- The ScoreContextProvider that will be used to interpret score contexts
+--
+-- @tfield ScoreContextProvider scoreContextProvider
+--
+ScoreManager.scoreContextProvider = nil
+
 
 ---
 -- ScoreManager constructor.
 --
+-- @tparam ScoreContextProvider _scoreContextProvider The ScoreContextProvider to use
 -- @tparam string[] _contexts The contexts to create ScoreListManager's for
 --
-function ScoreManager:new(_contexts)
+function ScoreManager:new(_scoreContextProvider, _contexts)
+  self.scoreContextProvider = _scoreContextProvider
   self.scoreListManagers = {}
 
   for _, context in ipairs(_contexts) do

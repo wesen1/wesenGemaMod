@@ -6,7 +6,9 @@
 --
 
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local MapScoreStorage = require "GemaScoreManager.MapScoreStorage"
 local Object = require "classic"
+local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 
 ---
@@ -24,37 +26,46 @@ local MapScoreSaver = Object:extend()
 MapScoreSaver.mapScoreStorage = nil
 
 ---
--- The last saved MapScore
+-- The ID's of the weapons for which own MapTop's exist
 --
--- @tfield MapScore lastSavedMapScore
+-- @tfield int[] weaponIdsWithOwnMapTops
 --
-MapScoreSaver.lastSavedMapScore = nil
+MapScoreSaver.weaponIdsWithOwnMapTops = nil
 
 ---
--- The EventCallback for the "mapScoreAdded" event of the MapTop's
+-- The last score contexts for which a "mapScoreAdded" or "hiddenMapScoreAdded" event was fired
 --
--- @tfield EventCallback onMapScoreAddedEventCallback
+-- @tfield int[] lastMapScoreAddedContexts
 --
-MapScoreSaver.onMapScoreAddedEventCallback = nil
+MapScoreSaver.lastMapScoreAddedContexts = nil
 
 ---
--- The EventCallback for the "hiddenMapScoreAdded" event of the MapTop's
+-- The EventCallbacks for the "mapScoreAdded" and "hiddenMapScoreAdded" events of the MapTop's
+-- This list is in the format { <score context> = <EventCallback>, ... }
 --
--- @tfield EventCallback onHiddenMapScoreAddedEventCallback
+-- @tfield EventCallback[] onMapScoreAddedToMapTopEventCallbacks
 --
-MapScoreSaver.onHiddenMapScoreAddedEventCallback = nil
+MapScoreSaver.onMapScoreAddedToMapTopEventCallbacks = nil
+
+---
+-- The EventCallback for the "mapScoreProcessed" event of the MapTopManager
+--
+-- @tfield EventCallback onMapScoreProcessedEventCallback
+--
+MapScoreSaver.onMapScoreProcessedEventCallback = nil
 
 
 ---
 -- MapScoreSaver constructor.
 --
 -- @tparam MapScoreStorage _mapScoreStorage The MapScoreStorage to use
+-- @tparam ScoreContextProvider _scoreContextProvider The ScoreContextProvider to use to interpret score contexts
 --
-function MapScoreSaver:new(_mapScoreStorage)
+function MapScoreSaver:new(_mapScoreStorage, _scoreContextProvider)
   self.mapScoreStorage = _mapScoreStorage
+  self.scoreContextProvider = _scoreContextProvider
 
-  self.onMapScoreAddedEventCallback = EventCallback({ object = self, methodName = "onMapScoreAdded" })
-  self.onHiddenMapScoreAddedEventCallback = EventCallback({ object = self, methodName = "onHiddenMapScoreAdded" })
+  self.onMapScoreProcessedEventCallback = EventCallback({ object = self, methodName = "onMapScoreProcessed" })
 end
 
 
@@ -65,9 +76,26 @@ end
 --
 function MapScoreSaver:initialize(_mapTopManager)
 
+  self.weaponIdsWithOwnMapTops = {}
+  self.lastMapScoreAddedContexts = {}
+
+  _mapTopManager:on("mapScoreProcessed", self.onMapScoreProcessedEventCallback)
+
+  self.onMapScoreAddedToMapTopEventCallbacks = {}
   for context, mapTop in pairs(_mapTopManager:getMapTops()) do
-    mapTop:on("mapScoreAdded", self.onMapScoreAddedEventCallback)
-    mapTop:on("hiddenMapScoreAdded", self.onHiddenMapScoreAddedEventCallback)
+
+    if (self.scoreContextProvider:isWeaponScoreContext(context)) then
+      table.insert(self.weaponIdsWithOwnMapTops, self.scoreContextProvider:scoreContextToWeaponId(context))
+    end
+
+    self.onMapScoreAddedToMapTopEventCallbacks[context] = EventCallback({
+        object = self,
+        methodName = "onMapScoreAddedToMapTop",
+        additionalParameters = { [1] = { context } }
+    })
+
+    mapTop:on("mapScoreAdded", self.onMapScoreAddedToMapTopEventCallbacks[context])
+    mapTop:on("hiddenMapScoreAdded", self.onMapScoreAddedToMapTopEventCallbacks[context])
   end
 
 end
@@ -80,9 +108,12 @@ end
 function MapScoreSaver:terminate(_mapTopManager)
 
   for context, mapTop in pairs(_mapTopManager:getMapTops()) do
-    mapTop:off("mapScoreAdded", self.onMapScoreAddedEventCallback)
-    mapTop:off("hiddenMapScoreAdded", self.onHiddenMapScoreAddedEventCallback)
+    mapTop:off("mapScoreAdded", self.onMapScoreAddedToMapTopEventCallbacks[context])
+    mapTop:off("hiddenMapScoreAdded", self.onMapScoreAddedToMapTopEventCallbacks[context])
   end
+  self.onMapScoreAddedToMapTopEventCallbacks = {}
+
+  _mapTopManager:off("mapScoreProcessed", self.onMapScoreProcessedEventCallback)
 
 end
 
@@ -92,19 +123,20 @@ end
 ---
 -- Event handler that is called when a MapScore was added to one of the MapTop's.
 --
--- @tparam MapScore _newMapScore The MapScore that was added
+-- @tparam string _context The context of the MapTop to which the MapScore was added
 --
-function MapScoreSaver:onMapScoreAdded(_newMapScore)
-  self:saveMapScore(_newMapScore)
+function MapScoreSaver:onMapScoreAddedToMapTop(_context)
+  table.insert(self.lastMapScoreAddedContexts, _context)
 end
 
 ---
--- Event handler that is called when a hidden MapScore was added to one of the MapTop's.
+-- Event handler that is called when a MapScore was processed by the MapTopManager.
 --
--- @tparam MapScore _newMapScore The hidden MapScore that was added
---
-function MapScoreSaver:onHiddenMapScoreAdded(_newMapScore)
-  self:saveMapScore(_newMapScore)
+function MapScoreSaver:onMapScoreProcessed(_mapScore)
+  if (#self.lastMapScoreAddedContexts > 0) then
+    self:saveMapScore(_mapScore, self.lastMapScoreAddedContexts)
+    self.lastMapScoreAddedContexts = {}
+  end
 end
 
 
@@ -114,16 +146,41 @@ end
 -- Saves a given MapScore.
 --
 -- @tparam MapScore _newMapScore The MapScore to save
+-- @tparam string[] _addedForContexts The score contexts for which the MapScore was added to the MapTop's
 --
-function MapScoreSaver:saveMapScore(_newMapScore)
+function MapScoreSaver:saveMapScore(_newMapScore, _addedForContexts)
 
-  if (self.lastSavedMapScore == _newMapScore) then
-    return
+  local wasAddedToMainMapTop = false
+  local wasAddedToWeaponMapTop = false
+  for _, context in ipairs(_addedForContexts) do
+    if (context == ScoreContextProvider.CONTEXT_MAIN) then
+      wasAddedToMainMapTop = true
+    elseif (self.scoreContextProvider:isWeaponScoreContext(context)) then
+      wasAddedToWeaponMapTop = true
+    end
   end
 
   local mapName = Server.getInstance():getGameHandler():getCurrentGame():getMapName()
-  self.mapScoreStorage:saveMapScore(_newMapScore, mapName)
-  self.lastSavedMapScore = _newMapScore
+  local filterWeaponIds, filterMode
+
+  if (wasAddedToWeaponMapTop) then
+    -- The MapScore was added to a weapon specific MapTop, replace only the best
+    -- personal MapScore for that weapon if one exists
+    filterWeaponIds = { _newMapScore:getWeaponId() }
+    filterMode = MapScoreStorage.SAVE_WEAPON_FILTER_MODE_MATCHES
+
+  elseif (wasAddedToMainMapTop) then
+    -- The MapScore was only added to the main MapTop, make sure to not overwrite slower personal MapScore's
+    -- that are managed by weapon specific MapTop's
+    filterWeaponIds = self.weaponIdsWithOwnMapTops
+    filterMode = MapScoreStorage.SAVE_WEAPON_FILTER_MODE_NOT_MATCHES
+
+  else
+    -- The MapScore was neither added to the main MapTop nor to a weapon specific MapTop, ignore it
+    return
+  end
+
+  self.mapScoreStorage:saveMapScore(_newMapScore, mapName, filterWeaponIds, filterMode)
 
 end
 

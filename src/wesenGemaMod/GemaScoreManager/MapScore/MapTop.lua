@@ -30,16 +30,26 @@ MapTop.mapName = nil
 --
 MapTop.mapScoreStorage = nil
 
+---
+-- The ID of the weapon for which this MapTop manages MapScore's
+-- If nil the MapTop will manage the fastest times per player
+--
+-- @tfield int|nil weaponId
+--
+MapTop.weaponId = nil
+
 
 ---
 -- MapTop constructor.
 --
 -- @tparam MapScoreList _mapScoreList The MapScoreList to use
 -- @tparam MapScoreStorage _mapScoreStorage The MapScoreStorage to use
+-- @tparam int|nil _weaponId The ID of the weapon for which to manage MapScore's
 --
-function MapTop:new(_mapScoreList, _mapScoreStorage)
+function MapTop:new(_mapScoreList, _mapScoreStorage, _weaponId)
   ScoreListManager.new(self, _mapScoreList)
   self.mapScoreStorage = _mapScoreStorage
+  self.weaponId = _weaponId
 
   -- EventEmitter
   self.eventCallbacks = {}
@@ -88,7 +98,7 @@ function MapTop:loadMapScores(_mapName)
     self.scoreList:clear()
 
     local numberOfSkippedMapScores = 0
-    for mapScore in self.mapScoreStorage:loadMapScores(self.mapName) do
+    for mapScore in self.mapScoreStorage:loadMapScores(self.mapName, self.weaponId) do
 
       if (self.scoreList:getScoreByPlayer(mapScore:getPlayer()) == nil) then
         mapScore:setRank(mapScore:getRank() - numberOfSkippedMapScores)
@@ -110,6 +120,11 @@ end
 -- @tparam MapScore _mapScore The MapScore to check
 --
 function MapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(_mapScore)
+
+  if (self.weaponId ~= nil and _mapScore:getWeaponId() ~= self.weaponId) then
+    -- Ignore MapScore's with a different weapon ID than the one of this MapTop
+    return
+  end
 
   local previousMapScore = self.scoreList:getScoreByPlayer(_mapScore:getPlayer())
   local previousHiddenMapScore = self.scoreList:getHiddenMapScoreByPlayer(_mapScore:getPlayer())

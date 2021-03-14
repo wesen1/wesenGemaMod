@@ -7,6 +7,7 @@
 
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local Object = require "classic"
+local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 
 ---
@@ -68,7 +69,7 @@ end
 --
 function ScoreAttemptScoreOutput:initialize(_gemaScoreManager)
 
-  local mainMapTop = _gemaScoreManager:getMapTopManager():getMapTop("main")
+  local mainMapTop = _gemaScoreManager:getMapTopManager():getMapTop(ScoreContextProvider.CONTEXT_MAIN)
 
   mainMapTop:on("mapScoreAdded", self.onMapScoreAddedEventCallback)
   mainMapTop:on("hiddenMapScoreAdded", self.onHiddenMapScoreAddEventCallback)
@@ -84,7 +85,7 @@ end
 --
 function ScoreAttemptScoreOutput:terminate(_gemaScoreManager)
 
-  local mainMapTop = _gemaScoreManager:getMapTopManager():getMapTop("main")
+  local mainMapTop = _gemaScoreManager:getMapTopManager():getMapTop(ScoreContextProvider.CONTEXT_MAIN)
 
   mainMapTop:off("mapScoreAdded", self.onMapScoreAddedEventCallback)
   mainMapTop:off("hiddenMapScoreAdded", self.onHiddenMapScoreAddEventCallback)
@@ -152,7 +153,7 @@ end
 function ScoreAttemptScoreOutput:outputMapScore(_mapScore, _previousMapScore, _isValid, _isHiddenMapScore, _mapScoreNotValidReason)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local mainMapTop = gemaScoreManager:getMapTopManager():getMapTop("main")
+  local mainMapTop = gemaScoreManager:getMapTopManager():getMapTop(ScoreContextProvider.CONTEXT_MAIN)
 
   -- Fetch the total number of MapScore's (including the new MapScore)
   local totalNumberOfMapScores = mainMapTop:getScoreList():getNumberOfScores()

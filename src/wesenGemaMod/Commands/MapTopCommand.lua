@@ -7,6 +7,7 @@
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
+local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
@@ -74,7 +75,7 @@ end
 function MapTopCommand:execute(_player, _arguments)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local mapScoreList = gemaScoreManager:getMapTopManager():getMapTop("main"):getScoreList()
+  local mapScoreList = gemaScoreManager:getMapTopManager():getMapTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
 
   local numberOfScores = mapScoreList:getNumberOfScores()
 

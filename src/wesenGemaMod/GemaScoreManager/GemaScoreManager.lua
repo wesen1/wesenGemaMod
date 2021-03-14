@@ -15,6 +15,7 @@ local MapScorePointsProvider = require "GemaScoreManager.ServerScore.MapScorePoi
 local ObjectUtils = require "Util.ObjectUtils"
 local ScoreAttemptManager = require "GemaScoreManager.ScoreAttempt.ScoreAttemptManager"
 local ScoreAttemptScoreOutput = require "GemaScoreManager.ScoreAttemptScoreOutput"
+local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 local ServerTopManager = require "GemaScoreManager.ServerScore.ServerTopManager"
 
@@ -31,6 +32,13 @@ local GemaScoreManager = BaseExtension:extend()
 -- @tfield ScoreAttemptManager scoreAttemptManager
 --
 GemaScoreManager.scoreAttemptManager = nil
+
+---
+-- The ScoreContextProvider
+--
+-- @tfield ScoreContextProvider scoreContextProvider
+--
+GemaScoreManager.scoreContextProvider = nil
 
 ---
 -- The MapTopManager
@@ -84,22 +92,29 @@ function GemaScoreManager:new(_mapTopManagerOptions, _serverTopManagerOptions)
   BaseExtension.new(self, "GemaScoreManager", "GemaGameMode")
 
   self.scoreAttemptManager = ScoreAttemptManager()
+  self.scoreContextProvider = ScoreContextProvider()
+  self.scoreContextProvider:initialize()
 
   local mapTopManagerOptions = _mapTopManagerOptions or {}
   local mapScoreStorage = MapScoreStorage()
-  local mapTopContexts = mapTopManagerOptions["contexts"] or { "main" }
+  local mapTopContexts = self.scoreContextProvider:getScoreContextsByAliases(
+    _mapTopManagerOptions["contexts"] or { "main" }
+  )
   local mergeMapScoresByPlayerName = mapTopManagerOptions["mergeScoresByPlayerName"]
-  self.mapTopManager = MapTopManager(mapScoreStorage, mapTopContexts, mergeMapScoresByPlayerName)
+  self.mapTopManager = MapTopManager(mapScoreStorage, self.scoreContextProvider, mapTopContexts, mergeMapScoresByPlayerName)
 
-  self.mapScoreSaver = MapScoreSaver(mapScoreStorage)
+  self.mapScoreSaver = MapScoreSaver(mapScoreStorage, self.scoreContextProvider)
   self.scoreAttemptScoreOutput = ScoreAttemptScoreOutput()
 
   local serverTopManagerOptions = _serverTopManagerOptions or {}
-  local serverTopContexts = serverTopManagerOptions["contexts"] or { "main" }
+  local serverTopContexts = self.scoreContextProvider:getScoreContextsByAliases(
+    _serverTopManagerOptions["contexts"] or { "main" }
+  )
+
   local mergeServerScoresByPlayerName = serverTopManagerOptions["mergeScoresByPlayerName"]
   local mapScorePointsProvider = serverTopManagerOptions["mapScorePointsProvider"] or MapScorePointsProvider()
   self.serverTopManager = ServerTopManager(
-    mapScoreStorage, serverTopContexts, mergeServerScoresByPlayerName, mapScorePointsProvider
+    mapScoreStorage, self.scoreContextProvider, serverTopContexts, mergeServerScoresByPlayerName, mapScorePointsProvider
   )
 
   self.onValidScoreAttemptFinishedEventCallback = EventCallback({ object = self, methodName = "onValidScoreAttemptFinished" })
