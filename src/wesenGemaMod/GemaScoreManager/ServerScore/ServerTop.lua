@@ -32,6 +32,14 @@ ServerTop.mapScoreStorage = nil
 ServerTop.mapScorePointsProvider = nil
 
 ---
+-- The ID of the weapon for which this ServerTop processes MapScore's
+-- If nil the ServerTop will process all MapScore's
+--
+-- @tfield int|nil weaponId
+--
+ServerTop.weaponId = nil
+
+---
 -- The target MapTop whose added MapScore's will be added to this ServerTop
 --
 -- @tfield MapTop targetMapTop
@@ -59,12 +67,14 @@ ServerTop.onMapScoreAddedEventCallback = nil
 -- @tparam ServerScoreList _serverScoreList The ServerScoreList to use
 -- @tparam MapScoreStorage _mapScoreStorage The MapScoreStorage to use
 -- @tparam MapScorePointsProvider _mapScorePointsProvider The MapScorePointsProvider to use
+-- @tparam int|nil The ID of the weapon for which to process MapScore's
 --
-function ServerTop:new(_serverScoreList, _mapScoreStorage, _mapScorePointsProvider)
+function ServerTop:new(_serverScoreList, _mapScoreStorage, _mapScorePointsProvider, _weaponId)
   ScoreListManager.new(self, _serverScoreList)
 
   self.mapScoreStorage = _mapScoreStorage
   self.mapScorePointsProvider = _mapScorePointsProvider
+  self.weaponId = _weaponId
   self.isInitialized = false
   self.onMapScoreAddedEventCallback = EventCallback({ object = self, methodName = "onMapScoreAdded" })
 end

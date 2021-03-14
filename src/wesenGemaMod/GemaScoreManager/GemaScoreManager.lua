@@ -107,11 +107,14 @@ function GemaScoreManager:new(_mapTopManagerOptions, _serverTopManagerOptions)
   self.scoreAttemptScoreOutput = ScoreAttemptScoreOutput()
 
   local serverTopManagerOptions = _serverTopManagerOptions or {}
-  local serverTopContexts = serverTopManagerOptions["contexts"] or { "main" }
+  local serverTopContexts = self.scoreContextProvider:getScoreContextsByAliases(
+    _serverTopManagerOptions["contexts"] or { "main" }
+  )
+
   local mergeServerScoresByPlayerName = serverTopManagerOptions["mergeScoresByPlayerName"]
   local mapScorePointsProvider = serverTopManagerOptions["mapScorePointsProvider"] or MapScorePointsProvider()
   self.serverTopManager = ServerTopManager(
-    mapScoreStorage, serverTopContexts, mergeServerScoresByPlayerName, mapScorePointsProvider
+    mapScoreStorage, self.scoreContextProvider, serverTopContexts, mergeServerScoresByPlayerName, mapScorePointsProvider
   )
 
   self.onValidScoreAttemptFinishedEventCallback = EventCallback({ object = self, methodName = "onValidScoreAttemptFinished" })

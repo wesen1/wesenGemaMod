@@ -42,16 +42,17 @@ ServerTopManager.mergeScoresByPlayerName = nil
 -- ServerTopManager constructor.
 --
 -- @tparam MapScoreStorage _mapScoreStorage The MapScoreStorage to use
+-- @tparam ScoreContextProvider _scoreContextProvider The ScoreContextProvider to use
 -- @tparam string[] _contexts The contexts to create ScoreListManager's for
 -- @tparam bool _mergeScoresByPlayerName Whether to merge ServerScore's by player names
 -- @tparam MapScorePointsProvider|nil _mapScorePointsProvider The MapScorePointsProvider to use
 --
-function ServerTopManager:new(_mapScoreStorage, _contexts, _mergeScoresByPlayerName, _mapScorePointsProvider)
+function ServerTopManager:new(_mapScoreStorage, _scoreContextProvider, _contexts, _mergeScoresByPlayerName, _mapScorePointsProvider)
   self.mapScoreStorage = _mapScoreStorage
   self.mergeScoresByPlayerName = (_mergeScoresByPlayerName ~= false)
   self.mapScorePointsProvider = _mapScorePointsProvider
 
-  ScoreManager.new(self, _contexts)
+  ScoreManager.new(self, _scoreContextProvider, _contexts)
 end
 
 
@@ -99,13 +100,21 @@ end
 ---
 -- Creates and returns a ScoreListManager instance.
 --
+-- @tparam string _context The context to create the ScoreListManager for
+--
 -- @treturn ServerTop The created ScoreListManager instance
 --
-function ServerTopManager:createScoreListManager()
+function ServerTopManager:createScoreListManager(_context)
+  local weaponId
+  if (self.scoreContextProvider:isWeaponScoreContext(_context)) then
+    weaponId = self.scoreContextProvider:scoreContextToWeaponId(_context)
+  end
+
   return ServerTop(
     ServerScoreList(self.mergeScoresByPlayerName),
     self.mapScoreStorage,
-    self.mapScorePointsProvider
+    self.mapScorePointsProvider,
+    weaponId
   )
 end
 
