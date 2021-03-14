@@ -30,16 +30,26 @@ MapTop.mapName = nil
 --
 MapTop.mapScoreStorage = nil
 
+---
+-- The ID of the weapon for which this MapTop manages MapScore's
+-- If nil the MapTop will manage the fastest times per player
+--
+-- @tfield int|nil weaponId
+--
+MapTop.weaponId = nil
+
 
 ---
 -- MapTop constructor.
 --
 -- @tparam MapScoreList _mapScoreList The MapScoreList to use
 -- @tparam MapScoreStorage _mapScoreStorage The MapScoreStorage to use
+-- @tparam int|nil _weaponId The ID of the weapon for which to manage MapScore's
 --
-function MapTop:new(_mapScoreList, _mapScoreStorage)
+function MapTop:new(_mapScoreList, _mapScoreStorage, _weaponId)
   ScoreListManager.new(self, _mapScoreList)
   self.mapScoreStorage = _mapScoreStorage
+  self.weaponId = _weaponId
 
   -- EventEmitter
   self.eventCallbacks = {}

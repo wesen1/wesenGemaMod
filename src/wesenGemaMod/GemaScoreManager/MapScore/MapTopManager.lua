@@ -9,6 +9,7 @@ local EventEmitter = require "AC-LuaServer.Core.Event.EventEmitter"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
 local MapScoreList = require "GemaScoreManager.MapScore.MapScoreList"
 local MapTop = require "GemaScoreManager.MapScore.MapTop"
+local ObjectUtils = require "Util.ObjectUtils"
 local ScoreManager = require "GemaScoreManager.Score.ScoreManager"
 local Server = require "AC-LuaServer.Core.Server"
 
@@ -46,14 +47,15 @@ MapTopManager.onGameModeStaysEnabledAfterGameChangeEventCallback = nil
 -- MapTopManager constructor.
 --
 -- @tparam MapScoreStorage _mapScoreStorage The MapScoreStorage to use
+-- @tparam ScoreContextProvider _scoreContextProvider The ScoreContextProvider to use
 -- @tparam string[] _contexts The contexts to create ScoreListManager's for
 -- @tparam bool _mergeScoresByPlayerName Whether to merge MapScore's by player names
 --
-function MapTopManager:new(_mapScoreStorage, _contexts, _mergeScoresByPlayerName)
+function MapTopManager:new(_mapScoreStorage, _scoreContextProvider, _contexts, _mergeScoresByPlayerName)
 
   self.mapScoreStorage = _mapScoreStorage
   self.mergeScoresByPlayerName = (_mergeScoresByPlayerName ~= false)
-  ScoreManager.new(self, _contexts)
+  ScoreManager.new(self, _scoreContextProvider, _contexts)
 
   self.onGameModeStaysEnabledAfterGameChangeEventCallback = EventCallback({ object = self, methodName = "onGameModeStaysEnabledAfterGameChange" })
 
@@ -110,7 +112,7 @@ end
 --
 function MapTopManager:addMapScore(_mapScore)
   for _, mapTop in pairs(self:getMapTops()) do
-    mapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(_mapScore)
+    mapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(ObjectUtils.clone(_mapScore))
   end
 end
 
@@ -131,10 +133,17 @@ end
 ---
 -- Creates and returns a ScoreListManager instance.
 --
+-- @tparam string _context The context to create the ScoreListManager for
+--
 -- @treturn MapTop The created ScoreListManager instance
 --
-function MapTopManager:createScoreListManager()
-  return MapTop(MapScoreList(self.mergeScoresByPlayerName), self.mapScoreStorage)
+function MapTopManager:createScoreListManager(_context)
+  local weaponId
+  if (self.scoreContextProvider:isWeaponScoreContext(_context)) then
+    weaponId = self.scoreContextProvider:scoreContextToWeaponId(_context)
+  end
+
+  return MapTop(MapScoreList(self.mergeScoresByPlayerName), self.mapScoreStorage, weaponId)
 end
 
 
