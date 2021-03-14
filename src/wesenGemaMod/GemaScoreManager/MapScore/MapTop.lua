@@ -98,7 +98,7 @@ function MapTop:loadMapScores(_mapName)
     self.scoreList:clear()
 
     local numberOfSkippedMapScores = 0
-    for mapScore in self.mapScoreStorage:loadMapScores(self.mapName) do
+    for mapScore in self.mapScoreStorage:loadMapScores(self.mapName, self.weaponId) do
 
       if (self.scoreList:getScoreByPlayer(mapScore:getPlayer()) == nil) then
         mapScore:setRank(mapScore:getRank() - numberOfSkippedMapScores)
@@ -120,6 +120,11 @@ end
 -- @tparam MapScore _mapScore The MapScore to check
 --
 function MapTop:addMapScoreIfBetterThanPreviousPlayerMapScore(_mapScore)
+
+  if (self.weaponId ~= nil and _mapScore:getWeaponId() ~= self.weaponId) then
+    -- Ignore MapScore's with a different weapon ID than the one of this MapTop
+    return
+  end
 
   local previousMapScore = self.scoreList:getScoreByPlayer(_mapScore:getPlayer())
   local previousHiddenMapScore = self.scoreList:getHiddenMapScoreByPlayer(_mapScore:getPlayer())

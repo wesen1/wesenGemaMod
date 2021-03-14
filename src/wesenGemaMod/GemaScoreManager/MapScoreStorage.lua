@@ -27,19 +27,25 @@ local MapScoreStorage = Object:extend()
 -- It can be used like `for mapScore in mapScoreStorage:loadMapScores() do`.
 --
 -- @tparam string _mapName The name of the map for which to fetch all MapScore's
+-- @tparam int _weaponId The ID of the weapon to filter the MapScore's by (optional)
 --
 -- @treturn function The iterator function
 --
-function MapScoreStorage:loadMapScores(_mapName)
+function MapScoreStorage:loadMapScores(_mapName, _weaponId)
 
-  local mapScoreCollection = MapScoreModel:get()
-                                          :innerJoinMaps()
-                                          :innerJoinPlayers()
-                                          :innerJoinIps()
-                                          :innerJoinNames()
-                                          :where():column("maps.name"):equals(_mapName)
-                                          :orderByMilliseconds():asc()
-                                          :find()
+  local mapScoreQuery = MapScoreModel:get()
+                                     :innerJoinMaps()
+                                     :innerJoinPlayers()
+                                     :innerJoinIps()
+                                     :innerJoinNames()
+                                     :where():column("maps.name"):equals(_mapName)
+                                     :orderByMilliseconds():asc()
+
+  if (_weaponId ~= nil) then
+    mapScoreQuery:where():column("map_records.weapon_id"):equals(_weaponId)
+  end
+
+  local mapScoreCollection = mapScoreQuery:find()
 
   local currentMapScoreRecordIndex = 0
   local numberOfMapScoreRecords = mapScoreCollection:count()
@@ -61,22 +67,29 @@ end
 -- Generates and returns a function that iterates over all MapScore's sorted by maps and ranks.
 -- It can be used like `for mapId, mapScore in mapScoreStorage:loadAllMapScores() do`.
 --
+-- @tparam int _weaponId The ID of the weapon to filter the MapScore's by (optional)
+--
 -- @treturn function The iterator function
 --
-function MapScoreStorage:loadAllMapScores()
+function MapScoreStorage:loadAllMapScores(_weaponId)
 
-  local mapScoreCollection = MapScoreModel:get()
-                                          :select():min("milliseconds")
-                                          :innerJoinMaps()
-                                          :innerJoinPlayers()
-                                          :innerJoinIps()
-                                          :innerJoinNames()
-                                          :groupBy("player_id")
-                                          :groupBy("map_id")
-                                          :orderByMapId():asc()
-                                          :orderBy("MIN_milliseconds"):asc()
-                                          :selectOnlyAggregatedTableColumns(true)
-                                          :find()
+  local mapScoreQuery = MapScoreModel:get()
+                                     :select():min("milliseconds")
+                                     :innerJoinMaps()
+                                     :innerJoinPlayers()
+                                     :innerJoinIps()
+                                     :innerJoinNames()
+                                     :groupBy("player_id")
+                                     :groupBy("map_id")
+                                     :orderByMapId():asc()
+                                     :orderBy("MIN_milliseconds"):asc()
+                                     :selectOnlyAggregatedTableColumns(true)
+
+  if (_weaponId ~= nil) then
+    mapScoreQuery:where():column("map_records.weapon_id"):equals(_weaponId)
+  end
+
+  local mapScoreCollection = mapScoreQuery:find()
 
   local currentMapScoreRecordIndex = 0
   local numberOfMapScoreRecords = mapScoreCollection:count()

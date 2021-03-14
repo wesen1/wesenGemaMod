@@ -141,7 +141,7 @@ function ServerTop:loadInitialServerScores()
   local currentMapId, scoresForCurrentMapId
   local effectiveRank
 
-  for mapId, mapScore in self.mapScoreStorage:loadAllMapScores() do
+  for mapId, mapScore in self.mapScoreStorage:loadAllMapScores(self.weaponId) do
 
     if (currentMapId ~= mapId) then
       currentMapId = mapId
