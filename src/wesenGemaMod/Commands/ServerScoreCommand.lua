@@ -7,6 +7,7 @@
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
+local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
 
@@ -60,7 +61,7 @@ end
 function ServerScoreCommand:execute(_player, _arguments)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local serverScoreList = gemaScoreManager:getServerTopManager():getServerTop("main"):getScoreList()
+  local serverScoreList = gemaScoreManager:getServerTopManager():getServerTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
 
   local serverScore, playerName, isSelf
   if (_arguments["playerName"] ~= nil) then

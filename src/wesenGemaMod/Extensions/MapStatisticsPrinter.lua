@@ -7,6 +7,7 @@
 
 local BaseExtension = require "AC-LuaServer.Core.Extension.BaseExtension"
 local EventCallback = require "AC-LuaServer.Core.Event.EventCallback"
+local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 
 ---
@@ -56,7 +57,7 @@ function MapStatisticsPrinter:initialize()
   mapTopManager:on("mapScoresForMapLoaded", self.onGameModeStaysEnabledAfterGameChangeEventCallback)
 
   local currentGame = Server.getInstance():getGameHandler():getCurrentGame()
-  if (mapTopManager:getMapTop("main"):getMapName() == currentGame:getMapName()) then
+  if (mapTopManager:getMapTop(ScoreContextProvider.CONTEXT_MAIN):getMapName() == currentGame:getMapName()) then
     self:onGameModeStaysEnabledAfterGameChange()
   end
 
@@ -109,7 +110,7 @@ function MapStatisticsPrinter:printMapStatistics(_player)
   local output = Server.getInstance():getOutput()
   output:printTableTemplate(
     "Extensions/MapStatisticsPrinter/MapStatistics",
-    { ["mapScoreList"] = mapTopManager:getMapTop("main"):getScoreList() },
+    { ["mapScoreList"] = mapTopManager:getMapTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList() },
     _player
   )
 
