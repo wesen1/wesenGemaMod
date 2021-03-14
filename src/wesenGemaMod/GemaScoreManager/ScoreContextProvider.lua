@@ -86,7 +86,7 @@ end
 ---
 -- Initializes this ScoreContextProvider.
 --
-function initialize()
+function ScoreContextProvider:initialize()
   self:initializeScoreContextAliases()
 end
 
