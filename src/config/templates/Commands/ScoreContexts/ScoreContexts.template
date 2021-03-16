@@ -1,0 +1,54 @@
+{#
+ # Prints the names, descriptions and possible usages of all available score contexts.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam table[] scoreContextInfos The infos per score context (id, name, used for Score types)
+ #}
+
+{% for _, scoreContextInfo in ipairs(scoreContextInfos) do %}
+
+  {* colors.scoreContextName *}{* scoreContextInfo["name"] *}
+  -----------------------------------------------------------;
+
+  {* colors.scoreContextGeneralText *}
+  :
+  {* colors.scoreContextDescription *}
+  <whitespace>
+  Best scores per map
+  <whitespace>
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/Context"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      scoreContextProvider = scoreContextProvider,
+      scoreContext = scoreContextInfo["id"]
+    }
+  ]}
+  {* colors.scoreContextGeneralText *}
+
+  -----------------------------------------------------------;
+
+  (
+    {% local isFirstScoreType = true %}
+    {% for _, scoreType in ipairs(scoreContextInfo["usedForScoreTypes"]) do %}
+
+      {% if (isFirstScoreType) then %}
+        {% isFirstScoreType = false %}
+      {% else %}
+        {* colors.scoreContextGeneralText *},
+        <whitespace>
+      {% end %}
+
+      {* colors.scoreContextScoreTypes *}
+      {* scoreType *}
+
+    {% end %}
+
+    {* colors.scoreContextGeneralText *}
+  )
+_____________________________________________________________;
+
+{% end %}

@@ -1,0 +1,25 @@
+{#
+ # Adds a score context to a sentence that tells something about a score context.
+ #
+ # Will print nothing for the MAIN context.
+ # Will print "with <weapon name>" for a weapon context.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
+ #}
+
+{% if (scoreContextProvider:isWeaponScoreContext(scoreContext)) then %}
+
+  with
+  <whitespace>
+
+  {* colors.scoreWeapon *}
+
+  {[
+    getAbsoluteTemplatePath("TextTemplate/WeaponName"),
+    { weaponId = scoreContextProvider:scoreContextToWeaponId(scoreContext) }
+  ]}
+
+{% end %}

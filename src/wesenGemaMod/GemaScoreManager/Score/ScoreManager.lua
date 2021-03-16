@@ -6,6 +6,7 @@
 --
 
 local Object = require "classic"
+local tablex = require "pl.tablex"
 
 ---
 -- Manages multiple ScoreListManager's.
@@ -54,6 +55,15 @@ end
 --
 function ScoreManager:getScoreListManagers()
   return self.scoreListManagers
+end
+
+---
+-- Returns the list of score contexts.
+--
+-- @treturn int[] The list of score contexts
+--
+function ScoreManager:getScoreContexts()
+  return tablex.keys(self.scoreListManagers)
 end
 
 

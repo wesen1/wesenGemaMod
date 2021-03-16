@@ -69,18 +69,6 @@ function ScoreContextProvider:new()
 end
 
 
--- Getters and Setters
-
----
--- Returns the list of preferred score context aliases.
---
--- @treturn string[] The list of preferred score context aliases
---
-function ScoreContextProvider:getPreferredScoreContextAliases()
-  return self.preferredScoreContextAliases
-end
-
-
 -- Public Methods
 
 ---
@@ -88,6 +76,17 @@ end
 --
 function ScoreContextProvider:initialize()
   self:initializeScoreContextAliases()
+end
+
+---
+-- Returns the preferred score context alias for a given score context.
+--
+-- @tparam int _context The context whose preferred alias to return
+--
+-- @treturn string|nil The preferred score context alias for the given context
+--
+function ScoreContextProvider:getPreferredAliasForScoreContext(_context)
+  return self.preferredScoreContextAliases[_context]
 end
 
 ---
@@ -180,9 +179,11 @@ function ScoreContextProvider:initializeScoreContextAliases()
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_MAIN, "main", true)
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_KNIFE, "knife", true)
+  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_KNIFE, "knife-only")
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_KNIFE, tostring(LuaServerApi.GUN_KNIFE))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_PISTOL, "pistol", true)
+  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_PISTOL, "pistol-only")
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_PISTOL, tostring(LuaServerApi.GUN_PISTOL))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, "assault-rifle", true)
