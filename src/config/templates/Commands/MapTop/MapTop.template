@@ -7,16 +7,34 @@
  # @tparam MapScoreList mapScoreList The MapScoreList
  # @tparam int startRank The start rank
  # @tparam int numberOfDisplayScores The number of displayed MapScore's
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
  #}
 
 {% if (mapScoreList:getNumberOfScores() == 0) then %}
-  {(lua/config/templates/TextTemplate/MapTop/MapTopEmpty.template, { colors = colors })}
+  {[
+    getAbsoluteTemplatePath("TextTemplate/MapTop/MapTopEmpty"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      scoreContextProvider = scoreContextProvider,
+      scoreContext = scoreContext
+    }
+  ]}
 
 {% else %}
 
-  {(lua/config/templates/TextTemplate/MapTop/MapTopTitle.template,
-    { colors = colors, startRank = startRank, numberOfDisplayScores = numberOfDisplayScores }
-  )}
+  {[
+    getAbsoluteTemplatePath("Commands/MapTop/Title"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      startRank = startRank,
+      numberOfDisplayScores = numberOfDisplayScores,
+      scoreContextProvider = scoreContextProvider,
+      scoreContext = scoreContext
+    }
+  ]}
   ___________________________________________________;
 
     ----------[FIELD]----------;

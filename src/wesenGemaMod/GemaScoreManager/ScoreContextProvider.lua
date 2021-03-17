@@ -180,29 +180,22 @@ function ScoreContextProvider:initializeScoreContextAliases()
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_KNIFE, "knife", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_KNIFE, "knife-only")
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_KNIFE, tostring(LuaServerApi.GUN_KNIFE))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_PISTOL, "pistol", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_PISTOL, "pistol-only")
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_PISTOL, tostring(LuaServerApi.GUN_PISTOL))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, "assault-rifle", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, "assault")
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, tostring(LuaServerApi.GUN_ASSAULT))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SUBMACHINE_GUN, "submachine-gun", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SUBMACHINE_GUN, "submachine")
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SUBMACHINE_GUN, tostring(LuaServerApi.GUN_SUBGUN))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SNIPER_RIFLE, "sniper-rifle", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SNIPER_RIFLE, "sniper")
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SNIPER_RIFLE, tostring(LuaServerApi.GUN_SNIPER))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SHOTGUN, "shotgun", true)
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SHOTGUN, tostring(LuaServerApi.GUN_SHOTGUN))
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_CARBINE, "carbine", true)
-  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_CARBINE, tostring(LuaServerApi.GUN_CARBINE))
 
 end
 

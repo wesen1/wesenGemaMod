@@ -17,7 +17,6 @@
   {* colors.scoreContextDescription *}
   <whitespace>
   Best scores per map
-  <whitespace>
   {[
     getAbsoluteTemplatePath("Generic/MapScore/Context"),
     {

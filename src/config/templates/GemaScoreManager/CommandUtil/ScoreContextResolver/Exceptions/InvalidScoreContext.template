@@ -1,0 +1,7 @@
+{#
+ # Generates an exception message for the "invalid score context" case.
+ #
+ # @tparam string invalidScoreContext The invalid score context name
+ #}
+
+Unknown score context "{* invalidScoreContext *}"

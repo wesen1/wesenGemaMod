@@ -1,13 +1,13 @@
 ---
 -- @author wesen
--- @copyright 2017-2018 wesen <wesen-ac@web.de>
+-- @copyright 2017-2021 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
-local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
+local ScoreContextResolver = require "GemaScoreManager.CommandUtil.ScoreContextResolver"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
@@ -26,6 +26,14 @@ local MapTopCommand = BaseCommand:extend()
 --
 function MapTopCommand:new()
 
+  local contextArgument = CommandArgument(
+    StaticString("maptopCommandContextArgumentName"):getString(),
+    true,
+    "string",
+    StaticString("maptopCommandContextArgumentShortName"):getString(),
+    StaticString("maptopCommandContextArgumentDescription"):getString()
+  )
+
   local startRankArgument = CommandArgument(
     StaticString("maptopCommandStartRankArgumentName"):getString(),
     true,
@@ -39,7 +47,7 @@ function MapTopCommand:new()
     StaticString("mapTopCommandName"):getString(),
     0,
     StaticString("mapTopCommandGroupName"):getString(),
-    { startRankArgument },
+    { contextArgument, startRankArgument },
     StaticString("mapTopCommandDescription"):getString(),
     { StaticString("mapTopCommandAlias1"):getString() }
   )
@@ -75,7 +83,11 @@ end
 function MapTopCommand:execute(_player, _arguments)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local mapScoreList = gemaScoreManager:getMapTopManager():getMapTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
+  local scoreContextProvider = gemaScoreManager:getScoreContextProvider()
+
+  local scoreContextResolver = ScoreContextResolver(gemaScoreManager)
+  local scoreContext, mapTop = scoreContextResolver:getMapTopForScoreContext(_arguments["context"])
+  local mapScoreList = mapTop:getScoreList()
 
   local numberOfScores = mapScoreList:getNumberOfScores()
 
@@ -85,7 +97,11 @@ function MapTopCommand:execute(_player, _arguments)
     if (_arguments["startRank"] > numberOfScores) then
       error(TemplateException(
         "Commands/MapTop/Exceptions/StartRankHigherThanNumberOfRecords",
-        { maximumStartRank = numberOfScores }
+        {
+          maximumStartRank = numberOfScores,
+          scoreContextProvider = scoreContextProvider,
+          scoreContext = scoreContext
+        }
       ))
     end
 
@@ -102,9 +118,11 @@ function MapTopCommand:execute(_player, _arguments)
     "Commands/MapTop/MapTop",
     { ["mapScoreList"] = mapScoreList,
       ["numberOfDisplayScores"] = numberOfDisplayScores,
-      ["startRank"] = startRank
-    }
-    , _player
+      ["startRank"] = startRank,
+      ["scoreContextProvider"] = scoreContextProvider,
+      ["scoreContext"] = scoreContext
+    },
+    _player
   )
 
 end
