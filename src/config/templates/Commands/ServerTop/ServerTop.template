@@ -8,18 +8,34 @@
  # @tparam int startRank The start rank
  # @tparam int numberOfDisplayRecords The number of display records
  # @tparam int numberOfGemaMaps The total number of gema maps
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
  #}
 
 {% if (serverScoreList:getNumberOfScores() == 0) then %}
-  {* colors.emptyTop *}The server top is empty
+  {* colors.emptyTop *}No server scores found
+
+  {% if (scoreContextProvider ~= nil) then %}
+    {[
+      getAbsoluteTemplatePath("Generic/MapScore/Context"),
+      {
+        getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+        colors = colors,
+        scoreContextProvider = scoreContextProvider,
+        scoreContext = scoreContext
+      }
+    ]}
+  {% end %}
 
 {% else %}
 
-  {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/Title"),
+  {[ getAbsoluteTemplatePath("Commands/ServerTop/Title"),
     { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
       colors = colors,
       startRank = startRank,
-      numberOfDisplayedScores = numberOfDisplayedScores
+      numberOfDisplayedScores = numberOfDisplayedScores,
+      scoreContextProvider = scoreContextProvider,
+      scoreContext = scoreContext
     }
   ]}
   ___________________________________________________;
@@ -39,7 +55,7 @@
 
     {% for i = startRank, endRank, 1 do %}
 
-      {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/ServerScore"),
+      {[ getAbsoluteTemplatePath("Commands/ServerTop/ServerScore"),
         { getAbsoluteTemplatePath = getAbsoluteTemplatePath,
           colors = colors,
           serverScoreList = serverScoreList,

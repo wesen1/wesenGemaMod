@@ -66,6 +66,34 @@ function ScoreContextResolver:getMapTopForScoreContext(_inputScoreContext)
 
 end
 
+---
+-- Returns the ServerTop for a given command input score context.
+--
+-- @tparam string|nil _inputScoreContext The command input score context
+--
+-- @treturn ServerTop The ServerTop for the given score context
+--
+-- @raise TemplateException The Exception when no ServerTop is available for the given score context
+--
+function ScoreContextResolver:getServerTopForScoreContext(_inputScoreContext)
+
+  local scoreContext = self:resolveScoreContext(_inputScoreContext)
+
+  local serverTop = self.gemaScoreManager:getServerTopManager():getServerTop(scoreContext)
+  if (serverTop == nil) then
+    error(TemplateException(
+      "GemaScoreManager/CommandUtil/ScoreContextResolver/Exceptions/NoServerTopForContextAvailable",
+      {
+        scoreContextProvider = self.gemaScoreManager:getScoreContextProvider(),
+        scoreContext = scoreContext
+      }
+    ))
+  else
+    return scoreContext, serverTop
+  end
+
+end
+
 
 -- Private Methods
 
