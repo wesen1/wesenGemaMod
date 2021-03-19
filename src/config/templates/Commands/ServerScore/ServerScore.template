@@ -40,7 +40,7 @@
     ,
     <whitespace>
 
-    {[ getAbsoluteTemplatePath("ServerScoreManager/ServerTop/ServerScore/NumberOfScores"),
+    {[ getAbsoluteTemplatePath("Commands/ServerTop/ServerScore/NumberOfScores"),
       { colors = colors,
         serverScore = serverScore,
         numberOfGemaMaps = numberOfGemaMaps,

@@ -1,14 +1,13 @@
 {#
- # Generates a message that tells a player that the given start rank is higher than the number of server scores.
+ # Generates an exception message for the "No ServerTop exists for score context" case.
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
- # @tparam int maximumStartRank The maximum allowed start rank
  # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
- # @tparam int scoreContext The score context ID
+ # @tparam int scoreContext The score context
  #}
 
-The maximum allowed ServerTop start rank for the
+No ServerTop available for the
 <whitespace>
 {[
   getAbsoluteTemplatePath("Generic/MapScore/Context"),
@@ -21,5 +20,4 @@ The maximum allowed ServerTop start rank for the
   }
 ]}
 
-{* colors.error *} context is
-{* colors.serverScoreRank *} {* maximumStartRank *}
+{* colors.error *} context

@@ -141,7 +141,10 @@ function CommandParser:parseArguments(_command, _argumentTextParts)
 
     for index, argument in ipairs(arguments) do
       local argumentValue = _argumentTextParts[index]
-      inputArguments[argument:getName()] = self:castArgumentToType(argument, argumentValue)
+      if (argumentValue ~= nil) then
+        argumentValue = self:castArgumentToType(argument, argumentValue)
+      end
+      inputArguments[argument:getName()] = argumentValue
     end
 
   end

@@ -1,8 +1,25 @@
 {#
  # Generates a message that tells a player that the given start rank is higher than the number of map scores.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
  # @tparam int maximumStartRank The maximum allowed start rank
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
  #}
 
-The maximum allowed start rank is {* colors.mapRecordRank *}{* maximumStartRank *}
+The maximum allowed MapTop start rank for the
+<whitespace>
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/Context"),
+  {
+    getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    scoreContextProvider = scoreContextProvider,
+    scoreContext = scoreContext,
+    showShortContext = true
+  }
+]}
+
+{* colors.error *} context is
+{* colors.mapRecordRank *} {* maximumStartRank *}

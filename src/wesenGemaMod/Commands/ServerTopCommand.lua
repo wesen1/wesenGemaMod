@@ -1,13 +1,13 @@
 ---
 -- @author wesen
--- @copyright 2020 wesen <wesen-ac@web.de>
+-- @copyright 2020-2021 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
 local CommandArgument = require "CommandManager.CommandArgument"
-local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
+local ScoreContextResolver = require "GemaScoreManager.CommandUtil.ScoreContextResolver"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
 local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateException"
@@ -26,6 +26,14 @@ local ServerTopCommand = BaseCommand:extend()
 --
 function ServerTopCommand:new()
 
+  local contextArgument = CommandArgument(
+    StaticString("servertopCommandContextArgumentName"):getString(),
+    true,
+    "string",
+    StaticString("servertopCommandContextArgumentShortName"):getString(),
+    StaticString("servertopCommandContextArgumentDescription"):getString()
+  )
+
   local startRankArgument = CommandArgument(
     StaticString("serverTopCommandStartRankArgumentName"):getString(),
     true,
@@ -39,7 +47,7 @@ function ServerTopCommand:new()
     StaticString("serverTopCommandName"):getString(),
     0,
     StaticString("serverTopCommandGroupName"):getString(),
-    { startRankArgument },
+    { contextArgument, startRankArgument },
     StaticString("serverTopCommandDescription"):getString(),
     { StaticString("serverTopCommandAlias1"):getString() }
   )
@@ -75,7 +83,11 @@ end
 function ServerTopCommand:execute(_player, _arguments)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local serverScoreList = gemaScoreManager:getServerTopManager():getServerTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
+  local scoreContextProvider = gemaScoreManager:getScoreContextProvider()
+
+  local scoreContextResolver = ScoreContextResolver(gemaScoreManager)
+  local scoreContext, serverTop = scoreContextResolver:getServerTopForScoreContext(_arguments["context"])
+  local serverScoreList = serverTop:getScoreList()
 
   local numberOfScores = serverScoreList:getNumberOfScores()
 
@@ -85,7 +97,11 @@ function ServerTopCommand:execute(_player, _arguments)
     if (_arguments["startRank"] > numberOfScores) then
       error(TemplateException(
         "Commands/ServerTop/Exceptions/StartRankHigherThanNumberOfScores",
-        { maximumStartRank = numberOfScores }
+        {
+          maximumStartRank = numberOfScores,
+          scoreContextProvider = scoreContextProvider,
+          scoreContext = scoreContext
+        }
       ))
     end
 
@@ -100,11 +116,14 @@ function ServerTopCommand:execute(_player, _arguments)
   local gemaMapManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaMapManager")
 
   self.output:printTableTemplate(
-    "ServerScoreManager/ServerTop/ServerTop",
-    { ["serverScoreList"] = serverScoreList,
+    "Commands/ServerTop/ServerTop",
+    {
+      ["serverScoreList"] = serverScoreList,
       ["numberOfDisplayedScores"] = numberOfDisplayedScores,
       ["startRank"] = startRank,
-      ["numberOfGemaMaps"] = gemaMapManager:getNumberOfGemaMaps()
+      ["numberOfGemaMaps"] = gemaMapManager:getNumberOfGemaMaps(),
+      ["scoreContextProvider"] = scoreContextProvider,
+      ["scoreContext"] = scoreContext
     },
     _player
   )

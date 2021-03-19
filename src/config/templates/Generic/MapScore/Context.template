@@ -1,0 +1,32 @@
+{#
+ # Adds a score context to a sentence that tells something about a score context.
+ #
+ # Will print nothing for the MAIN context.
+ # Will print " with <weapon name>" (long) or "<weapon name>" (short) for a weapon context.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
+ # @tparam bool showShortContext True to show the short context name, false to show the long version
+ #}
+
+{% if (scoreContextProvider:isWeaponScoreContext(scoreContext)) then %}
+
+  {% if (not showShortContext) then %}
+    <whitespace>
+    with
+    <whitespace>
+  {% end %}
+
+  {* colors.scoreWeapon *}
+
+  {[
+    getAbsoluteTemplatePath("TextTemplate/WeaponName"),
+    { weaponId = scoreContextProvider:scoreContextToWeaponId(scoreContext) }
+  ]}
+
+{% elseif (showShortContext and scoreContext == scoreContextProvider.CONTEXT_MAIN) then %}
+  {* colors.scoreContextName *}
+  Main
+{% end %}

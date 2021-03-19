@@ -1,0 +1,56 @@
+{#
+ # Prints the map top title.
+ #
+ # If the start rank is 1 this will print "The x best player(s) of this map is/are:".
+ # In all other cases this will print "Rank x (to y) is/are:".
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam int startRank The start rank
+ # @tparam int numberOfDisplayScores The number of displayed records
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
+ #}
+
+{% if (startRank == 1) then %}
+
+  {* colors.mapTopInfo *}The
+  {* colors.mapTopNumberOfRecords *} {* numberOfDisplayScores *}
+  {* colors.mapTopInfo *} best player
+  {% if (numberOfDisplayScores ~= 1) then %}
+    s
+  {% end %}
+  <whitespace>
+  of this map
+
+{% else %}
+
+  {* colors.mapTopInfo *}Rank
+  {* colors.mapTopRank *} {* startRank *}
+
+  {% if (numberOfDisplayScores > 1) then %}
+    {* colors.mapTopInfo *} to
+    {* colors.mapTopRank *} {* startRank + (numberOfDisplayScores - 1) *}
+  {% end %}
+  {* colors.mapTopInfo *}
+
+{% end %}
+
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/Context"),
+  {
+    getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+    colors = colors,
+    scoreContextProvider = scoreContextProvider,
+    scoreContext = scoreContext
+  }
+]}
+<whitespace>
+
+{* colors.mapTopInfo *}
+{% if (numberOfDisplayScores == 1) then %}
+  is
+{% else %}
+  are
+{% end %}
+:

@@ -1,7 +1,22 @@
 {#
  # Prints the "map top is empty" message.
  #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
  # @tparam string[] colors The list of colors
+ # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
+ # @tparam int scoreContext The score context ID
  #}
 
 {* colors.emptyTop *}No records found for this map
+
+{% if (scoreContextProvider ~= nil) then %}
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/Context"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      scoreContextProvider = scoreContextProvider,
+      scoreContext = scoreContext
+    }
+  ]}
+{% end %}

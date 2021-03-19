@@ -66,6 +66,7 @@ return {
     "Commands.RulesCommand",
     "Commands.ServerTopCommand",
     "Commands.ServerScoreCommand",
+    "Commands.ScoreContextsCommand",
     "Commands.ResetCommand",
     "Commands.LatestMapsCommand",
 

@@ -135,6 +135,15 @@ function GemaScoreManager:getScoreAttemptManager()
 end
 
 ---
+-- Returns the ScoreContextProvider.
+--
+-- @treturn ScoreContextProvider The ScoreContextProvider
+--
+function GemaScoreManager:getScoreContextProvider()
+  return self.scoreContextProvider
+end
+
+---
 -- Returns the MapTopManager.
 --
 -- @treturn MapTopManager The MapTopManager
