@@ -6,7 +6,6 @@
 --
 
 local BaseCommand = require "CommandManager.BaseCommand"
-local ScoreContextProvider = require "GemaScoreManager.ScoreContextProvider"
 local Server = require "AC-LuaServer.Core.Server"
 local StaticString = require "Output.StaticString"
 local tablex = require "pl.tablex"

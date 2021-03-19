@@ -6,7 +6,7 @@
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam ServerScoreList serverScoreList The ServerScoreList
  # @tparam int startRank The start rank
- # @tparam int numberOfDisplayRecords The number of display records
+ # @tparam int numberOfDisplayedScores The number of displayed scores
  # @tparam int numberOfGemaMaps The total number of gema maps
  # @tparam ScoreContextProvider scoreContextProvider The ScoreContextProvider
  # @tparam int scoreContext The score context ID
@@ -15,17 +15,15 @@
 {% if (serverScoreList:getNumberOfScores() == 0) then %}
   {* colors.emptyTop *}No server scores found
 
-  {% if (scoreContextProvider ~= nil) then %}
-    {[
-      getAbsoluteTemplatePath("Generic/MapScore/Context"),
-      {
-        getAbsoluteTemplatePath = getAbsoluteTemplatePath,
-        colors = colors,
-        scoreContextProvider = scoreContextProvider,
-        scoreContext = scoreContext
-      }
-    ]}
-  {% end %}
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/Context"),
+    {
+      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+      colors = colors,
+      scoreContextProvider = scoreContextProvider,
+      scoreContext = scoreContext
+    }
+  ]}
 
 {% else %}
 
