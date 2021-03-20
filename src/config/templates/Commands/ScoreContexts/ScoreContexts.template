@@ -7,47 +7,54 @@
  # @tparam table[] scoreContextInfos The infos per score context (id, name, used for Score types)
  #}
 
-{% for _, scoreContextInfo in ipairs(scoreContextInfos) do %}
-
-  {* colors.scoreContextName *}{* scoreContextInfo["name"] *}
-  -----------------------------------------------------------;
-
-  {* colors.scoreContextGeneralText *}
-  :
-  {* colors.scoreContextDescription *}
-  <whitespace>
-  Best scores per map
-  {[
-    getAbsoluteTemplatePath("Generic/MapScore/Context"),
-    {
-      getAbsoluteTemplatePath = getAbsoluteTemplatePath,
-      colors = colors,
-      scoreContextProvider = scoreContextProvider,
-      scoreContext = scoreContextInfo["id"]
-    }
-  ]}
-  {* colors.scoreContextGeneralText *}
-
-  -----------------------------------------------------------;
-
-  (
-    {% local isFirstScoreType = true %}
-    {% for _, scoreType in ipairs(scoreContextInfo["usedForScoreTypes"]) do %}
-
-      {% if (isFirstScoreType) then %}
-        {% isFirstScoreType = false %}
-      {% else %}
-        {* colors.scoreContextGeneralText *},
-        <whitespace>
-      {% end %}
-
-      {* colors.scoreContextScoreTypes *}
-      {* scoreType *}
-
-    {% end %}
-
-    {* colors.scoreContextGeneralText *}
-  )
+{* colors.scoreContextInfo *}The available score contexts are:
 _____________________________________________________________;
 
-{% end %}
+  -----------------------[FIELD]-----------------------;
+
+  {% for _, scoreContextInfo in ipairs(scoreContextInfos) do %}
+
+    {* colors.scoreContextName *}{* scoreContextInfo["name"] *}
+    -----------------------------------------------------------;
+
+    {* colors.scoreContextInfo *}
+    :
+    {* colors.scoreContextDescription *}
+    <whitespace>
+    Best scores per map
+    {[
+      getAbsoluteTemplatePath("Generic/MapScore/Context"),
+      {
+        getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+        colors = colors,
+        scoreContextProvider = scoreContextProvider,
+        scoreContext = scoreContextInfo["id"]
+      }
+    ]}
+    {* colors.scoreContextInfo *}
+
+    -----------------------------------------------------------;
+
+    (
+      {% local isFirstScoreType = true %}
+      {% for _, scoreType in ipairs(scoreContextInfo["usedForScoreTypes"]) do %}
+
+        {% if (isFirstScoreType) then %}
+          {% isFirstScoreType = false %}
+        {% else %}
+          {* colors.scoreContextInfo *},
+          <whitespace>
+        {% end %}
+
+        {* colors.scoreContextScoreTypes *}
+        {* scoreType *}
+
+      {% end %}
+
+      {* colors.scoreContextInfo *}
+    )
+  _____________________________________________________________;
+
+  {% end %}
+
+  ---------------------[ENDFIELD]----------------------;
