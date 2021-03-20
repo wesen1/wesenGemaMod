@@ -1,74 +1,55 @@
 {#
- # Prints the rank and best map score of a player.
+ # Prints the rank(s) and best map score(s) of a player.
  #
  # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam string[] colors The list of colors
- # @tparam MapScore|nil mapScore The MapScore to print
+ # @tparam MapScore|nil personalBestMapScore The best MapScore of the player
  # @tparam string playerName The name of the player whose MapRecord is shown
  # @tparam bool isSelf True if the MapRecord belongs to the command executor himself, false otherwise
  # @tparam int numberOfMapScores The total number of map scores for the current map
+ # @tparam table contextInfos The context infos (personal best MapScore + number of scores)
  #}
 
-{% if (mapScore) then %}
+{% if (personalBestMapScore) then %}
 
-  {* colors.mapRecordInfo *}
-  {% if (isSelf) then %}
-    Your
+  {% if (#contextInfos == 1) then %}
+      {[
+        getAbsoluteTemplatePath("Commands/MapScore/SingleContext"),
+        {
+          getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+          timeFormatter = timeFormatter,
+          colors = colors,
+          mapScore = personalBestMapScore,
+          playerName = playerName,
+          isSelf = isSelf,
+          numberOfMapScores = numberOfMapScores
+        }
+      ]}
+
   {% else %}
-    {* colors.mapRecordName *}{* playerName *}
-    {* colors.mapRecordInfo *}'s
+      {[
+        getAbsoluteTemplatePath("Commands/MapScore/MultipleContexts"),
+        {
+          getAbsoluteTemplatePath = getAbsoluteTemplatePath,
+          timeFormatter = timeFormatter,
+          colors = colors,
+          personalBestMapScore = personalBestMapScore,
+          playerName = playerName,
+          isSelf = isSelf,
+          timeFormatter = timeFormatter,
+          contextInfos = contextInfos
+        }
+      ]}
   {% end %}
-
-  <whitespace>
-  best time for this map is
-  <whitespace>
-
-  {[
-     getAbsoluteTemplatePath("Generic/MapScore/MapScoreTime"),
-     {
-       colors = colors,
-       timeFormatter = timeFormatter,
-       mapScore = mapScore
-     }
-  ]}
-
-  {* colors.mapRecordInfo *}
-  <whitespace>
-  (
-    {* colors.mapRecordRank *}Rank
-    {* colors.mapRecordCurrentRank *} {* mapScore:getRank() *}
-    {* colors.mapRecordInfo *}/
-    {* colors.totalNumberOfMapScores *}{* numberOfMapScores *}
-    {* colors.mapRecordInfo *}
-  )
-
-  {* colors.mapRecordInfo *} with
-  <whitespace>
-  {[
-    getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
-    { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
-  ]}
-
-  {* colors.mapRecordInfo *}
-  <whitespace>
-  (
-    Created on
-    <whitespace>
-    {* colors.mapRecordTimeStamp *}
-    {* os.date("%Y-%m-%d", mapScore:getCreatedAt()) *}
-    {* colors.mapRecordInfo *}
-  )
-
 
 {% else %}
-
-  {* colors.emptyTop *}
-  {% if (isSelf) then %}
-    You
-  {% else %}
-    {* colors.mapRecordName *}{* playerName *}
-  {% end %}
-
-  {* colors.emptyTop *} didn't score on this map yet
-
+  {[
+    getAbsoluteTemplatePath("Commands/MapScore/NoScoresForMap"),
+    {
+      colors = colors,
+      playerName = playerName,
+      isSelf = isSelf
+    }
+  ]}
 {% end %}

@@ -1,0 +1,16 @@
+{#
+ # Prints the "No MapScores for map for player" message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string playerName The name of the player whose MapRecord is shown
+ # @tparam bool isSelf True if the MapRecord belongs to the command executor himself, false otherwise
+ #}
+
+{* colors.emptyTop *}
+{% if (isSelf) then %}
+  You
+{% else %}
+  {* colors.mapRecordName *}{* playerName *}
+{% end %}
+
+{* colors.emptyTop *} didn't score on this map yet

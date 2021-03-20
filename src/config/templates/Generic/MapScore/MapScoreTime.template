@@ -5,23 +5,43 @@
  # @tparam string[] colors The list of colors
  # @tparam TimeFormatter timeFormatter The time formatter
  # @tparam MapScore mapScore The MapScore
+ # @tparam bool highlightAsBestTime True to highlight the time as best time of a player, false otherwise
  #}
 
-{% if (not mapScore:getTimeString()) then %}
+{% local colorSchema, doCacheTimeString %}
+{% if (highlightAsBestTime) then %}
+  {% colorSchema = {
+    time = colors.bestMapScoreTimeDigit,
+    timeUnit = colors.bestMapScoreTimeUnit,
+    text = colors.bestMapScoreTimeText
+  } %}
+  {% doCacheTimeString = false %}
 
-  {# There is no cached time string, generate one #}
-  {% local timeString = timeFormatter:generateTimeString(
-       mapScore:getMilliseconds(),
-       "%02i- %02s- %03v-",
-       {
-         time = colors.mapScoreTimeDigit,
-         timeUnit = colors.mapScoreTimeUnit,
-         text = colors.mapScoreTimeText
-       }
-     ) %}
-  {% mapScore:setTimeString(timeString) %}
+{% elseif (not mapScore:getTimeString()) then %}
+  {% colorSchema = {
+    time = colors.mapScoreTimeDigit,
+    timeUnit = colors.mapScoreTimeUnit,
+    text = colors.mapScoreTimeText
+  } %}
+  {% doCacheTimeString = true %}
 
 {% end %}
 
-{# Print the cached time string #}
-{* colors.mapRecordTime *}{* mapScore:getTimeString() *}
+{% local timeString = "" %}
+{% if (colorSchema) then %}
+  {% timeString = timeFormatter:generateTimeString(
+       mapScore:getMilliseconds(),
+       "%02i- %02s- %03v-",
+       colorSchema
+     ) %}
+
+  {% if (doCacheTimeString) then %}
+    {% mapScore:setTimeString(timeString) %}
+  {% end %}
+
+{% else %}
+  {# Print the cached time string #}
+  {% timeString = mapScore:getTimeString() %}
+{% end %}
+
+{* colors.mapRecordTime *}{* timeString *}

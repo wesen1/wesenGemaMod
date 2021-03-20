@@ -34,9 +34,12 @@
     <whitespace>
   {% end %}
 
-  {* colors.mapRecordRank *}Rank
-  {* colors.mapRecordCurrentRank *} {* mapScore:getRank() *}
-  {* colors.mapRecordInfo *}/
-  {* colors.totalNumberOfMapScores *}{* totalNumberOfMapScores *}
-  {* colors.mapRecordInfo *}
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/Rank"),
+    {
+      colors = colors,
+      mapScore = mapScore,
+      totalNumberOfMapScores = totalNumberOfMapScores
+    }
+  ]}
 )
