@@ -1,0 +1,90 @@
+{#
+ # Prints the ranks and server scores per context of a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScore personalBestServerScore The best ServerScore of the player
+ # @tparam string playerName The name of the player whose ServerScore is shown
+ # @tparam bool isSelf True if the ServerScore belongs to the command executor himself, false otherwise
+ # @tparam int numberOfGemaMaps The total number of gema maps
+ # @tparam table contextInfos The context infos (personal ServerScore + number of scores)
+ #}
+
+{* colors.serverScoreInfo *}
+{% if (isSelf) then %}
+  Your
+{% else %}
+  {* colors.serverScoreName *}{* playerName *}
+  {* colors.serverScoreInfo *}'s
+{% end %}
+
+<whitespace>
+server scores are:
+______________________________________________________________;
+
+  {% local maxBestTimesLength = 1 %}
+  {% local maxMapsCompletedLength = 1 %}
+  {% local maxPointsLength = 1 %}
+  {% for _, contextInfo in ipairs(contextInfos) do %}
+    {% local serverScore = contextInfo["score"] %}
+    {% if (serverScore) then %}
+      {% local scoreBestTimesLength = string.len(serverScore:getNumberOfBestTimes()) %}
+      {% local scoreCompletedLength = string.len(serverScore:getNumberOfMapScores()) %}
+      {% local scorePointsLength = string.len(serverScore:getPoints()) %}
+      {% if (scoreBestTimesLength > maxBestTimesLength) then maxBestTimesLength = scoreBestTimesLength end %}
+      {% if (scoreCompletedLength > maxMapsCompletedLength) then maxMapsCompletedLength = scoreCompletedLength end %}
+      {% if (scorePointsLength > maxPointsLength) then maxPointsLength = scorePointsLength end %}
+    {% end %}
+  {% end %}
+
+  --------------------------[FIELD]--------------------------;
+
+  {% for _, contextInfo in ipairs(contextInfos) do %}
+
+    {* colors.scoreContextName *}{* contextInfo["contextName"] *}
+    -----------------------------------------------------------;
+
+    {* colors.serverScoreInfo *}:
+    <whitespace>
+
+    {% if (contextInfo["score"]) then %}
+
+      {[ getAbsoluteTemplatePath("Generic/ServerScore/NumberOfPoints"),
+        { colors = colors,
+          serverScore = contextInfo["score"],
+          maxPointsLength = maxPointsLength,
+          appendComma = true,
+          padPointsWordWithWhitespace = true
+        }
+      ]}
+
+      <whitespace>
+      {[ getAbsoluteTemplatePath("Generic/ServerScore/NumberOfScores"),
+        { colors = colors,
+          serverScore = contextInfo["score"],
+          numberOfGemaMaps = numberOfGemaMaps,
+          maxBestTimesLength = maxBestTimesLength,
+          maxMapsCompletedLength = maxMapsCompletedLength
+        }
+      ]}
+
+      {* colors.serverScoreInfo *},
+      <whitespace>
+      {[
+        getAbsoluteTemplatePath("Generic/ServerScore/Rank"),
+        {
+          colors = colors,
+          serverScore = contextInfo["score"],
+          numberOfServerScores = contextInfo["numberOfScores"]
+        }
+      ]}
+
+    {% else %}
+      {* colors.emptyTop *}No score found
+    {% end %}
+
+    ________________________________________________________________;
+
+  {% end %}
+
+  ------------------------[ENDFIELD]-------------------------;

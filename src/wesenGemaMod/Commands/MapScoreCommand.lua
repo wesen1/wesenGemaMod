@@ -64,9 +64,8 @@ function MapScoreCommand:execute(_player, _arguments)
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
   local mapTopManager = gemaScoreManager:getMapTopManager()
 
-  -- Fetch information about the best MapScore
+  -- Fetch information about the personal best MapScore
   local mapScoreList = mapTopManager:getMapTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
-
   local personalBestMapScore, playerName, isSelf
   if (_arguments["playerName"] ~= nil) then
     playerName = _arguments["playerName"]

@@ -1,0 +1,13 @@
+{#
+ # Prints a ServerScore rank info.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScore serverScore The ServerScore whose rank info to print
+ # @tparam int totalNumberOfServerScores The total number of server scores
+ #}
+
+{* colors.serverScoreRank *}Rank
+{* colors.serverScoreCurrentRank *} {* serverScore:getRank() *}
+{* colors.serverScoreInfo *}/
+{* colors.totalNumberOfServerScores *}{* numberOfServerScores *}
+{* colors.serverScoreInfo *}

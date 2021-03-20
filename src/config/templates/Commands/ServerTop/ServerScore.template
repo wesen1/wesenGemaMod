@@ -23,20 +23,18 @@
 
 |----------------------------------------------------------------------------------------------------------;
 
-{* colors.serverScorePoints *}
-{* string.format("%0" .. maxPointsLength .. "d", serverScore:getPoints()) *}
-{* colors.serverScoreInfo *} point
-
-{% if (serverScore:getPoints() == 1) then %}
-  <whitespace>
-{% else %}
-  s
-{% end %}
+{[ getAbsoluteTemplatePath("Generic/ServerScore/NumberOfPoints"),
+  { colors = colors,
+    serverScore = serverScore,
+    maxPointsLength = maxPointsLength,
+    padPointsWordWithWhitespace = true
+  }
+]}
 
 <whitespace>
 {* colors.serverScoreInfo *}
 (
-  {[ getAbsoluteTemplatePath("Commands/ServerTop/ServerScore/NumberOfScores"),
+  {[ getAbsoluteTemplatePath("Generic/ServerScore/NumberOfScores"),
     { colors = colors,
       serverScore = serverScore,
       numberOfGemaMaps = numberOfGemaMaps,

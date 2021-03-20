@@ -61,14 +61,16 @@ end
 function ServerScoreCommand:execute(_player, _arguments)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local serverScoreList = gemaScoreManager:getServerTopManager():getServerTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
+  local serverTopManager = gemaScoreManager:getServerTopManager()
 
-  local serverScore, playerName, isSelf
+  -- Fetch information about the personal best ServerScore
+  local serverScoreList = serverTopManager:getServerTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
+  local personalBestServerScore, playerName, isSelf
   if (_arguments["playerName"] ~= nil) then
     playerName = _arguments["playerName"]
-    serverScore = serverScoreList:getScoreByPlayerName(playerName)
-    if ((serverScore and serverScore:getPlayer():equals(_player)) or
-        (not serverScore and playerName == _player:getName())
+    personalBestServerScore = serverScoreList:getScoreByPlayerName(playerName)
+    if ((personalBestServerScore and personalBestServerScore:getPlayer():equals(_player)) or
+        (not personalBestServerScore and playerName == _player:getName())
     ) then
       isSelf = true
     else
@@ -77,18 +79,41 @@ function ServerScoreCommand:execute(_player, _arguments)
   else
     playerName = _player:getName()
     isSelf = true
-    serverScore = serverScoreList:getScoreByPlayer(_player)
+    personalBestServerScore = serverScoreList:getScoreByPlayer(_player)
+  end
+
+  local contextInfos = {}
+  if (personalBestServerScore) then
+    local scoreContextProvider = gemaScoreManager:getScoreContextProvider()
+    local scorePlayer = personalBestServerScore:getPlayer()
+    local scoreContexts = serverTopManager:getScoreContexts()
+    table.sort(scoreContexts)
+
+    for _, scoreContext in ipairs(scoreContexts) do
+      local contextServerScoreList = serverTopManager:getServerTop(scoreContext):getScoreList()
+      table.insert(
+        contextInfos,
+        {
+          contextName = scoreContextProvider:getPreferredAliasForScoreContext(scoreContext),
+          score = contextServerScoreList:getScoreByPlayer(scorePlayer),
+          numberOfScores = contextServerScoreList:getNumberOfScores()
+        }
+      )
+    end
+
   end
 
   local gemaMapManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaMapManager")
 
-  self.output:printTextTemplate(
+  self.output:printTableTemplate(
     "Commands/ServerScore/ServerScore",
-    { ["serverScore"] = serverScore,
-      ["playerName"] = playerName,
-      ["isSelf"] = isSelf,
-      ["numberOfServerScores"] = serverScoreList:getNumberOfScores(),
-      ["numberOfGemaMaps"] = gemaMapManager:getNumberOfGemaMaps()
+    {
+      personalBestServerScore = personalBestServerScore,
+      playerName = playerName,
+      isSelf = isSelf,
+      numberOfServerScores = serverScoreList:getNumberOfScores(),
+      numberOfGemaMaps = gemaMapManager:getNumberOfGemaMaps(),
+      contextInfos = contextInfos
     },
     _player
   )

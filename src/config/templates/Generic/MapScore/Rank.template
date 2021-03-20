@@ -2,7 +2,7 @@
  # Prints a MapScore rank info.
  #
  # @tparam string[] colors The list of colors
- # @tparam MapScore|nil mapScore The MapScore whose rank info to print
+ # @tparam MapScore mapScore The MapScore whose rank info to print
  # @tparam int totalNumberOfMapScores The total number of map scores for the current map
  #}
 

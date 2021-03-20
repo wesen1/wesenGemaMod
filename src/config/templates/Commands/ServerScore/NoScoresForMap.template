@@ -1,0 +1,16 @@
+{#
+ # Prints the "No ServerScores for player" message.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam string playerName The name of the player whose ServerScore is shown
+ # @tparam bool isSelf True if the ServerScore belongs to the command executor himself, false otherwise
+ #}
+
+{* colors.emptyTop *}
+{% if (isSelf) then %}
+  You
+{% else %}
+  {* colors.serverScoreName *}{* playerName *}
+{% end %}
+
+{* colors.emptyTop *} didn't score on any map yet
