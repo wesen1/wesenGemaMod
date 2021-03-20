@@ -28,7 +28,7 @@
   <whitespace>
   {* colors.mapRecordRank *}
   {[
-    getAbsoluteTemplatePath("Generic/MapScore/Rank"),
+    getAbsoluteTemplatePath("Generic/MapScore/RankName"),
     { rank = nextRank }
   ]}
 
@@ -57,6 +57,6 @@ from
 <whitespace>
 {* colors.mapRecordRank *}
 {[
-  getAbsoluteTemplatePath("Generic/MapScore/Rank"),
+  getAbsoluteTemplatePath("Generic/MapScore/RankName"),
   { rank = 1 }
 ]}

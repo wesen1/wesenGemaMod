@@ -1,0 +1,26 @@
+{#
+ # Prints the number of server score points of a player.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScore serverScore The ServeScore to print
+ # @tparam int maxPointsLength The maximum points length of all displayed points
+ # @tparam bool appendComma True to add a comma behind the points string, false otherwise
+ # @tparam bool padPointsWordWithWhitespace True to add a whitespace if the "points" word does not end with "s"
+ #}
+
+{* colors.serverScorePoints *}
+{* string.format("%0" .. maxPointsLength .. "d", serverScore:getPoints()) *}
+{* colors.serverScoreInfo *} point
+
+{% if (serverScore:getPoints() ~= 1) then %}
+  s
+{% end %}
+
+
+{% if (appendComma) then %}
+  ,
+{% end %}
+
+{% if (padPointsWordWithWhitespace and serverScore:getPoints() == 1) then %}
+  <whitespace>
+{% end %}

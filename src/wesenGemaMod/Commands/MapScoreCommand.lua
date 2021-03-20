@@ -1,6 +1,6 @@
 ---
 -- @author wesen
--- @copyright 2020 wesen <wesen-ac@web.de>
+-- @copyright 2020-2021 wesen <wesen-ac@web.de>
 -- @release 0.1
 -- @license MIT
 --
@@ -62,14 +62,16 @@ end
 function MapScoreCommand:execute(_player, _arguments)
 
   local gemaScoreManager = Server.getInstance():getExtensionManager():getExtensionByName("GemaScoreManager")
-  local mapScoreList = gemaScoreManager:getMapTopManager():getMapTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
+  local mapTopManager = gemaScoreManager:getMapTopManager()
 
-  local mapScore, playerName, isSelf
+  -- Fetch information about the personal best MapScore
+  local mapScoreList = mapTopManager:getMapTop(ScoreContextProvider.CONTEXT_MAIN):getScoreList()
+  local personalBestMapScore, playerName, isSelf
   if (_arguments["playerName"] ~= nil) then
     playerName = _arguments["playerName"]
-    mapScore = mapScoreList:getScoreByPlayerName(playerName)
-    if ((mapScore and mapScore:getPlayer():equals(_player)) or
-        (not mapScore and playerName == _player:getName())
+    personalBestMapScore = mapScoreList:getScoreByPlayerName(playerName)
+    if ((personalBestMapScore and personalBestMapScore:getPlayer():equals(_player)) or
+        (not personalBestMapScore and playerName == _player:getName())
     ) then
       isSelf = true
     else
@@ -78,15 +80,38 @@ function MapScoreCommand:execute(_player, _arguments)
   else
     playerName = _player:getName()
     isSelf = true
-    mapScore = mapScoreList:getScoreByPlayer(_player)
+    personalBestMapScore = mapScoreList:getScoreByPlayer(_player)
   end
 
-  self.output:printTextTemplate(
+  local contextInfos = {}
+  if (personalBestMapScore) then
+    local scoreContextProvider = gemaScoreManager:getScoreContextProvider()
+    local scorePlayer = personalBestMapScore:getPlayer()
+    local scoreContexts = mapTopManager:getScoreContexts()
+    table.sort(scoreContexts)
+
+    for _, scoreContext in ipairs(scoreContexts) do
+      local contextMapScoreList = mapTopManager:getMapTop(scoreContext):getScoreList()
+      table.insert(
+        contextInfos,
+        {
+          contextName = scoreContextProvider:getPreferredAliasForScoreContext(scoreContext),
+          score = contextMapScoreList:getScoreByPlayer(scorePlayer),
+          numberOfScores = contextMapScoreList:getNumberOfScores()
+        }
+      )
+    end
+
+  end
+
+  self.output:printTableTemplate(
     "Commands/MapScore/MapScore",
-    { ["mapScore"] = mapScore,
-      ["playerName"] = playerName,
-      ["isSelf"] = isSelf,
-      ["numberOfMapScores"] = mapScoreList:getNumberOfScores()
+    {
+      personalBestMapScore = personalBestMapScore,
+      playerName = playerName,
+      isSelf = isSelf,
+      numberOfMapScores = mapScoreList:getNumberOfScores(),
+      contextInfos = contextInfos
     }
     , _player
   )

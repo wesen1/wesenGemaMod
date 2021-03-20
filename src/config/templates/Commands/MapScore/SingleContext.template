@@ -1,0 +1,61 @@
+{#
+ # Prints the rank and best map score of a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore|nil mapScore The MapScore to print
+ # @tparam string playerName The name of the player whose MapRecord is shown
+ # @tparam bool isSelf True if the MapRecord belongs to the command executor himself, false otherwise
+ # @tparam int numberOfMapScores The total number of map scores for the current map
+ #}
+
+{* colors.mapRecordInfo *}
+{% if (isSelf) then %}
+  Your
+{% else %}
+  {* colors.mapRecordName *}{* playerName *}
+  {* colors.mapRecordInfo *}'s
+{% end %}
+
+<whitespace>
+best time for this map is
+<whitespace>
+
+{[
+   getAbsoluteTemplatePath("Generic/MapScore/MapScoreTime"),
+   {
+     colors = colors,
+     timeFormatter = timeFormatter,
+     mapScore = mapScore
+   }
+]}
+
+{* colors.mapRecordInfo *}
+<whitespace>
+(
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/Rank"),
+    {
+      colors = colors,
+      mapScore = mapScore,
+      totalNumberOfMapScores = numberOfMapScores
+    }
+  ]}
+)
+
+{* colors.mapRecordInfo *} with
+<whitespace>
+{[
+  getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
+  { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
+]}
+
+{* colors.mapRecordInfo *}
+<whitespace>
+(
+  {[
+    getAbsoluteTemplatePath("Generic/MapScore/Date"),
+    { colors = colors, mapScore = mapScore }
+  ]}
+)

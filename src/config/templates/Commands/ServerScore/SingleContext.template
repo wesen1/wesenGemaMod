@@ -1,0 +1,56 @@
+{#
+ # Prints the rank and server score of a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam string[] colors The list of colors
+ # @tparam ServerScore|nil serverScore The ServeScore to print
+ # @tparam string playerName The name of the player whose ServerScore is shown
+ # @tparam bool isSelf True if the ServerScore belongs to the command executor himself, false otherwise
+ # @tparam int numberOfServerScores The total number of server scores
+ # @tparam int numberOfGemaMaps The total number of gema maps
+ #}
+
+{* colors.serverScoreInfo *}
+{% if (isSelf) then %}
+  Your
+{% else %}
+  {* colors.serverScoreName *}{* playerName *}
+  {* colors.serverScoreInfo *}'s
+{% end %}
+
+<whitespace>
+server score is
+<whitespace>
+
+{[ getAbsoluteTemplatePath("Generic/ServerScore/NumberOfPoints"),
+  { colors = colors,
+    serverScore = serverScore,
+    maxPointsLength = string.len(serverScore:getPoints())
+  }
+]}
+
+{* colors.serverScoreInfo *}
+<whitespace>
+(
+  {[
+    getAbsoluteTemplatePath("Generic/ServerScore/Rank"),
+    {
+      colors = colors,
+      serverScore = serverScore,
+      numberOfServerScores = numberOfServerScores
+    }
+  ]}
+
+  ,
+  <whitespace>
+
+  {[ getAbsoluteTemplatePath("Generic/ServerScore/NumberOfScores"),
+    { colors = colors,
+      serverScore = serverScore,
+      numberOfGemaMaps = numberOfGemaMaps,
+      maxBestTimesLength = string.len(serverScore:getNumberOfBestTimes()),
+      maxMapsCompletedLength = string.len(serverScore:getNumberOfMapScores())
+    }
+  ]}
+  {* colors.serverScoreInfo *}
+)

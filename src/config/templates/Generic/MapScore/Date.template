@@ -1,0 +1,12 @@
+{#
+ # Prints a MapScore creation date info.
+ #
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore|nil mapScore The MapScore whose creation date info to print
+ #}
+
+Created on
+<whitespace>
+{* colors.mapRecordTimeStamp *}
+{* os.date("%Y-%m-%d", mapScore:getCreatedAt()) *}
+{* colors.mapRecordInfo *}

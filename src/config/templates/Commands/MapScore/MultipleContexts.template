@@ -1,0 +1,75 @@
+{#
+ # Prints the ranks and best map scores per context of a player.
+ #
+ # @tparam function getAbsoluteTemplatePath The function to fetch absolute template paths
+ # @tparam TimeFormatter timeFormatter The time formatter
+ # @tparam string[] colors The list of colors
+ # @tparam MapScore personalBestMapScore The best MapScore of the player
+ # @tparam string playerName The name of the player whose MapRecord is shown
+ # @tparam bool isSelf True if the MapRecord belongs to the command executor himself, false otherwise
+ # @tparam table contextInfos The context infos (personal best MapScore + number of scores)
+ #}
+
+{* colors.mapRecordInfo *}
+{% if (isSelf) then %}
+  Your
+{% else %}
+  {* colors.mapRecordName *}{* playerName *}
+  {* colors.mapRecordInfo *}'s
+{% end %}
+
+<whitespace>
+best times for this map are:
+______________________________________________________________;
+
+  --------------------------[FIELD]--------------------------;
+
+  {% for _, contextInfo in ipairs(contextInfos) do %}
+
+    {* colors.scoreContextName *}{* contextInfo["contextName"] *}
+    -----------------------------------------------------------;
+
+    {* colors.mapRecordInfo *}:
+    <whitespace>
+
+    {% if (contextInfo["score"]) then %}
+
+      {[
+        getAbsoluteTemplatePath("Generic/MapScore/MapScoreTime"),
+        {
+          colors = colors,
+          timeFormatter = timeFormatter,
+          mapScore = contextInfo["score"],
+          highlightAsBestTime = (contextInfo["score"]:getMilliseconds() == personalBestMapScore:getMilliseconds())
+        }
+      ]}
+
+      {* colors.mapRecordInfo *},
+
+      <whitespace>
+      {[
+        getAbsoluteTemplatePath("Generic/MapScore/Rank"),
+        {
+          colors = colors,
+          mapScore = contextInfo["score"],
+          totalNumberOfMapScores = contextInfo["numberOfScores"]
+        }
+      ]}
+
+      {* colors.mapRecordInfo *},
+
+      <whitespace>
+      {[
+        getAbsoluteTemplatePath("Generic/MapScore/Date"),
+        { colors = colors, mapScore = contextInfo["score"] }
+      ]}
+
+    {% else %}
+      {* colors.emptyTop *}No score found
+    {% end %}
+
+    ________________________________________________________________;
+
+  {% end %}
+
+  ------------------------[ENDFIELD]-------------------------;
