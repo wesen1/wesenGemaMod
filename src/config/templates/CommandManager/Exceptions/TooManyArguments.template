@@ -12,6 +12,7 @@ Too many arguments
 (
   Expected: {* command:getNumberOfRequiredArguments() *}
   {% if (command:getNumberOfRequiredArguments() < command:getNumberOfArguments()) then %}
+    <whitespace>
     to {* command:getNumberOfArguments() *}
   {% end %}
   , got: {* numberOfPassedArguments *}
