@@ -186,14 +186,17 @@ function ScoreContextProvider:initializeScoreContextAliases()
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, "assault-rifle", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, "assault")
+  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_ASSAULT_RIFLE, "ar")
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SUBMACHINE_GUN, "submachine-gun", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SUBMACHINE_GUN, "submachine")
+  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SUBMACHINE_GUN, "smg")
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SNIPER_RIFLE, "sniper-rifle", true)
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SNIPER_RIFLE, "sniper")
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SHOTGUN, "shotgun", true)
+  self:addScoreContextAlias(ScoreContextProvider.CONTEXT_SHOTGUN, "sg")
 
   self:addScoreContextAlias(ScoreContextProvider.CONTEXT_CARBINE, "carbine", true)
 

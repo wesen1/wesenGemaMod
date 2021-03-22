@@ -20,11 +20,23 @@ local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateExce
 --
 local MapTopCommand = BaseCommand:extend()
 
+---
+-- The default number of scores to show when the numberOfScores option is not set
+-- Defaults to 5
+--
+-- @tfield int defaultNumberOfDisplayScores
+--
+MapTopCommand.defaultNumberOfDisplayScores = nil
+
 
 ---
 -- MapTopCommand constructor.
 --
-function MapTopCommand:new()
+-- @tparam int _defaultNumberOfDisplayScores The default number of display scores to show (optional)
+--
+function MapTopCommand:new(_defaultNumberOfDisplayScores)
+
+  self.defaultNumberOfDisplayScores = _defaultNumberOfDisplayScores or 5
 
   local contextArgument = CommandArgument(
     StaticString("maptopCommandContextArgumentName"):getString(),
@@ -42,12 +54,20 @@ function MapTopCommand:new()
     StaticString("maptopCommandStartRankArgumentDescription"):getString()
   )
 
+  local numberOfDisplayScoresArgument = CommandArgument(
+    StaticString("maptopCommandNumberOfScoresArgumentName"):getString(),
+    true,
+    "integer",
+    StaticString("maptopCommandNumberOfScoresArgumentShortName"):getString(),
+    StaticString("maptopCommandNumberOfScoresArgumentDescription"):getString():format(self.defaultNumberOfDisplayScores)
+  )
+
   self.super.new(
     self,
     StaticString("mapTopCommandName"):getString(),
     0,
     StaticString("mapTopCommandGroupName"):getString(),
-    { contextArgument, startRankArgument },
+    { contextArgument, startRankArgument, numberOfDisplayScoresArgument },
     StaticString("mapTopCommandDescription"):getString(),
     { StaticString("mapTopCommandAlias1"):getString() }
   )
@@ -109,7 +129,7 @@ function MapTopCommand:execute(_player, _arguments)
 
   end
 
-  local numberOfDisplayScores = 5
+  local numberOfDisplayScores = _arguments["numberOfScores"] or self.defaultNumberOfDisplayScores
   if (startRank + numberOfDisplayScores - 1 > numberOfScores) then
     numberOfDisplayScores = numberOfScores - startRank + 1
   end

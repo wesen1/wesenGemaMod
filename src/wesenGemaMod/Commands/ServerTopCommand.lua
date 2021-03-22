@@ -20,11 +20,23 @@ local TemplateException = require "AC-LuaServer.Core.Util.Exception.TemplateExce
 --
 local ServerTopCommand = BaseCommand:extend()
 
+---
+-- The default number of scores to show when the numberOfScores option is not set
+-- Defaults to 5
+--
+-- @tfield int defaultNumberOfDisplayScores
+--
+ServerTopCommand.defaultNumberOfDisplayScores = nil
+
 
 ---
 -- ServerTopCommand constructor.
 --
-function ServerTopCommand:new()
+-- @tparam int _defaultNumberOfDisplayScores The default number of display scores to show (optional)
+--
+function ServerTopCommand:new(_defaultNumberOfDisplayScores)
+
+  self.defaultNumberOfDisplayScores = _defaultNumberOfDisplayScores or 5
 
   local contextArgument = CommandArgument(
     StaticString("servertopCommandContextArgumentName"):getString(),
@@ -42,12 +54,20 @@ function ServerTopCommand:new()
     StaticString("serverTopCommandStartRankArgumentDescription"):getString()
   )
 
+  local numberOfDisplayScoresArgument = CommandArgument(
+    StaticString("serverTopCommandNumberOfScoresArgumentName"):getString(),
+    true,
+    "integer",
+    StaticString("serverTopCommandNumberOfScoresArgumentShortName"):getString(),
+    StaticString("serverTopCommandNumberOfScoresArgumentDescription"):getString():format(self.defaultNumberOfDisplayScores)
+  )
+
   BaseCommand.new(
     self,
     StaticString("serverTopCommandName"):getString(),
     0,
     StaticString("serverTopCommandGroupName"):getString(),
-    { contextArgument, startRankArgument },
+    { contextArgument, startRankArgument, numberOfDisplayScoresArgument },
     StaticString("serverTopCommandDescription"):getString(),
     { StaticString("serverTopCommandAlias1"):getString() }
   )
@@ -108,7 +128,7 @@ function ServerTopCommand:execute(_player, _arguments)
     startRank = _arguments["startRank"]
   end
 
-  local numberOfDisplayedScores = 5
+  local numberOfDisplayedScores = _arguments["numberOfScores"] or self.defaultNumberOfDisplayScores
   if (startRank + numberOfDisplayedScores - 1 > numberOfScores) then
     numberOfDisplayedScores = numberOfScores - startRank + 1
   end
