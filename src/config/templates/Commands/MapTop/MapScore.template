@@ -27,6 +27,9 @@
 
 |----------------------------------------------------------------------------------------------------------;
 
+{# Make sure that the player name and weapon name are always separated by at least one whitespace width #}
+<whitespace>
+
 {[
   getAbsoluteTemplatePath("Generic/MapScore/ScoreWeapon"),
   { getAbsoluteTemplatePath = getAbsoluteTemplatePath, colors = colors, mapScore = mapScore }
