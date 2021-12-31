@@ -1,5 +1,6 @@
 FROM wesen1/assaultcube-lua-server:1.2.0.2-lib-lua
-RUN apt-get install -y luarocks && \
+RUN apt-get --allow-releaseinfo-change-suite update && \
+    apt-get install -y luarocks && \
     apt-get install libmaxminddb0 libmaxminddb-dev && \
     apt-get install make && \
     luarocks install ac-luaserver && \
